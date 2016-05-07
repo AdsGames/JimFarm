@@ -113,6 +113,10 @@ void character::update(){
         moving = false;
     }
 
+    // Move item with you
+    inventory_item -> x = x;
+    inventory_item -> y = y;
+
     // Move
     if( !moving){
         if(( key[KEY_UP] || joy[0].stick[0].axis[1].d1) && !map_pointer -> is_solid_at( x, y - 16)){
@@ -168,14 +172,22 @@ void character::update(){
                 else
                     push_message( "You can't hoe this");
 
-            }else if(map_pointer -> get_tile_at(x,y,BACKGROUND) == 7){
-              if(inventory_item -> id == 3){
-                water=4;
-                push_message( "Watering can filled");
-              }else{
-                push_message( "This is a well");
+            }
+            else if( inventory_item -> id == 1){
+                if( map_pointer -> get_tile_at( x, y, true) == 4)
+                    map_pointer -> replace_tile( x, y, -1, true);
+                else
+                    push_message( "You can't cut this");
 
-              }
+            }
+            else if(map_pointer -> get_tile_at(x,y,BACKGROUND) == 7){
+                if(inventory_item -> id == 3){
+                    water=4;
+                    push_message( "Watering can filled");
+            }
+            else{
+                push_message( "This is a well");
+            }
 
 
             }else if(inventory_item -> id == 3){

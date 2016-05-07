@@ -199,16 +199,26 @@ void tile_map::replace_tile( int tileX, int tileY, int newID, bool foreground){
     if( !foreground){
         for( unsigned int i = 0; i < map_tiles.size(); i++){
             if( map_tiles.at(i).x == tileX && map_tiles.at(i).y == tileY){
-                map_tiles.at(i).id = newID;
-                map_tiles.at(i).image[0] = tile_images[newID];
+                if( newID == -1){
+                    map_tiles.erase( map_tiles.begin() + i);
+                }
+                else{
+                    map_tiles.at(i).id = newID;
+                    map_tiles.at(i).image[0] = tile_images[newID];
+                }
             }
         }
     }
     else{
         for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
             if( map_tiles_foreground.at(i).x == tileX && map_tiles_foreground.at(i).y == tileY){
-                map_tiles_foreground.at(i).id = newID;
-                map_tiles_foreground.at(i).image[0] = tile_images[newID];
+                if( newID == -1){
+                    map_tiles_foreground.erase( map_tiles_foreground.begin() + i);
+                }
+                else{
+                    map_tiles_foreground.at(i).id = newID;
+                    map_tiles_foreground.at(i).image[0] = tile_images[newID];
+                }
             }
         }
     }
