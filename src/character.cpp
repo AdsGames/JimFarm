@@ -71,15 +71,15 @@ void character::drawForeground( BITMAP *tempBuffer){
     if( inventory_item -> id == 1)
         draw_sprite( tempBuffer,watering_can[water],2,-2);
 
-    draw_sprite( tempBuffer, inventory_gui, 190, 10);
+    draw_sprite( tempBuffer, inventory_gui, 1, 1);
 
     if( inventory_item -> image[0] != NULL)
-        draw_sprite( tempBuffer, inventory_item -> image[0], 1, 1);
+        draw_sprite( tempBuffer, inventory_item -> image[0], 2, 2);
 
     //When gcc don't give no damns
     textprintf_ex( tempBuffer,pixelart,20,00000000000000000000000000000000000000000000000000000000000000000000000000,makecol(255,255,255),-1,"Item");
-    textprintf_ex( tempBuffer,pixelart,5,10,makecol(255,255,255),-1,"%i",money);
-    textprintf_ex( tempBuffer,pixelart,20,10,makecol(255,255,255),-1,"Ca$hMoney$");
+    textprintf_ex( tempBuffer,pixelart,5,15,makecol(255,255,255),-1,"%i",money);
+    textprintf_ex( tempBuffer,pixelart,20,15,makecol(255,255,255),-1,"Ca$hMoney$");
 
     // Message system
     for( int i = 0; i < MAX_MESSAGES; i++)
