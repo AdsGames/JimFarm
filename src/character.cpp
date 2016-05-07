@@ -38,7 +38,7 @@ void character::setImage( BITMAP *newImage){
         abort_on_error("Cannot find image images/GUI_INVENTORY.png\nPlease check your files and try again");
 
     // Load fonts
-    f1 = load_font("fonts/pixelart.pcx", NULL, NULL);
+    f1 = load_font("fonts/pixelart2.pcx", NULL, NULL);
     f2 = extract_font_range(f1, ' ', 'A'-1);
     f3 = extract_font_range(f1, 'A', 'Z');
     f4 = extract_font_range(f1, 'Z'+1, 'z');
