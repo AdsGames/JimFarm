@@ -20,7 +20,7 @@ tile::~tile()
 
 void tile::draw( BITMAP *tempBuffer)
 {
-    draw_sprite( tempBuffer, image[0], x, y);
+    draw_sprite( tempBuffer, image[0], x, y - (image[0] -> h - 16));
 }
 
 

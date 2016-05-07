@@ -6,6 +6,7 @@
 
 #include "math.h"
 #include "tile_map.h"
+#include "tile.h"
 
 #define MAX_MESSAGES 1
 
@@ -19,6 +20,7 @@ class character
         void setImage( BITMAP *newImage);
 
         void draw( BITMAP *tempBuffer);
+        void drawForeground( BITMAP *tempBuffer);
 
         void push_message( std::string new_message);
 
@@ -38,12 +40,13 @@ class character
         FONT* pixelart;
 
         int x, y;
-        int inventory;
+        item *inventory_item;
         int money;
         int water;
 
         BITMAP *image;
         BITMAP *watering_can[5];
+        BITMAP *inventory_gui;
 
         char gameTick;
         char direction;

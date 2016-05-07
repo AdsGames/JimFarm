@@ -71,6 +71,12 @@ void draw(){
     // Draw JIM
     jim.draw( buffer);
 
+    // Draw map
+    farm_map.drawForeground( buffer);
+
+    // Draw JIM
+    jim.drawForeground( buffer);
+
     // Stretch screen
     stretch_sprite( screen, buffer, 0, 0, SCREEN_W, SCREEN_H);
 }

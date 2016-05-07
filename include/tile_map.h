@@ -23,6 +23,7 @@ class tile_map
         static const int VIEWPORT_HEIGHT = 160;
 
         void draw( BITMAP *tempBuffer);
+        void drawForeground( BITMAP *tempBuffer);
 
         void replace_tile( int tileX, int tileY, int newID);
         void place_item( item newItem);
@@ -45,6 +46,8 @@ class tile_map
     private:
         // Tiles
         std::vector<tile> map_tiles;
+        std::vector<tile> map_tiles_foreground;
+
         std::vector<item> map_items;
 
         BITMAP *tile_images[100];
