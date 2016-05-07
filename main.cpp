@@ -107,8 +107,8 @@ void setup(){
     set_close_button_callback(close_button_handler);
 
     // Check if image exists
-    if (!( jim_image = load_bitmap("images/tile2.png", NULL)))
-        abort_on_error("Cannot find image images/tile2.png\nPlease check your files and try again");
+    if (!( jim_image = load_bitmap("images/character_1.png", NULL)))
+        abort_on_error("Cannot find image images/character_1.png\nPlease check your files and try again");
 
     // Nice Map
     farm_map.load_images();

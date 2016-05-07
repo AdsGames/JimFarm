@@ -3,6 +3,7 @@
 
 #include <allegro.h>
 
+#include "math.h"
 #include "tile_map.h"
 
 
@@ -14,7 +15,7 @@ class character
         virtual ~character();
 
         void setPosition( int newX, int newY){ x = newX; y = newY;}
-        void setImage( BITMAP *newImage){ image = newImage;}
+        void setImage( BITMAP *newImage);
 
         void draw( BITMAP *tempBuffer);
 
@@ -25,10 +26,12 @@ class character
 
     private:
         int x, y;
+
         BITMAP *image;
 
         char gameTick;
         char direction;
+        bool moving;
 
         tile_map *map_pointer;
 

@@ -2,6 +2,8 @@
 
 character::character()
 {
+    moving = false;
+    direction = 1;
 }
 
 character::~character()
@@ -9,28 +11,42 @@ character::~character()
     //dtor
 }
 
+// Set image
+void character::setImage( BITMAP *newImage){
+    image = newImage;
+}
+
+// Draw character to screen
 void character::draw( BITMAP *tempBuffer)
 {
-    draw_sprite( tempBuffer, image, x, y - 3);
+    masked_blit( image, tempBuffer, floor(gameTick/2) * 16, (direction - 1) * 20, x, y - 3, 16, 20);
 }
 
 void character::update(){
+    // Snap
+    if( x % 16 == 0 && y % 16 == 0 ){
+        gameTick = 0;
+        moving = false;
+    }
+
     // Move
-    if( direction == 0){
+    if( !moving){
         if( key[KEY_UP]){
-            direction = 1;
+            direction = 2;
+            moving = true;
         }
         else if( key[KEY_DOWN]){
-            direction = 2;
+            direction = 1;
+            moving = true;
         }
         else if( key[KEY_LEFT]){
-            direction = 3;
+            direction = 4;
+            moving = true;
         }
         else if( key[KEY_RIGHT]){
-            direction = 4;
+            direction = 3;
+            moving = true;
         }
-
-        gameTick = 0;
 
         // Action button
         if( key[KEY_SPACE]){
@@ -38,33 +54,30 @@ void character::update(){
         }
     }
 
-    // Smooth move
-    if( direction == 1){
-        if( y > 0)
-            y -= 2;
-    }
-    else if( direction == 2){
-        if( y < 160 - 16)
-            y += 2;
-    }
-    else if( direction == 3){
-        if( x > 0)
-            x -= 2;
-    }
-    else if( direction == 4){
-        if( x < 240 - 16)
-            x += 2;
-    }
+    if( moving){
+        // Smooth move
+        if( direction == 2){
+            if( y > 0)
+                y -= 2;
+        }
+        else if( direction == 1){
+            if( y < 160 - 16)
+                y += 2;
+        }
+        else if( direction == 4){
+            if( x > 0)
+                x -= 2;
+        }
+        else if( direction == 3){
+            if( x < 240 - 16)
+                x += 2;
+        }
 
-    // Snap
-    if( x % 16 == 0 && y % 16 == 0 ){
-        direction = 0;
+        // Increase game ticker
+        gameTick++;
+        if( gameTick > 7)
+            gameTick = 0;
     }
-
-    // Increase game ticker
-    gameTick++;
-    if( gameTick > 8)
-        gameTick = 0;
 }
 
 void character::setWorld( tile_map *newTileMap){
