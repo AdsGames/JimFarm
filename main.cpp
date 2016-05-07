@@ -4,20 +4,22 @@
 #include<vector>
 
 #include "tile.h"
-
+#include "character.h"
 
 // Images
-BITMAP* buffer;
-BITMAP* background;
-BITMAP* tile_images[100];
+BITMAP *buffer;
+BITMAP *tile_images[100];
+BITMAP *jim_image;
 
 bool close_button_pressed;
 
 // Tiles
 std::vector<tile> map_tiles;
 
+character jim;
+
 // Constant
-const int MAP_WIDTH = 10;
+const int MAP_WIDTH = 15;
 const int MAP_HEIGHT = 10;
 
 
@@ -45,6 +47,17 @@ void close_button_handler(void){
 }
 END_OF_FUNCTION(close_button_handler)
 
+// Game clock
+int animationFrame = 0;
+
+void animationTicker(){
+    animationFrame++;
+    if( animationFrame > 10)
+        animationFrame = 0;
+}
+END_OF_FUNCTION(ticker)
+
+
 // Random number generator. Use int random(highest,lowest);
 int random(int newLowest, int newHighest)
 {
@@ -69,9 +82,8 @@ void abort_on_error(const char *message){
  *   Update logic
  *********************/
 void update(){
-
-
-
+    // Update character
+    jim.update();
 }
 
 /*********************
@@ -79,13 +91,15 @@ void update(){
  *********************/
 void draw(){
     // Draw background
-    draw_sprite( buffer, background, 0, 0);
+    rectfill( buffer, 0, 0, 160, 240, makecol( 0, 0, 0));
 
     // Draw tiles
     for( int i = 0; i < map_tiles.size(); i++){
         map_tiles.at(i).draw( buffer);
     }
 
+    // Draw JIM
+    jim.draw( buffer);
 
     // Stretch screen
     stretch_sprite( screen, buffer, 0, 0, SCREEN_W, SCREEN_H);
@@ -111,27 +125,47 @@ void setup(){
     LOCK_FUNCTION(game_time_ticker);
     install_int_ex(game_time_ticker, BPS_TO_TIMER(10));
 
+    // Animation ticks
+    LOCK_VARIABLE(animationFrame);
+    LOCK_FUNCTION(animationTicker);
+    install_int( animationTicker,10);
+    install_int_ex( animationTicker, BPS_TO_TIMER(100));
+
+
     // Close button
     LOCK_FUNCTION(close_button_handler);
     set_close_button_callback(close_button_handler);
 
     // Check if image exists
-    if (!( background = load_bitmap("images/grass.png", NULL)))
+    if (!( tile_images[0] = load_bitmap("images/grass.png", NULL)))
         abort_on_error("Cannot find image images/grass.png\nPlease check your files and try again");
 
-    if (!( tile_images[0] = load_bitmap("images/tile1.png", NULL)))
-        abort_on_error("Cannot find image images/tile1.png\nPlease check your files and try again");
+    if (!( tile_images[1] = load_bitmap("images/water.png", NULL)))
+        abort_on_error("Cannot find image images/water.png\nPlease check your files and try again");
 
-    if (!( tile_images[1] = load_bitmap("images/tile2.png", NULL)))
+    if (!( jim_image = load_bitmap("images/tile2.png", NULL)))
+        abort_on_error("Cannot find image images/tile2.png\nPlease check your files and try again");
+
+    if (!( tile_images[2] = load_bitmap("images/tile1.png", NULL)))
         abort_on_error("Cannot find image images/tile2.png\nPlease check your files and try again");
 
     // Nice Map
     for( int i = 0; i < MAP_WIDTH; i++){
         for( int t = 0; t < MAP_HEIGHT; t++){
-            tile newTile( i * 16, t * 16, tile_images[0], tile_images[0], 0);
-            map_tiles.push_back( newTile);
+            if( i > 6){
+                tile newTile( i * 16, t * 16, tile_images[1], tile_images[1], 1);
+                map_tiles.push_back( newTile);
+            }
+            else{
+                tile newTile( i * 16, t * 16, tile_images[0], tile_images[0], 0);
+                map_tiles.push_back( newTile);
+            }
         }
     }
+
+    // Setup jim
+    jim.setPosition( 0, 0);
+    jim.setImage( jim_image);
 }
 
 
