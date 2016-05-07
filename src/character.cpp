@@ -48,6 +48,10 @@ void character::draw( BITMAP *tempBuffer)
 }
 
 void character::update(){
+    // Ask joystick for keys
+    poll_joystick();
+
+    //Oh
     // Snap
     if( x % 16 == 0 && y % 16 == 0 ){
         gameTick = 0;
@@ -74,7 +78,7 @@ void character::update(){
         }
 
         // Action button
-        if( key[KEY_SPACE]){
+        if( key[KEY_SPACE] || joy[0].button[0].b){
             if( map_pointer -> get_tile_at( x, y) == 0)
                 map_pointer -> replace_tile( x, y, 2);
         }

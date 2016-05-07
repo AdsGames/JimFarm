@@ -27,8 +27,16 @@ void tile_map::generate_map(){
                 map_tiles.push_back( newTile);
             }
             else{
-                tile newTile( i * 16, t * 16, tile_images[0], tile_images[0], 0);
-                map_tiles.push_back( newTile);
+                //Well...............
+                if(i==5 && t==2){
+                  tile newTile( i * 16, t * 16, tile_images[3], tile_images[3], 3);
+                  map_tiles.push_back( newTile);
+
+                }else{
+                  tile newTile( i * 16, t * 16, tile_images[0], tile_images[0], 0);
+                  map_tiles.push_back( newTile);
+                }
+
             }
         }
     }
@@ -44,6 +52,9 @@ void tile_map::load_images(){
 
     if (!( tile_images[2] = load_bitmap("images/tile1.png", NULL)))
         abort_on_error("Cannot find image images/tile2.png\nPlease check your files and try again");
+
+    if (!( tile_images[3] = load_bitmap("images/well.png", NULL)))
+        abort_on_error("Cannot find image images/well.png\nPlease check your files and try again");
 }
 
 // Replace tile on map

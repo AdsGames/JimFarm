@@ -131,6 +131,8 @@ int main(){
   install_timer();
   install_keyboard();
   install_mouse();
+  install_joystick(JOY_TYPE_AUTODETECT);
+
   set_color_depth(32);
 
 
