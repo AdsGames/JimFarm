@@ -21,6 +21,8 @@ class tile_map
 
         void replace_tile( int tileX, int tileY, int newID);
 
+        int get_tile_at( int positionX, int positionY);
+
         void generate_map();
 
         void load_images();

@@ -55,3 +55,12 @@ void tile_map::replace_tile( int tileX, int tileY, int newID){
         }
     }
 }
+
+// Get tile at position
+int tile_map::get_tile_at( int positionX, int positionY){
+    for( int i = 0; i < map_tiles.size(); i++){
+        if( map_tiles.at(i).x == positionX && map_tiles.at(i).y == positionY){
+            return map_tiles.at(i).id;
+        }
+    }
+}

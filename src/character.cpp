@@ -50,7 +50,8 @@ void character::update(){
 
         // Action button
         if( key[KEY_SPACE]){
-            map_pointer -> replace_tile( x, y, 2);
+            if( map_pointer -> get_tile_at( x, y) == 0)
+                map_pointer -> replace_tile( x, y, 2);
         }
     }
 
