@@ -6,8 +6,6 @@ character::character(){
 
     for( int i = 0; i < MAX_MESSAGES; i++)
         player_messages[i] = "SWAG";
-
-    inventory_item = new item( 0, 0, NULL, NULL, -1, "hand");
 }
 
 character::~character(){
@@ -36,6 +34,12 @@ void character::setImage( BITMAP *newImage){
 
     if (!( inventory_gui = load_bitmap("images/GUI_INVENTORY.png", NULL)))
         abort_on_error("Cannot find image images/GUI_INVENTORY.png\nPlease check your files and try again");
+
+    if (!( hand = load_bitmap("images/hand.png", NULL)))
+        abort_on_error("Cannot find image images/hand.png\nPlease check your files and try again");
+
+    inventory_hand = new item( 0, 0, hand, hand, -1, "hand");
+    inventory_item = inventory_hand;
 
     // Load fonts
     f1 = load_font("fonts/pixelart2.pcx", NULL, NULL);
@@ -126,12 +130,16 @@ void character::update(){
             if( map_pointer -> is_item_at( x, y) == true){
                 inventory_item = map_pointer -> get_item_at( x, y);
                 push_message( "You pick up a " + map_pointer -> get_item_at( x, y) -> name);
+                map_pointer -> remove_item_at( x, y);
             }
         }
 
         // Drop
-        if( key[KEY_RCONTROL]){
-            inventory_item = new item( 0, 0, NULL, NULL, -1, "JIMOTHY");
+        if( key[KEY_RCONTROL] && inventory_item -> id != -1){
+            inventory_item -> x = x;
+            inventory_item -> y = y;
+            map_pointer -> place_item( *inventory_item);
+            inventory_item = inventory_hand;
             push_message( "You drop your item");
         }
 

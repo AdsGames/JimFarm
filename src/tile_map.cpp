@@ -18,17 +18,17 @@ void tile_map::draw( BITMAP *tempBuffer){
         map_tiles.at(i).draw( map_buffer);
     }
 
-    // Draw items
-    for( unsigned int i = 0; i < map_items.size(); i++){
-        map_items.at(i).draw( map_buffer);
-    }
-
     blit( map_buffer, tempBuffer, x, y, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 }
 
 // Draw tiles
 void tile_map::drawForeground( BITMAP *tempBuffer){
     rectfill( map_buffer, 0, 0, map_buffer -> w, map_buffer -> h, makecol( 255, 0, 255));
+
+    // Draw items
+    for( unsigned int i = 0; i < map_items.size(); i++){
+        map_items.at(i).draw( map_buffer);
+    }
 
     // Draw foreground
     for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
@@ -206,7 +206,7 @@ bool tile_map::is_solid_at( int positionX, int positionY){
 }
 
 
-// CHeck if item exists
+// Check if item exists
 bool tile_map::is_item_at( int positionX, int positionY){
     for( unsigned int i = 0; i < map_items.size(); i++){
         if( map_items.at(i).x == positionX && map_items.at(i).y == positionY){
@@ -224,6 +224,16 @@ item *tile_map::get_item_at( int positionX, int positionY){
         }
     }
     return NULL;
+}
+
+// Pick up item at position
+void tile_map::remove_item_at( int positionX, int positionY){
+    for( unsigned int i = 0; i < map_items.size(); i++){
+        if( map_items.at(i).x == positionX && map_items.at(i).y == positionY){
+            map_items.erase( map_items.begin() + i);
+            break;
+        }
+    }
 }
 
 // Scroll

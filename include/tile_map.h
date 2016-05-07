@@ -33,6 +33,7 @@ class tile_map
 
         bool is_item_at( int positionX, int positionY);
         item *get_item_at( int positionX, int positionY);
+        void remove_item_at( int positionX, int positionY);
 
         void generate_map();
 

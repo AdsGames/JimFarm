@@ -41,12 +41,14 @@ class character
 
         int x, y;
         item *inventory_item;
+        item *inventory_hand;
         int money;
         int water;
 
         BITMAP *image;
         BITMAP *watering_can[5];
         BITMAP *inventory_gui;
+        BITMAP *hand;
 
         char gameTick;
         char direction;
