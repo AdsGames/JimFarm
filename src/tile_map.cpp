@@ -65,6 +65,10 @@ void tile_map::generate_map(){
             else if( random( 0, 30) == 0){
                 tempMapForeground[i][t] = 5;
             }
+            // Bushes
+            else if( random( 0, 20) == 0){
+                tempMapForeground[i][t] = 6;
+            }
         }
     }
 
@@ -156,6 +160,9 @@ void tile_map::load_images(){
 
     if (!( tile_images[5] = load_bitmap("images/tree.png", NULL)))
         abort_on_error("Cannot find image images/tree.png\nPlease check your files and try again");
+
+    if (!( tile_images[6] = load_bitmap("images/bush.png", NULL)))
+        abort_on_error("Cannot find image images/bush.png\nPlease check your files and try again");
 
     if (!( item_images[0] = load_bitmap("images/hoe.png", NULL)))
         abort_on_error("Cannot find image images/hoe.png\nPlease check your files and try again");
