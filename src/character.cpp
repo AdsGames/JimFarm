@@ -60,19 +60,19 @@ void character::update(){
 
     // Move
     if( !moving){
-        if( key[KEY_UP] || joy[0].stick[0].axis[1].d1){
+        if(( key[KEY_UP] || joy[0].stick[0].axis[1].d1) && map_pointer -> get_tile_at( x, y-16) != 1){
             direction = 2;
             moving = true;
         }
-        else if( key[KEY_DOWN] || joy[0].stick[0].axis[1].d2){
+        else if( (key[KEY_DOWN] || joy[0].stick[0].axis[1].d2) && map_pointer -> get_tile_at( x, y+16) != 1){
             direction = 1;
             moving = true;
         }
-        else if( key[KEY_LEFT] || joy[0].stick[0].axis[0].d1){
+        else if(( key[KEY_LEFT] || joy[0].stick[0].axis[0].d1)  && map_pointer -> get_tile_at( x-16, y) != 1){
             direction = 4;
             moving = true;
         }
-        else if( key[KEY_RIGHT] || joy[0].stick[0].axis[0].d2){
+        else if(( key[KEY_RIGHT] || joy[0].stick[0].axis[0].d2)  && map_pointer -> get_tile_at( x+16, y) != 1){
             direction = 3;
             moving = true;
         }
