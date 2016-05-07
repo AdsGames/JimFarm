@@ -53,7 +53,7 @@ void character::draw( BITMAP *tempBuffer)
 
   masked_blit( image, tempBuffer, floor(gameTick/2) * 16, (direction - 1) * 20, x, y - 3, 16, 20);
 
-  if(inventory==0)draw_sprite( tempBuffer,watering_can[water],2,-2);
+  if(inventory==1)draw_sprite( tempBuffer,watering_can[water],2,-2);
   //When gcc don't give no damns
   textprintf_ex(tempBuffer,pixelart,20,00000000000000000000000000000000000000000000000000000000000000000000000000,makecol(255,255,255),-1,"Item");
   textprintf_ex(tempBuffer,pixelart,5,10,makecol(255,255,255),-1,"%i",money);
