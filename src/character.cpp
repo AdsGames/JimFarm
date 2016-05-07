@@ -88,13 +88,13 @@ void character::draw( BITMAP *tempBuffer){
     }
 
     // Draw frame
-    masked_blit( image, tempBuffer, floor(gameTick/2) * 16, (direction - 1) * 20, x - map_pointer -> x, y - map_pointer -> y - 8, 16, 20);
+    masked_blit( image, tempBuffer, floor(gameTick/4) * 16, (direction - 1) * 20, x - map_pointer -> x, y - map_pointer -> y - 8, 16, 20);
 }
 
 // Draw character to screen
 void character::drawForeground( BITMAP *tempBuffer){
     // Top of head
-    masked_blit( image, tempBuffer, floor(gameTick/2) * 16, (direction - 1) * 20, x - map_pointer -> x, y - map_pointer -> y - 8, 16, 8);
+    masked_blit( image, tempBuffer, floor(gameTick/4) * 16, (direction - 1) * 20, x - map_pointer -> x, y - map_pointer -> y - 8, 16, 8);
 
     // Inventory box
     draw_sprite( tempBuffer, inventory_gui, 1, 1);
@@ -141,7 +141,7 @@ void character::update(){
     // Oh
     // Snap
     if( x % 16 == 0 && y % 16 == 0 ){
-        gameTick = 0;
+        //gameTick = 0;
         moving = false;
     }
 
@@ -174,7 +174,7 @@ void character::update(){
 
         // Pickup
         if(( key[KEY_LCONTROL] || joy[0].button[2].b) && tick>10){
-            tick=0;
+            tick = 0;
             if( map_pointer -> is_item_at( x, y) == true){
                 inventory_item = map_pointer -> get_item_at( x, y);
                 push_message( "You pick up a " + map_pointer -> get_item_at( x, y) -> name);
@@ -184,7 +184,7 @@ void character::update(){
 
         // Drop
         if(( key[KEY_RCONTROL] || joy[0].button[1].b) && inventory_item -> id != -1 && tick>10){
-            tick=0;
+            tick = 0;
             inventory_item -> x = x;
             inventory_item -> y = y;
             //map_pointer -> place_item( *inventory_item);
@@ -286,7 +286,7 @@ void character::update(){
 
         // Increase game ticker
         gameTick++;
-        if( gameTick > 7)
+        if( gameTick > 15)
             gameTick = 0;
     }
 }
