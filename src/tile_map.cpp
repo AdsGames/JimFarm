@@ -180,7 +180,7 @@ void tile_map::generate_map(){
         for( int t = 0; t < MAP_HEIGHT; t++){
             // Place items
             if( random( 0, 50) == 0){
-                char temp_item_id = random( 2, 5);
+                char temp_item_id = random( 2, 6);
                 item newItem( i * 16, t * 16, item_images[temp_item_id], item_images[temp_item_id], temp_item_id, item_names[temp_item_id]);
                 place_item( newItem);
             }
@@ -276,6 +276,9 @@ void tile_map::load_images(){
 
     if (!( tile_images[58] = load_bitmap("images/coop_right.png", NULL)))
         abort_on_error("Cannot find image images/coop_right.png\nPlease check your files and try again");
+
+    if (!( tile_images[59] = load_bitmap("images/coop_grass.png", NULL)))
+        abort_on_error("Cannot find image images/coop_grass.png\nPlease check your files and try again");
 
     if (!( tile_images[60] = load_bitmap("images/store.png", NULL)))
         abort_on_error("Cannot find image images/store.png\nPlease check your files and try again");
@@ -399,7 +402,21 @@ item *tile_map::get_item_at( int positionX, int positionY){
     }
     return NULL;
 }
+void tile_map::update(){
+  timer++;
+  if(timer>=60){
+    timer=0;
+    for( unsigned int i = 0; i < map_items.size(); i++){
+        if( map_items.at(i).id == 6 && random(1,10)==2){
+              item newItem( map_items.at(i).x+(16*random(-1,1)), map_items.at(i).y+(16*random(-1,1)), item_images[7], item_images[7], 7, item_names[7]);
+              place_item( newItem);
+        }
 
+    }
+  }
+
+
+}
 // Pick up item at position
 void tile_map::remove_item_at( int positionX, int positionY){
     for( unsigned int i = 0; i < map_items.size(); i++){

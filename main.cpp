@@ -55,6 +55,7 @@ END_OF_FUNCTION(ticker)
  *********************/
 void update(){
     // Update character
+    farm_map.update();
     jim.update();
 }
 

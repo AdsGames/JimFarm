@@ -22,6 +22,7 @@ class tile_map
         // Constant
         int MAP_WIDTH;
         int MAP_HEIGHT;
+        int timer;
 
         static const int VIEWPORT_WIDTH = 240;
         static const int VIEWPORT_HEIGHT = 160;
@@ -33,6 +34,8 @@ class tile_map
         int get_tile_at( int positionX, int positionY, bool foreground);
 
         void place_item( item newItem);
+        void update();
+
         bool is_solid_at( int positionX, int positionY);
         bool is_item_at( int positionX, int positionY);
         item *get_item_at( int positionX, int positionY);
