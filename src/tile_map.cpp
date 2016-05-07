@@ -273,6 +273,24 @@ void tile_map::load_images(){
     if (!( tile_images[11] = load_bitmap("images/stump.png", NULL)))
         abort_on_error("Cannot find image images/stump.png\nPlease check your files and try again");
 
+    if (!( tile_images[12] = load_bitmap("images/path_horizontal.png", NULL)))
+        abort_on_error("Cannot find image images/path_horizontal.png\nPlease check your files and try again");
+
+    if (!( tile_images[13] = load_bitmap("images/path_vertical.png", NULL)))
+        abort_on_error("Cannot find image images/path_vertical.png\nPlease check your files and try again");
+
+    if (!( tile_images[14] = load_bitmap("images/path_corner_1.png", NULL)))
+        abort_on_error("Cannot find image images/path_corner_1.png\nPlease check your files and try again");
+
+    if (!( tile_images[15] = load_bitmap("images/path_corner_2.png", NULL)))
+        abort_on_error("Cannot find image images/path_corner_2.png\nPlease check your files and try again");
+
+    if (!( tile_images[16] = load_bitmap("images/path_corner_3.png", NULL)))
+        abort_on_error("Cannot find image images/path_corner_3.png\nPlease check your files and try again");
+
+    if (!( tile_images[17] = load_bitmap("images/path_corner_4.png", NULL)))
+        abort_on_error("Cannot find image images/path_corner_4.png\nPlease check your files and try again");
+
     // What's the difference between item_images[0] and Allan? Nothing.
     if (!( tile_images[50] = load_bitmap("images/coop_1.png", NULL)))
         abort_on_error("Cannot find image images/coop_1.png\nPlease check your files and try again");
