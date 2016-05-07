@@ -152,8 +152,8 @@ void character::update(){
                     push_message( "There is nothing of interest here.");
             }
             else if( inventory_item -> id == 0){
-                if( map_pointer -> get_tile_at( x, y) == 0)
-                    map_pointer -> replace_tile( x, y, 2);
+                if( map_pointer -> get_tile_at( x, y, false) == 0)
+                    map_pointer -> replace_tile( x, y, 2, false);
                 else
                     push_message( "You can't hoe this");
             }

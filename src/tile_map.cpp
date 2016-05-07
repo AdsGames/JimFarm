@@ -171,11 +171,21 @@ void tile_map::load_images(){
 }
 
 // Replace tile on map
-void tile_map::replace_tile( int tileX, int tileY, int newID){
-    for( unsigned int i = 0; i < map_tiles.size(); i++){
-        if( map_tiles.at(i).x == tileX && map_tiles.at(i).y == tileY){
-            map_tiles.at(i).id = newID;
-            map_tiles.at(i).image[0] = tile_images[newID];
+void tile_map::replace_tile( int tileX, int tileY, int newID, bool foreground){
+    if( !foreground){
+        for( unsigned int i = 0; i < map_tiles.size(); i++){
+            if( map_tiles.at(i).x == tileX && map_tiles.at(i).y == tileY){
+                map_tiles.at(i).id = newID;
+                map_tiles.at(i).image[0] = tile_images[newID];
+            }
+        }
+    }
+    else{
+        for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
+            if( map_tiles_foreground.at(i).x == tileX && map_tiles_foreground.at(i).y == tileY){
+                map_tiles_foreground.at(i).id = newID;
+                map_tiles_foreground.at(i).image[0] = tile_images[newID];
+            }
         }
     }
 }
@@ -186,10 +196,19 @@ void tile_map::place_item( item newItem){
 }
 
 // Get tile at position
-char tile_map::get_tile_at( int positionX, int positionY){
-    for( unsigned int i = 0; i < map_tiles.size(); i++){
-        if( map_tiles.at(i).x == positionX && map_tiles.at(i).y == positionY){
-            return map_tiles.at(i).id;
+char tile_map::get_tile_at( int positionX, int positionY, bool foreground){
+    if( !foreground){
+        for( unsigned int i = 0; i < map_tiles.size(); i++){
+            if( map_tiles.at(i).x == positionX && map_tiles.at(i).y == positionY){
+                return map_tiles.at(i).id;
+            }
+        }
+    }
+    else{
+        for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
+            if( map_tiles_foreground.at(i).x == positionX && map_tiles_foreground.at(i).y == positionY){
+                return map_tiles_foreground.at(i).id;
+            }
         }
     }
     return -1;
