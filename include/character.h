@@ -25,7 +25,19 @@ class character
     protected:
 
     private:
+
+        // Fonts
+        FONT* f1;
+        FONT* f2;
+        FONT* f3;
+        FONT* f4;
+        FONT* f5;
+        FONT* pixelart;
+
         int x, y;
+        int inventory;
+        int money;
+        int water;
 
         BITMAP *image;
 

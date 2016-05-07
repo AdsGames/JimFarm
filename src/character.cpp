@@ -13,13 +13,38 @@ character::~character()
 
 // Set image
 void character::setImage( BITMAP *newImage){
+
     image = newImage;
+
+    // Load fonts
+    f1 = load_font("fonts/pixelart.pcx", NULL, NULL);
+    f2 = extract_font_range(f1, ' ', 'A'-1);
+    f3 = extract_font_range(f1, 'A', 'Z');
+    f4 = extract_font_range(f1, 'Z'+1, 'z');
+    pixelart = merge_fonts(f4, f5 = merge_fonts(f2, f3));
+
+    // Destroy temporary fonts
+    destroy_font(f1);
+    destroy_font(f2);
+    destroy_font(f3);
+    destroy_font(f4);
+    destroy_font(f5);
 }
 
 // Draw character to screen
 void character::draw( BITMAP *tempBuffer)
 {
-    masked_blit( image, tempBuffer, floor(gameTick/2) * 16, (direction - 1) * 20, x, y - 3, 16, 20);
+
+
+
+  masked_blit( image, tempBuffer, floor(gameTick/2) * 16, (direction - 1) * 20, x, y - 3, 16, 20);
+
+  textprintf_ex(tempBuffer,pixelart,5,0,makecol(255,255,255),-1,"%i",water);
+  textprintf_ex(tempBuffer,pixelart,20,0,makecol(255,255,255),-1,"Water");
+  textprintf_ex(tempBuffer,pixelart,5,10,makecol(255,255,255),-1,"%i",inventory);
+  textprintf_ex(tempBuffer,pixelart,20,10,makecol(255,255,255),-1,"Item");
+  textprintf_ex(tempBuffer,pixelart,5,20,makecol(255,255,255),-1,"%i",money);
+  textprintf_ex(tempBuffer,pixelart,20,20,makecol(255,255,255),-1,"Ca$hMoney$");
 }
 
 void character::update(){
