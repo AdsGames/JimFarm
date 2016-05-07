@@ -67,19 +67,21 @@ void character::drawForeground( BITMAP *tempBuffer){
     // Top of head
     masked_blit( image, tempBuffer, floor(gameTick/2) * 16, (direction - 1) * 20, x - map_pointer -> x, y - map_pointer -> y - 8, 16, 8);
 
-    // Watering can
-    if( inventory_item -> id == 1)
-        draw_sprite( tempBuffer,watering_can[water],2,-2);
+
 
     draw_sprite( tempBuffer, inventory_gui, 1, 1);
 
     if( inventory_item -> image[0] != NULL)
-        draw_sprite( tempBuffer, inventory_item -> image[0], 2, 2);
+      // Watering can
+        if( inventory_item -> id == 3)
+          draw_sprite( tempBuffer,watering_can[water],2,2);
+        else
+          draw_sprite( tempBuffer, inventory_item -> image[0], 2, 2);
 
     //When gcc don't give no damns
     textprintf_ex( tempBuffer,pixelart,20,00000000000000000000000000000000000000000000000000000000000000000000000000,makecol(255,255,255),-1,"Item");
     textprintf_ex( tempBuffer,pixelart,5,15,makecol(255,255,255),-1,"%i",money);
-    textprintf_ex( tempBuffer,pixelart,20,15,makecol(255,255,255),-1,"Ca$hMoney$");
+    textprintf_ex( tempBuffer,pixelart,20,15,makecol(255,255,255),-1,"CashMoneys");
 
     // Message system
     for( int i = 0; i < MAX_MESSAGES; i++)
@@ -94,6 +96,7 @@ void character::push_message( std::string new_message){
         player_messages[i] = player_messages[i + 1];
 
     player_messages[MAX_MESSAGES - 1] = new_message;
+    std::cout<<player_messages[0];
 }
 
 // Update player
@@ -143,17 +146,16 @@ void character::update(){
             map_pointer -> place_item( *inventory_item);
             inventory_item = inventory_hand;
             push_message( "You drop your item");
+            std::cout<<std::endl;
         }
 
         // Action button
         if( key[KEY_SPACE] || joy[0].button[0].b){
-            std::cout<<map_pointer -> get_tile_at(x,y,BACKGROUND);
-            std::cout<<"yo";
             if( inventory_item -> id == -1 && map_pointer -> get_tile_at(x,y,BACKGROUND) != 7){
                 if( map_pointer -> is_item_at( x, y) == true)
-                    push_message( "There is a " + map_pointer -> get_item_at( x, y) -> name + " here.");
+                    push_message( "There is a " + map_pointer -> get_item_at( x, y) -> name + " here");
                 else
-                    push_message( "There is nothing of interest here.");
+                    push_message( "There is nothing of interest here");
             }
             else if( inventory_item -> id == 0){
                 if( map_pointer -> get_tile_at( x, y, false) == 0)
@@ -172,6 +174,8 @@ void character::update(){
 
 
             }
+            std::cout<<". Tile ID: "<<map_pointer -> get_tile_at(x,y,BACKGROUND)<<std::endl;
+
         }
     }
 
