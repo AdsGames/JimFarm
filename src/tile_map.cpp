@@ -97,23 +97,19 @@ void tile_map::drawForeground( BITMAP *tempBuffer){
 
 // Generate map
 void tile_map::generate_map(){
+    load_map( "data/map");
+
     int tempMap[MAP_WIDTH][MAP_HEIGHT];
     int tempMapForeground[MAP_WIDTH][MAP_HEIGHT];
 
-    load_map( "data/map");
-
-    /*// Generate map
+    // Generate map
     for( int i = 0; i < MAP_WIDTH; i++){
         for( int t = 0; t < MAP_HEIGHT; t++){
             tempMap[i][t] = 0;
             tempMapForeground[i][t] = 0;
 
-            // Water
-            if( random( 0, 150) == 0){
-                tempMapForeground[i][t] = 1;
-            }
             // Dense grass
-            else if( random( 0, 10) == 0){
+            if( random( 0, 10) == 0){
                 tempMapForeground[i][t] = 4;
             }
             // Trees
@@ -167,70 +163,32 @@ void tile_map::generate_map(){
         }
     }
 
-    // More Pond
-    for( int j = 0; j < 3; j++){
-        for( int i = 0; i < MAP_WIDTH; i++){
-            for( int t = 0; t < MAP_HEIGHT; t++){
-                if( tempMapForeground[i][t] == 1){
-                    if( i > 0 && random( 0, 1) == 0){
-                        tempMapForeground[i - 1][t] = 1;
-                    }
-                    if( i < MAP_WIDTH - 1 && random( 0, 1) == 0){
-                        tempMapForeground[i + 1][t] = 1;
-                    }
-                    if( t > 0 && random( 0, 1) == 0){
-                        tempMapForeground[i][t - 1] = 1;
-                    }
-                    if( t < MAP_HEIGHT - 1 && random( 0, 1) == 0){
-                        tempMapForeground[i][t + 1] = 1;
-                    }
-                }
-            }
-        }
-    }*/
-
-    //Place foreground objects
-    /*tempMapForeground[5][3] = 3;
-    tempMapForeground[5][4] = 0;
-    tempMapForeground[10][7] = 50;
-    tempMapForeground[11][7] = 51;
-    tempMapForeground[12][7] = 52;
-    tempMapForeground[14][9] = 54;
-
-    //Place background items
-    tempMap[5][4] = 7;
-
     // Turn numbers into objects
     for( int i = 0; i < MAP_WIDTH; i++){
         for( int t = 0; t < MAP_HEIGHT; t++){
-            tile newTile( i * 16, t * 16, tile_images[tempMap[i][t]], tile_images[tempMap[i][t]], tempMap[i][t]);
-            map_tiles.push_back( newTile);
-
-            if( tempMapForeground[i][t] != 0){
-                tile newTile2( i * 16, t * 16, tile_images[tempMapForeground[i][t]], tile_images[tempMapForeground[i][t]], tempMapForeground[i][t]);
-                map_tiles_foreground.push_back( newTile2);
+            if( get_tile_at( i * 16, t * 16, false) == 0 && get_tile_at( i * 16, t * 16, true) == -1){
+                if( tempMapForeground[i][t] != 0){
+                    tile newTile2( i * 16, t * 16, tile_images[tempMapForeground[i][t]], tile_images[tempMapForeground[i][t]], tempMapForeground[i][t]);
+                    map_tiles_foreground.push_back( newTile2);
+                }
             }
         }
-    }*/
+    }
 
     // Place items
     for( int i = 0; i < MAP_WIDTH; i++){
         for( int t = 0; t < MAP_HEIGHT; t++){
             // Place items
-            // Goods
             if( random( 0, 50) == 0){
-                char temp_item_id = random( 0, 5);
+                char temp_item_id = random( 2, 5);
                 item newItem( i * 16, t * 16, item_images[temp_item_id], item_images[temp_item_id], temp_item_id, item_names[temp_item_id]);
                 place_item( newItem);
             }
-            remove_item_at(6*16,5*16);
-            item newItem( 6 * 16, 5 * 16, item_images[3], item_images[3], 3, item_names[3]);
-            place_item( newItem);
-
-
-            map_buffer = create_bitmap( MAP_WIDTH * 16, MAP_HEIGHT * 16);
         }
     }
+
+    // Create map buffer
+    map_buffer = create_bitmap( MAP_WIDTH * 16, MAP_HEIGHT * 16);
 }
 
 // Load images
