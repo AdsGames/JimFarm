@@ -1,0 +1,5 @@
+egg
+harvested plants
+chicken coop
+store
+different plant types
