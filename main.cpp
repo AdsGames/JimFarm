@@ -3,6 +3,7 @@
 #include<time.h>
 
 BITMAP* buffer;
+BITMAP* background;
 
 bool close_button_pressed;
 
