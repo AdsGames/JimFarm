@@ -102,6 +102,7 @@ void character::push_message( std::string new_message){
 
 // Update player
 void character::update(){
+    tick++;
     // Ask joystick for keys
     poll_joystick();
 
@@ -132,7 +133,8 @@ void character::update(){
         }
 
         // Pickup
-        if( key[KEY_LCONTROL] || joy[0].button[2].b){
+        if(( key[KEY_LCONTROL] || joy[0].button[2].b) && tick>10){
+            tick=0;
             if( map_pointer -> is_item_at( x, y) == true){
                 inventory_item = map_pointer -> get_item_at( x, y);
                 push_message( "You pick up a " + map_pointer -> get_item_at( x, y) -> name);
@@ -141,7 +143,8 @@ void character::update(){
         }
 
         // Drop
-        if(( key[KEY_RCONTROL] || joy[0].button[1].b) && inventory_item -> id != -1){
+        if(( key[KEY_RCONTROL] || joy[0].button[1].b) && inventory_item -> id != -1 && tick>10){
+            tick=0;
             inventory_item -> x = x;
             inventory_item -> y = y;
             map_pointer -> place_item( *inventory_item);
@@ -151,7 +154,8 @@ void character::update(){
         }
 
         // Action button
-        if( key[KEY_SPACE] || joy[0].button[0].b){
+        if(( key[KEY_SPACE] || joy[0].button[0].b) && tick>10){
+            tick=0;
             if( inventory_item -> id == -1 && map_pointer -> get_tile_at(x,y,BACKGROUND) != 7){
                 if( map_pointer -> is_item_at( x, y) == true)
                     push_message( "There is a " + map_pointer -> get_item_at( x, y) -> name + " here");
@@ -174,6 +178,13 @@ void character::update(){
               }
 
 
+            }else if(inventory_item -> id == 3){
+                if(water>0){
+                  water--;
+                  push_message("Watered");
+                }
+                else
+                  push_message("Out of water");
             }
             std::cout<<". Tile ID: "<<map_pointer -> get_tile_at(x,y,BACKGROUND)<<std::endl;
 

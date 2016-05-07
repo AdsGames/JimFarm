@@ -55,6 +55,8 @@ class character
         char direction;
         bool moving;
 
+        int tick;
+
         tile_map *map_pointer;
 
         std::string player_messages[MAX_MESSAGES];
