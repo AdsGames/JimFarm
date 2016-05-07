@@ -2,11 +2,12 @@
 #define CHARACTER_H
 
 #include <allegro.h>
+#include <string>
 
 #include "math.h"
 #include "tile_map.h"
 
-
+#define MAX_MESSAGES 4
 
 class character
 {
@@ -18,6 +19,8 @@ class character
         void setImage( BITMAP *newImage);
 
         void draw( BITMAP *tempBuffer);
+
+        void push_message( std::string new_message);
 
         void update();
 
@@ -40,13 +43,16 @@ class character
         int water;
 
         BITMAP *image;
-        BITMAP* watering_can[5];
+        BITMAP *watering_can[5];
 
         char gameTick;
         char direction;
         bool moving;
 
         tile_map *map_pointer;
+
+        std::string player_messages[MAX_MESSAGES];
+        bool recent_message;
 
 };
 

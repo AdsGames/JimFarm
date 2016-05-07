@@ -1,20 +1,21 @@
 #include "character.h"
 
-character::character()
-{
+character::character(){
     moving = false;
     direction = 1;
+
+    for( int i = 0; i < MAX_MESSAGES; i++)
+        player_messages[i] = "SWAG";
 }
 
-character::~character()
-{
+character::~character(){
     //dtor
 }
 
 // Set image
 void character::setImage( BITMAP *newImage){
 
-    image = newImage;
+  image = newImage;
 
   if (!( watering_can[0] = load_bitmap("images/watering_can_0.png", NULL)))
         abort_on_error("Cannot find image images/watering_can_0.png\nPlease check your files and try again");
@@ -30,6 +31,7 @@ void character::setImage( BITMAP *newImage){
 
   if (!( watering_can[4] = load_bitmap("images/watering_can_4.png", NULL)))
         abort_on_error("Cannot find image images/watering_can_4.png\nPlease check your files and try again");
+
     // Load fonts
     f1 = load_font("fonts/pixelart.pcx", NULL, NULL);
     f2 = extract_font_range(f1, ' ', 'A'-1);
@@ -46,25 +48,37 @@ void character::setImage( BITMAP *newImage){
 }
 
 // Draw character to screen
-void character::draw( BITMAP *tempBuffer)
-{
+void character::draw( BITMAP *tempBuffer){
+    // Draw frame
+    masked_blit( image, tempBuffer, floor(gameTick/2) * 16, (direction - 1) * 20, x - map_pointer -> x, y - map_pointer -> y - 3, 16, 20);
 
+    if(inventory==1)
+        draw_sprite( tempBuffer,watering_can[water],2,-2);
 
+    //When gcc don't give no damns
+    textprintf_ex(tempBuffer,pixelart,20,00000000000000000000000000000000000000000000000000000000000000000000000000,makecol(255,255,255),-1,"Item");
+    textprintf_ex(tempBuffer,pixelart,5,10,makecol(255,255,255),-1,"%i",money);
+    textprintf_ex(tempBuffer,pixelart,20,10,makecol(255,255,255),-1,"Ca$hMoney$");
 
-  masked_blit( image, tempBuffer, floor(gameTick/2) * 16, (direction - 1) * 20, x, y - 3, 16, 20);
-
-  if(inventory==1)draw_sprite( tempBuffer,watering_can[water],2,-2);
-  //When gcc don't give no damns
-  textprintf_ex(tempBuffer,pixelart,20,00000000000000000000000000000000000000000000000000000000000000000000000000,makecol(255,255,255),-1,"Item");
-  textprintf_ex(tempBuffer,pixelart,5,10,makecol(255,255,255),-1,"%i",money);
-  textprintf_ex(tempBuffer,pixelart,20,10,makecol(255,255,255),-1,"Ca$hMoney$");
+    // Message system
+    for( int i = 0; i < MAX_MESSAGES; i++)
+        textprintf_ex(tempBuffer,pixelart, 5, i * 10 + 112, makecol(255,255,255),-1,"> %s", (player_messages[i]).c_str());
 }
 
+// Push message
+void character::push_message( std::string new_message){
+    for( int i = 0; i < MAX_MESSAGES - 1; i++)
+        player_messages[i] = player_messages[i + 1];
+
+    player_messages[MAX_MESSAGES - 1] = new_message;
+}
+
+// Update player
 void character::update(){
     // Ask joystick for keys
     poll_joystick();
 
-    //Oh
+    // Oh
     // Snap
     if( x % 16 == 0 && y % 16 == 0 ){
         gameTick = 0;
@@ -90,6 +104,13 @@ void character::update(){
             moving = true;
         }
 
+        // Search
+        if( key[KEY_LCONTROL]){
+            if( map_pointer -> get_item_at( x, y) == -1){
+                push_message( "There is nothing of interest here!");
+            }
+        }
+
         // Action button
         if( key[KEY_SPACE] || joy[0].button[0].b){
             if( map_pointer -> get_tile_at( x, y) == 0)
@@ -108,7 +129,7 @@ void character::update(){
                 y -= 2;
         }
         else if( direction == 1){
-            if( y < 160 - 16)
+            if( y < (map_pointer -> MAP_HEIGHT * 16) - 16)
                 y += 2;
         }
         else if( direction == 4){
@@ -116,9 +137,12 @@ void character::update(){
                 x -= 2;
         }
         else if( direction == 3){
-            if( x < 240 - 16)
+            if( x < (map_pointer -> MAP_WIDTH * 16)  - 16)
                 x += 2;
         }
+
+        // Scroll map
+        map_pointer -> scroll( x, y);
 
         // Increase game ticker
         gameTick++;
@@ -127,6 +151,7 @@ void character::update(){
     }
 }
 
+// World object to point to (needs this!)
 void character::setWorld( tile_map *newTileMap){
     map_pointer = newTileMap;
 }
