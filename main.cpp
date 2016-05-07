@@ -15,6 +15,8 @@ bool close_button_pressed;
 tile_map farm_map;
 character jim;
 
+store main_store;
+
 // FPS System
 volatile int ticks = 0;
 const int updates_per_second = 60;
@@ -57,6 +59,9 @@ void update(){
     // Update character
     farm_map.update();
     jim.update();
+
+    // Store update
+    main_store.update();
 }
 
 /*********************
@@ -77,6 +82,8 @@ void draw(){
 
     // Draw JIM
     jim.drawForeground( buffer);
+
+    main_store.draw( buffer);
 
     // Stretch screen
     stretch_sprite( screen, buffer, 0, 0, SCREEN_W, SCREEN_H);
@@ -125,6 +132,16 @@ void setup(){
     jim.setPosition( 80, 64);
     jim.setImage( jim_image);
     jim.setWorld( &farm_map);
+
+    // Store
+    main_store.load_images();
+
+    // Give items to store
+    for( int i = 0; i < 8; i ++){
+        int newType = random(0, 2);
+        item *storeItem = new item( 0, 0, farm_map.item_images[newType], farm_map.item_images[newType], newType, "MEMES");
+        main_store.add_item(storeItem);
+    }
 }
 
 
@@ -148,7 +165,7 @@ int main(){
 
 
 
-  set_window_title("Tojam \"Don't stop Allan's noseing\"");
+  set_window_title("Jim Farm");
   setup();
 
 

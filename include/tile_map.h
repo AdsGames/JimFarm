@@ -10,6 +10,7 @@
 
 #include "tile.h"
 #include "tools.h"
+#include "store.h"
 
 
 
@@ -51,6 +52,8 @@ class tile_map
 
         int x, y;
 
+        BITMAP *item_images[100];
+
     protected:
 
     private:
@@ -61,7 +64,7 @@ class tile_map
         std::vector<item> map_items;
 
         BITMAP *tile_images[100];
-        BITMAP *item_images[100];
+
 
         std::string item_names[100];
 

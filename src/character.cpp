@@ -195,6 +195,7 @@ void character::update(){
 
         // Action button
         if(( key[KEY_SPACE] || joy[0].button[0].b) && tick>10){
+            push_message( "");
             tick=0;
             if( inventory_item -> id == -1 && map_pointer -> get_tile_at(x,y,BACKGROUND) != 7){
                 if( map_pointer -> is_item_at( x, y) == true)

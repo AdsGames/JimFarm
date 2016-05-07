@@ -65,6 +65,8 @@ void tile_map::load_map( std::string fileName){
         }
         read2.close();
     }
+
+
 }
 
 
