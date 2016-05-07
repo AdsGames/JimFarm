@@ -102,7 +102,7 @@ void character::push_message( std::string new_message){
 
 // Update player
 void character::update(){
-    tick++;
+    tick+=2;
     // Ask joystick for keys
     poll_joystick();
 
