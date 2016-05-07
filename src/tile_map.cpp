@@ -304,7 +304,22 @@ void tile_map::load_images(){
     if (!( tile_images[53] = load_bitmap("images/coop_fence.png", NULL)))
         abort_on_error("Cannot find image images/coop_fence.png\nPlease check your files and try again");
 
-    if (!( tile_images[54] = load_bitmap("images/store.png", NULL)))
+    if (!( tile_images[54] = load_bitmap("images/coop_gate.png", NULL)))
+        abort_on_error("Cannot find image images/coop_gate.png\nPlease check your files and try again");
+
+    if (!( tile_images[55] = load_bitmap("images/coop_corner.png", NULL)))
+        abort_on_error("Cannot find image images/coop_corner.png\nPlease check your files and try again");
+
+    if (!( tile_images[56] = load_bitmap("images/coop_left.png", NULL)))
+        abort_on_error("Cannot find image images/coop_left.png\nPlease check your files and try again");
+
+    if (!( tile_images[57] = load_bitmap("images/coop_corner_2.png", NULL)))
+        abort_on_error("Cannot find image images/coop_corner_2.png\nPlease check your files and try again");
+
+    if (!( tile_images[58] = load_bitmap("images/coop_right.png", NULL)))
+        abort_on_error("Cannot find image images/coop_right.png\nPlease check your files and try again");
+
+    if (!( tile_images[60] = load_bitmap("images/store.png", NULL)))
         abort_on_error("Cannot find image images/store.png\nPlease check your files and try again");
 
     // What's the difference between item_images[0] and Allan? Everything!
