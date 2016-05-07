@@ -139,6 +139,10 @@ void tile_map::generate_map(){
                 item newItem( i * 16, t * 16, item_images[temp_item_id], item_images[temp_item_id], temp_item_id, item_names[temp_item_id]);
                 place_item( newItem);
             }
+            remove_item_at(6*16,5*16);
+            item newItem( 6 * 16, 5 * 16, item_images[3], item_images[3], 3, item_names[3]);
+            place_item( newItem);
+
 
             map_buffer = create_bitmap( MAP_WIDTH * 16, MAP_HEIGHT * 16);
         }
@@ -184,6 +188,10 @@ void tile_map::load_images(){
     if (!( item_images[2] = load_bitmap("images/seeds.png", NULL)))
         abort_on_error("Cannot find image images/seeds.png\nPlease check your files and try again");
     item_names[2] = "seeds";
+
+    if (!( item_images[3] = load_bitmap("images/watering_can.png", NULL)))
+        abort_on_error("Cannot find image images/watering_can.png\nPlease check your files and try again");
+    item_names[3] = "watering can";
 }
 
 // Replace tile on map
@@ -212,7 +220,7 @@ void tile_map::place_item( item newItem){
 }
 
 // Get tile at position
-char tile_map::get_tile_at( int positionX, int positionY, bool foreground){
+int tile_map::get_tile_at( int positionX, int positionY, bool foreground){
     if( !foreground){
         for( unsigned int i = 0; i < map_tiles.size(); i++){
             if( map_tiles.at(i).x == positionX && map_tiles.at(i).y == positionY){

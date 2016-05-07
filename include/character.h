@@ -3,6 +3,7 @@
 
 #include <allegro.h>
 #include <string>
+#include <iostream>
 
 #include "math.h"
 #include "tile_map.h"

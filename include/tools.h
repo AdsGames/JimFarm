@@ -1,5 +1,7 @@
 #ifndef TOOLS_H
 #define TOOLS_H
+#define BACKGROUND false
+#define FOREGROUND true
 
 #include <allegro.h>
 #include<time.h>

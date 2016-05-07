@@ -26,7 +26,7 @@ class tile_map
         void drawForeground( BITMAP *tempBuffer);
 
         void replace_tile( int tileX, int tileY, int newID, bool foreground);
-        char get_tile_at( int positionX, int positionY, bool foreground);
+        int get_tile_at( int positionX, int positionY, bool foreground);
 
         void place_item( item newItem);
         bool is_solid_at( int positionX, int positionY);

@@ -147,7 +147,9 @@ void character::update(){
 
         // Action button
         if( key[KEY_SPACE] || joy[0].button[0].b){
-            if( inventory_item -> id == -1){
+            std::cout<<map_pointer -> get_tile_at(x,y,BACKGROUND);
+            std::cout<<"yo";
+            if( inventory_item -> id == -1 && map_pointer -> get_tile_at(x,y,BACKGROUND) != 7){
                 if( map_pointer -> is_item_at( x, y) == true)
                     push_message( "There is a " + map_pointer -> get_item_at( x, y) -> name + " here.");
                 else
@@ -158,6 +160,17 @@ void character::update(){
                     map_pointer -> replace_tile( x, y, 2, false);
                 else
                     push_message( "You can't hoe this");
+
+            }else if(map_pointer -> get_tile_at(x,y,BACKGROUND) == 7){
+              if(inventory_item -> id == 3){
+                water=4;
+                push_message( "Watering can filled");
+              }else{
+                push_message( "This is a well");
+
+              }
+
+
             }
         }
     }
