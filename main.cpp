@@ -1,27 +1,19 @@
 #include<allegro.h>
 #include<alpng.h>
-#include<time.h>
-#include<vector>
 
 #include "tile.h"
 #include "character.h"
+#include "tile_map.h"
+#include "tools.h"
 
 // Images
 BITMAP *buffer;
-BITMAP *tile_images[100];
 BITMAP *jim_image;
 
 bool close_button_pressed;
 
-// Tiles
-std::vector<tile> map_tiles;
-
+tile_map farm_map;
 character jim;
-
-// Constant
-const int MAP_WIDTH = 15;
-const int MAP_HEIGHT = 10;
-
 
 // FPS System
 volatile int ticks = 0;
@@ -58,26 +50,6 @@ void animationTicker(){
 END_OF_FUNCTION(ticker)
 
 
-// Random number generator. Use int random(highest,lowest);
-int random(int newLowest, int newHighest)
-{
-  int lowest = newLowest, highest = newHighest;
-  int range = (highest - lowest) + 1;
-  int randomNumber = lowest+int(range*rand()/(RAND_MAX + 1.0));
-  return randomNumber;
-}
-
-
-//A function to streamline error reporting in file loading
-void abort_on_error(const char *message){
-	 set_window_title("Error!");
-	 if (screen != NULL){
-	    set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
-	 }
-	 allegro_message("%s.\n %s\n", message, allegro_error);
-	 exit(-1);
-}
-
 /*********************
  *   Update logic
  *********************/
@@ -93,10 +65,8 @@ void draw(){
     // Draw background
     rectfill( buffer, 0, 0, 160, 240, makecol( 0, 0, 0));
 
-    // Draw tiles
-    for( int i = 0; i < map_tiles.size(); i++){
-        map_tiles.at(i).draw( buffer);
-    }
+    // Draw map
+    farm_map.draw( buffer);
 
     // Draw JIM
     jim.draw( buffer);
@@ -137,31 +107,12 @@ void setup(){
     set_close_button_callback(close_button_handler);
 
     // Check if image exists
-    if (!( tile_images[0] = load_bitmap("images/grass.png", NULL)))
-        abort_on_error("Cannot find image images/grass.png\nPlease check your files and try again");
-
-    if (!( tile_images[1] = load_bitmap("images/water.png", NULL)))
-        abort_on_error("Cannot find image images/water.png\nPlease check your files and try again");
-
     if (!( jim_image = load_bitmap("images/tile2.png", NULL)))
         abort_on_error("Cannot find image images/tile2.png\nPlease check your files and try again");
 
-    if (!( tile_images[2] = load_bitmap("images/tile1.png", NULL)))
-        abort_on_error("Cannot find image images/tile2.png\nPlease check your files and try again");
-
     // Nice Map
-    for( int i = 0; i < MAP_WIDTH; i++){
-        for( int t = 0; t < MAP_HEIGHT; t++){
-            if( i > 6){
-                tile newTile( i * 16, t * 16, tile_images[1], tile_images[1], 1);
-                map_tiles.push_back( newTile);
-            }
-            else{
-                tile newTile( i * 16, t * 16, tile_images[0], tile_images[0], 0);
-                map_tiles.push_back( newTile);
-            }
-        }
-    }
+    farm_map.load_images();
+    farm_map.generate_map();
 
     // Setup jim
     jim.setPosition( 0, 0);
@@ -187,7 +138,7 @@ int main(){
 
 
 
-  set_window_title("Tojam \"Don't stop Allan'snoseing\"");
+  set_window_title("Tojam \"Don't stop Allan's noseing\"");
   setup();
 
 
