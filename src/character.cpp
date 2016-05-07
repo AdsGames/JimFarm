@@ -81,6 +81,10 @@ void character::update(){
         if( key[KEY_SPACE] || joy[0].button[0].b){
             if( map_pointer -> get_tile_at( x, y) == 0)
                 map_pointer -> replace_tile( x, y, 2);
+
+            if(map_pointer -> get_tile_at( x, y) == 3){
+              water=3;
+            }
         }
     }
 
