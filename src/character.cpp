@@ -67,14 +67,22 @@ void character::setImage( BITMAP *newImage){
 void character::draw( BITMAP *tempBuffer){
     // Indicator
     if( inventory_item -> id != -1){
-        if( inventory_item -> id == 4){
-            if( direction == 1 || direction == 2)
-                draw_sprite( tempBuffer, indicator, x - map_pointer -> x, (y - map_pointer -> y) + (-16 * ((direction * 2) - 3)));
-            else if( direction == 3 || direction == 4)
-                draw_sprite( tempBuffer, indicator, (x - map_pointer -> x) + (-16 * ((direction * 2) - 7)), y - map_pointer -> y);
+        if( inventory_item -> id == 4 || inventory_item -> id == 5){
+            if( direction == 1 || direction == 2){
+                indicator_x = x;
+                indicator_y = y - (16 * ((direction * 2) - 3));
+                draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> x, indicator_y - map_pointer -> y);
+            }
+            else if( direction == 3 || direction == 4){
+                indicator_x = x - (16 * ((direction * 2) - 7));
+                indicator_y = y;
+                draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> x, indicator_y - map_pointer -> y);
+            }
         }
         else{
-            draw_sprite( tempBuffer, indicator, x - map_pointer -> x, y - map_pointer -> y);
+            indicator_x = x;
+            indicator_y = y;
+            draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> x, indicator_y - map_pointer -> y);
         }
     }
 
@@ -118,12 +126,14 @@ void character::push_message( std::string new_message){
         player_messages[i] = player_messages[i + 1];
 
     player_messages[MAX_MESSAGES - 1] = new_message;
-    std::cout<<player_messages[0];
+    std::cout << player_messages[0];
 }
 
 // Update player
 void character::update(){
-    tick+=2;
+    // Ticker
+    tick += 2;
+
     // Ask joystick for keys
     poll_joystick();
 
@@ -192,53 +202,62 @@ void character::update(){
                     push_message( "There is nothing of interest here");
             }
             else if( inventory_item -> id == 0){
-                if( map_pointer -> get_tile_at( x, y, false) == 0)
-                    map_pointer -> replace_tile( x, y, 2, false);
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 0)
+                    map_pointer -> replace_tile( indicator_x, indicator_y, 2, false);
                 else
-                    push_message( "You can't hoe this");
+                    push_message( "You can't hoe that");
 
             }
             else if( inventory_item -> id == 1){
-                if( map_pointer -> get_tile_at( x, y, true) == 4)
-                    map_pointer -> replace_tile( x, y, -1, true);
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 4)
+                    map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
                 else
-                    push_message( "You can't cut this");
+                    push_message( "You can't cut that");
 
             }
             else if( inventory_item -> id == 2){
-                if( map_pointer -> get_tile_at( x, y, false) == 2)
-                    map_pointer -> replace_tile( x, y, 8, false);
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 2)
+                    map_pointer -> replace_tile( indicator_x, indicator_y, 8, false);
                 else
                     push_message( "You must plant in ploughed soil");
 
             }
-            else if(map_pointer -> get_tile_at(x,y,BACKGROUND) == 7){
-                if(inventory_item -> id == 3){
-                    water=4;
+            else if( inventory_item -> id == 3){
+                if(map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND) == 7){
+                    water = 4;
                     push_message( "Watering can filled");
-            }
-            else{
-                push_message( "This is a well");
-            }
+                }
 
-
-            }else if(inventory_item -> id == 3){
                 if(water > 0){
                     water--;
                     push_message("Watered");
 
-                    if( map_pointer -> get_tile_at( x, y, false) == 8){
-                        map_pointer -> replace_tile( x, y, 9, false);
+                    if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 8){
+                        map_pointer -> replace_tile( indicator_x, indicator_y, 9, false);
                     }
-                    else if( map_pointer -> get_tile_at( x, y, false) == 9){
-                        map_pointer -> replace_tile( x, y, 10, false);
+                    else if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 9){
+                        map_pointer -> replace_tile( indicator_x, indicator_y, 10, false);
                     }
                 }
-                else
-                  push_message("Out of water");
+                else{
+                    push_message("Out of water");
+                }
             }
-            std::cout<<". Tile ID: "<<map_pointer -> get_tile_at(x,y,BACKGROUND)<<std::endl;
-
+            else if( inventory_item -> id == 4){
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 5)
+                    map_pointer -> replace_tile( indicator_x, indicator_y, 11, true);
+                else
+                    push_message( "You can't chop that down");
+            }
+            else if( inventory_item -> id == 5){
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 6 ||
+                    map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 11)
+                    map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
+                else
+                    push_message( "You can't dig that up");
+            }
+            std::cout<<". Tile Back ID: "<<map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND)<<std::endl;
+            std::cout<<". Tile Front ID: "<<map_pointer -> get_tile_at( indicator_x, indicator_y, true)<<std::endl;
         }
     }
 

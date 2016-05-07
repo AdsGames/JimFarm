@@ -53,6 +53,8 @@ class character
         BITMAP *indicator;
         BITMAP *coin;
 
+        int indicator_x, indicator_y;
+
         char gameTick;
         char direction;
         bool moving;

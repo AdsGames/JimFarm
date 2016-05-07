@@ -50,10 +50,9 @@ void tile_map::generate_map(){
             tempMapForeground[i][t] = 0;
 
             // Water
-            if( i < -54){
+            if( random( 0, 80) == 0){
                 tempMapForeground[i][t] = 1;
             }
-
             // Dense grass
             else if( random( 0, 10) == 0){
                 tempMapForeground[i][t] = 4;
@@ -110,6 +109,29 @@ void tile_map::generate_map(){
             }
         }
     }
+
+    // More Pond
+    for( int j = 0; j < 3; j++){
+        for( int i = 0; i < MAP_WIDTH; i++){
+            for( int t = 0; t < MAP_HEIGHT; t++){
+                if( tempMapForeground[i][t] == 1){
+                    if( i > 0 && random( 0, 2) == 0){
+                        tempMapForeground[i - 1][t] = 1;
+                    }
+                    if( i < MAP_WIDTH - 1 && random( 0, 2) == 0){
+                        tempMapForeground[i + 1][t] = 1;
+                    }
+                    if( t > 0 && random( 0, 2) == 0){
+                        tempMapForeground[i][t - 1] = 1;
+                    }
+                    if( t < MAP_HEIGHT - 1 && random( 0, 2) == 0){
+                        tempMapForeground[i][t + 1] = 1;
+                    }
+                }
+            }
+        }
+    }
+
     //Place foreground objects
     tempMapForeground[5][3] = 3;
 
@@ -136,7 +158,7 @@ void tile_map::generate_map(){
             // Place items
             // Goods
             if( random( 0, 50) == 0){
-                char temp_item_id = random( 0, 4);
+                char temp_item_id = random( 0, 5);
                 item newItem( i * 16, t * 16, item_images[temp_item_id], item_images[temp_item_id], temp_item_id, item_names[temp_item_id]);
                 place_item( newItem);
             }
@@ -187,6 +209,9 @@ void tile_map::load_images(){
     if (!( tile_images[10] = load_bitmap("images/crop_2_3.png", NULL)))
         abort_on_error("Cannot find image images/crop_2_3.png\nPlease check your files and try again");
 
+    if (!( tile_images[11] = load_bitmap("images/stump.png", NULL)))
+        abort_on_error("Cannot find image images/stump.png\nPlease check your files and try again");
+
     // What's the difference between item_images[0] and Allan? Nothing.
     if (!( item_images[0] = load_bitmap("images/hoe.png", NULL)))
         abort_on_error("Cannot find image images/hoe.png\nPlease check your files and try again");
@@ -207,6 +232,10 @@ void tile_map::load_images(){
     if (!( item_images[4] = load_bitmap("images/axe.png", NULL)))
         abort_on_error("Cannot find image images/axe.png\nPlease check your files and try again");
     item_names[4] = "axe";
+
+    if (!( item_images[5] = load_bitmap("images/shovel.png", NULL)))
+        abort_on_error("Cannot find image images/shovel.png\nPlease check your files and try again");
+    item_names[5] = "shovel";
 }
 
 // Replace tile on map
