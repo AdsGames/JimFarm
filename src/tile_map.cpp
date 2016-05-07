@@ -11,6 +11,63 @@ tile_map::~tile_map()
     //dtor
 }
 
+// Manually load new file
+void tile_map::load_map( std::string fileName){
+    //Change size
+    std::string fileLoad = fileName + ".txt";
+    std::ifstream findSize(fileLoad.c_str());
+    MAP_WIDTH = 0;
+    MAP_HEIGHT = 0;
+    int data;
+    while (findSize >> data) {
+        if(MAP_HEIGHT == 0){
+            MAP_WIDTH++;
+        }
+        if(findSize.peek() == '\n'){
+            MAP_HEIGHT++;
+        }
+    }
+
+    //Setup Map
+    if(fileName != "blank"){
+        map_tiles.clear();
+        map_tiles_foreground.clear();
+
+        fileLoad = fileName + ".txt";
+        std::ifstream read(fileLoad.c_str());
+
+        for( int t = 0; t < MAP_HEIGHT; t++){
+            for (int i = 0; i < MAP_WIDTH; i++){
+                int newTileType;
+                read >> newTileType;
+                std::cout << newTileType;
+                // Set tile type
+                tile newTile( i * 16, t * 16, tile_images[newTileType], tile_images[newTileType], newTileType);
+                map_tiles.push_back( newTile);
+            }
+        }
+        read.close();
+
+        fileLoad = fileName + "_back.txt";
+        std::ifstream read2(fileLoad.c_str());
+
+        for( int t = 0; t < MAP_HEIGHT; t++){
+            for (int i = 0; i < MAP_WIDTH; i++){
+                int newTileType;
+                read2 >> newTileType;
+                std::cout << newTileType;
+                // Set tile type
+                if( newTileType != 0){
+                    tile newTile( i * 16, t * 16, tile_images[newTileType], tile_images[newTileType], newTileType);
+                    map_tiles_foreground.push_back( newTile);
+                }
+            }
+        }
+        read2.close();
+    }
+}
+
+
 // Draw tiles
 void tile_map::draw( BITMAP *tempBuffer){
     // Draw tiles
@@ -43,14 +100,16 @@ void tile_map::generate_map(){
     int tempMap[MAP_WIDTH][MAP_HEIGHT];
     int tempMapForeground[MAP_WIDTH][MAP_HEIGHT];
 
-    // Generate map
+    load_map( "data/map");
+
+    /*// Generate map
     for( int i = 0; i < MAP_WIDTH; i++){
         for( int t = 0; t < MAP_HEIGHT; t++){
             tempMap[i][t] = 0;
             tempMapForeground[i][t] = 0;
 
             // Water
-            if( random( 0, 80) == 0){
+            if( random( 0, 150) == 0){
                 tempMapForeground[i][t] = 1;
             }
             // Dense grass
@@ -65,8 +124,6 @@ void tile_map::generate_map(){
             else if( random( 0, 20) == 0){
                 tempMapForeground[i][t] = 6;
             }
-
-
         }
     }
 
@@ -115,34 +172,33 @@ void tile_map::generate_map(){
         for( int i = 0; i < MAP_WIDTH; i++){
             for( int t = 0; t < MAP_HEIGHT; t++){
                 if( tempMapForeground[i][t] == 1){
-                    if( i > 0 && random( 0, 2) == 0){
+                    if( i > 0 && random( 0, 1) == 0){
                         tempMapForeground[i - 1][t] = 1;
                     }
-                    if( i < MAP_WIDTH - 1 && random( 0, 2) == 0){
+                    if( i < MAP_WIDTH - 1 && random( 0, 1) == 0){
                         tempMapForeground[i + 1][t] = 1;
                     }
-                    if( t > 0 && random( 0, 2) == 0){
+                    if( t > 0 && random( 0, 1) == 0){
                         tempMapForeground[i][t - 1] = 1;
                     }
-                    if( t < MAP_HEIGHT - 1 && random( 0, 2) == 0){
+                    if( t < MAP_HEIGHT - 1 && random( 0, 1) == 0){
                         tempMapForeground[i][t + 1] = 1;
                     }
                 }
             }
         }
-    }
+    }*/
 
     //Place foreground objects
-    tempMapForeground[5][3] = 3;
+    /*tempMapForeground[5][3] = 3;
+    tempMapForeground[5][4] = 0;
+    tempMapForeground[10][7] = 50;
+    tempMapForeground[11][7] = 51;
+    tempMapForeground[12][7] = 52;
+    tempMapForeground[14][9] = 54;
 
     //Place background items
     tempMap[5][4] = 7;
-    tempMapForeground[5][4] = 0;
-    tempMapForeground[10][7] = 50;
-    tempMapForeground[10][8] = 0;
-    tempMapForeground[10][9] = 0;
-    tempMapForeground[10][10] = 0;
-    tempMapForeground[10][11] = 0;
 
     // Turn numbers into objects
     for( int i = 0; i < MAP_WIDTH; i++){
@@ -155,7 +211,7 @@ void tile_map::generate_map(){
                 map_tiles_foreground.push_back( newTile2);
             }
         }
-    }
+    }*/
 
     // Place items
     for( int i = 0; i < MAP_WIDTH; i++){
@@ -214,20 +270,26 @@ void tile_map::load_images(){
     if (!( tile_images[10] = load_bitmap("images/crop_2_3.png", NULL)))
         abort_on_error("Cannot find image images/crop_2_3.png\nPlease check your files and try again");
 
-<<<<<<< HEAD
     if (!( tile_images[11] = load_bitmap("images/stump.png", NULL)))
         abort_on_error("Cannot find image images/stump.png\nPlease check your files and try again");
 
     // What's the difference between item_images[0] and Allan? Nothing.
-=======
-    if (!( tile_images[50] = load_bitmap("images/coop.png", NULL)))
-        abort_on_error("Cannot find image images/coop.png\nPlease check your files and try again");
+    if (!( tile_images[50] = load_bitmap("images/coop_1.png", NULL)))
+        abort_on_error("Cannot find image images/coop_1.png\nPlease check your files and try again");
 
-    if (!( tile_images[51] = load_bitmap("images/coop_fence.png", NULL)))
+    if (!( tile_images[51] = load_bitmap("images/coop_2.png", NULL)))
+        abort_on_error("Cannot find image images/coop_2.png\nPlease check your files and try again");
+
+    if (!( tile_images[52] = load_bitmap("images/coop_3.png", NULL)))
+        abort_on_error("Cannot find image images/coop_3.png\nPlease check your files and try again");
+
+    if (!( tile_images[53] = load_bitmap("images/coop_fence.png", NULL)))
         abort_on_error("Cannot find image images/coop_fence.png\nPlease check your files and try again");
 
+    if (!( tile_images[54] = load_bitmap("images/store.png", NULL)))
+        abort_on_error("Cannot find image images/store.png\nPlease check your files and try again");
+
     // What's the difference between item_images[0] and Allan? Everything!
->>>>>>> origin/master
     if (!( item_images[0] = load_bitmap("images/hoe.png", NULL)))
         abort_on_error("Cannot find image images/hoe.png\nPlease check your files and try again");
     item_names[0] = "hoe";

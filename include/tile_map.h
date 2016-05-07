@@ -4,6 +4,10 @@
 #include<allegro.h>
 #include<vector>
 
+#include <iostream>
+#include <string>
+#include <fstream>
+
 #include "tile.h"
 #include "tools.h"
 
@@ -16,8 +20,8 @@ class tile_map
         virtual ~tile_map();
 
         // Constant
-        static const int MAP_WIDTH = 30;
-        static const int MAP_HEIGHT = 20;
+        int MAP_WIDTH;
+        int MAP_HEIGHT;
 
         static const int VIEWPORT_WIDTH = 240;
         static const int VIEWPORT_HEIGHT = 160;
@@ -33,6 +37,8 @@ class tile_map
         bool is_item_at( int positionX, int positionY);
         item *get_item_at( int positionX, int positionY);
         void remove_item_at( int positionX, int positionY);
+
+        void load_map( std::string fileName);
 
         void generate_map();
 
