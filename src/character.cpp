@@ -138,7 +138,7 @@ void character::update(){
             if( map_pointer -> is_item_at( x, y) == true){
                 inventory_item = map_pointer -> get_item_at( x, y);
                 push_message( "You pick up a " + map_pointer -> get_item_at( x, y) -> name);
-                map_pointer -> remove_item_at( x, y);
+                //map_pointer -> remove_item_at( x, y);
             }
         }
 
@@ -147,10 +147,10 @@ void character::update(){
             tick=0;
             inventory_item -> x = x;
             inventory_item -> y = y;
-            map_pointer -> place_item( *inventory_item);
+            //map_pointer -> place_item( *inventory_item);
+            push_message( "You drop your " + inventory_item -> name);
             inventory_item = inventory_hand;
-            push_message( "You drop your item");
-            std::cout<<std::endl;
+            std::cout << std::endl;
         }
 
         // Action button
