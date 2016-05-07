@@ -11,6 +11,11 @@ tile::tile(int newX, int newY, BITMAP *newImage1, BITMAP *newImage2, char newID)
     image[1] = newImage2;
 
     id = newID;
+
+    if( id == 1 || id == 3 || id == 5)
+        solid = true;
+    else
+        solid = false;
 }
 
 tile::~tile()

@@ -29,6 +29,7 @@ class tile_map
         void place_item( item newItem);
 
         char get_tile_at( int positionX, int positionY);
+        bool is_solid_at( int positionX, int positionY);
 
         bool is_item_at( int positionX, int positionY);
         item *get_item_at( int positionX, int positionY);

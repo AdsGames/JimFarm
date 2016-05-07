@@ -157,9 +157,6 @@ void tile_map::load_images(){
     if (!( tile_images[5] = load_bitmap("images/tree.png", NULL)))
         abort_on_error("Cannot find image images/tree.png\nPlease check your files and try again");
 
-    if (!( tile_images[6] = load_bitmap("images/tree_2.png", NULL)))
-        abort_on_error("Cannot find image images/tree_2.png\nPlease check your files and try again");
-
     if (!( item_images[0] = load_bitmap("images/hoe.png", NULL)))
         abort_on_error("Cannot find image images/hoe.png\nPlease check your files and try again");
     item_names[0] = "hoe";
@@ -197,6 +194,17 @@ char tile_map::get_tile_at( int positionX, int positionY){
     }
     return -1;
 }
+
+// Check for solid tile
+bool tile_map::is_solid_at( int positionX, int positionY){
+    for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
+        if( map_tiles_foreground.at(i).x == positionX && map_tiles_foreground.at(i).y == positionY){
+            return map_tiles_foreground.at(i).solid;
+        }
+    }
+    return false;
+}
+
 
 // CHeck if item exists
 bool tile_map::is_item_at( int positionX, int positionY){

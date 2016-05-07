@@ -7,7 +7,7 @@ character::character(){
     for( int i = 0; i < MAX_MESSAGES; i++)
         player_messages[i] = "SWAG";
 
-    inventory_item = new item( 0, 0, NULL, NULL, 0, "hand");
+    inventory_item = new item( 0, 0, NULL, NULL, -1, "hand");
 }
 
 character::~character(){
@@ -104,37 +104,51 @@ void character::update(){
 
     // Move
     if( !moving){
-        if(( key[KEY_UP] || joy[0].stick[0].axis[1].d1) && map_pointer -> get_tile_at( x, y - 16) != 1){
+        if(( key[KEY_UP] || joy[0].stick[0].axis[1].d1) && !map_pointer -> is_solid_at( x, y - 16)){
             direction = 2;
             moving = true;
         }
-        else if( (key[KEY_DOWN] || joy[0].stick[0].axis[1].d2) && map_pointer -> get_tile_at( x, y + 16) != 1){
+        else if( (key[KEY_DOWN] || joy[0].stick[0].axis[1].d2) && !map_pointer -> is_solid_at( x, y + 16)){
             direction = 1;
             moving = true;
         }
-        else if(( key[KEY_LEFT] || joy[0].stick[0].axis[0].d1)  && map_pointer -> get_tile_at( x - 16, y) != 1){
+        else if(( key[KEY_LEFT] || joy[0].stick[0].axis[0].d1) && !map_pointer -> is_solid_at( x - 16, y)){
             direction = 4;
             moving = true;
         }
-        else if(( key[KEY_RIGHT] || joy[0].stick[0].axis[0].d2)  && map_pointer -> get_tile_at( x + 16, y) != 1){
+        else if(( key[KEY_RIGHT] || joy[0].stick[0].axis[0].d2) && !map_pointer -> is_solid_at( x + 16, y)){
             direction = 3;
             moving = true;
         }
 
-        // Search
+        // Pickup
         if( key[KEY_LCONTROL]){
-            if( map_pointer -> is_item_at( x, y) == true)
-                push_message( "There is a " + map_pointer -> get_item_at( x, y) -> name + " here.");
-            else
-                push_message( "There is nothing of interest here.");
+            if( map_pointer -> is_item_at( x, y) == true){
+                inventory_item = map_pointer -> get_item_at( x, y);
+                push_message( "You pick up a " + map_pointer -> get_item_at( x, y) -> name);
+            }
+        }
+
+        // Drop
+        if( key[KEY_RCONTROL]){
+            inventory_item = new item( 0, 0, NULL, NULL, -1, "JIMOTHY");
+            push_message( "You drop your item");
         }
 
         // Action button
         if( key[KEY_SPACE] || joy[0].button[0].b){
-            if( map_pointer -> is_item_at( x, y) == true){
-                inventory_item = map_pointer -> get_item_at( x, y);
+            if( inventory_item -> id == -1){
+                if( map_pointer -> is_item_at( x, y) == true)
+                    push_message( "There is a " + map_pointer -> get_item_at( x, y) -> name + " here.");
+                else
+                    push_message( "There is nothing of interest here.");
             }
-
+            else if( inventory_item -> id == 0){
+                if( map_pointer -> get_tile_at( x, y) == 0)
+                    map_pointer -> replace_tile( x, y, 2);
+                else
+                    push_message( "You can't hoe this");
+            }
         }
     }
 
