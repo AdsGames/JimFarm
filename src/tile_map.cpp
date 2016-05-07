@@ -53,10 +53,7 @@ void tile_map::generate_map(){
             if( i < -54){
                 tempMapForeground[i][t] = 1;
             }
-            //Well...............
-            else if( i == 5 && t == 2){
-              tempMapForeground[i][t] = 3;
-            }
+
             // Dense grass
             else if( random( 0, 10) == 0){
                 tempMapForeground[i][t] = 4;
@@ -69,6 +66,8 @@ void tile_map::generate_map(){
             else if( random( 0, 20) == 0){
                 tempMapForeground[i][t] = 6;
             }
+
+
         }
     }
 
@@ -111,6 +110,11 @@ void tile_map::generate_map(){
             }
         }
     }
+    //Place foreground objects
+    tempMapForeground[5][3] = 3;
+    //Place background items
+    tempMap[5][4] = 7;
+    tempMapForeground[5][4] = 0;
 
     // Turn numbers into objects
     for( int i = 0; i < MAP_WIDTH; i++){
@@ -161,9 +165,14 @@ void tile_map::load_images(){
     if (!( tile_images[5] = load_bitmap("images/tree.png", NULL)))
         abort_on_error("Cannot find image images/tree.png\nPlease check your files and try again");
 
+    //tile_images[6] did 9/11
     if (!( tile_images[6] = load_bitmap("images/bush.png", NULL)))
         abort_on_error("Cannot find image images/bush.png\nPlease check your files and try again");
 
+    if (!( tile_images[7] = load_bitmap("images/well_path.png", NULL)))
+        abort_on_error("Cannot find image images/well_path.png\nPlease check your files and try again");
+
+    // What's the difference between item_images[0] and Allan? Nothing.
     if (!( item_images[0] = load_bitmap("images/hoe.png", NULL)))
         abort_on_error("Cannot find image images/hoe.png\nPlease check your files and try again");
     item_names[0] = "hoe";
