@@ -1,11 +1,25 @@
 #include<allegro.h>
 #include<alpng.h>
 #include<time.h>
+#include<vector>
 
+#include "tile.h"
+
+
+// Images
 BITMAP* buffer;
 BITMAP* background;
+BITMAP* tile_images[100];
 
 bool close_button_pressed;
+
+// Tiles
+std::vector<tile> map_tiles;
+
+// Constant
+const int MAP_WIDTH = 10;
+const int MAP_HEIGHT = 10;
+
 
 // FPS System
 volatile int ticks = 0;
@@ -51,23 +65,36 @@ void abort_on_error(const char *message){
 	 exit(-1);
 }
 
+/*********************
+ *   Update logic
+ *********************/
 void update(){
 
 
 
 }
 
+/*********************
+ *  Draw to screen
+ *********************/
 void draw(){
+    // Draw background
     draw_sprite( buffer, background, 0, 0);
+
+    // Draw tiles
+    for( int i = 0; i < map_tiles.size(); i++){
+        map_tiles.at(i).draw( buffer);
+    }
+
+
+    // Stretch screen
     stretch_sprite( screen, buffer, 0, 0, SCREEN_W, SCREEN_H);
 }
 
 
-
-
-
-
-
+/*********************
+ *   Setup game
+ *********************/
 void setup(){
 
     // Create buffer
@@ -88,15 +115,29 @@ void setup(){
     LOCK_FUNCTION(close_button_handler);
     set_close_button_callback(close_button_handler);
 
+    // Check if image exists
     if (!( background = load_bitmap("images/grass.png", NULL)))
         abort_on_error("Cannot find image images/grass.png\nPlease check your files and try again");
+
+    if (!( tile_images[0] = load_bitmap("images/tile1.png", NULL)))
+        abort_on_error("Cannot find image images/tile1.png\nPlease check your files and try again");
+
+    if (!( tile_images[1] = load_bitmap("images/tile2.png", NULL)))
+        abort_on_error("Cannot find image images/tile2.png\nPlease check your files and try again");
+
+    // Nice Map
+    for( int i = 0; i < MAP_WIDTH; i++){
+        for( int t = 0; t < MAP_HEIGHT; t++){
+            tile newTile( i * 16, t * 16, tile_images[0], tile_images[0], 0);
+            map_tiles.push_back( newTile);
+        }
+    }
 }
 
 
-
-
-
-
+/*********************
+ *   Start here
+ *********************/
 int main(){
 
   allegro_init();
@@ -116,20 +157,20 @@ int main(){
   setup();
 
 
-      while(!key[KEY_ESC] && !close_button_pressed){
+    while(!key[KEY_ESC] && !close_button_pressed){
         while(ticks == 0){
             rest(1);
         }
-    while(ticks > 0){
-        int old_ticks = ticks;
+        while(ticks > 0){
+            int old_ticks = ticks;
 
-        update();
+            update();
 
-        ticks--;
-        if(old_ticks <= ticks){
-            break;
+            ticks--;
+            if(old_ticks <= ticks){
+                break;
+            }
         }
-    }
         if(game_time - old_time >= 10){
             fps = frames_done;
             frames_done = 0;
