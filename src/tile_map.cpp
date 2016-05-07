@@ -304,6 +304,15 @@ void tile_map::load_images(){
     if (!( item_images[5] = load_bitmap("images/shovel.png", NULL)))
         abort_on_error("Cannot find image images/shovel.png\nPlease check your files and try again");
     item_names[5] = "shovel";
+
+    if (!( item_images[6] = load_bitmap("images/chicken.png", NULL)))
+        abort_on_error("Cannot find image images/chicken.png\nPlease check your files and try again");
+    item_names[6] = "chicken";
+
+    if (!( item_images[7] = load_bitmap("images/egg.png", NULL)))
+        abort_on_error("Cannot find image images/egg.png\nPlease check your files and try again");
+    item_names[7] = "egg";
+
 }
 
 // Replace tile on map
