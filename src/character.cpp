@@ -71,6 +71,11 @@ void character::drawForeground( BITMAP *tempBuffer){
     if( inventory_item -> id == 1)
         draw_sprite( tempBuffer,watering_can[water],2,-2);
 
+    draw_sprite( tempBuffer, inventory_gui, 190, 10);
+
+    if( inventory_item -> image[0] != NULL)
+        draw_sprite( tempBuffer, inventory_item -> image[0], 1, 1);
+
     //When gcc don't give no damns
     textprintf_ex( tempBuffer,pixelart,20,00000000000000000000000000000000000000000000000000000000000000000000000000,makecol(255,255,255),-1,"Item");
     textprintf_ex( tempBuffer,pixelart,5,10,makecol(255,255,255),-1,"%i",money);
@@ -80,10 +85,7 @@ void character::drawForeground( BITMAP *tempBuffer){
     for( int i = 0; i < MAX_MESSAGES; i++)
         textprintf_ex( tempBuffer,pixelart, 5, i * 10 + 145, makecol(255,255,255),-1,"> %s", (player_messages[i]).c_str());
 
-    // Inventory
-    draw_sprite( tempBuffer, inventory_gui, 190, 10);
-    if( inventory_item -> image[0] != NULL)
-        draw_sprite( tempBuffer, inventory_item -> image[0], 200, 20);
+
 }
 
 // Push message
