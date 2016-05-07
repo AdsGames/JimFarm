@@ -116,6 +116,11 @@ void tile_map::generate_map(){
     //Place background items
     tempMap[5][4] = 7;
     tempMapForeground[5][4] = 0;
+    tempMapForeground[10][7] = 50;
+    tempMapForeground[10][8] = 0;
+    tempMapForeground[10][9] = 0;
+    tempMapForeground[10][10] = 0;
+    tempMapForeground[10][11] = 0;
 
     // Turn numbers into objects
     for( int i = 0; i < MAP_WIDTH; i++){
@@ -187,7 +192,13 @@ void tile_map::load_images(){
     if (!( tile_images[10] = load_bitmap("images/crop_2_3.png", NULL)))
         abort_on_error("Cannot find image images/crop_2_3.png\nPlease check your files and try again");
 
-    // What's the difference between item_images[0] and Allan? Nothing.
+    if (!( tile_images[50] = load_bitmap("images/coop.png", NULL)))
+        abort_on_error("Cannot find image images/coop.png\nPlease check your files and try again");
+
+    if (!( tile_images[51] = load_bitmap("images/coop_fence.png", NULL)))
+        abort_on_error("Cannot find image images/coop_fence.png\nPlease check your files and try again");
+
+    // What's the difference between item_images[0] and Allan? Everything!
     if (!( item_images[0] = load_bitmap("images/hoe.png", NULL)))
         abort_on_error("Cannot find image images/hoe.png\nPlease check your files and try again");
     item_names[0] = "hoe";

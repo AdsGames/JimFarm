@@ -12,7 +12,7 @@ tile::tile(int newX, int newY, BITMAP *newImage1, BITMAP *newImage2, char newID)
 
     id = newID;
 
-    if( id == 1 || id == 3 || id == 5)
+    if( id == 1 || id == 3 || id == 5 || id == 50 || id == 6 || id == 51)
         solid = true;
     else
         solid = false;
