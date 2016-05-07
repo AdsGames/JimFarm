@@ -31,6 +31,11 @@ void character::update(){
         }
 
         gameTick = 0;
+
+        // Action button
+        if( key[KEY_SPACE]){
+            map_pointer -> replace_tile( x, y, 2);
+        }
     }
 
     // Smooth move
@@ -60,4 +65,8 @@ void character::update(){
     gameTick++;
     if( gameTick > 8)
         gameTick = 0;
+}
+
+void character::setWorld( tile_map *newTileMap){
+    map_pointer = newTileMap;
 }

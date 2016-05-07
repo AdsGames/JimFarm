@@ -13,18 +13,18 @@ class tile
 
         bool solid;
 
-    protected:
-
-    private:
-        // Images
-        BITMAP *image[2];
-
         // Positioning
         int x, y;
 
         // ID
         char id;
 
+        // Images
+        BITMAP *image[2];
+
+    protected:
+
+    private:
 };
 
 #endif // TILE_H

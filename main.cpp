@@ -117,6 +117,7 @@ void setup(){
     // Setup jim
     jim.setPosition( 0, 0);
     jim.setImage( jim_image);
+    jim.setWorld( &farm_map);
 }
 
 

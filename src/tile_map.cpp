@@ -50,8 +50,8 @@ void tile_map::load_images(){
 void tile_map::replace_tile( int tileX, int tileY, int newID){
     for( int i = 0; i < map_tiles.size(); i++){
         if( map_tiles.at(i).x == tileX && map_tiles.at(i).y == tileY){
-            map_tiles.at(i).ID = newID;
-            map_tiles.at(i).image = tile_images[newID];
+            map_tiles.at(i).id = newID;
+            map_tiles.at(i).image[0] = tile_images[newID];
         }
     }
 }

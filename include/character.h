@@ -3,6 +3,8 @@
 
 #include <allegro.h>
 
+#include "tile_map.h"
+
 
 
 class character
@@ -17,6 +19,8 @@ class character
         void draw( BITMAP *tempBuffer);
 
         void update();
+
+        void setWorld( tile_map *newTileMap);
     protected:
 
     private:
@@ -25,6 +29,9 @@ class character
 
         char gameTick;
         char direction;
+
+        tile_map *map_pointer;
+
 };
 
 #endif // CHARACTER_H
