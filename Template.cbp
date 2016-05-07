@@ -2,21 +2,25 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Tojam11Game" />
+		<Option title="Template" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Release">
-				<Option output="build/Tojam11game" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="build/" />
+				<Option output="build/Template" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="G:/TOJAM/Tojam11game/include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add option="-lalpng" />
+					<Add option="-lalleg" />
+					<Add option="-lfmod" />
+					<Add directory="G:/TOJAM/Tojam11game/lib" />
 				</Linker>
 			</Target>
 		</Build>

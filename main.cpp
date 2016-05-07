@@ -58,8 +58,8 @@ void update(){
 }
 
 void draw(){
-
-    draw_sprite(screen,buffer,0,0);
+    draw_sprite( buffer, background, 0, 0);
+    stretch_sprite( screen, buffer, 0, 0, SCREEN_W, SCREEN_H);
 }
 
 
@@ -69,8 +69,9 @@ void draw(){
 
 
 void setup(){
-    buffer=create_bitmap(1024,768);
 
+    // Create buffer
+    buffer = create_bitmap( 240, 160);
 
     srand(time(NULL));
 
@@ -87,8 +88,8 @@ void setup(){
     LOCK_FUNCTION(close_button_handler);
     set_close_button_callback(close_button_handler);
 
-   // if (!(bmp = load_bitmap("bmp.png", NULL)))
-   //   abort_on_error("Cannot find image bmp.png\nPlease check your files and try again");
+    if (!( background = load_bitmap("images/grass.png", NULL)))
+        abort_on_error("Cannot find image images/grass.png\nPlease check your files and try again");
 }
 
 
@@ -106,7 +107,7 @@ int main(){
   set_color_depth(32);
 
 
-  set_gfx_mode(GFX_AUTODETECT_WINDOWED,960, 640,0, 0);
+  set_gfx_mode(GFX_AUTODETECT_WINDOWED, 960, 640, 0, 0);
   install_sound(DIGI_AUTODETECT,MIDI_AUTODETECT,".");
 
 
