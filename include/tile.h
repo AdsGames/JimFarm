@@ -2,11 +2,12 @@
 #define TILE_H
 
 #include <allegro.h>
+#include <string>
 
 class tile
 {
     public:
-        tile(int newX, int newY, BITMAP *newImage1, BITMAP *newImage2, char newID, char newItemID = -1);
+        tile(int newX, int newY, BITMAP *newImage1, BITMAP *newImage2, char newID);
         virtual ~tile();
 
         void draw( BITMAP *tempBuffer);
@@ -16,19 +17,28 @@ class tile
         // Positioning
         int x, y;
 
-        // Item placed
-        char item_id;
-
         // ID
         char id;
 
         // Images
         BITMAP *image[2];
-        BITMAP *item_image;
 
     protected:
 
     private:
+};
+
+class item : public tile
+{
+    public:
+        item(int newX, int newY, BITMAP *newImage1, BITMAP *newImage2, char newID, std::string newName);
+        virtual ~item();
+
+        std::string name;
+    protected:
+
+    private:
+
 };
 
 #endif // TILE_H

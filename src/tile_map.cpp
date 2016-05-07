@@ -18,6 +18,11 @@ void tile_map::draw( BITMAP *tempBuffer){
         map_tiles.at(i).draw( map_buffer);
     }
 
+    // Draw items
+    for( unsigned int i = 0; i < map_items.size(); i++){
+        map_items.at(i).draw( map_buffer);
+    }
+
     blit( map_buffer, tempBuffer, x, y, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 }
 
@@ -41,14 +46,26 @@ void tile_map::generate_map(){
         }
     }
 
-    // Place items
-    for( unsigned int i = 0; i < map_tiles.size(); i++){
-        if( random( 0, 20) == 0){
-            place_item( map_tiles.at( i).x, map_tiles.at( i).y, random( 0, 2));
+    for( int i = 0; i < MAP_WIDTH; i++){
+        for( int t = 0; t < MAP_HEIGHT; t++){
+            // Place items
+
+            // Grass
+            if( random( 0, 4) == 0){
+                char temp_item_id = 3;
+                item newItem( i * 16, t * 16, item_images[temp_item_id], item_images[temp_item_id], temp_item_id, item_names[temp_item_id]);
+                place_item( newItem);
+            }
+            // Goods
+            if( random( 0, 100) == 0){
+                char temp_item_id = random( 0, 2);
+                item newItem( i * 16, t * 16, item_images[temp_item_id], item_images[temp_item_id], temp_item_id, item_names[temp_item_id]);
+                place_item( newItem);
+            }
+
+            map_buffer = create_bitmap( MAP_WIDTH * 16, MAP_HEIGHT * 16);
         }
     }
-
-    map_buffer = create_bitmap( MAP_WIDTH * 16, MAP_HEIGHT * 16);
 }
 
 // Load images
@@ -68,10 +85,19 @@ void tile_map::load_images(){
 
     if (!( item_images[0] = load_bitmap("images/hoe.png", NULL)))
         abort_on_error("Cannot find image images/hoe.png\nPlease check your files and try again");
+    item_names[0] = "hoe";
+
     if (!( item_images[1] = load_bitmap("images/scythe.png", NULL)))
         abort_on_error("Cannot find image images/scythe.png\nPlease check your files and try again");
+    item_names[1] = "scythe";
+
     if (!( item_images[2] = load_bitmap("images/seeds.png", NULL)))
         abort_on_error("Cannot find image images/seeds.png\nPlease check your files and try again");
+    item_names[2] = "seeds";
+
+    if (!( item_images[3] = load_bitmap("images/dense_grass.png", NULL)))
+        abort_on_error("Cannot find image images/dense_grass.png\nPlease check your files and try again");
+    item_names[3] = "dense grass";
 }
 
 // Replace tile on map
@@ -85,15 +111,8 @@ void tile_map::replace_tile( int tileX, int tileY, int newID){
 }
 
 // Place item on map
-bool tile_map::place_item( int tileX, int tileY, int newItemID){
-    for( unsigned int i = 0; i < map_tiles.size(); i++){
-        if( map_tiles.at(i).x == tileX && map_tiles.at(i).y == tileY && map_tiles.at(i).item_id == -1){
-            map_tiles.at(i).item_id = newItemID;
-            map_tiles.at(i).item_image = item_images[newItemID];
-            return true;
-        }
-    }
-    return false;
+void tile_map::place_item( item newItem){
+    map_items.push_back( newItem);
 }
 
 // Get tile at position
@@ -106,14 +125,24 @@ char tile_map::get_tile_at( int positionX, int positionY){
     return -1;
 }
 
-// Get item at position
-char tile_map::get_item_at( int positionX, int positionY){
-    for( unsigned int i = 0; i < map_tiles.size(); i++){
-        if( map_tiles.at(i).x == positionX && map_tiles.at(i).y == positionY){
-            return map_tiles.at(i).item_id;
+// CHeck if item exists
+bool tile_map::is_item_at( int positionX, int positionY){
+    for( unsigned int i = 0; i < map_items.size(); i++){
+        if( map_items.at(i).x == positionX && map_items.at(i).y == positionY){
+            return true;
         }
     }
-    return -1;
+    return false;
+}
+
+// Get item at position
+item *tile_map::get_item_at( int positionX, int positionY){
+    for( unsigned int i = 0; i < map_items.size(); i++){
+        if( map_items.at(i).x == positionX && map_items.at(i).y == positionY){
+            return &map_items.at(i);
+        }
+    }
+    return NULL;
 }
 
 // Scroll

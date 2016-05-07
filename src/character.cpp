@@ -62,7 +62,7 @@ void character::draw( BITMAP *tempBuffer){
 
     // Message system
     for( int i = 0; i < MAX_MESSAGES; i++)
-        textprintf_ex(tempBuffer,pixelart, 5, i * 10 + 112, makecol(255,255,255),-1,"> %s", (player_messages[i]).c_str());
+        textprintf_ex(tempBuffer,pixelart, 5, i * 10 + 145, makecol(255,255,255),-1,"> %s", (player_messages[i]).c_str());
 }
 
 // Push message
@@ -105,10 +105,8 @@ void character::update(){
         }
 
         // Search
-        if( key[KEY_LCONTROL]){
-            if( map_pointer -> get_item_at( x, y) == -1){
-                push_message( "There is nothing of interest here!");
-            }
+        if( key[KEY_LCONTROL] && map_pointer -> is_item_at( x, y) == true){
+            push_message( "There is a " + map_pointer -> get_item_at( x, y) -> name + " here.");
         }
 
         // Action button

@@ -7,7 +7,7 @@
 #include "math.h"
 #include "tile_map.h"
 
-#define MAX_MESSAGES 4
+#define MAX_MESSAGES 1
 
 class character
 {

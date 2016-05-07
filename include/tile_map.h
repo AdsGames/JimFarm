@@ -25,10 +25,12 @@ class tile_map
         void draw( BITMAP *tempBuffer);
 
         void replace_tile( int tileX, int tileY, int newID);
-        bool place_item( int tileX, int tileY, int newItemID);
+        void place_item( item newItem);
 
         char get_tile_at( int positionX, int positionY);
-        char get_item_at( int positionX, int positionY);
+
+        bool is_item_at( int positionX, int positionY);
+        item *get_item_at( int positionX, int positionY);
 
         void generate_map();
 
@@ -43,9 +45,12 @@ class tile_map
     private:
         // Tiles
         std::vector<tile> map_tiles;
+        std::vector<item> map_items;
 
         BITMAP *tile_images[100];
         BITMAP *item_images[100];
+
+        std::string item_names[100];
 
         BITMAP *map_buffer;
 };
