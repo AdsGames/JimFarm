@@ -71,12 +71,13 @@ void character::drawForeground( BITMAP *tempBuffer){
 
     draw_sprite( tempBuffer, inventory_gui, 1, 1);
 
-    if( inventory_item -> image[0] != NULL)
+    if( inventory_item -> image[0] != NULL){
       // Watering can
         if( inventory_item -> id == 3)
           draw_sprite( tempBuffer,watering_can[water],2,2);
         else
           draw_sprite( tempBuffer, inventory_item -> image[0], 2, 2);
+    }
 
     //When gcc don't give no damns
     textprintf_ex( tempBuffer,pixelart,20,00000000000000000000000000000000000000000000000000000000000000000000000000,makecol(255,255,255),-1,"Item");
@@ -131,7 +132,7 @@ void character::update(){
         }
 
         // Pickup
-        if( key[KEY_LCONTROL]){
+        if( key[KEY_LCONTROL] || joy[0].button[2].b){
             if( map_pointer -> is_item_at( x, y) == true){
                 inventory_item = map_pointer -> get_item_at( x, y);
                 push_message( "You pick up a " + map_pointer -> get_item_at( x, y) -> name);
@@ -140,7 +141,7 @@ void character::update(){
         }
 
         // Drop
-        if( key[KEY_RCONTROL] && inventory_item -> id != -1){
+        if(( key[KEY_RCONTROL] || joy[0].button[1].b) && inventory_item -> id != -1){
             inventory_item -> x = x;
             inventory_item -> y = y;
             map_pointer -> place_item( *inventory_item);
