@@ -121,7 +121,7 @@ void setup(){
     farm_map.generate_map();
 
     // Setup jim
-    jim.setPosition( 0, 0);
+    jim.setPosition( 80, 64);
     jim.setImage( jim_image);
     jim.setWorld( &farm_map);
 }

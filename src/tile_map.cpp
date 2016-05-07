@@ -112,6 +112,7 @@ void tile_map::generate_map(){
     }
     //Place foreground objects
     tempMapForeground[5][3] = 3;
+
     //Place background items
     tempMap[5][4] = 7;
     tempMapForeground[5][4] = 0;
@@ -134,8 +135,8 @@ void tile_map::generate_map(){
         for( int t = 0; t < MAP_HEIGHT; t++){
             // Place items
             // Goods
-            if( random( 0, 100) == 0){
-                char temp_item_id = random( 0, 2);
+            if( random( 0, 50) == 0){
+                char temp_item_id = random( 0, 4);
                 item newItem( i * 16, t * 16, item_images[temp_item_id], item_images[temp_item_id], temp_item_id, item_names[temp_item_id]);
                 place_item( newItem);
             }
@@ -176,6 +177,16 @@ void tile_map::load_images(){
     if (!( tile_images[7] = load_bitmap("images/well_path.png", NULL)))
         abort_on_error("Cannot find image images/well_path.png\nPlease check your files and try again");
 
+
+    if (!( tile_images[8] = load_bitmap("images/crop_2_1.png", NULL)))
+        abort_on_error("Cannot find image images/crop_2_1.png\nPlease check your files and try again");
+
+    if (!( tile_images[9] = load_bitmap("images/crop_2_2.png", NULL)))
+        abort_on_error("Cannot find image images/crop_2_2.png\nPlease check your files and try again");
+
+    if (!( tile_images[10] = load_bitmap("images/crop_2_3.png", NULL)))
+        abort_on_error("Cannot find image images/crop_2_3.png\nPlease check your files and try again");
+
     // What's the difference between item_images[0] and Allan? Nothing.
     if (!( item_images[0] = load_bitmap("images/hoe.png", NULL)))
         abort_on_error("Cannot find image images/hoe.png\nPlease check your files and try again");
@@ -192,6 +203,10 @@ void tile_map::load_images(){
     if (!( item_images[3] = load_bitmap("images/watering_can.png", NULL)))
         abort_on_error("Cannot find image images/watering_can.png\nPlease check your files and try again");
     item_names[3] = "watering can";
+
+    if (!( item_images[4] = load_bitmap("images/axe.png", NULL)))
+        abort_on_error("Cannot find image images/axe.png\nPlease check your files and try again");
+    item_names[4] = "axe";
 }
 
 // Replace tile on map

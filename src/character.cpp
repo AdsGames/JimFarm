@@ -6,6 +6,7 @@ character::character(){
 
     for( int i = 0; i < MAX_MESSAGES; i++)
         player_messages[i] = "SWAG";
+
 }
 
 character::~character(){
@@ -38,6 +39,12 @@ void character::setImage( BITMAP *newImage){
     if (!( hand = load_bitmap("images/hand.png", NULL)))
         abort_on_error("Cannot find image images/hand.png\nPlease check your files and try again");
 
+    if (!( indicator = load_bitmap("images/indicator.png", NULL)))
+        abort_on_error("Cannot find image images/indicator.png\nPlease check your files and try again");
+
+    if (!( coin = load_bitmap("images/coin.png", NULL)))
+        abort_on_error("Cannot find image images/coin.png\nPlease check your files and try again");
+
     inventory_hand = new item( 0, 0, hand, hand, -1, "hand");
     inventory_item = inventory_hand;
 
@@ -58,6 +65,19 @@ void character::setImage( BITMAP *newImage){
 
 // Draw character to screen
 void character::draw( BITMAP *tempBuffer){
+    // Indicator
+    if( inventory_item -> id != -1){
+        if( inventory_item -> id == 4){
+            if( direction == 1 || direction == 2)
+                draw_sprite( tempBuffer, indicator, x - map_pointer -> x, (y - map_pointer -> y) + (-16 * ((direction * 2) - 3)));
+            else if( direction == 3 || direction == 4)
+                draw_sprite( tempBuffer, indicator, (x - map_pointer -> x) + (-16 * ((direction * 2) - 7)), y - map_pointer -> y);
+        }
+        else{
+            draw_sprite( tempBuffer, indicator, x - map_pointer -> x, y - map_pointer -> y);
+        }
+    }
+
     // Draw frame
     masked_blit( image, tempBuffer, floor(gameTick/2) * 16, (direction - 1) * 20, x - map_pointer -> x, y - map_pointer -> y - 8, 16, 20);
 }
@@ -67,8 +87,7 @@ void character::drawForeground( BITMAP *tempBuffer){
     // Top of head
     masked_blit( image, tempBuffer, floor(gameTick/2) * 16, (direction - 1) * 20, x - map_pointer -> x, y - map_pointer -> y - 8, 16, 8);
 
-
-
+    // Inventory box
     draw_sprite( tempBuffer, inventory_gui, 1, 1);
 
     if( inventory_item -> image[0] != NULL){
@@ -80,9 +99,11 @@ void character::drawForeground( BITMAP *tempBuffer){
     }
 
     //When gcc don't give no damns
-    textprintf_ex( tempBuffer,pixelart,20,00000000000000000000000000000000000000000000000000000000000000000000000000,makecol(255,255,255),-1,"Item");
-    textprintf_ex( tempBuffer,pixelart,5,15,makecol(255,255,255),-1,"%i",money);
-    textprintf_ex( tempBuffer,pixelart,20,15,makecol(255,255,255),-1,"CashMoneys");
+    textprintf_ex( tempBuffer, pixelart, 20, 0, makecol(255,255,255), -1, inventory_item -> name.c_str());
+
+    // Money
+    draw_sprite( tempBuffer, coin, 190, 10);
+    textprintf_ex( tempBuffer,pixelart,205,5,makecol(255,255,255),-1,"x %i",money);
 
     // Message system
     for( int i = 0; i < MAX_MESSAGES; i++)
@@ -119,21 +140,25 @@ void character::update(){
 
     // Move
     if( !moving){
-        if(( key[KEY_UP] || joy[0].stick[0].axis[1].d1) && !map_pointer -> is_solid_at( x, y - 16)){
+        if(( key[KEY_UP] || joy[0].stick[0].axis[1].d1)){
             direction = 2;
-            moving = true;
+            if( !map_pointer -> is_solid_at( x, y - 16))
+                moving = true;
         }
-        else if( (key[KEY_DOWN] || joy[0].stick[0].axis[1].d2) && !map_pointer -> is_solid_at( x, y + 16)){
+        else if( (key[KEY_DOWN] || joy[0].stick[0].axis[1].d2)){
             direction = 1;
-            moving = true;
+            if( !map_pointer -> is_solid_at( x, y + 16))
+                moving = true;
         }
-        else if(( key[KEY_LEFT] || joy[0].stick[0].axis[0].d1) && !map_pointer -> is_solid_at( x - 16, y)){
+        else if(( key[KEY_LEFT] || joy[0].stick[0].axis[0].d1)){
             direction = 4;
-            moving = true;
+            if( !map_pointer -> is_solid_at( x - 16, y))
+                moving = true;
         }
-        else if(( key[KEY_RIGHT] || joy[0].stick[0].axis[0].d2) && !map_pointer -> is_solid_at( x + 16, y)){
+        else if(( key[KEY_RIGHT] || joy[0].stick[0].axis[0].d2)){
             direction = 3;
-            moving = true;
+            if( !map_pointer -> is_solid_at( x + 16, y))
+                moving = true;
         }
 
         // Pickup
@@ -180,6 +205,13 @@ void character::update(){
                     push_message( "You can't cut this");
 
             }
+            else if( inventory_item -> id == 2){
+                if( map_pointer -> get_tile_at( x, y, false) == 2)
+                    map_pointer -> replace_tile( x, y, 8, false);
+                else
+                    push_message( "You must plant in ploughed soil");
+
+            }
             else if(map_pointer -> get_tile_at(x,y,BACKGROUND) == 7){
                 if(inventory_item -> id == 3){
                     water=4;
@@ -191,9 +223,16 @@ void character::update(){
 
 
             }else if(inventory_item -> id == 3){
-                if(water>0){
-                  water--;
-                  push_message("Watered");
+                if(water > 0){
+                    water--;
+                    push_message("Watered");
+
+                    if( map_pointer -> get_tile_at( x, y, false) == 8){
+                        map_pointer -> replace_tile( x, y, 9, false);
+                    }
+                    else if( map_pointer -> get_tile_at( x, y, false) == 9){
+                        map_pointer -> replace_tile( x, y, 10, false);
+                    }
                 }
                 else
                   push_message("Out of water");

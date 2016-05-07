@@ -50,6 +50,8 @@ class character
         BITMAP *watering_can[5];
         BITMAP *inventory_gui;
         BITMAP *hand;
+        BITMAP *indicator;
+        BITMAP *coin;
 
         char gameTick;
         char direction;

@@ -41,4 +41,18 @@ class item : public tile
 
 };
 
+class crop : public tile
+{
+    public:
+        crop(int newX, int newY, BITMAP *newImage1, BITMAP *newImage2, char newID, std::string newName);
+        virtual ~crop();
+
+        std::string name;
+        char growth_tick;
+    protected:
+
+    private:
+
+};
+
 #endif // TILE_H

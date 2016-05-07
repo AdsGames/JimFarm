@@ -50,3 +50,28 @@ item::~item()
     //dtor
 }
 
+
+
+
+
+// CROP
+crop::crop(int newX, int newY, BITMAP *newImage1, BITMAP *newImage2, char newID, std::string newName) :
+    tile( newX, newY, newImage1, newImage2, newID)
+{
+    // Set init variables
+    x = newX;
+    y = newY;
+
+    image[0] = newImage1;
+    image[1] = newImage2;
+
+    id = newID;
+
+    name = newName;
+}
+
+crop::~crop()
+{
+    //dtor
+}
+
