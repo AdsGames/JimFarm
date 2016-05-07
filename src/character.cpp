@@ -16,6 +16,20 @@ void character::setImage( BITMAP *newImage){
 
     image = newImage;
 
+  if (!( watering_can[0] = load_bitmap("images/watering_can_0.png", NULL)))
+        abort_on_error("Cannot find image images/watering_can_0.png\nPlease check your files and try again");
+
+  if (!( watering_can[1] = load_bitmap("images/watering_can_1.png", NULL)))
+        abort_on_error("Cannot find image images/watering_can_1.png\nPlease check your files and try again");
+
+  if (!( watering_can[2] = load_bitmap("images/watering_can_2.png", NULL)))
+        abort_on_error("Cannot find image images/watering_can_2.png\nPlease check your files and try again");
+
+  if (!( watering_can[3] = load_bitmap("images/watering_can_3.png", NULL)))
+        abort_on_error("Cannot find image images/watering_can_3.png\nPlease check your files and try again");
+
+  if (!( watering_can[4] = load_bitmap("images/watering_can_4.png", NULL)))
+        abort_on_error("Cannot find image images/watering_can_4.png\nPlease check your files and try again");
     // Load fonts
     f1 = load_font("fonts/pixelart.pcx", NULL, NULL);
     f2 = extract_font_range(f1, ' ', 'A'-1);
@@ -39,12 +53,11 @@ void character::draw( BITMAP *tempBuffer)
 
   masked_blit( image, tempBuffer, floor(gameTick/2) * 16, (direction - 1) * 20, x, y - 3, 16, 20);
 
-  textprintf_ex(tempBuffer,pixelart,5,0,makecol(255,255,255),-1,"%i",water);
-  textprintf_ex(tempBuffer,pixelart,20,0,makecol(255,255,255),-1,"Water");
-  textprintf_ex(tempBuffer,pixelart,5,10,makecol(255,255,255),-1,"%i",inventory);
-  textprintf_ex(tempBuffer,pixelart,20,10,makecol(255,255,255),-1,"Item");
-  textprintf_ex(tempBuffer,pixelart,5,20,makecol(255,255,255),-1,"%i",money);
-  textprintf_ex(tempBuffer,pixelart,20,20,makecol(255,255,255),-1,"Ca$hMoney$");
+  if(inventory==0)draw_sprite( tempBuffer,watering_can[water],2,-2);
+  //When gcc don't give no damns
+  textprintf_ex(tempBuffer,pixelart,20,00000000000000000000000000000000000000000000000000000000000000000000000000,makecol(255,255,255),-1,"Item");
+  textprintf_ex(tempBuffer,pixelart,5,10,makecol(255,255,255),-1,"%i",money);
+  textprintf_ex(tempBuffer,pixelart,20,10,makecol(255,255,255),-1,"Ca$hMoney$");
 }
 
 void character::update(){
@@ -83,7 +96,7 @@ void character::update(){
                 map_pointer -> replace_tile( x, y, 2);
 
             if(map_pointer -> get_tile_at( x, y) == 3){
-              water=3;
+              water=4;
             }
         }
     }

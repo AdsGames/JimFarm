@@ -40,6 +40,7 @@ class character
         int water;
 
         BITMAP *image;
+        BITMAP* watering_can[5];
 
         char gameTick;
         char direction;
