@@ -27,7 +27,17 @@ class character
 
         void update();
 
+        void remove_item();
+        void give_item( char newItem);
+
         void setWorld( tile_map *newTileMap);
+
+        item *inventory_item;
+        item *inventory_hand;
+
+        int money;
+
+        bool store_open;
     protected:
 
     private:
@@ -41,9 +51,7 @@ class character
         FONT* pixelart;
 
         int x, y;
-        item *inventory_item;
-        item *inventory_hand;
-        int money;
+
         int water;
         int sound_step;
 

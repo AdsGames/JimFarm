@@ -179,17 +179,30 @@ void tile_map::generate_map(){
         }
     }
 
-    // Place items
-    for( int i = 0; i < MAP_WIDTH; i++){
-        for( int t = 0; t < MAP_HEIGHT; t++){
-            // Place items
-            if( random( 0, 50) == 0){
-                char temp_item_id = random( 2, 6);
-                if(!is_solid_at(i*16,t*16)){
-                  item newItem( i * 16, t * 16, item_images[temp_item_id], item_images[temp_item_id], temp_item_id, item_names[temp_item_id]);
-                  place_item( newItem);
-                }
+    // Place items ( 1 of each)
+    for( int i = 0; i < 6; i ++){
+        bool placed = false;
+        while( !placed){
+            int random_x = random( 0, MAP_WIDTH) * 16;
+            int random_y = random( 0, MAP_HEIGHT) * 16;
+            if(!is_solid_at( random_x, random_y)){
+                item newItem( random_x, random_y, item_images[i], item_images[i], i, item_names[i]);
+                place_item( newItem);
+                placed = true;
             }
+        }
+    }
+
+
+    // Place chickens (4)
+    int placed = 0;
+    while( placed < 4){
+        int random_x = random( 0, MAP_WIDTH) * 16;
+        int random_y = random( 0, MAP_HEIGHT) * 16;
+        if(!is_solid_at( random_x, random_y)){
+            item newItem( random_x, random_y, item_images[6], item_images[6], 6, item_names[6]);
+            place_item( newItem);
+            placed += 1;
         }
     }
 
@@ -224,7 +237,6 @@ void tile_map::load_images(){
     if (!( tile_images[7] = load_bitmap("images/well_path.png", NULL)))
         abort_on_error("Cannot find image images/well_path.png\nPlease check your files and try again");
 
-
     if (!( tile_images[8] = load_bitmap("images/crop_2_1.png", NULL)))
         abort_on_error("Cannot find image images/crop_2_1.png\nPlease check your files and try again");
 
@@ -254,6 +266,12 @@ void tile_map::load_images(){
 
     if (!( tile_images[17] = load_bitmap("images/path_corner_4.png", NULL)))
         abort_on_error("Cannot find image images/path_corner_4.png\nPlease check your files and try again");
+
+    if (!( tile_images[18] = load_bitmap("images/ploughed_soil.png", NULL)))
+        abort_on_error("Cannot find image images/ploughed_soil.png\nPlease check your files and try again");
+
+    if (!( tile_images[19] = load_bitmap("images/store_path.png", NULL)))
+        abort_on_error("Cannot find image images/store_path.png\nPlease check your files and try again");
 
     // What's the difference between item_images[0] and Allan? Nothing.
     if (!( tile_images[50] = load_bitmap("images/coop_1.png", NULL)))
@@ -447,6 +465,12 @@ void tile_map::remove_item_at( int positionX, int positionY){
             break;
         }
     }
+}
+
+// Create item
+void tile_map::place_new_item_at( int newX, int newY, char newItem){
+    item newItemx( newX, newY, item_images[newItem], item_images[newItem], newItem, item_names[newItem]);
+    place_item( newItemx);
 }
 
 // Scroll

@@ -8,6 +8,8 @@ character::character(){
         player_messages[i] = "SWAG";
 
     money = 10;
+
+    store_open = false;
 }
 
 character::~character(){
@@ -169,8 +171,15 @@ void character::update(){
     inventory_item -> x = x;
     inventory_item -> y = y;
 
+    // Close store
+    if( store_open == true){
+        if( key[KEY_LCONTROL] || joy[0].button[2].b || key[KEY_RCONTROL]){
+            store_open = false;
+            push_message( "Come again");
+        }
+    }
     // Move
-    if( !moving){
+    else if( !moving){
         if(( key[KEY_UP] || joy[0].stick[0].axis[1].d1)){
             direction = 2;
             if( !map_pointer -> is_solid_at( x, y - 16)){
@@ -199,17 +208,17 @@ void character::update(){
                 sound_step++;
             }
         }
-        if(sound_step>=2){
-          play_sample(step_2,255,125,1000,0);
-          sound_step=0;
+        if(sound_step > 1){
+          play_sample(step_2,50,125,1300,0);
+          sound_step = 0;
         }
-        if(sound_step==1 && moving)
-          play_sample(step_1,255,125,1000,0);
+        if(sound_step == 1 && moving)
+          play_sample(step_1,50,125,1300,0);
 
 
         // Pickup
-        if(( key[KEY_LCONTROL] || joy[0].button[2].b || key[KEY_RCONTROL]) && tick>20){
-            if(inventory_item -> id==-1){
+        if(( key[KEY_LCONTROL] || joy[0].button[2].b || key[KEY_RCONTROL]) && tick > 20){
+            if(inventory_item -> id == -1){
               tick = 0;
               if( map_pointer -> is_item_at( x, y) == true){
 
@@ -219,33 +228,39 @@ void character::update(){
                   push_message( "You pick up a " + map_pointer -> get_item_at( x, y) -> name);
                   //map_pointer -> remove_item_at( x, y);
               }
-            }else{
-              play_sample(drop,255,125,1000,0);
+            }
+            else{
+                play_sample(drop,255,125,1000,0);
 
-              tick = 0;
-              inventory_item -> x = x;
-              inventory_item -> y = y;
-              //map_pointer -> place_item( *inventory_item);
-              push_message( "You drop your " + inventory_item -> name);
-              inventory_item = inventory_hand;
-              std::cout << std::endl;
-
+                tick = 0;
+                inventory_item -> x = x;
+                inventory_item -> y = y;
+                //map_pointer -> place_item( *inventory_item);
+                push_message( "You drop your " + inventory_item -> name);
+                inventory_item = inventory_hand;
+                std::cout << std::endl;
             }
         }
 
         // Action button
         if(( key[KEY_SPACE] || joy[0].button[0].b) && tick>10){
             push_message( "");
-            tick=0;
-            if( inventory_item -> id == -1 && map_pointer -> get_tile_at(x,y,BACKGROUND) != 7){
+            tick = 0;
+
+            // OPEN STORE
+            if( map_pointer -> get_tile_at( x, y, BACKGROUND) == 19){
+                push_message( "Welcome to Danners Devices");
+                store_open = true;
+            }
+            else if( inventory_item -> id == -1 && map_pointer -> get_tile_at(x,y,BACKGROUND) != 7){
                 if( map_pointer -> is_item_at( x, y) == true)
                     push_message( "There is a " + map_pointer -> get_item_at( x, y) -> name + " here");
                 else
                     push_message( "There is nothing of interest here");
             }
             else if( inventory_item -> id == 0){
-                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 0)
-                    map_pointer -> replace_tile( indicator_x, indicator_y, 2, false);
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 2)
+                    map_pointer -> replace_tile( indicator_x, indicator_y, 18, false);
                 else
                     push_message( "You can't hoe that");
 
@@ -259,7 +274,7 @@ void character::update(){
 
             }
             else if( inventory_item -> id == 2){
-                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 2)
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18)
                     map_pointer -> replace_tile( indicator_x, indicator_y, 8, false);
                 else
                     push_message( "You must plant in ploughed soil");
@@ -332,6 +347,17 @@ void character::update(){
         if( gameTick > 15)
             gameTick = 0;
     }
+}
+
+// Remove item from hand ( and the world)
+void character::remove_item(){
+    inventory_item = inventory_hand;
+    map_pointer -> remove_item_at( x, y);
+}
+
+// Give item
+void character::give_item( char newItem){
+    map_pointer -> place_new_item_at( x, y, newItem);
 }
 
 // World object to point to (needs this!)

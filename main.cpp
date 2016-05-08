@@ -5,6 +5,8 @@
 #include "character.h"
 #include "tile_map.h"
 #include "tools.h"
+#include "store.h"
+
 
 // Images
 BITMAP *buffer;
@@ -62,6 +64,15 @@ void update(){
 
     // Store update
     main_store.update();
+
+
+    // Open store
+    if( jim.store_open){
+        main_store.open_store( &jim);
+    }
+    else{
+        main_store.close_store();
+    }
 }
 
 /*********************

@@ -6,6 +6,7 @@
 
 #include "tile.h"
 #include "tools.h"
+#include "character.h"
 
 class store
 {
@@ -19,7 +20,8 @@ class store
 
         void draw( BITMAP *tempBitmap);
 
-        void toggle();
+        void open_store( character *new_inventory);
+        void close_store();
 
         void load_images();
 
@@ -32,6 +34,8 @@ class store
     private:
         BITMAP *image;
         BITMAP *indicator;
+
+        character *customer_inventory;
 
         int selector_index;
 };

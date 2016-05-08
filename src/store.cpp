@@ -29,16 +29,49 @@ void store::draw( BITMAP *tempBitmap){
                 if( selector_index == i)
                     draw_sprite( tempBitmap, indicator, 25 + i * 19, 90);
         }
+        if( customer_inventory != NULL)
+            draw_sprite( tempBitmap, customer_inventory -> inventory_item -> image[0], 185, 90);
+
+        if( selector_index == storeItems.size())
+            draw_sprite( tempBitmap, indicator, 185, 90);
     }
 }
 
 void store::update(){
-    if( key[KEY_LEFT] && selector_index > 0)
-        selector_index--;
-    else if( key[KEY_RIGHT] && selector_index < 7)
-        selector_index++;
+    if( open){
+        if( key[KEY_LEFT] && selector_index > 0){
+            selector_index--;
+            rest( 100);
+        }
+        else if( key[KEY_RIGHT] && selector_index < storeItems.size()){
+            selector_index++;
+            rest( 100);
+        }
+
+
+        if( key[KEY_ENTER]){
+            if( selector_index < storeItems.size()){
+                if( customer_inventory -> inventory_item -> id == -1){
+                    customer_inventory -> give_item( storeItems.at(selector_index) -> id);
+                    storeItems.erase(storeItems.begin() + selector_index);
+                }
+            }
+            else if( selector_index == storeItems.size()){
+                if( customer_inventory -> inventory_item -> id == 7){
+                    customer_inventory -> money += 10;
+                    customer_inventory -> remove_item();
+                }
+            }
+            rest( 200);
+        }
+    }
 }
 
-void store::toggle(){
-    open =! open;
+void store::close_store(){
+    open = false;
+}
+
+void store::open_store( character *new_inventory){
+    open = true;
+    customer_inventory = new_inventory;
 }
