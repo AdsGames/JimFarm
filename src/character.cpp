@@ -66,6 +66,9 @@ void character::setImage( BITMAP *newImage){
     if( !(cut_scythe= load_sample("sfx/cut_scythe.wav")))
         abort_on_error( "Cannot find file sfx/cut_scythe.wav \n Please check your files and try again");
 
+    if( !(hoe= load_sample("sfx/hoe.wav")))
+        abort_on_error( "Cannot find file sfx/hoe.wav \n Please check your files and try again");
+
     inventory_hand = new item( 0, 0, hand, hand, -1, "hand");
     inventory_item = inventory_hand;
 
@@ -259,9 +262,10 @@ void character::update(){
                     push_message( "There is nothing of interest here");
             }
             else if( inventory_item -> id == 0){
-                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 2)
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 2){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 18, false);
-                else
+                    play_sample(hoe,255,125,1000,0);
+                }else
                     push_message( "You can't hoe that");
 
             }
@@ -286,7 +290,7 @@ void character::update(){
                     push_message( "Watering can filled");
                 }
 
-                if(water > 0){
+                if(water > 0 && tick > 10){
                     water--;
                     push_message("Watered");
 
