@@ -347,6 +347,9 @@ void tile_map::load_images(){
         abort_on_error("Cannot find image images/egg.png\nPlease check your files and try again");
     item_names[7] = "egg";
 
+    if( !(egg = load_sample("sfx/egg.wav")))
+        abort_on_error( "Cannot find file sfx/egg.wav \n Please check your files and try again");
+
 }
 
 // Replace tile on map
@@ -445,6 +448,8 @@ void tile_map::update(){
 
               item newItem( map_items.at(i).x+rand_1, map_items.at(i).y+rand_2, item_images[7], item_images[7], 7, item_names[7]);
               place_item( newItem);
+              play_sample(egg,255,125,1000,0);
+
             }
         }
 

@@ -65,6 +65,8 @@ class tile_map
 
         BITMAP *tile_images[100];
 
+        SAMPLE* egg;
+
 
         std::string item_names[100];
 
