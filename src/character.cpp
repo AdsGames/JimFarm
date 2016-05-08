@@ -173,24 +173,24 @@ void character::update(){
         }
 
         // Pickup
-        if(( key[KEY_LCONTROL] || joy[0].button[2].b) && tick>10){
-            tick = 0;
-            if( map_pointer -> is_item_at( x, y) == true){
-                inventory_item = map_pointer -> get_item_at( x, y);
-                push_message( "You pick up a " + map_pointer -> get_item_at( x, y) -> name);
-                //map_pointer -> remove_item_at( x, y);
-            }
-        }
+        if(( key[KEY_LCONTROL] || joy[0].button[2].b || key[KEY_RCONTROL]) && tick>20){
+            if(inventory_item -> id==-1){
+              tick = 0;
+              if( map_pointer -> is_item_at( x, y) == true){
+                  inventory_item = map_pointer -> get_item_at( x, y);
+                  push_message( "You pick up a " + map_pointer -> get_item_at( x, y) -> name);
+                  //map_pointer -> remove_item_at( x, y);
+              }
+            }else{
+              tick = 0;
+              inventory_item -> x = x;
+              inventory_item -> y = y;
+              //map_pointer -> place_item( *inventory_item);
+              push_message( "You drop your " + inventory_item -> name);
+              inventory_item = inventory_hand;
+              std::cout << std::endl;
 
-        // Drop
-        if(( key[KEY_RCONTROL] || joy[0].button[1].b) && inventory_item -> id != -1 && tick>10){
-            tick = 0;
-            inventory_item -> x = x;
-            inventory_item -> y = y;
-            //map_pointer -> place_item( *inventory_item);
-            push_message( "You drop your " + inventory_item -> name);
-            inventory_item = inventory_hand;
-            std::cout << std::endl;
+            }
         }
 
         // Action button
