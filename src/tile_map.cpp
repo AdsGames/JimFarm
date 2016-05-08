@@ -445,13 +445,12 @@ void tile_map::update(){
   if(timer>=60){
     timer=0;
     for( unsigned int i = 0; i < map_items.size(); i++){
-        //if( map_items.at(i).id == 6  && get_tile_at(map_items.at(i).x,map_items.at(i).y,FOREGROUND)==59){
         if( map_items.at(i).id == 6  && random(1,10)==2 && get_tile_at(map_items.at(i).x,map_items.at(i).y,BACKGROUND)==59){
             int rand_1 = 16*random(-1,1);
             int rand_2 = 16*random(-1,1);
             if(!is_item_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2) && !is_solid_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2)){
 
-              item newItem( map_items.at(i).x+(16*random(-1,1)), map_items.at(i).y+(16*random(-1,1)), item_images[7], item_images[7], 7, item_names[7]);
+              item newItem( map_items.at(i).x+rand_1, map_items.at(i).y+rand_2, item_images[7], item_images[7], 7, item_names[7]);
               place_item( newItem);
             }
         }
