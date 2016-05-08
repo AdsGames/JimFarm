@@ -42,6 +42,7 @@ class store
 
         SAMPLE* buy;
         SAMPLE* sell;
+        SAMPLE* error;
 
         character *customer_inventory;
 

@@ -27,6 +27,9 @@ void store::load_images(){
     if( !(sell= load_sample("sfx/sell.wav")))
         abort_on_error( "Cannot find file sfx/sell.wav \n Please check your files and try again");
 
+    if( !(error= load_sample("sfx/error.wav")))
+        abort_on_error( "Cannot find file sfx/error.wav \n Please check your files and try again");
+
 }
 void store::draw_background( BITMAP *tempBitmap){
     if( open){
@@ -88,11 +91,18 @@ void store::update(){
         if(( key[KEY_ENTER] ||  joy[0].button[3].b ) && tick>10){
             tick=0;
             if( selector_index < storeItems.size()){
-                if( customer_inventory -> inventory_item -> id == -1 && customer_inventory -> money >= storeItems.at(selector_index) -> value){
-                    customer_inventory -> money -= storeItems.at(selector_index) -> value;
-                    customer_inventory -> give_item( storeItems.at(selector_index) -> id);
-                    storeItems.erase(storeItems.begin() + selector_index);
-                    play_sample(buy,255,125,1000,0);
+                if( customer_inventory -> inventory_item -> id == -1){
+                    if(customer_inventory -> money >= storeItems.at(selector_index) -> value){
+                      customer_inventory -> money -= storeItems.at(selector_index) -> value;
+                      customer_inventory -> give_item( storeItems.at(selector_index) -> id);
+                      storeItems.erase(storeItems.begin() + selector_index);
+                      play_sample(buy,255,125,1000,0);
+                      customer_inventory -> push_message("Purchased item");
+
+                    }else{
+                      play_sample(error,255,125,1000,0);
+                      customer_inventory -> push_message("Can't afford item!");
+                    }
 
                 }
             }
