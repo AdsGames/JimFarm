@@ -131,16 +131,16 @@ void tile_map::generate_map(){
         // Allan, that's who!
         for( int t = 0; t < MAP_HEIGHT; t++){
             if( tempMapForeground[i][t] == 4){
-                if( i > 0 && random( 0, 2) == 0 && get_tile_at(i*16,t*16,FOREGROUND)==0){
+                if( i > 0 && random( 0, 2) == 0 && tempMapForeground[i][t]==0){
                     tempMapForeground[i - 1][t] = 4;
                 }
-                if( i < MAP_WIDTH - 1 && random( 0, 2) == 0 && get_tile_at(i*16,t*16,FOREGROUND)==0){
+                if( i < MAP_WIDTH - 1 && random( 0, 2) == 0 && tempMapForeground[i][t]==0){
                     tempMapForeground[i + 1][t] = 4;
                 }
-                if( t > 0 && random( 0, 2) == 0 && get_tile_at(i*16,t*16,FOREGROUND)==0){
+                if( t > 0 && random( 0, 2) == 0 && tempMapForeground[i][t]==0){
                     tempMapForeground[i][t - 1] = 4;
                 }
-                if( t < MAP_HEIGHT - 1 && random( 0, 2) == 0 && get_tile_at(i*16,t*16,FOREGROUND)==0){
+                if( t < MAP_HEIGHT - 1 && random( 0, 2) == 0 && tempMapForeground[i][t]==0){
                     tempMapForeground[i][t + 1] = 4;
                 }
             }
@@ -151,16 +151,16 @@ void tile_map::generate_map(){
     for( int i = 0; i < MAP_WIDTH; i++){
         for( int t = 0; t < MAP_HEIGHT; t++){
             if( tempMapForeground[i][t] == 5){
-                if( i > 0 && random( 0, 2) == 0){
+                if( i > 0 && random( 0, 2) == 0  && tempMapForeground[i][t]==0){
                     tempMapForeground[i - 1][t] = 5;
                 }
-                if( i < MAP_WIDTH - 1 && random( 0, 2) == 0){
+                if( i < MAP_WIDTH - 1 && random( 0, 2) == 0 && tempMapForeground[i][t]==0){
                     tempMapForeground[i + 1][t] = 5;
                 }
-                if( t > 0 && random( 0, 2) == 0){
+                if( t > 0 && random( 0, 2) == 0 && tempMapForeground[i][t]==0){
                     tempMapForeground[i][t - 1] = 5;
                 }
-                if( t < MAP_HEIGHT - 1 && random( 0, 2) == 0){
+                if( t < MAP_HEIGHT - 1 && random( 0, 2) == 0 && tempMapForeground[i][t]==0){
                     tempMapForeground[i][t + 1] = 5;
                 }
             }
