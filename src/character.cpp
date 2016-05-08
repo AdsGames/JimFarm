@@ -298,40 +298,60 @@ void character::update(){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 4){
                     map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
                     play_sample(cut_scythe,255,125,1000,0);
-                }else if(tick>20){
+                }
+                else if(tick > 20){
                     push_message( "You can't cut there");
                     play_sample(error,255,125,1000,0);
                 }
             }
             // Berry
             else if( inventory_item -> id == 8){
-                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18)
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 30, false);
-                else if(tick > 20)
+                    if( random( 0, 2) == 0){
+                        remove_item();
+                    }
+                }
+                else if(tick > 20){
                     push_message( "You must plant in ploughed soil");
                     play_sample(error,255,125,1000,0);
+                }
             }
             // Tomato
             else if( inventory_item -> id == 10){
-                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18)
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 33, false);
-                else if(tick > 20)
+                    if( random( 0, 2) == 0){
+                        remove_item();
+                    }
+                }
+                else if(tick > 20){
                     push_message( "You must plant in ploughed soil");
                     play_sample(error,255,125,1000,0);
+                }
             }
             // Carrot
             else if( inventory_item -> id == 12){
-                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18)
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 36, false);
-                else if(tick > 20)
+                    if( random( 0, 2) == 0){
+                        remove_item();
+                    }
+                }
+                else if(tick > 20){
                     push_message( "You must plant in ploughed soil");
                     play_sample(error,255,125,1000,0);
+                }
             }
             // Lavender
             else if( inventory_item -> id == 14){
-                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18)
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 39, false);
-                else if(tick>20){
+                    if( random( 0, 2) == 0){
+                        remove_item();
+                    }
+                }
+                else if(tick > 20){
                     push_message( "You must plant in ploughed soil");
                     play_sample(error,255,125,1000,0);
                 }

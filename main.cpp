@@ -14,11 +14,18 @@
 // Images
 BITMAP *buffer;
 BITMAP *jim_image;
+BITMAP *menu_image;
+BITMAP *help_image;
 
 // Music
 FSOUND_STREAM* music;
 
 bool close_button_pressed;
+
+#define MENU 0
+#define GAME 1
+
+int game_state = 0;
 
 tile_map farm_map;
 character jim;
@@ -64,20 +71,25 @@ END_OF_FUNCTION(ticker)
  *   Update logic
  *********************/
 void update(){
-    // Update character
-    farm_map.update();
-    jim.update();
+    if( game_state == MENU){
 
-    // Store update
-    main_store.update();
-
-
-    // Open store
-    if( jim.store_open){
-        main_store.open_store( &jim);
     }
-    else{
-        main_store.close_store();
+    else if( game_state == GAME){
+        // Update character
+        farm_map.update();
+        jim.update();
+
+        // Store update
+        main_store.update();
+
+
+        // Open store
+        if( jim.store_open){
+            main_store.open_store( &jim);
+        }
+        else{
+            main_store.close_store();
+        }
     }
 }
 
@@ -85,29 +97,41 @@ void update(){
  *  Draw to screen
  *********************/
 void draw(){
-    // Draw background
-    rectfill( buffer, 0, 0, 160, 240, makecol( 0, 0, 0));
+    if( game_state == MENU){
+        draw_sprite( buffer, menu_image, 0, 0);
 
-    // Draw map
-    farm_map.draw( buffer);
+        if( key[KEY_H]){
+            draw_sprite( buffer, help_image, 0, 0);
+        }
 
-    // Draw JIM
-    jim.draw( buffer);
+        // Stretch screen
+        stretch_sprite( screen, buffer, 0, 0, SCREEN_W, SCREEN_H);
+    }
+    else if( game_state == GAME){
+        // Draw background
+        rectfill( buffer, 0, 0, 160, 240, makecol( 0, 0, 0));
 
-    // Draw map
-    farm_map.drawForeground( buffer);
+        // Draw map
+        farm_map.draw( buffer);
+
+        // Draw JIM
+        jim.draw( buffer);
+
+        // Draw map
+        farm_map.drawForeground( buffer);
 
 
-    // Allan says this is bad code.
-    // I disagree halfheartedly.
-    main_store.draw_background(buffer);
-    // Draw JIM
-    jim.drawForeground( buffer);
+        // Allan says this is bad code.
+        // I disagree halfheartedly.
+        main_store.draw_background(buffer);
+        // Draw JIM
+        jim.drawForeground( buffer);
 
-    main_store.draw( buffer);
+        main_store.draw( buffer);
 
-    // Stretch screen
-    stretch_sprite( screen, buffer, 0, 0, SCREEN_W, SCREEN_H);
+        // Stretch screen
+        stretch_sprite( screen, buffer, 0, 0, SCREEN_W, SCREEN_H);
+    }
 }
 
 
@@ -149,6 +173,12 @@ void setup(){
     // Check if image exists
     if (!( jim_image = load_bitmap("images/character_1.png", NULL)))
         abort_on_error("Cannot find image images/character_1.png\nPlease check your files and try again");
+
+    if (!( menu_image = load_bitmap("images/title_screen.png", NULL)))
+        abort_on_error("Cannot find image images/title_screen.png\nPlease check your files and try again");
+
+    if (!( help_image = load_bitmap("images/help.png", NULL)))
+        abort_on_error("Cannot find image images/help.png\nPlease check your files and try again");
 
     // Nice Map
     farm_map.load_images();
