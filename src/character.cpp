@@ -378,7 +378,8 @@ void character::update(){
                     map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
                     play_sample(dig,255,125,1000,0);
                 }
-                else if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 0){
+                else if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 0
+                        && map_pointer -> get_tile_at( indicator_x, indicator_y, true) == -1){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 18, false);
                     play_sample(dig,255,125,1000,0);
                 }

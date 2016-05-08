@@ -59,6 +59,7 @@ void tile::run_tick(){
         }
     }
 
+    // Plowed soil
     else if( id == 18){
         if( random( 0, 400) == 0){
             requirements_met = true;
