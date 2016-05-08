@@ -293,7 +293,7 @@ void character::update(){
                     push_message( "Watering can filled");
                 }
 
-                if(water > 0 && tick > 20){
+                else if(water > 0 && tick > 20){
                     water--;
                     push_message("Watered");
 
