@@ -181,8 +181,10 @@ void tile_map::generate_map(){
             // Place items
             if( random( 0, 50) == 0){
                 char temp_item_id = random( 2, 6);
-                item newItem( i * 16, t * 16, item_images[temp_item_id], item_images[temp_item_id], temp_item_id, item_names[temp_item_id]);
-                place_item( newItem);
+                if(!is_solid_at(i*16,t*16)){
+                  item newItem( i * 16, t * 16, item_images[temp_item_id], item_images[temp_item_id], temp_item_id, item_names[temp_item_id]);
+                  place_item( newItem);
+                }
             }
         }
     }
