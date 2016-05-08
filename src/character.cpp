@@ -193,7 +193,8 @@ void character::update(){
 
     // Close store
     if( store_open == true){
-        if( key[KEY_LCONTROL] || joy[0].button[2].b || key[KEY_RCONTROL]){
+        if(key[KEY_SPACE] && tick>30){
+            tick=0;
             store_open = false;
             push_message( "Come again");
         }
@@ -263,7 +264,8 @@ void character::update(){
         }
 
         // Action button
-        if(( key[KEY_SPACE] || joy[0].button[0].b) && tick>10){
+        if(( key[KEY_SPACE] || joy[0].button[0].b) && tick>30){
+            tick=0;
             push_message( "");
 
 
