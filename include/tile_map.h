@@ -54,6 +54,8 @@ class tile_map
 
         BITMAP *item_images[100];
 
+        std::string item_names[100];
+
     protected:
 
     private:
@@ -68,7 +70,7 @@ class tile_map
         SAMPLE* egg;
 
 
-        std::string item_names[100];
+
 
         BITMAP *map_buffer;
 };

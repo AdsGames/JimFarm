@@ -150,13 +150,6 @@ void setup(){
 
     // Store
     main_store.load_images();
-
-    // Give items to store
-    for( int i = 0; i < 8; i ++){
-        int newType = random(0, 6);
-        item *storeItem = new item( 0, 0, farm_map.item_images[newType], farm_map.item_images[newType], newType, "Hoe");
-        main_store.add_item(storeItem);
-    }
 }
 
 

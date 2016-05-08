@@ -391,8 +391,6 @@ void tile_map::load_images(){
         abort_on_error("Cannot find image images/egg.png\nPlease check your files and try again");
     item_names[7] = "egg";
 
-<<<<<<< HEAD
-
     if (!( item_images[8] = load_bitmap("images/crop_1_0.png", NULL)))
         abort_on_error("Cannot find image images/crop_1_0.png\nPlease check your files and try again");
     item_names[8] = "berry seed";
@@ -427,10 +425,10 @@ void tile_map::load_images(){
     if (!( item_images[15] = load_bitmap("images/crop_5_4.png", NULL)))
         abort_on_error("Cannot find image images/crop_5_4.png\nPlease check your files and try again");
     item_names[15] = "lavender";
-=======
+
+
     if( !(egg = load_sample("sfx/egg.wav")))
         abort_on_error( "Cannot find file sfx/egg.wav \n Please check your files and try again");
->>>>>>> origin/master
 
 }
 

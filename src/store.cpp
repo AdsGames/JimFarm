@@ -41,9 +41,22 @@ void store::draw( BITMAP *tempBitmap){
         for( int i = 0; i < storeItems.size(); i++){
             if( storeItems.at(i) -> image[0] != NULL)
                 draw_sprite( tempBitmap, storeItems.at(i) -> image[0], 25 + i * 19, 90);
-                if( selector_index == i)
-                    draw_sprite( tempBitmap, indicator, 25 + i * 19, 90);
+            if( selector_index == i)
+                draw_sprite( tempBitmap, indicator, 25 + i * 19, 90);
         }
+        if( selector_index < storeItems.size())
+            textprintf_ex( tempBitmap, font, 25, 106, makecol(0,0,0), -1, "%s : %i coins",
+                        storeItems.at(selector_index) -> name.c_str(), storeItems.at(selector_index) -> value);
+        else{
+            if( customer_inventory -> inventory_item -> id == -1)
+                textprintf_ex( tempBitmap, font, 25, 106, makecol(0,0,0), -1, "%s : %s",
+                            customer_inventory -> inventory_item -> name.c_str(), "NOT FOR SALE");
+            else
+                textprintf_ex( tempBitmap, font, 25, 106, makecol(0,0,0), -1, "%s : %i coins",
+                            customer_inventory -> inventory_item -> name.c_str(), customer_inventory -> inventory_item -> value);
+
+        }
+
         if( customer_inventory != NULL)
             draw_sprite( tempBitmap, customer_inventory -> inventory_item -> image[0], 185, 90);
 
@@ -96,9 +109,28 @@ void store::update(){
 
 void store::close_store(){
     open = false;
+    storeItems.clear();
+
 }
 
 void store::open_store( character *new_inventory){
     open = true;
     customer_inventory = new_inventory;
+
+    // Give items to store
+    if( storeItems.size() == 0){
+        for( int i = 0; i < 8; i ++){
+            int newType = random(0, 15);
+
+            if( newType == 2){
+                newType = 6;
+            }
+
+
+            item *storeItem = new item( 0, 0, new_inventory -> map_pointer -> item_images[newType],
+                                              new_inventory -> map_pointer -> item_images[newType],
+                                              newType, new_inventory -> map_pointer -> item_names[newType]);
+            add_item(storeItem);
+        }
+    }
 }

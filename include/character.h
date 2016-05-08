@@ -38,6 +38,8 @@ class character
         int money;
 
         bool store_open;
+
+        tile_map *map_pointer;
     protected:
 
     private:
@@ -81,8 +83,6 @@ class character
         bool moving;
 
         int tick;
-
-        tile_map *map_pointer;
 
         std::string player_messages[MAX_MESSAGES];
         bool recent_message;

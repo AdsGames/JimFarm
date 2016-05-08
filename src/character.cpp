@@ -87,6 +87,7 @@ void character::setImage( BITMAP *newImage){
     f3 = extract_font_range(f1, 'A', 'Z');
     f4 = extract_font_range(f1, 'Z'+1, 'z');
     pixelart = merge_fonts(f4, f5 = merge_fonts(f2, f3));
+    font = merge_fonts(f4, f5 = merge_fonts(f2, f3));
 
     // Destroy temporary fonts
     destroy_font(f1);
@@ -297,10 +298,10 @@ void character::update(){
             // Berry
             else if( inventory_item -> id == 8){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18)
-<<<<<<< HEAD
                     map_pointer -> replace_tile( indicator_x, indicator_y, 30, false);
                 else if(tick > 20)
                     push_message( "You must plant in ploughed soil");
+                    play_sample(error,255,125,1000,0);
             }
             // Tomato
             else if( inventory_item -> id == 10){
@@ -308,6 +309,7 @@ void character::update(){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 33, false);
                 else if(tick > 20)
                     push_message( "You must plant in ploughed soil");
+                    play_sample(error,255,125,1000,0);
             }
             // Carrot
             else if( inventory_item -> id == 12){
@@ -315,20 +317,16 @@ void character::update(){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 36, false);
                 else if(tick > 20)
                     push_message( "You must plant in ploughed soil");
+                    play_sample(error,255,125,1000,0);
             }
             // Lavender
             else if( inventory_item -> id == 14){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18)
                     map_pointer -> replace_tile( indicator_x, indicator_y, 39, false);
-                else if(tick>20)
-                    push_message( "You must plant in ploughed soil");
-=======
-                    map_pointer -> replace_tile( indicator_x, indicator_y, 8, false);
                 else if(tick>20){
                     push_message( "You must plant in ploughed soil");
                     play_sample(error,255,125,1000,0);
                 }
->>>>>>> origin/master
             }
             else if( inventory_item -> id == 3){
                 if(map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND) == 7){
@@ -342,11 +340,12 @@ void character::update(){
                     push_message("Watered");
                     play_sample(water_pour,255,125,1000,0);
 
-                    if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 8){
-                        map_pointer -> replace_tile( indicator_x, indicator_y, 9, false);
-                    }
-                    else if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 9){
-                        map_pointer -> replace_tile( indicator_x, indicator_y, 10, false);
+                    // Berries
+                    int wateringID = map_pointer -> get_tile_at( indicator_x, indicator_y, false);
+                    if( wateringID == 30 || wateringID == 31 || wateringID == 33 || wateringID == 34 ||
+                        wateringID == 36 || wateringID == 37 || wateringID == 39 || wateringID == 40){
+
+                        map_pointer -> replace_tile( indicator_x, indicator_y, wateringID + 1, false);
                     }
                 }
                 else if(tick>20){
@@ -369,21 +368,16 @@ void character::update(){
                     map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 11){
 
                     map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
-
                     play_sample(dig,255,125,1000,0);
                 }
-<<<<<<< HEAD
                 else if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 0){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 18, true);
 
                     play_sample(dig,255,125,1000,0);
                 }
-                else if(tick > 10)
-=======
-                else if(tick>20){
->>>>>>> origin/master
+                else if(tick > 20){
                     push_message( "You can't dig that up");
-                    play_sample(error,255,125,1000,0);
+                    play_sample( error,255,125,1000,0);
                 }
             }
             std::cout<<". Tile Back ID: "<<map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND)<<std::endl;
@@ -392,7 +386,6 @@ void character::update(){
             tick = 0;
         }
     }
-
     if( moving){
         // Smooth move
         if( direction == 2){
