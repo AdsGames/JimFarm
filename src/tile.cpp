@@ -14,7 +14,7 @@ tile::tile(int newX, int newY, BITMAP *newImage1, BITMAP *newImage2, char newID)
 
     requirements_met = false;
 
-    if( id == 1 || id == 3 || id == 5 || id == 50 || id == 6 ||id == 50 || id == 51 || id == 52 || id == 53 || id == 55 || id == 56 || id == 57 || id == 58 || id ==60 || id == 61 || id == 99)
+    if( id == 1 || id == 3 || id == 5 || id == 62 || id == 50 || id == 6 ||id == 50 || id == 51 || id == 52 || id == 53 || id == 55 || id == 56 || id == 57 || id == 58 || id ==60 || id == 61 || id == 99)
         solid = true;
     else
         solid = false;

@@ -352,6 +352,9 @@ void tile_map::load_images(){
     if (!( tile_images[61] = load_bitmap("images/barn.png", NULL)))
         abort_on_error("Cannot find image images/barn.png\nPlease check your files and try again");
 
+    if (!( tile_images[62] = load_bitmap("images/goat.png", NULL)))
+        abort_on_error("Cannot find image images/goat.png\nPlease check your files and try again");
+
     if (!( tile_images[99] = load_bitmap("images/inv_wall.png", NULL)))
         abort_on_error("Cannot find image images/inv_wall.png\nPlease check your files and try again");
 
@@ -425,6 +428,7 @@ void tile_map::load_images(){
 
     if (!( item_images[16] = load_bitmap("images/stick.png", NULL)))
         abort_on_error("Cannot find image images/stick.png\nPlease check your files and try again");
+
     item_names[16] = "stick";
 
     if( !(egg = load_sample("sfx/egg.wav")))
@@ -526,7 +530,7 @@ void tile_map::update(){
 
     for( unsigned int i = 0; i < map_items.size(); i++){
         // Chicken eggs
-        if( map_items.at(i).id == 6  && random(1,40) == 2 && get_tile_at(map_items.at(i).x,map_items.at(i).y,BACKGROUND) == 59){
+        if( map_items.at(i).id == 6  && random(0,8) == 1 && get_tile_at(map_items.at(i).x,map_items.at(i).y,BACKGROUND) == 59){
             int rand_1 = 16*random(-1,1);
             int rand_2 = 16*random(-1,1);
             if(!is_item_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2) && !is_solid_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2)){
