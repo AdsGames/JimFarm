@@ -129,6 +129,9 @@ item::item(int newX, int newY, BITMAP *newImage1, BITMAP *newImage2, char newID,
         case 15:
             value = 25;
             break;
+        case 16:
+            value = 1;
+            break;
         default:
             value = 0;
     }

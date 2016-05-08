@@ -182,16 +182,27 @@ void tile_map::generate_map(){
     // Place hoe ( 1)
     place_new_item_at( 17 * 16, 5 * 16, 0);
 
-    item newItem2( 18 * 16, 5 * 16, item_images[3], item_images[3], 3, item_names[3]);
-    place_item( newItem2);
+    //item newItem2( 18 * 16, 5 * 16, item_images[3], item_images[3], 3, item_names[3]);
+   // place_item( newItem2);
 
     // Place chickens (4)
     int placed = 0;
-    while( placed < 4){
+    while( placed < 2){
         int random_x = random( 0, MAP_WIDTH) * 16;
         int random_y = random( 0, MAP_HEIGHT) * 16;
         if(!is_solid_at( random_x, random_y)){
             item newItem( random_x, random_y, item_images[6], item_images[6], 6, item_names[6]);
+            place_item( newItem);
+            placed += 1;
+        }
+    }
+
+    placed = 0;
+    while( placed < 15){
+        int random_x = random( 0, MAP_WIDTH) * 16;
+        int random_y = random( 0, MAP_HEIGHT) * 16;
+        if(!is_solid_at( random_x, random_y)){
+            item newItem( random_x, random_y, item_images[16], item_images[16], 16, item_names[16]);
             place_item( newItem);
             placed += 1;
         }
@@ -421,6 +432,10 @@ void tile_map::load_images(){
     item_names[15] = "lavender";
 
 
+    if (!( item_images[16] = load_bitmap("images/stick.png", NULL)))
+        abort_on_error("Cannot find image images/stick.png\nPlease check your files and try again");
+    item_names[16] = "stick";
+
     if( !(egg = load_sample("sfx/egg.wav")))
         abort_on_error( "Cannot find file sfx/egg.wav \n Please check your files and try again");
 
@@ -515,12 +530,12 @@ item *tile_map::get_item_at( int positionX, int positionY){
 
 void tile_map::update(){
   timer++;
-  if(timer>=60){
+  if(timer>=120){
     timer=0;
 
     for( unsigned int i = 0; i < map_items.size(); i++){
         // Chicken eggs
-        if( map_items.at(i).id == 6  && random(1,10) == 2 && get_tile_at(map_items.at(i).x,map_items.at(i).y,BACKGROUND) == 59){
+        if( map_items.at(i).id == 6  && random(1,40) == 2 && get_tile_at(map_items.at(i).x,map_items.at(i).y,BACKGROUND) == 59){
             int rand_1 = 16*random(-1,1);
             int rand_2 = 16*random(-1,1);
             if(!is_item_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2) && !is_solid_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2)){

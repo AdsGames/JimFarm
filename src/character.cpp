@@ -7,7 +7,7 @@ character::character(){
     for( int i = 0; i < MAX_MESSAGES; i++)
         player_messages[i] = "SWAG";
 
-    money = 10;
+    money = 2;
 
     store_open = false;
 }
