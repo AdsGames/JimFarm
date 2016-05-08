@@ -32,6 +32,8 @@ class store
     protected:
 
     private:
+
+        int tick;
         BITMAP *image;
         BITMAP *indicator;
 
