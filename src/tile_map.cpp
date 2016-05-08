@@ -555,48 +555,48 @@ void tile_map::update(){
                 replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, map_tiles.at(i).id + 1, false);
             }
             // YUM YUM
-            if( map_tiles.at(i).id == 32){
+            else if( map_tiles.at(i).id == 32){
                 place_new_item_at( map_tiles.at(i).x, map_tiles.at(i).y, 9);
                 replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 2, false);
             }
 
             // Tomatoes
-            if( map_tiles.at(i).id == 33 || map_tiles.at(i).id == 34){
+            else if( map_tiles.at(i).id == 33 || map_tiles.at(i).id == 34){
                 replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, map_tiles.at(i).id + 1, false);
             }
             // YUM YUM
-            if( map_tiles.at(i).id == 35){
+            else if( map_tiles.at(i).id == 35){
                 place_new_item_at( map_tiles.at(i).x, map_tiles.at(i).y, 11);
                 replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 2, false);
             }
 
             // Tomatoes
-            if( map_tiles.at(i).id == 36 || map_tiles.at(i).id == 37){
+            else if( map_tiles.at(i).id == 36 || map_tiles.at(i).id == 37){
                 replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, map_tiles.at(i).id + 1, false);
             }
             // YUM YUM
-            if( map_tiles.at(i).id == 38){
+            else if( map_tiles.at(i).id == 38){
                 place_new_item_at( map_tiles.at(i).x, map_tiles.at(i).y, 13);
                 replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 2, false);
             }
 
             // Lavender
-            if( map_tiles.at(i).id == 39 || map_tiles.at(i).id == 40){
+            else if( map_tiles.at(i).id == 39 || map_tiles.at(i).id == 40){
                 replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, map_tiles.at(i).id + 1, false);
             }
             // YUM YUM
-            if( map_tiles.at(i).id == 41){
+            else if( map_tiles.at(i).id == 41){
                 place_new_item_at( map_tiles.at(i).x, map_tiles.at(i).y, 15);
                 replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 2, false);
             }
 
             // Back to dirt
-            if( map_tiles.at(i).id == 18){
+            else if( map_tiles.at(i).id == 18){
                 replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 2, false);
             }
 
             // Back to grass
-            if( map_tiles.at(i).id == 2){
+            else if( map_tiles.at(i).id == 2){
                 replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 0, false);
             }
 

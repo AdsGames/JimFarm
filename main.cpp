@@ -123,7 +123,8 @@ void setup(){
 
     // Music
     music = FSOUND_Stream_Open( "sfx/farmy.mp3", 2, 0, 0);
-    FSOUND_Stream_Play(0,music);
+    FSOUND_Stream_Play( 0, music);
+    FSOUND_SetVolumeAbsolute( 0, 50);
 
      // Setup for FPS system
     LOCK_VARIABLE(ticks);
