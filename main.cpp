@@ -167,8 +167,10 @@ int main(){
 
   set_color_depth(32);
 
+  int w, h;
+  get_desktop_resolution(&w, &h);
 
-  set_gfx_mode(GFX_AUTODETECT_WINDOWED, 960, 640, 0, 0);
+  set_gfx_mode(GFX_AUTODETECT, w,h, 0, 0);
   install_sound(DIGI_AUTODETECT,MIDI_AUTODETECT,".");
 
 

@@ -187,10 +187,10 @@ void tile_map::generate_map(){
 
     // Place chickens (4)
     int placed = 0;
-    while( placed < 2){
+    while( placed < 3){
         int random_x = random( 0, MAP_WIDTH) * 16;
         int random_y = random( 0, MAP_HEIGHT) * 16;
-        if(!is_solid_at( random_x, random_y)){
+        if(get_tile_at(random_x,random_y,FOREGROUND)==4){
             item newItem( random_x, random_y, item_images[6], item_images[6], 6, item_names[6]);
             place_item( newItem);
             placed += 1;
@@ -198,7 +198,7 @@ void tile_map::generate_map(){
     }
 
     placed = 0;
-    while( placed < 15){
+    while( placed < 35){
         int random_x = random( 0, MAP_WIDTH) * 16;
         int random_y = random( 0, MAP_HEIGHT) * 16;
         if(!is_solid_at( random_x, random_y)){
