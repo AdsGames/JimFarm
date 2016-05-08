@@ -72,7 +72,7 @@ void store::update(){
         }
 
 
-        if(( key[KEY_ENTER] ||  joy[0].button[0].b ) && tick>10){
+        if(( key[KEY_ENTER] ||  joy[0].button[3].b ) && tick>10){
             tick=0;
             if( selector_index < storeItems.size()){
                 if( customer_inventory -> inventory_item -> id == -1 && customer_inventory -> money >= storeItems.at(selector_index) -> value){
