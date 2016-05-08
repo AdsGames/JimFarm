@@ -179,19 +179,9 @@ void tile_map::generate_map(){
         }
     }
 
-    // Place items ( 1 of each)
-    for( int i = 0; i < 6; i ++){
-        bool placed = false;
-        while( !placed){
-            int random_x = random( 0, MAP_WIDTH) * 16;
-            int random_y = random( 0, MAP_HEIGHT) * 16;
-            if(!is_solid_at( random_x, random_y)){
-                item newItem( random_x, random_y, item_images[i], item_images[i], i, item_names[i]);
-                place_item( newItem);
-                placed = true;
-            }
-        }
-    }
+    // Place hoe ( 1)
+    item newItem( 17 * 16, 5 * 16, item_images[0], item_images[0], 0, item_names[0]);
+    place_item( newItem);
 
 
     // Place chickens (4)
@@ -239,7 +229,7 @@ void tile_map::load_images(){
         abort_on_error("Cannot find image images/bush.png\nPlease check your files and try again");
 
     if (!( tile_images[7] = load_bitmap("images/well_path.png", NULL)))
-        abort_on_error("Cannot find image images/well_path.png\nPlease check your files and try again");
+        abort_on_error("Cannot find image images/well_path.png\nPlease check your files and try again");
 
     if (!( tile_images[8] = load_bitmap("images/crop_2_1.png", NULL)))
         abort_on_error("Cannot find image images/crop_2_1.png\nPlease check your files and try again");
