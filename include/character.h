@@ -70,6 +70,7 @@ class character
         SAMPLE* cut_scythe;
         SAMPLE* hoe;
         SAMPLE* dig;
+        SAMPLE* error;
 
         int indicator_x, indicator_y;
 

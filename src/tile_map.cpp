@@ -448,7 +448,7 @@ void tile_map::update(){
 
               item newItem( map_items.at(i).x+rand_1, map_items.at(i).y+rand_2, item_images[7], item_images[7], 7, item_names[7]);
               place_item( newItem);
-              play_sample(egg,255,125,1000,0);
+              play_sample(egg,100,125,1000,0);
 
             }
         }

@@ -17,6 +17,13 @@ void store::load_images(){
 
     if (!( indicator = load_bitmap("images/indicator.png", NULL)))
         abort_on_error("Cannot find image images/indicator.png\nPlease check your files and try again");
+
+    if( !(buy= load_sample("sfx/buy.wav")))
+        abort_on_error( "Cannot find file sfx/buy.wav \n Please check your files and try again");
+
+    if( !(sell= load_sample("sfx/sell.wav")))
+        abort_on_error( "Cannot find file sfx/sell.wav \n Please check your files and try again");
+
 }
 
 void store::draw( BITMAP *tempBitmap){
@@ -55,11 +62,15 @@ void store::update(){
                     customer_inventory -> money -= storeItems.at(selector_index) -> value;
                     customer_inventory -> give_item( storeItems.at(selector_index) -> id);
                     storeItems.erase(storeItems.begin() + selector_index);
+                    play_sample(buy,255,125,1000,0);
+
                 }
             }
             else if( selector_index == storeItems.size() && customer_inventory -> inventory_item -> id != -1){
                 customer_inventory -> money += customer_inventory -> inventory_item -> value;
                 customer_inventory -> remove_item();
+                play_sample(sell,255,125,1000,0);
+
             }
             rest( 200);
         }

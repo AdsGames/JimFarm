@@ -35,6 +35,9 @@ class store
         BITMAP *image;
         BITMAP *indicator;
 
+        SAMPLE* buy;
+        SAMPLE* sell;
+
         character *customer_inventory;
 
         int selector_index;
