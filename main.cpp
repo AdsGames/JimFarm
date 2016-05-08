@@ -140,7 +140,7 @@ void setup(){
     farm_map.generate_map();
 
     // Setup jim
-    jim.setPosition( 80, 64);
+    jim.setPosition( 15 * 16, 5 * 16);
     jim.setImage( jim_image);
     jim.setWorld( &farm_map);
 
@@ -150,7 +150,7 @@ void setup(){
     // Give items to store
     for( int i = 0; i < 8; i ++){
         int newType = random(0, 2);
-        item *storeItem = new item( 0, 0, farm_map.item_images[newType], farm_map.item_images[newType], newType, "MEMES");
+        item *storeItem = new item( 0, 0, farm_map.item_images[newType], farm_map.item_images[newType], newType, "Hoe");
         main_store.add_item(storeItem);
     }
 }

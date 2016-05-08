@@ -2,7 +2,7 @@
 
 tile_map::tile_map()
 {
-    x = 0;
+    x = 128;
     y = 0;
 }
 
