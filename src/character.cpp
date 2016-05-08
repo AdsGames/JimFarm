@@ -46,6 +46,18 @@ void character::setImage( BITMAP *newImage){
     if (!( coin = load_bitmap("images/coin.png", NULL)))
         abort_on_error("Cannot find image images/coin.png\nPlease check your files and try again");
 
+    if( !(pickup = load_sample("sfx/pickup.wav")))
+        abort_on_error( "Cannot find file sfx/pickup.wav \n Please check your files and try again");
+
+    if( !(drop = load_sample("sfx/drop.wav")))
+        abort_on_error( "Cannot find file sfx/drop.wav \n Please check your files and try again");
+
+    if( !(step_1 = load_sample("sfx/step_1.wav")))
+        abort_on_error( "Cannot find file sfx/step_1.wav \n Please check your files and try again");
+
+    if( !(step_2 = load_sample("sfx/step_2.wav")))
+        abort_on_error( "Cannot find file sfx/step_2.wav \n Please check your files and try again");
+
     inventory_hand = new item( 0, 0, hand, hand, -1, "hand");
     inventory_item = inventory_hand;
 
@@ -153,35 +165,55 @@ void character::update(){
     if( !moving){
         if(( key[KEY_UP] || joy[0].stick[0].axis[1].d1)){
             direction = 2;
-            if( !map_pointer -> is_solid_at( x, y - 16))
+            if( !map_pointer -> is_solid_at( x, y - 16)){
                 moving = true;
+                sound_step++;
+            }
         }
         else if( (key[KEY_DOWN] || joy[0].stick[0].axis[1].d2)){
             direction = 1;
-            if( !map_pointer -> is_solid_at( x, y + 16))
+            if( !map_pointer -> is_solid_at( x, y + 16)){
                 moving = true;
+                sound_step++;
+            }
         }
         else if(( key[KEY_LEFT] || joy[0].stick[0].axis[0].d1)){
             direction = 4;
-            if( !map_pointer -> is_solid_at( x - 16, y))
+            if( !map_pointer -> is_solid_at( x - 16, y)){
                 moving = true;
+                sound_step++;
+            }
         }
         else if(( key[KEY_RIGHT] || joy[0].stick[0].axis[0].d2)){
             direction = 3;
-            if( !map_pointer -> is_solid_at( x + 16, y))
+            if( !map_pointer -> is_solid_at( x + 16, y)){
                 moving = true;
+                sound_step++;
+            }
         }
+        if(sound_step>=2){
+          play_sample(step_2,255,125,1000,0);
+          sound_step=0;
+        }
+        if(sound_step==1 && moving)
+          play_sample(step_1,255,125,1000,0);
+
 
         // Pickup
         if(( key[KEY_LCONTROL] || joy[0].button[2].b || key[KEY_RCONTROL]) && tick>20){
             if(inventory_item -> id==-1){
               tick = 0;
               if( map_pointer -> is_item_at( x, y) == true){
+
+                  play_sample(pickup,255,125,1000,0);
+
                   inventory_item = map_pointer -> get_item_at( x, y);
                   push_message( "You pick up a " + map_pointer -> get_item_at( x, y) -> name);
                   //map_pointer -> remove_item_at( x, y);
               }
             }else{
+              play_sample(drop,255,125,1000,0);
+
               tick = 0;
               inventory_item -> x = x;
               inventory_item -> y = y;

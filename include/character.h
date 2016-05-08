@@ -45,6 +45,7 @@ class character
         item *inventory_hand;
         int money;
         int water;
+        int sound_step;
 
         BITMAP *image;
         BITMAP *watering_can[5];
@@ -52,6 +53,11 @@ class character
         BITMAP *hand;
         BITMAP *indicator;
         BITMAP *coin;
+
+        SAMPLE* pickup;
+        SAMPLE* drop;
+        SAMPLE* step_1;
+        SAMPLE* step_2;
 
         int indicator_x, indicator_y;
 
