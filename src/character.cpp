@@ -193,7 +193,7 @@ void character::update(){
 
     // Close store
     if( store_open == true){
-        if(key[KEY_SPACE] && tick>30){
+        if((key[KEY_SPACE] || joy[0].button[0].b) && tick>30 ){
             tick=0;
             store_open = false;
             push_message( "Come again");
@@ -434,6 +434,8 @@ void character::remove_item(){
 // Give item
 void character::give_item( char newItem){
     map_pointer -> place_new_item_at( x, y, newItem);
+    inventory_item = map_pointer -> get_item_at( x, y);
+
 }
 
 // World object to point to (needs this!)

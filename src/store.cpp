@@ -88,7 +88,7 @@ void store::update(){
         }
 
 
-        if(( key[KEY_LCONTROL] ||  joy[0].button[1].b || key[KEY_RCONTROL] ) && tick>10){
+        if(( key[KEY_LCONTROL] ||  joy[0].button[2].b || key[KEY_RCONTROL] ) && tick>10){
             tick=0;
             if( selector_index < storeItems.size()){
                 if( customer_inventory -> inventory_item -> id == -1){
@@ -104,9 +104,12 @@ void store::update(){
                       customer_inventory -> push_message("Can't afford item!");
                     }
 
+                }else{
+                  play_sample(error,255,125,1000,0);
+                  customer_inventory -> push_message("Hands full");
                 }
-            }
-            else if( selector_index == storeItems.size() && customer_inventory -> inventory_item -> id != -1){
+
+            }else if( selector_index == storeItems.size() && customer_inventory -> inventory_item -> id != -1){
                 customer_inventory -> money += customer_inventory -> inventory_item -> value;
                 customer_inventory -> remove_item();
                 play_sample(sell,255,125,1000,0);
