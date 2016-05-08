@@ -127,18 +127,20 @@ void tile_map::generate_map(){
 
     // Grow Grass
     for( int i = 0; i < MAP_WIDTH; i++){
+        // Who the frick uses t as an iterator?
+        // Allan, that's who!
         for( int t = 0; t < MAP_HEIGHT; t++){
             if( tempMapForeground[i][t] == 4){
-                if( i > 0 && random( 0, 2) == 0){
+                if( i > 0 && random( 0, 2) == 0 && get_tile_at(i*16,t*16,FOREGROUND)==0){
                     tempMapForeground[i - 1][t] = 4;
                 }
-                if( i < MAP_WIDTH - 1 && random( 0, 2) == 0){
+                if( i < MAP_WIDTH - 1 && random( 0, 2) == 0 && get_tile_at(i*16,t*16,FOREGROUND)==0){
                     tempMapForeground[i + 1][t] = 4;
                 }
-                if( t > 0 && random( 0, 2) == 0){
+                if( t > 0 && random( 0, 2) == 0 && get_tile_at(i*16,t*16,FOREGROUND)==0){
                     tempMapForeground[i][t - 1] = 4;
                 }
-                if( t < MAP_HEIGHT - 1 && random( 0, 2) == 0){
+                if( t < MAP_HEIGHT - 1 && random( 0, 2) == 0 && get_tile_at(i*16,t*16,FOREGROUND)==0){
                     tempMapForeground[i][t + 1] = 4;
                 }
             }
@@ -291,6 +293,9 @@ void tile_map::load_images(){
         abort_on_error("Cannot find image images/barn.png\nPlease check your files and try again");
 
     if (!( tile_images[99] = load_bitmap("images/inv_wall.png", NULL)))
+        abort_on_error("Cannot find image images/inv_wall.png\nPlease check your files and try again");
+
+    if (!( tile_images[98] = load_bitmap("images/inv_wall.png", NULL)))
         abort_on_error("Cannot find image images/inv_wall.png\nPlease check your files and try again");
 
 

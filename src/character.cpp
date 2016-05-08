@@ -115,7 +115,9 @@ void character::drawForeground( BITMAP *tempBuffer){
     masked_blit( image, tempBuffer, floor(gameTick/4) * 16, (direction - 1) * 20, x - map_pointer -> x, y - map_pointer -> y - 8, 16, 8);
 
     // Inventory box
+
     draw_sprite( tempBuffer, inventory_gui, 1, 1);
+
 
     if( inventory_item -> image[0] != NULL){
       // Watering can
@@ -126,7 +128,7 @@ void character::drawForeground( BITMAP *tempBuffer){
     }
 
     //When gcc don't give no damns
-    textprintf_ex( tempBuffer, pixelart, 20, 0, makecol(255,255,255), -1, inventory_item -> name.c_str());
+    textprintf_ex( tempBuffer, pixelart, 20, 000000000000000000000000000000000000000000000000000000, makecol(255,255,255), -1, inventory_item -> name.c_str());
 
     // Money
     draw_sprite( tempBuffer, coin, 190, 10);
