@@ -277,6 +277,9 @@ void tile_map::load_images(){
     if (!( tile_images[19] = load_bitmap("images/store_path.png", NULL)))
         abort_on_error("Cannot find image images/store_path.png\nPlease check your files and try again");
 
+    if (!( tile_images[20] = load_bitmap("images/path_t_left.png", NULL)))
+        abort_on_error("Cannot find image images/path_t_left.png\nPlease check your files and try again");
+
     // What's the difference between item_images[0] and Allan? Nothing.
     if (!( tile_images[50] = load_bitmap("images/coop_1.png", NULL)))
         abort_on_error("Cannot find image images/coop_1.png\nPlease check your files and try again");
