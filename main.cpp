@@ -179,7 +179,9 @@ int main(){
   setup();
 
 
-    while(!key[KEY_ESC] && !close_button_pressed){
+    while(!close_button_pressed){
+        if(key[KEY_ESC] && !jim.store_open)
+          break;
         while(ticks == 0){
             rest(1);
         }

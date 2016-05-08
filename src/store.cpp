@@ -18,8 +18,8 @@ void store::load_images(){
     if (!( image_background = load_bitmap("images/GUI_STORE_BACKGROUND.png", NULL)))
         abort_on_error("Cannot find image images/GUI_STORE_BACKGROUND.png\nPlease check your files and try again");
 
-    if (!( indicator = load_bitmap("images/indicator.png", NULL)))
-        abort_on_error("Cannot find image images/indicator.png\nPlease check your files and try again");
+    if (!( indicator = load_bitmap("images/indicator_store.png", NULL)))
+        abort_on_error("Cannot find image images/indicator_store.png\nPlease check your files and try again");
 
     if( !(buy= load_sample("sfx/buy.wav")))
         abort_on_error( "Cannot find file sfx/buy.wav \n Please check your files and try again");
