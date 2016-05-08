@@ -305,7 +305,7 @@ void tile_map::load_images(){
 
     // Carrot
     if (!( tile_images[36] = load_bitmap("images/crop_4_1.png", NULL)))
-        abort_on_error("Cannot find image images/crop_4_1.png\nPlease check your files and try again");
+        abort_on_error("Cannot find image images/crop_4_1.2png\nPlease check your files and try again");
 
     if (!( tile_images[37] = load_bitmap("images/crop_4_2.png", NULL)))
         abort_on_error("Cannot find image images/crop_4_2.png\nPlease check your files and try again");
@@ -590,8 +590,13 @@ void tile_map::update(){
                 replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 2, false);
             }
 
-            // Back to grass
+            // Back to dirt
             if( map_tiles.at(i).id == 18){
+                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 2, false);
+            }
+
+            // Back to grass
+            if( map_tiles.at(i).id == 2){
                 replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 0, false);
             }
 
