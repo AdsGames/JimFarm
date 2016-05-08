@@ -280,12 +280,33 @@ void character::update(){
                     push_message( "You can't cut that");
 
             }
-            else if( inventory_item -> id == 2){
+            // Berry
+            else if( inventory_item -> id == 8){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18)
-                    map_pointer -> replace_tile( indicator_x, indicator_y, 8, false);
+                    map_pointer -> replace_tile( indicator_x, indicator_y, 30, false);
+                else if(tick > 20)
+                    push_message( "You must plant in ploughed soil");
+            }
+            // Tomato
+            else if( inventory_item -> id == 10){
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18)
+                    map_pointer -> replace_tile( indicator_x, indicator_y, 33, false);
+                else if(tick > 20)
+                    push_message( "You must plant in ploughed soil");
+            }
+            // Carrot
+            else if( inventory_item -> id == 12){
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18)
+                    map_pointer -> replace_tile( indicator_x, indicator_y, 36, false);
+                else if(tick > 20)
+                    push_message( "You must plant in ploughed soil");
+            }
+            // Lavender
+            else if( inventory_item -> id == 14){
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18)
+                    map_pointer -> replace_tile( indicator_x, indicator_y, 39, false);
                 else if(tick>20)
                     push_message( "You must plant in ploughed soil");
-
             }
             else if( inventory_item -> id == 3){
                 if(map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND) == 7){
@@ -319,11 +340,17 @@ void character::update(){
                 //Literally the worst formatted if statement I've seen all week
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 6 ||
                     map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 11){
+
                     map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
 
                     play_sample(dig,255,125,1000,0);
                 }
-                else if(tick>10)
+                else if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 0){
+                    map_pointer -> replace_tile( indicator_x, indicator_y, 18, true);
+
+                    play_sample(dig,255,125,1000,0);
+                }
+                else if(tick > 10)
                     push_message( "You can't dig that up");
             }
             std::cout<<". Tile Back ID: "<<map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND)<<std::endl;

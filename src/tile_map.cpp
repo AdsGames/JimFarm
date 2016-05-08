@@ -180,8 +180,13 @@ void tile_map::generate_map(){
     }
 
     // Place hoe ( 1)
-    item newItem( 17 * 16, 5 * 16, item_images[0], item_images[0], 0, item_names[0]);
-    place_item( newItem);
+    place_new_item_at( 17 * 16, 5 * 16, 0);
+
+    place_new_item_at( 17 * 16, 5 * 16, 8);
+    place_new_item_at( 17 * 16, 5 * 16, 10);
+    place_new_item_at( 17 * 16, 5 * 16, 12);
+    place_new_item_at( 17 * 16, 5 * 16, 14);
+
 
 
     // Place chickens (4)
@@ -270,6 +275,48 @@ void tile_map::load_images(){
     if (!( tile_images[20] = load_bitmap("images/path_t_left.png", NULL)))
         abort_on_error("Cannot find image images/path_t_left.png\nPlease check your files and try again");
 
+
+    // Berry
+    if (!( tile_images[30] = load_bitmap("images/crop_1_1.png", NULL)))
+        abort_on_error("Cannot find image images/crop_1_1.png\nPlease check your files and try again");
+
+    if (!( tile_images[31] = load_bitmap("images/crop_1_2.png", NULL)))
+        abort_on_error("Cannot find image images/crop_1_2.png\nPlease check your files and try again");
+
+    if (!( tile_images[32] = load_bitmap("images/crop_1_3.png", NULL)))
+        abort_on_error("Cannot find image images/crop_1_3.png\nPlease check your files and try again");
+
+    // Tomato
+    if (!( tile_images[33] = load_bitmap("images/crop_2_1.png", NULL)))
+        abort_on_error("Cannot find image images/crop_2_1.png\nPlease check your files and try again");
+
+    if (!( tile_images[34] = load_bitmap("images/crop_2_2.png", NULL)))
+        abort_on_error("Cannot find image images/crop_2_2.png\nPlease check your files and try again");
+
+    if (!( tile_images[35] = load_bitmap("images/crop_2_3.png", NULL)))
+        abort_on_error("Cannot find image images/crop_2_3.png\nPlease check your files and try again");
+
+    // Carrot
+    if (!( tile_images[36] = load_bitmap("images/crop_4_1.png", NULL)))
+        abort_on_error("Cannot find image images/crop_4_1.png\nPlease check your files and try again");
+
+    if (!( tile_images[37] = load_bitmap("images/crop_4_2.png", NULL)))
+        abort_on_error("Cannot find image images/crop_4_2.png\nPlease check your files and try again");
+
+    if (!( tile_images[38] = load_bitmap("images/crop_4_3.png", NULL)))
+        abort_on_error("Cannot find image images/crop_4_3.png\nPlease check your files and try again");
+
+    // Lavender
+    if (!( tile_images[39] = load_bitmap("images/crop_5_1.png", NULL)))
+        abort_on_error("Cannot find image images/crop_3_1.png\nPlease check your files and try again");
+
+    if (!( tile_images[40] = load_bitmap("images/crop_5_2.png", NULL)))
+        abort_on_error("Cannot find image images/crop_5_2.png\nPlease check your files and try again");
+
+    if (!( tile_images[41] = load_bitmap("images/crop_5_3.png", NULL)))
+        abort_on_error("Cannot find image images/crop_5_3.png\nPlease check your files and try again");
+
+
     // What's the difference between item_images[0] and Allan? Nothing.
     if (!( tile_images[50] = load_bitmap("images/coop_1.png", NULL)))
         abort_on_error("Cannot find image images/coop_1.png\nPlease check your files and try again");
@@ -313,7 +360,6 @@ void tile_map::load_images(){
     if (!( tile_images[98] = load_bitmap("images/inv_wall.png", NULL)))
         abort_on_error("Cannot find image images/inv_wall.png\nPlease check your files and try again");
 
-
     // What's the difference between item_images[0] and Allan? Everything!
     if (!( item_images[0] = load_bitmap("images/hoe.png", NULL)))
         abort_on_error("Cannot find image images/hoe.png\nPlease check your files and try again");
@@ -322,10 +368,6 @@ void tile_map::load_images(){
     if (!( item_images[1] = load_bitmap("images/scythe.png", NULL)))
         abort_on_error("Cannot find image images/scythe.png\nPlease check your files and try again");
     item_names[1] = "scythe";
-
-    if (!( item_images[2] = load_bitmap("images/seeds.png", NULL)))
-        abort_on_error("Cannot find image images/seeds.png\nPlease check your files and try again");
-    item_names[2] = "seeds";
 
     if (!( item_images[3] = load_bitmap("images/watering_can.png", NULL)))
         abort_on_error("Cannot find image images/watering_can.png\nPlease check your files and try again");
@@ -347,6 +389,42 @@ void tile_map::load_images(){
         abort_on_error("Cannot find image images/egg.png\nPlease check your files and try again");
     item_names[7] = "egg";
 
+
+    if (!( item_images[8] = load_bitmap("images/crop_1_0.png", NULL)))
+        abort_on_error("Cannot find image images/crop_1_0.png\nPlease check your files and try again");
+    item_names[8] = "berry seed";
+
+    if (!( item_images[9] = load_bitmap("images/crop_1_4.png", NULL)))
+        abort_on_error("Cannot find image images/crop_1_4.png\nPlease check your files and try again");
+    item_names[9] = "berry";
+
+
+    if (!( item_images[10] = load_bitmap("images/crop_2_0.png", NULL)))
+        abort_on_error("Cannot find image images/crop_2_0.png\nPlease check your files and try again");
+    item_names[10] = "tomato seed";
+
+    if (!( item_images[11] = load_bitmap("images/crop_2_4.png", NULL)))
+        abort_on_error("Cannot find image images/crop_2_4.png\nPlease check your files and try again");
+    item_names[11] = "tomato";
+
+
+    if (!( item_images[12] = load_bitmap("images/crop_4_0.png", NULL)))
+        abort_on_error("Cannot find image images/crop_4_0.png\nPlease check your files and try again");
+    item_names[12] = "carrot seed";
+
+    if (!( item_images[13] = load_bitmap("images/crop_4_4.png", NULL)))
+        abort_on_error("Cannot find image images/crop_4_4.png\nPlease check your files and try again");
+    item_names[13] = "carrot";
+
+
+    if (!( item_images[14] = load_bitmap("images/crop_5_0.png", NULL)))
+        abort_on_error("Cannot find image images/crop_5_0.png\nPlease check your files and try again");
+    item_names[14] = "lavender seed";
+
+    if (!( item_images[15] = load_bitmap("images/crop_5_4.png", NULL)))
+        abort_on_error("Cannot find image images/crop_5_4.png\nPlease check your files and try again");
+    item_names[15] = "lavender";
+
 }
 
 // Replace tile on map
@@ -360,6 +438,7 @@ void tile_map::replace_tile( int tileX, int tileY, int newID, bool foreground){
                 else{
                     map_tiles.at(i).id = newID;
                     map_tiles.at(i).image[0] = tile_images[newID];
+                    map_tiles.at(i).requirements_met = false;
                 }
             }
         }
@@ -373,6 +452,7 @@ void tile_map::replace_tile( int tileX, int tileY, int newID, bool foreground){
                 else{
                     map_tiles_foreground.at(i).id = newID;
                     map_tiles_foreground.at(i).image[0] = tile_images[newID];
+                    map_tiles_foreground.at(i).requirements_met = false;
                 }
             }
         }
@@ -433,21 +513,82 @@ item *tile_map::get_item_at( int positionX, int positionY){
     }
     return NULL;
 }
+
 void tile_map::update(){
   timer++;
   if(timer>=60){
     timer=0;
+
     for( unsigned int i = 0; i < map_items.size(); i++){
-        if( map_items.at(i).id == 6  && random(1,10)==2 && get_tile_at(map_items.at(i).x,map_items.at(i).y,BACKGROUND)==59){
+        // Chicken eggs
+        if( map_items.at(i).id == 6  && random(1,10) == 2 && get_tile_at(map_items.at(i).x,map_items.at(i).y,BACKGROUND) == 59){
             int rand_1 = 16*random(-1,1);
             int rand_2 = 16*random(-1,1);
             if(!is_item_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2) && !is_solid_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2)){
-
               item newItem( map_items.at(i).x+rand_1, map_items.at(i).y+rand_2, item_images[7], item_images[7], 7, item_names[7]);
               place_item( newItem);
             }
         }
+    }
 
+    // Run tickers
+    for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
+        map_tiles_foreground.at(i).run_tick();
+    }
+    for( unsigned int i = 0; i < map_tiles.size(); i++){
+        map_tiles.at(i).run_tick();
+    }
+
+
+    for( unsigned int i = 0; i < map_tiles.size(); i++){
+        // Check crops
+        if( map_tiles.at(i).requirements_met == true){
+            // Berries
+            if( map_tiles.at(i).id == 30 || map_tiles.at(i).id == 31){
+                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, map_tiles.at(i).id + 1, false);
+            }
+            // YUM YUM
+            if( map_tiles.at(i).id == 32){
+                place_new_item_at( map_tiles.at(i).x, map_tiles.at(i).y, 9);
+                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 2, false);
+            }
+
+            // Tomatoes
+            if( map_tiles.at(i).id == 33 || map_tiles.at(i).id == 34){
+                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, map_tiles.at(i).id + 1, false);
+            }
+            // YUM YUM
+            if( map_tiles.at(i).id == 35){
+                place_new_item_at( map_tiles.at(i).x, map_tiles.at(i).y, 11);
+                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 2, false);
+            }
+
+            // Tomatoes
+            if( map_tiles.at(i).id == 36 || map_tiles.at(i).id == 37){
+                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, map_tiles.at(i).id + 1, false);
+            }
+            // YUM YUM
+            if( map_tiles.at(i).id == 38){
+                place_new_item_at( map_tiles.at(i).x, map_tiles.at(i).y, 13);
+                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 2, false);
+            }
+
+            // Lavender
+            if( map_tiles.at(i).id == 39 || map_tiles.at(i).id == 40){
+                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, map_tiles.at(i).id + 1, false);
+            }
+            // YUM YUM
+            if( map_tiles.at(i).id == 41){
+                place_new_item_at( map_tiles.at(i).x, map_tiles.at(i).y, 15);
+                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 2, false);
+            }
+
+            // Back to grass
+            if( map_tiles.at(i).id == 18){
+                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 0, false);
+            }
+
+        }
     }
   }
 

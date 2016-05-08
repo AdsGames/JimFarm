@@ -3,6 +3,9 @@
 
 #include <allegro.h>
 #include <string>
+#include <iostream>
+
+#include "tools.h"
 
 class tile
 {
@@ -27,6 +30,9 @@ class tile
         bool operator< (const tile &other) const {
             return y < other.y;
         }
+
+        virtual void run_tick();
+        bool requirements_met;
 
     protected:
 
@@ -56,6 +62,8 @@ class crop : public tile
 
         std::string name;
         char growth_tick;
+
+        virtual void run_tick();
     protected:
 
     private:
