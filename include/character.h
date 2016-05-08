@@ -58,6 +58,8 @@ class character
         SAMPLE* drop;
         SAMPLE* step_1;
         SAMPLE* step_2;
+        SAMPLE* cut_axe;
+        SAMPLE* cut_scythe;
 
         int indicator_x, indicator_y;
 

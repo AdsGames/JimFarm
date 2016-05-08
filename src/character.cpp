@@ -58,6 +58,12 @@ void character::setImage( BITMAP *newImage){
     if( !(step_2 = load_sample("sfx/step_2.wav")))
         abort_on_error( "Cannot find file sfx/step_2.wav \n Please check your files and try again");
 
+    if( !(cut_axe= load_sample("sfx/cut_axe.wav")))
+        abort_on_error( "Cannot find file sfx/cut_axe.wav \n Please check your files and try again");
+
+    if( !(cut_scythe= load_sample("sfx/cut_scythe.wav")))
+        abort_on_error( "Cannot find file sfx/cut_scythe.wav \n Please check your files and try again");
+
     inventory_hand = new item( 0, 0, hand, hand, -1, "hand");
     inventory_item = inventory_hand;
 
@@ -243,9 +249,10 @@ void character::update(){
 
             }
             else if( inventory_item -> id == 1){
-                if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 4)
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 4){
                     map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
-                else
+                    play_sample(cut_scythe,255,125,1000,0);
+                }else
                     push_message( "You can't cut that");
 
             }
@@ -278,9 +285,10 @@ void character::update(){
                 }
             }
             else if( inventory_item -> id == 4){
-                if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 5)
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 5){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 11, true);
-                else
+                    play_sample(cut_axe,255,125,1000,0);
+                }else
                     push_message( "You can't chop that down");
             }
             else if( inventory_item -> id == 5){

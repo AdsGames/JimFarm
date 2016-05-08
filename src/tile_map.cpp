@@ -287,6 +287,13 @@ void tile_map::load_images(){
     if (!( tile_images[60] = load_bitmap("images/store.png", NULL)))
         abort_on_error("Cannot find image images/store.png\nPlease check your files and try again");
 
+    if (!( tile_images[61] = load_bitmap("images/barn.png", NULL)))
+        abort_on_error("Cannot find image images/barn.png\nPlease check your files and try again");
+
+    if (!( tile_images[99] = load_bitmap("images/inv_wall.png", NULL)))
+        abort_on_error("Cannot find image images/inv_wall.png\nPlease check your files and try again");
+
+
     // What's the difference between item_images[0] and Allan? Everything!
     if (!( item_images[0] = load_bitmap("images/hoe.png", NULL)))
         abort_on_error("Cannot find image images/hoe.png\nPlease check your files and try again");
