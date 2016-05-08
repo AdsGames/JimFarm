@@ -49,25 +49,25 @@ item::item(int newX, int newY, BITMAP *newImage1, BITMAP *newImage2, char newID,
             value = 10;
             break;
         case 1:
-            value = 15;
-            break;
-        case 2:
             value = 20;
             break;
+        case 2:
+            value = 1;
+            break;
         case 3:
-            value = 15;
+            value = 20;
             break;
         case 4:
-            value = 15;
+            value = 20;
             break;
         case 5:
-            value = 15;
+            value = 20;
             break;
         case 6:
-            value = 15;
+            value = 30;
             break;
         case 7:
-            value = 15;
+            value = 1;
             break;
         default:
             value = 0;

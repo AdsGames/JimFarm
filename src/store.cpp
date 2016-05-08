@@ -51,7 +51,8 @@ void store::update(){
 
         if( key[KEY_ENTER]){
             if( selector_index < storeItems.size()){
-                if( customer_inventory -> inventory_item -> id == -1){
+                if( customer_inventory -> inventory_item -> id == -1 && customer_inventory -> money >= storeItems.at(selector_index) -> value){
+                    customer_inventory -> money -= storeItems.at(selector_index) -> value;
                     customer_inventory -> give_item( storeItems.at(selector_index) -> id);
                     storeItems.erase(storeItems.begin() + selector_index);
                 }

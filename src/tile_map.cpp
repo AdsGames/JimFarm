@@ -239,7 +239,7 @@ void tile_map::load_images(){
         abort_on_error("Cannot find image images/bush.png\nPlease check your files and try again");
 
     if (!( tile_images[7] = load_bitmap("images/well_path.png", NULL)))
-        abort_on_error("Cannot find image images/well_path.png\nPlease check your files and try again");
+        abort_on_error("Cannot find image images/well_path.png\nPlease check your files and try again");
 
     if (!( tile_images[8] = load_bitmap("images/crop_2_1.png", NULL)))
         abort_on_error("Cannot find image images/crop_2_1.png\nPlease check your files and try again");
