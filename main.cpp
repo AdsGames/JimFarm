@@ -91,6 +91,10 @@ void draw(){
     // Draw map
     farm_map.drawForeground( buffer);
 
+
+    // Allan says this is bad code.
+    // I disagree halfheartedly.
+    main_store.draw_background(buffer);
     // Draw JIM
     jim.drawForeground( buffer);
 

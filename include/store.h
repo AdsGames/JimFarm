@@ -19,6 +19,7 @@ class store
         std::vector<item*> storeItems;
 
         void draw( BITMAP *tempBitmap);
+        void draw_background( BITMAP *tempBitmap);
 
         void open_store( character *new_inventory);
         void close_store();
@@ -35,6 +36,8 @@ class store
 
         int tick;
         BITMAP *image;
+        // Here's to your scummy coding standards
+        BITMAP* image_background;
         BITMAP *indicator;
 
         SAMPLE* buy;

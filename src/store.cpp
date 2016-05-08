@@ -15,6 +15,9 @@ void store::load_images(){
     if (!( image = load_bitmap("images/GUI_STORE.png", NULL)))
         abort_on_error("Cannot find image images/GUI_STORE.png\nPlease check your files and try again");
 
+    if (!( image_background = load_bitmap("images/GUI_STORE_BACKGROUND.png", NULL)))
+        abort_on_error("Cannot find image images/GUI_STORE_BACKGROUND.png\nPlease check your files and try again");
+
     if (!( indicator = load_bitmap("images/indicator.png", NULL)))
         abort_on_error("Cannot find image images/indicator.png\nPlease check your files and try again");
 
@@ -24,6 +27,11 @@ void store::load_images(){
     if( !(sell= load_sample("sfx/sell.wav")))
         abort_on_error( "Cannot find file sfx/sell.wav \n Please check your files and try again");
 
+}
+void store::draw_background( BITMAP *tempBitmap){
+    if( open){
+        draw_sprite( tempBitmap, image_background, 0, 0);
+  }
 }
 
 void store::draw( BITMAP *tempBitmap){
@@ -49,20 +57,18 @@ void store::update(){
     if( open){
         if(( key[KEY_LEFT] || key[KEY_A] || joy[0].stick[0].axis[0].d1)  && tick>10){
             tick=0;
-            if(selector_index>0)
-                selector_index--;
-            else
+            selector_index--;
+            if(selector_index<0)
                 selector_index=storeItems.size();
 
 
 
         }
-        else if(( key[KEY_RIGHT] || key[KEY_D] || joy[0].stick[0].axis[0].d2) && selector_index < storeItems.size() && tick>10){
+        else if(( key[KEY_RIGHT] || key[KEY_D] || joy[0].stick[0].axis[0].d2) && tick>10){
             tick=0;
-            if(selector_index<=storeItems.size())
-                selector_index++;
-            else
-                selector_index=0;
+            selector_index++;
+            if(selector_index > storeItems.size())
+              selector_index=0;
         }
 
 

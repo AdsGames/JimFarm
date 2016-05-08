@@ -146,7 +146,11 @@ void character::drawForeground( BITMAP *tempBuffer){
 
     // Money
     draw_sprite( tempBuffer, coin, 190, 10);
-    textprintf_ex( tempBuffer,pixelart,205,5,makecol(255,255,255),-1,"x %i",money);
+
+    // Allan just died a little inside...
+    if(store_open)textprintf_ex( tempBuffer,pixelart,205,5,makecol(0,0,0),-1,"x %i",money);
+    else textprintf_ex( tempBuffer,pixelart,205,5,makecol(255,255,255),-1,"x %i",money);
+
 
     // Message system
     for( int i = 0; i < MAX_MESSAGES; i++)
