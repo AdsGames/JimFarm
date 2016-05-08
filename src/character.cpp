@@ -264,13 +264,13 @@ void character::update(){
         }
 
         // Action button
-        if(( key[KEY_SPACE] || joy[0].button[0].b) && tick>30){
-            tick=0;
+        if(( key[KEY_SPACE] || joy[0].button[0].b) && tick>10){
+
             push_message( "");
 
 
             // OPEN STORE
-            if( map_pointer -> get_tile_at( x, y, BACKGROUND) == 19){
+            if( map_pointer -> get_tile_at( x, y, BACKGROUND) == 19 && tick>30){
                 push_message( "Welcome to Danners Devices");
                 store_open = true;
             }
