@@ -8,6 +8,8 @@
 #include <string>
 #include <fstream>
 
+#include <algorithm>
+
 #include "tile.h"
 #include "tools.h"
 

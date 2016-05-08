@@ -56,11 +56,9 @@ void store::update(){
                     storeItems.erase(storeItems.begin() + selector_index);
                 }
             }
-            else if( selector_index == storeItems.size()){
-                if( customer_inventory -> inventory_item -> id == 7){
-                    customer_inventory -> money += 10;
-                    customer_inventory -> remove_item();
-                }
+            else if( selector_index == storeItems.size() && customer_inventory -> inventory_item -> id != -1){
+                customer_inventory -> money += customer_inventory -> inventory_item -> value;
+                customer_inventory -> remove_item();
             }
             rest( 200);
         }

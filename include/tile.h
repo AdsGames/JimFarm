@@ -23,6 +23,11 @@ class tile
         // Images
         BITMAP *image[2];
 
+        // Sorting stuff
+        bool operator< (const tile &other) const {
+            return y < other.y;
+        }
+
     protected:
 
     private:
@@ -35,6 +40,8 @@ class item : public tile
         virtual ~item();
 
         std::string name;
+
+        char value;
     protected:
 
     private:

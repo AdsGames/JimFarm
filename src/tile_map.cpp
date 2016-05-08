@@ -206,6 +206,10 @@ void tile_map::generate_map(){
         }
     }
 
+
+    // SORT IT OUT!
+    std::sort( map_tiles_foreground.begin(), map_tiles_foreground.end());
+
     // Create map buffer
     map_buffer = create_bitmap( MAP_WIDTH * 16, MAP_HEIGHT * 16);
 }
