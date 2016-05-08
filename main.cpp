@@ -16,6 +16,7 @@ BITMAP *buffer;
 BITMAP *jim_image;
 BITMAP *menu_image;
 BITMAP *help_image;
+BITMAP *story_image;
 
 // Music
 FSOUND_STREAM* music;
@@ -72,7 +73,9 @@ END_OF_FUNCTION(ticker)
  *********************/
 void update(){
     if( game_state == MENU){
-
+        if( key[KEY_B]){
+            game_state = GAME;
+        }
     }
     else if( game_state == GAME){
         // Update character
@@ -102,6 +105,9 @@ void draw(){
 
         if( key[KEY_H]){
             draw_sprite( buffer, help_image, 0, 0);
+        }
+        else if( key[KEY_S]){
+            draw_sprite( buffer, story_image, 0, 0);
         }
 
         // Stretch screen
@@ -179,6 +185,9 @@ void setup(){
 
     if (!( help_image = load_bitmap("images/help.png", NULL)))
         abort_on_error("Cannot find image images/help.png\nPlease check your files and try again");
+
+    if (!( story_image = load_bitmap("images/story.png", NULL)))
+        abort_on_error("Cannot find image images/story.png\nPlease check your files and try again");
 
     // Nice Map
     farm_map.load_images();

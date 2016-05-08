@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Release">
-				<Option output="build/Template" prefix_auto="1" extension_auto="1" />
+				<Option output="build/Jim Farm" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="build/" />
 				<Option object_output="obj/" />
 				<Option type="1" />
@@ -30,10 +30,19 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="include/character.h" />
+		<Unit filename="include/store.h" />
 		<Unit filename="include/tile.h" />
+		<Unit filename="include/tile_map.h" />
+		<Unit filename="include/tools.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="res/resources.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
 		<Unit filename="src/character.cpp" />
+		<Unit filename="src/store.cpp" />
 		<Unit filename="src/tile.cpp" />
+		<Unit filename="src/tile_map.cpp" />
+		<Unit filename="src/tools.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
