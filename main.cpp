@@ -7,10 +7,16 @@
 #include "tools.h"
 #include "store.h"
 
+#include "fmod/fmod.h"
+#include "fmod/fmod_errors.h"
+
 
 // Images
 BITMAP *buffer;
 BITMAP *jim_image;
+
+// Music
+FSOUND_STREAM* music;
 
 bool close_button_pressed;
 
@@ -115,6 +121,10 @@ void setup(){
 
     srand(time(NULL));
 
+    // Music
+    music = FSOUND_Stream_Open( "sfx/farmy.mp3", 2, 0, 0);
+    FSOUND_Stream_Play(0,music);
+
      // Setup for FPS system
     LOCK_VARIABLE(ticks);
     LOCK_FUNCTION(ticker);
@@ -164,6 +174,7 @@ int main(){
   install_keyboard();
   install_mouse();
   install_joystick(JOY_TYPE_AUTODETECT);
+  FSOUND_Init (44100, 32, 0);
 
   set_color_depth(32);
 
