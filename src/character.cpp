@@ -69,8 +69,14 @@ void character::setImage( BITMAP *newImage){
     if( !(hoe= load_sample("sfx/hoe.wav")))
         abort_on_error( "Cannot find file sfx/hoe.wav \n Please check your files and try again");
 
-    if( !(dig= load_sample("sfx/dig.wav")))
-        abort_on_error( "Cannot find file sfx/dig.wav \n Please check your files and try again");
+    if( !(error= load_sample("sfx/error.wav")))
+        abort_on_error( "Cannot find file sfx/error.wav \n Please check your files and try again");
+
+    if( !(water_fill= load_sample("sfx/water_fill.wav")))
+        abort_on_error( "Cannot find file sfx/water_fill.wav \n Please check your files and try again");
+
+    if( !(water_pour = load_sample("sfx/water_pour.wav")))
+        abort_on_error( "Cannot find file sfx/water_pour.wav \n Please check your files and try again");
 
     inventory_hand = new item( 0, 0, hand, hand, -1, "hand");
     inventory_item = inventory_hand;
@@ -140,7 +146,11 @@ void character::drawForeground( BITMAP *tempBuffer){
 
     // Money
     draw_sprite( tempBuffer, coin, 190, 10);
-    textprintf_ex( tempBuffer,pixelart,205,5,makecol(255,255,255),-1,"x %i",money);
+
+    // Allan just died a little inside...
+    if(store_open)textprintf_ex( tempBuffer,pixelart,205,5,makecol(0,0,0),-1,"x %i",money);
+    else textprintf_ex( tempBuffer,pixelart,205,5,makecol(255,255,255),-1,"x %i",money);
+
 
     // Message system
     for( int i = 0; i < MAX_MESSAGES; i++)
@@ -261,28 +271,33 @@ void character::update(){
             else if( inventory_item -> id == -1 && map_pointer -> get_tile_at(x,y,BACKGROUND) != 7){
                 if( map_pointer -> is_item_at( x, y) == true)
                     push_message( "There is a " + map_pointer -> get_item_at( x, y) -> name + " here");
-                else if(tick>20)
+                else if(tick>20){
                     push_message( "There is nothing of interest here");
+                    play_sample(error,255,125,1000,0);
+                }
             }
             else if( inventory_item -> id == 0){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 2){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 18, false);
                     play_sample(hoe,255,125,1000,0);
-                }else if(tick>20)
+                }else if(tick>20){
                     push_message( "You can't hoe that");
-
+                    play_sample(error,255,125,1000,0);
+                }
             }
             else if( inventory_item -> id == 1){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 4){
                     map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
                     play_sample(cut_scythe,255,125,1000,0);
-                }else if(tick>20)
+                }else if(tick>20){
                     push_message( "You can't cut that");
-
+                    play_sample(error,255,125,1000,0);
+                }
             }
             // Berry
             else if( inventory_item -> id == 8){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18)
+<<<<<<< HEAD
                     map_pointer -> replace_tile( indicator_x, indicator_y, 30, false);
                 else if(tick > 20)
                     push_message( "You must plant in ploughed soil");
@@ -307,16 +322,25 @@ void character::update(){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 39, false);
                 else if(tick>20)
                     push_message( "You must plant in ploughed soil");
+=======
+                    map_pointer -> replace_tile( indicator_x, indicator_y, 8, false);
+                else if(tick>20){
+                    push_message( "You must plant in ploughed soil");
+                    play_sample(error,255,125,1000,0);
+                }
+>>>>>>> origin/master
             }
             else if( inventory_item -> id == 3){
                 if(map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND) == 7){
                     water = 4;
                     push_message( "Watering can filled");
+                    play_sample(water_fill,255,125,1000,0);
                 }
 
                 else if(water > 0 && tick > 20){
                     water--;
                     push_message("Watered");
+                    play_sample(water_pour,255,125,1000,0);
 
                     if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 8){
                         map_pointer -> replace_tile( indicator_x, indicator_y, 9, false);
@@ -327,14 +351,17 @@ void character::update(){
                 }
                 else if(tick>20){
                     push_message("Out of water");
+                    play_sample(error,255,125,1000,0);
                 }
             }
             else if( inventory_item -> id == 4){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 5){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 11, true);
                     play_sample(cut_axe,255,125,1000,0);
-                }else if(tick>20)
+                }else if(tick>20){
                     push_message( "You can't chop that down");
+                    play_sample(error,255,125,1000,0);
+                }
             }
             else if( inventory_item -> id == 5){
                 //Literally the worst formatted if statement I've seen all week
@@ -345,13 +372,19 @@ void character::update(){
 
                     play_sample(dig,255,125,1000,0);
                 }
+<<<<<<< HEAD
                 else if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 0){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 18, true);
 
                     play_sample(dig,255,125,1000,0);
                 }
                 else if(tick > 10)
+=======
+                else if(tick>20){
+>>>>>>> origin/master
                     push_message( "You can't dig that up");
+                    play_sample(error,255,125,1000,0);
+                }
             }
             std::cout<<". Tile Back ID: "<<map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND)<<std::endl;
             std::cout<<". Tile Front ID: "<<map_pointer -> get_tile_at( indicator_x, indicator_y, true)<<std::endl;

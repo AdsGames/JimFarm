@@ -188,6 +188,8 @@ void tile_map::generate_map(){
     place_new_item_at( 17 * 16, 5 * 16, 14);
 
 
+    item newItem2( 18 * 16, 5 * 16, item_images[3], item_images[3], 3, item_names[3]);
+    place_item( newItem2);
 
     // Place chickens (4)
     int placed = 0;
@@ -389,6 +391,7 @@ void tile_map::load_images(){
         abort_on_error("Cannot find image images/egg.png\nPlease check your files and try again");
     item_names[7] = "egg";
 
+<<<<<<< HEAD
 
     if (!( item_images[8] = load_bitmap("images/crop_1_0.png", NULL)))
         abort_on_error("Cannot find image images/crop_1_0.png\nPlease check your files and try again");
@@ -424,6 +427,10 @@ void tile_map::load_images(){
     if (!( item_images[15] = load_bitmap("images/crop_5_4.png", NULL)))
         abort_on_error("Cannot find image images/crop_5_4.png\nPlease check your files and try again");
     item_names[15] = "lavender";
+=======
+    if( !(egg = load_sample("sfx/egg.wav")))
+        abort_on_error( "Cannot find file sfx/egg.wav \n Please check your files and try again");
+>>>>>>> origin/master
 
 }
 
@@ -527,6 +534,8 @@ void tile_map::update(){
             if(!is_item_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2) && !is_solid_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2)){
               item newItem( map_items.at(i).x+rand_1, map_items.at(i).y+rand_2, item_images[7], item_images[7], 7, item_names[7]);
               place_item( newItem);
+              play_sample(egg,100,125,1000,0);
+
             }
         }
     }
