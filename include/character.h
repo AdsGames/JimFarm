@@ -71,6 +71,8 @@ class character
         SAMPLE* hoe;
         SAMPLE* dig;
         SAMPLE* error;
+        SAMPLE* water_fill;
+        SAMPLE* water_pour;
 
         int indicator_x, indicator_y;
 

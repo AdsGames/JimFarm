@@ -72,6 +72,11 @@ void character::setImage( BITMAP *newImage){
     if( !(error= load_sample("sfx/error.wav")))
         abort_on_error( "Cannot find file sfx/error.wav \n Please check your files and try again");
 
+    if( !(water_fill= load_sample("sfx/water_fill.wav")))
+        abort_on_error( "Cannot find file sfx/water_fill.wav \n Please check your files and try again");
+
+    if( !(water_pour = load_sample("sfx/water_pour.wav")))
+        abort_on_error( "Cannot find file sfx/water_pour.wav \n Please check your files and try again");
 
     inventory_hand = new item( 0, 0, hand, hand, -1, "hand");
     inventory_item = inventory_hand;
@@ -297,11 +302,13 @@ void character::update(){
                 if(map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND) == 7){
                     water = 4;
                     push_message( "Watering can filled");
+                    play_sample(water_fill,255,125,1000,0);
                 }
 
                 else if(water > 0 && tick > 20){
                     water--;
                     push_message("Watered");
+                    play_sample(water_pour,255,125,1000,0);
 
                     if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 8){
                         map_pointer -> replace_tile( indicator_x, indicator_y, 9, false);
