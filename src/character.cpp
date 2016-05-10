@@ -238,7 +238,7 @@ void character::update(){
 
 
         // Pickup
-        if(( key[KEY_LCONTROL] || joy[0].button[2].b || key[KEY_RCONTROL]) && tick > 20){
+        if(( key[KEY_LCONTROL] || mouse_b & 1 || joy[0].button[2].b ||  key[KEY_RCONTROL]) && tick > 20){
             if(inventory_item -> id == -1){
               tick = 0;
               if( map_pointer -> is_item_at( x, y) == true){
