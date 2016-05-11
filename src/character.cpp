@@ -135,33 +135,33 @@ void character::drawForeground( BITMAP *tempBuffer){
     masked_blit( image, tempBuffer, floor(gameTick/4) * 16, (direction - 1) * 20, x - map_pointer -> x, y - map_pointer -> y - 8, 16, 8);
 
     // Inventory box
+    if(draw_hud){
+      draw_sprite( tempBuffer, inventory_gui, 1, 1);
 
-    draw_sprite( tempBuffer, inventory_gui, 1, 1);
+
+      if( inventory_item -> image[0] != NULL){
+        // Watering can
+          if( inventory_item -> id == 3)
+            draw_sprite( tempBuffer,watering_can[water],2,2);
+          else
+            draw_sprite( tempBuffer, inventory_item -> image[0], 2, 2);
+      }
+
+      //When gcc don't give no damns
+      textprintf_ex( tempBuffer, pixelart, 20, 000000000000000000000000000000000000000000000000000000, makecol(255,255,255), -1, inventory_item -> name.c_str());
+
+      // Money
+      draw_sprite( tempBuffer, coin, 190, 10);
+
+      // Allan just died a little inside...
+      if(store_open)textprintf_ex( tempBuffer,pixelart,205,5,makecol(0,0,0),-1,"x %i",money);
+      else textprintf_ex( tempBuffer,pixelart,205,5,makecol(255,255,255),-1,"x %i",money);
 
 
-    if( inventory_item -> image[0] != NULL){
-      // Watering can
-        if( inventory_item -> id == 3)
-          draw_sprite( tempBuffer,watering_can[water],2,2);
-        else
-          draw_sprite( tempBuffer, inventory_item -> image[0], 2, 2);
+      // Message system
+      for( int i = 0; i < MAX_MESSAGES; i++)
+          textprintf_ex( tempBuffer,pixelart, 5, i * 10 + 145, makecol(255,255,255),-1,"> %s", (player_messages[i]).c_str());
     }
-
-    //When gcc don't give no damns
-    textprintf_ex( tempBuffer, pixelart, 20, 000000000000000000000000000000000000000000000000000000, makecol(255,255,255), -1, inventory_item -> name.c_str());
-
-    // Money
-    draw_sprite( tempBuffer, coin, 190, 10);
-
-    // Allan just died a little inside...
-    if(store_open)textprintf_ex( tempBuffer,pixelart,205,5,makecol(0,0,0),-1,"x %i",money);
-    else textprintf_ex( tempBuffer,pixelart,205,5,makecol(255,255,255),-1,"x %i",money);
-
-
-    // Message system
-    for( int i = 0; i < MAX_MESSAGES; i++)
-        textprintf_ex( tempBuffer,pixelart, 5, i * 10 + 145, makecol(255,255,255),-1,"> %s", (player_messages[i]).c_str());
-
 
 }
 
@@ -177,7 +177,7 @@ void character::push_message( std::string new_message){
 // Update player
 void character::update(){
     // Ticker
-    tick += 2;
+    tick ++;
 
     // Ask joystick for keys
     poll_joystick();
@@ -195,11 +195,15 @@ void character::update(){
 
     // Close store
     if( store_open == true){
-        if((key[KEY_SPACE] || joy[0].button[0].b) && tick>30 ){
+        if((key[KEY_SPACE] || joy[0].button[0].b) && tick>10 ){
             tick=0;
             store_open = false;
             push_message( "Come again");
         }
+    }
+    if(key[KEY_F1] && tick > 10){
+      draw_hud=!draw_hud;
+      tick=0;
     }
     // Move
     else if( !moving){
@@ -240,7 +244,7 @@ void character::update(){
 
 
         // Pickup
-        if(( key[KEY_LCONTROL] || mouse_b & 1 || joy[0].button[2].b ||  key[KEY_RCONTROL]) && tick > 20){
+        if(( key[KEY_LCONTROL] || mouse_b & 1 || joy[0].button[2].b ||  key[KEY_RCONTROL]) && tick > 10){
             if(inventory_item -> id == -1){
               tick = 0;
               if( map_pointer -> is_item_at( x, y) == true){
@@ -266,7 +270,7 @@ void character::update(){
         }
 
         // Action button
-        if(( key[KEY_SPACE] || joy[0].button[0].b) && tick>10){
+        if(( key[KEY_SPACE] || joy[0].button[0].b) && tick>5){
 
             push_message( "");
 
