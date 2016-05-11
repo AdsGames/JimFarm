@@ -24,7 +24,7 @@ class store
         void open_store( character *new_inventory);
         void close_store();
 
-        void load_images();
+        void load_data();
 
         void add_item( item *storeItem){ storeItems.push_back( storeItem);}
 

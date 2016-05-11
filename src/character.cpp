@@ -17,9 +17,11 @@ character::~character(){
 }
 
 // Set image
-void character::setImage( BITMAP *newImage){
+void character::load_data(){
 
-    image = newImage;
+     // Check if image exists
+    if (!( image = load_bitmap("images/character_1.png", NULL)))
+        abort_on_error("Cannot find image images/character_1.png\nPlease check your files and try again");
 
     if (!( watering_can[0] = load_bitmap("images/watering_can_0.png", NULL)))
         abort_on_error("Cannot find image images/watering_can_0.png\nPlease check your files and try again");

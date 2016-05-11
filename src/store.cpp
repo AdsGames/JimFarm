@@ -11,7 +11,7 @@ store::~store()
     //dtor
 }
 
-void store::load_images(){
+void store::load_data(){
     if (!( image = load_bitmap("images/GUI_STORE.png", NULL)))
         abort_on_error("Cannot find image images/GUI_STORE.png\nPlease check your files and try again");
 

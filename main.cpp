@@ -178,10 +178,6 @@ void setup(){
     LOCK_FUNCTION(close_button_handler);
     set_close_button_callback(close_button_handler);
 
-    // Check if image exists
-    if (!( jim_image = load_bitmap("images/character_1.png", NULL)))
-        abort_on_error("Cannot find image images/character_1.png\nPlease check your files and try again");
-
     if (!( menu_image = load_bitmap("images/title_screen.png", NULL)))
         abort_on_error("Cannot find image images/title_screen.png\nPlease check your files and try again");
 
@@ -198,13 +194,11 @@ void setup(){
     // Setup jim
     jim.setPosition( 15 * 16, 5 * 16);
 
-    // One could call this... the jimage
-    // Sorry
-    jim.setImage( jim_image);
+    jim.load_data();
     jim.setWorld( &farm_map);
 
     // Store
-    main_store.load_images();
+    main_store.load_data();
 }
 
 

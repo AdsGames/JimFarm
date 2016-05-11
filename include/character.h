@@ -18,7 +18,7 @@ class character
         virtual ~character();
 
         void setPosition( int newX, int newY){ x = newX; y = newY;}
-        void setImage( BITMAP *newImage);
+        void load_data();
 
         void draw( BITMAP *tempBuffer);
         void drawForeground( BITMAP *tempBuffer);
