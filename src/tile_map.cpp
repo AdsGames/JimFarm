@@ -524,13 +524,14 @@ item *tile_map::get_item_at( int positionX, int positionY){
 }
 
 void tile_map::update(){
+
   timer++;
   if(timer>=120){
     timer=0;
 
     for( unsigned int i = 0; i < map_items.size(); i++){
         // Chicken eggs
-        if( map_items.at(i).id == 6  && random(0,8) == 1 && get_tile_at(map_items.at(i).x,map_items.at(i).y,BACKGROUND) == 59){
+        if( map_items.at(i).id == 6  && random(0,16) == 1 && get_tile_at(map_items.at(i).x,map_items.at(i).y,BACKGROUND) == 59){
             int rand_1 = 16*random(-1,1);
             int rand_2 = 16*random(-1,1);
             if(!is_item_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2) && !is_solid_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2)){

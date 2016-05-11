@@ -126,12 +126,17 @@ void store::close_store(){
 
 }
 
+
 void store::open_store( character *new_inventory){
     open = true;
     customer_inventory = new_inventory;
 
+
     // Give items to store
     if( storeItems.size() == 0){
+
+        selector_index=8;
+
         for( int i = 0; i < 8; i ++){
             int newType = random(0, 15);
 

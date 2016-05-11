@@ -129,6 +129,7 @@ void draw(){
 
         // Allan says this is bad code.
         // I disagree halfheartedly.
+
         main_store.draw_background(buffer);
         // Draw JIM
         jim.drawForeground( buffer);
@@ -195,6 +196,9 @@ void setup(){
 
     // Setup jim
     jim.setPosition( 15 * 16, 5 * 16);
+
+    // One could call this... the jimage
+    // Sorry
     jim.setImage( jim_image);
     jim.setWorld( &farm_map);
 

@@ -5,7 +5,7 @@ character::character(){
     direction = 1;
 
     for( int i = 0; i < MAX_MESSAGES; i++)
-        player_messages[i] = "SWAG";
+        player_messages[i] = "";
 
     money = 2;
 
@@ -270,7 +270,7 @@ void character::update(){
 
 
             // OPEN STORE
-            if( map_pointer -> get_tile_at( x, y, BACKGROUND) == 19 && tick>30){
+            if( map_pointer -> get_tile_at( x, y, BACKGROUND) == 19 ){
                 push_message( "Welcome to Danners Devices");
                 store_open = true;
             }
@@ -402,7 +402,7 @@ void character::update(){
                 }
                 else if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 0
                         && map_pointer -> get_tile_at( indicator_x, indicator_y, true) == -1){
-                    map_pointer -> replace_tile( indicator_x, indicator_y, 18, false);
+                    map_pointer -> replace_tile( indicator_x, indicator_y, 2,false);
                     play_sample(dig,255,125,1000,0);
                 }
                 else if(tick > 20){
