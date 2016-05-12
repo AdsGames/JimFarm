@@ -87,7 +87,7 @@ void character::load_data(){
     inventory_item = inventory_hand;
 
     // Load fonts
-    f1 = load_font("fonts/pixelart2.pcx", NULL, NULL);
+    f1 = load_font("fonts/pixelart_condensed.pcx", NULL, NULL);
     f2 = extract_font_range(f1, ' ', 'A'-1);
     f3 = extract_font_range(f1, 'A', 'Z');
     f4 = extract_font_range(f1, 'Z'+1, 'z');
