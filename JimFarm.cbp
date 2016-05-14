@@ -33,15 +33,19 @@
 		<Unit filename="include/store.h" />
 		<Unit filename="include/tile.h" />
 		<Unit filename="include/tile_map.h" />
+		<Unit filename="include/tile_type.h" />
+		<Unit filename="include/tile_type_manager.h" />
 		<Unit filename="include/tools.h" />
-		<Unit filename="main.cpp" />
 		<Unit filename="res/resources.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
 		<Unit filename="src/character.cpp" />
+		<Unit filename="src/main.cpp" />
 		<Unit filename="src/store.cpp" />
 		<Unit filename="src/tile.cpp" />
 		<Unit filename="src/tile_map.cpp" />
+		<Unit filename="src/tile_type.cpp" />
+		<Unit filename="src/tile_type_manager.cpp" />
 		<Unit filename="src/tools.cpp" />
 		<Extensions>
 			<code_completion />
