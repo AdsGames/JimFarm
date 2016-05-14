@@ -220,8 +220,8 @@ int main(){
   int w, h;
   get_desktop_resolution(&w, &h);
 
-  set_gfx_mode(GFX_AUTODETECT, w,h, 0, 0);
-
+  //set_gfx_mode(GFX_AUTODETECT, w,h, 0, 0);
+  set_gfx_mode(GFX_AUTODETECT_WINDOWED, 1280,960, 0, 0);
 
   //set_gfx_mode(GFX_AUTODETECT_WINDOWED, 240,160, 0, 0);
   install_sound(DIGI_AUTODETECT,MIDI_AUTODETECT,".");

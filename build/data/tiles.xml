@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tiles>
+	<!--Air-->
+	<tile id="0">
+		<name>Air</name>
+		<images>
+			<image>NULL</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Air-->
+	<tile id="1">
+		<name>Air</name>
+		<images>
+			<image>NULL</image>
+			<image2>NULL</image2>
+		</images>
+		<model>MODEL_NONE</model>
+		<attrubite>ATTRIBUTE_GAS</attrubite>
+		<random>0</random>
+	</tile>
+</tiles>

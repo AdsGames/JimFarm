@@ -4,6 +4,8 @@ tile_map::tile_map()
 {
     x = 128;
     y = 0;
+
+    tile_dictionary.load("data/tiles.xml");
 }
 
 tile_map::~tile_map()
@@ -13,6 +15,9 @@ tile_map::~tile_map()
 
 // Manually load new file
 void tile_map::load_map( std::string fileName){
+    // Loading
+    std::cout << "   MAPS\n-------------\n";
+
     //Change size
     std::string fileLoad = fileName + ".txt";
     std::ifstream findSize(fileLoad.c_str());
