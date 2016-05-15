@@ -276,9 +276,10 @@ void character::update(){
 
 
             // OPEN STORE
-            if( map_pointer -> get_tile_at( x, y, BACKGROUND) == 19 ){
+            if( map_pointer -> get_tile_at( x, y, BACKGROUND) == 19 && tick > 10){
                 push_message( "Welcome to Danners Devices");
                 store_open = true;
+                tick=0;
             }
             // Hand
             else if( inventory_item -> id == -1 && map_pointer -> get_tile_at(x,y,BACKGROUND) != 7){

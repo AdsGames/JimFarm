@@ -6,6 +6,7 @@
 #include "tile_map.h"
 #include "tools.h"
 #include "store.h"
+#include "menu.h"
 
 #include "fmod/fmod.h"
 #include "fmod/fmod_errors.h"
@@ -30,6 +31,7 @@ int game_state = 0;
 
 tile_map farm_map;
 character jim;
+menu game_menu;
 
 store main_store;
 
@@ -102,14 +104,7 @@ void update(){
  *********************/
 void draw(){
     if( game_state == MENU){
-        draw_sprite( buffer, menu_image, 0, 0);
-
-        if( key[KEY_H]){
-            draw_sprite( buffer, help_image, 0, 0);
-        }
-        else if( key[KEY_S]){
-            draw_sprite( buffer, story_image, 0, 0);
-        }
+        game_menu.draw(buffer);
 
         // Stretch screen
         stretch_sprite( screen, buffer, 0, 0, SCREEN_W, SCREEN_H);
@@ -156,7 +151,7 @@ void setup(){
     // Music
     music = FSOUND_Stream_Open( "sfx/farmy.mp3", 2, 0, 0);
     FSOUND_Stream_Play( 0, music);
-    FSOUND_SetVolumeAbsolute( 0, 50);
+    FSOUND_SetVolumeAbsolute( 0, 0);
 
      // Setup for FPS system
     LOCK_VARIABLE(ticks);
@@ -178,18 +173,12 @@ void setup(){
     LOCK_FUNCTION(close_button_handler);
     set_close_button_callback(close_button_handler);
 
-    if (!( menu_image = load_bitmap("images/title_screen.png", NULL)))
-        abort_on_error("Cannot find image images/title_screen.png\nPlease check your files and try again");
-
-    if (!( help_image = load_bitmap("images/help.png", NULL)))
-        abort_on_error("Cannot find image images/help.png\nPlease check your files and try again");
-
-    if (!( story_image = load_bitmap("images/story.png", NULL)))
-        abort_on_error("Cannot find image images/story.png\nPlease check your files and try again");
-
     // Nice Map
     farm_map.load_images();
     farm_map.generate_map();
+
+    // Main menu loading
+    game_menu.load_data();
 
     // Setup jim
     jim.setPosition( 15 * 16, 5 * 16);

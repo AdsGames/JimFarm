@@ -2,6 +2,10 @@
 #define TOOLS_H
 #define BACKGROUND false
 #define FOREGROUND true
+#define MAIN_MENU 0
+#define HELP 1
+#define OPTIONS 2
+#define STORY 3
 
 #include <allegro.h>
 #include<time.h>
