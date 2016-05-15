@@ -15,9 +15,6 @@
 // Images
 BITMAP *buffer;
 BITMAP *jim_image;
-BITMAP *menu_image;
-BITMAP *help_image;
-BITMAP *story_image;
 
 // Music
 FSOUND_STREAM* music;
@@ -75,8 +72,10 @@ END_OF_FUNCTION(ticker)
  *********************/
 void update(){
     if( game_state == MENU){
-        if( key[KEY_B]){
-            game_state = GAME;
+        if(game_menu.update()){
+          game_state=GAME;
+          // HAXX
+          // halp plz how do i coed?
         }
     }
     else if( game_state == GAME){

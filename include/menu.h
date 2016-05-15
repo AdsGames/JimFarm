@@ -18,17 +18,21 @@ class menu
 
         void load_data();
 
-        void update();
+        bool update();
 
     protected:
 
     private:
 
         int tick;
+        int coin_frame;
+        bool coin_direction;
+        int indicator_location=3;
 
         BITMAP *menu_image;
         BITMAP *story_image;
         BITMAP *help_image;
+        BITMAP *coin_flip;
 
         int state;
 
