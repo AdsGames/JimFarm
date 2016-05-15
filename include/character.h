@@ -57,7 +57,7 @@ class character
         int water;
         int sound_step;
 
-        bool draw_hud=true;
+        bool draw_hud;
 
         BITMAP *image;
         BITMAP *watering_can[5];

@@ -49,3 +49,7 @@ Temporary Items
 *.o
 *.res
 *.exe
+*.o
+*.res
+*.layout
+*.layout

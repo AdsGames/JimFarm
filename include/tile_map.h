@@ -12,6 +12,7 @@
 
 #include "tile.h"
 #include "tools.h"
+#include "tile_type_manager.h"
 
 class tile_map
 {
@@ -55,6 +56,8 @@ class tile_map
         BITMAP *item_images[100];
 
         std::string item_names[100];
+
+        tile_type_manager tile_dictionary;
 
     protected:
 

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tiles>
+	<!--Grass-->
+	<tile id="0">
+		<name>Grass</name>
+		<images>
+			<image>images/grass.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Water-->
+	<tile id="1">
+		<name>Grass</name>
+		<images>
+			<image>images/water.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Soil-->
+	<tile id="2">
+		<name>Soil</name>
+		<images>
+			<image>images/soil.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Well-->
+	<tile id="3">
+		<name>Well</name>
+		<images>
+			<image>images/well.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Dense Grass-->
+	<tile id="4">
+		<name>Dense Grass</name>
+		<images>
+			<image>images/dense_grass.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--DTree-->
+	<tile id="5">
+		<name>Tree</name>
+		<images>
+			<image>images/tree.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+</tiles>

@@ -41,7 +41,7 @@ void store::draw( BITMAP *tempBitmap){
     if( open){
         draw_sprite( tempBitmap, image, 0, 0);
 
-        for( int i = 0; i < storeItems.size(); i++){
+        for( unsigned int i = 0; i < storeItems.size(); i++){
             if( storeItems.at(i) -> image[0] != NULL)
                 draw_sprite( tempBitmap, storeItems.at(i) -> image[0], 25 + i * 19, 90);
             if( selector_index == i)

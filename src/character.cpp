@@ -3,6 +3,7 @@
 character::character(){
     moving = false;
     direction = 1;
+    draw_hud = true;
 
     for( int i = 0; i < MAX_MESSAGES; i++)
         player_messages[i] = "";
