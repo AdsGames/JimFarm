@@ -194,6 +194,10 @@ void character::update(){
     inventory_item -> x = x;
     inventory_item -> y = y;
 
+    if(key[KEY_F1] && tick > 10){
+      draw_hud=!draw_hud;
+      tick=0;
+    }
     // Close store
     if( store_open == true){
         if((key[KEY_SPACE] || joy[0].button[0].b) && tick>10 ){
@@ -202,10 +206,7 @@ void character::update(){
             push_message( "Come again");
         }
     }
-    if(key[KEY_F1] && tick > 10){
-      draw_hud=!draw_hud;
-      tick=0;
-    }
+
     // Move
     else if( !moving){
         if(( key[KEY_UP] || joy[0].stick[0].axis[1].d1)){

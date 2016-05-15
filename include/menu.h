@@ -32,7 +32,10 @@ class menu
         BITMAP *menu_image;
         BITMAP *story_image;
         BITMAP *help_image;
+        BITMAP *options_image;
         BITMAP *coin_flip;
+
+        SAMPLE *blip;
 
         int state;
 
