@@ -29,9 +29,17 @@ void menu::load_data(){
 
 
 void menu::draw( BITMAP *tempBitmap){
+
+    draw_sprite( tempBitmap, menu_image, 0, 0);
+
     if(state==MAIN_MENU){
-        draw_sprite( tempBitmap, menu_image, 0, 0);
         masked_blit( coin_flip, tempBitmap,9*(coin_frame/5),0,187,147-(indicator_location*11),9,9);
+    }
+    if(state==HELP){
+      draw_sprite(tempBitmap,help_image,0,0);
+    }
+    if(state==STORY){
+      draw_sprite(tempBitmap,story_image,0,0);
     }
 
 }
@@ -40,8 +48,9 @@ int menu::update(){
 
 
     tick++;
-    if(state==MAIN_MENU)
+    if(state==MAIN_MENU){
       if((key[KEY_SPACE] || key[KEY_LCONTROL]) && tick>10){
+        tick=0;
         if(indicator_location==4)
           return 2;
         if(indicator_location==3)
@@ -82,8 +91,10 @@ int menu::update(){
         coin_frame=5;
         coin_direction=false;
       }
-
-    if(state==OPTIONS){
+    }
+    if((state==HELP || state==STORY) &&(key[KEY_SPACE] || key[KEY_LCONTROL] || key[KEY_UP] || key[KEY_DOWN] || key[KEY_LEFT] || key[KEY_RIGHT])&& tick>10){
+      tick=0;
+      state=MAIN_MENU;
 
     }
 
