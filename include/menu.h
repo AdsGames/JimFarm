@@ -18,7 +18,7 @@ class menu
 
         void load_data();
 
-        bool update();
+        int update();
 
     protected:
 
@@ -27,7 +27,7 @@ class menu
         int tick;
         int coin_frame;
         bool coin_direction;
-        int indicator_location=3;
+        int indicator_location=4;
 
         BITMAP *menu_image;
         BITMAP *story_image;

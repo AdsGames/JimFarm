@@ -72,10 +72,14 @@ END_OF_FUNCTION(ticker)
  *********************/
 void update(){
     if( game_state == MENU){
-        if(game_menu.update()){
+        // HAXX
+        // halp plz how do i coed?
+        int menu_result = game_menu.update();
+        if(menu_result==2){
           game_state=GAME;
-          // HAXX
-          // halp plz how do i coed?
+        }
+        if(menu_result==0){
+          close_button_pressed=true;
         }
     }
     else if( game_state == GAME){
