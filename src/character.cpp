@@ -208,7 +208,7 @@ void character::update(){
     }
 
     // Move
-    else if( !moving){
+    if( !moving && !store_open){
         if(( key[KEY_UP] || joy[0].stick[0].axis[1].d1)){
             direction = 2;
             if( !map_pointer -> is_solid_at( x, y - 16)){
@@ -308,7 +308,7 @@ void character::update(){
                     map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
                     play_sample(cut_scythe,255,125,1000,0);
                 }
-                else if(tick > 20){
+                else if(tick > 10){
                     push_message( "You can't cut there");
                     play_sample(error,255,125,1000,0);
                 }
@@ -321,7 +321,7 @@ void character::update(){
                         remove_item();
                     }
                 }
-                else if(tick > 20){
+                else if(tick > 10){
                     push_message( "You must plant in ploughed soil");
                     play_sample(error,255,125,1000,0);
                 }
@@ -334,7 +334,7 @@ void character::update(){
                         remove_item();
                     }
                 }
-                else if(tick > 20){
+                else if(tick > 10){
                     push_message( "You must plant in ploughed soil");
                     play_sample(error,255,125,1000,0);
                 }
@@ -347,7 +347,7 @@ void character::update(){
                         remove_item();
                     }
                 }
-                else if(tick > 20){
+                else if(tick > 10){
                     push_message( "You must plant in ploughed soil");
                     play_sample(error,255,125,1000,0);
                 }
@@ -360,7 +360,7 @@ void character::update(){
                         remove_item();
                     }
                 }
-                else if(tick > 20){
+                else if(tick > 10){
                     push_message( "You must plant in ploughed soil");
                     play_sample(error,255,125,1000,0);
                 }
@@ -373,7 +373,7 @@ void character::update(){
                     play_sample(water_fill,255,125,1000,0);
                 }
 
-                else if(water > 0 && tick > 20){
+                else if(water > 0 && tick > 10){
                     water--;
                     push_message("Watered");
                     play_sample(water_pour,255,125,1000,0);
@@ -386,7 +386,7 @@ void character::update(){
                         map_pointer -> replace_tile( indicator_x, indicator_y, wateringID + 1, false);
                     }
                 }
-                else if(tick>20){
+                else if(tick>10){
                     push_message("Out of water");
                     play_sample(error,255,125,1000,0);
                 }
@@ -414,7 +414,7 @@ void character::update(){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 2,false);
                     play_sample(dig,255,125,1000,0);
                 }
-                else if(tick > 20){
+                else if(tick > 10){
                     push_message( "You can't dig that up");
                     play_sample( error, 255, 125, 1000, 0);
                 }

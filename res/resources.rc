@@ -15,7 +15,7 @@ FILETYPE VFT_APP
 		{
 			VALUE "CompanyName", "ADS Games"
 			VALUE "FileDescription", "A casual retro farming game."
-			VALUE "ProductVersion", "1.0.4"
+			VALUE "ProductVersion", "1.0.5"
 		}
 	}
   BLOCK "VarFileInfo"
