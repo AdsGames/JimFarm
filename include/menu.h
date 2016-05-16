@@ -27,7 +27,7 @@ class menu
         int tick;
         int coin_frame;
         bool coin_direction;
-        int indicator_location=4;
+        int indicator_location;
 
         BITMAP *menu_image;
         BITMAP *story_image;

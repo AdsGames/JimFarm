@@ -4,6 +4,7 @@
 menu::menu()
 {
     state = MAIN_MENU;
+    indicator_location = 4;
 }
 
 menu::~menu()

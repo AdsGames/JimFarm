@@ -41,13 +41,13 @@ void store::draw( BITMAP *tempBitmap){
     if( open){
         draw_sprite( tempBitmap, image, 0, 0);
 
-        for( unsigned int i = 0; i < storeItems.size(); i++){
+        for( int i = 0; i < (signed)storeItems.size(); i++){
             if( storeItems.at(i) -> image[0] != NULL)
                 draw_sprite( tempBitmap, storeItems.at(i) -> image[0], 25 + i * 19, 90);
             if( selector_index == i)
                 draw_sprite( tempBitmap, indicator, 25 + i * 19, 90);
         }
-        if( selector_index < storeItems.size())
+        if( selector_index < (signed)storeItems.size())
             textprintf_ex( tempBitmap, font, 25, 106, makecol(0,0,0), -1, "%s : %i coins",
                         storeItems.at(selector_index) -> name.c_str(), storeItems.at(selector_index) -> value);
         else{
@@ -63,7 +63,7 @@ void store::draw( BITMAP *tempBitmap){
         if( customer_inventory != NULL)
             draw_sprite( tempBitmap, customer_inventory -> inventory_item -> image[0], 185, 90);
 
-        if( selector_index == storeItems.size())
+        if( selector_index == (signed)storeItems.size())
             draw_sprite( tempBitmap, indicator, 185, 90);
     }
 }
@@ -83,14 +83,14 @@ void store::update(){
         else if(( key[KEY_RIGHT] || key[KEY_D] || joy[0].stick[0].axis[0].d2) && tick>10){
             tick=0;
             selector_index++;
-            if(selector_index > storeItems.size())
+            if(selector_index > (signed)storeItems.size())
               selector_index=0;
         }
 
 
         if(( key[KEY_LCONTROL] || mouse_b & 1 || joy[0].button[2].b || key[KEY_RCONTROL] ) && tick>10){
             tick=0;
-            if( selector_index < storeItems.size()){
+            if( selector_index < (signed)storeItems.size()){
                 if( customer_inventory -> inventory_item -> id == -1){
                     if(customer_inventory -> money >= storeItems.at(selector_index) -> value){
                       customer_inventory -> money -= storeItems.at(selector_index) -> value;
@@ -109,7 +109,7 @@ void store::update(){
                   customer_inventory -> push_message("Hands full");
                 }
 
-            }else if( selector_index == storeItems.size() && customer_inventory -> inventory_item -> id != -1){
+            }else if( selector_index == (signed)storeItems.size() && customer_inventory -> inventory_item -> id != -1){
                 customer_inventory -> money += customer_inventory -> inventory_item -> value;
                 customer_inventory -> remove_item();
                 play_sample(sell,255,125,1000,0);

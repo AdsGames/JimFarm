@@ -7,6 +7,7 @@
 #include "tools.h"
 #include "store.h"
 #include "menu.h"
+#include "keyListener.h"
 
 #include "fmod/fmod.h"
 #include "fmod/fmod_errors.h"
@@ -20,6 +21,9 @@ BITMAP *jim_image;
 FSOUND_STREAM* music;
 
 bool close_button_pressed;
+
+// Listen to the keys
+keyListener keys;
 
 #define MENU 0
 #define GAME 1
@@ -71,6 +75,9 @@ END_OF_FUNCTION(ticker)
  *   Update logic
  *********************/
 void update(){
+    // Checks keys JUST pressed or JUST released
+    keys.update();
+
     if( game_state == MENU){
         // HAXX
         // halp plz how do i coed?
