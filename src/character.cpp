@@ -181,6 +181,10 @@ void character::update(){
     // Ask joystick for keys
     poll_joystick();
 
+    // Snap closest tile
+    tile_x = (x * 16)/16;
+    tile_y = (y * 16)/16;
+
     // Oh
     // Snap
     if( x % 16 == 0 && y % 16 == 0 ){
@@ -198,7 +202,9 @@ void character::update(){
     // Close store
     if( store_open == true){
         if( keyListener::keyPressed[KEY_SPACE] || joy[0].button[0].b ){
+            // Make sure it is not opened by other code
             keyListener::keyPressed[KEY_SPACE] = false;
+
             store_open = false;
             push_message( "Come again");
         }
@@ -206,6 +212,7 @@ void character::update(){
 
     // Move
     if( !moving && !store_open){
+        // Up
         if(( key[KEY_UP] || joy[0].stick[0].axis[1].d1)){
             direction = 2;
             if( !map_pointer -> is_solid_at( x, y - 16)){
@@ -213,6 +220,7 @@ void character::update(){
                 sound_step++;
             }
         }
+        // Down
         else if( (key[KEY_DOWN] || joy[0].stick[0].axis[1].d2)){
             direction = 1;
             if( !map_pointer -> is_solid_at( x, y + 16)){
@@ -220,6 +228,7 @@ void character::update(){
                 sound_step++;
             }
         }
+        // Left
         else if(( key[KEY_LEFT] || joy[0].stick[0].axis[0].d1)){
             direction = 4;
             if( !map_pointer -> is_solid_at( x - 16, y)){
@@ -227,6 +236,7 @@ void character::update(){
                 sound_step++;
             }
         }
+        // Right
         else if(( key[KEY_RIGHT] || joy[0].stick[0].axis[0].d2)){
             direction = 3;
             if( !map_pointer -> is_solid_at( x + 16, y)){
@@ -247,17 +257,17 @@ void character::update(){
             if( map_pointer -> is_item_at( x, y) == true){
               play_sample( pickup, 255, 125, 1000, 0);
 
-              inventory_item = map_pointer -> get_item_at( x, y);
-              push_message( "You pick up a " + map_pointer -> get_item_at( x, y) -> name);
+              inventory_item = map_pointer -> get_item_at( tile_x, tile_y);
+              push_message( "You pick up a " + inventory_item -> name);
             }
           }
           else{
-            play_sample(drop,255,125,1000,0);
-            inventory_item -> x = x;
-            inventory_item -> y = y;
-            inventory_item = inventory_hand;
-
+            play_sample( drop, 255, 125, 1000, 0);
+            inventory_item -> x = tile_x;
+            inventory_item -> y = tile_y;
             push_message( "You drop your " + inventory_item -> name);
+
+            inventory_item = inventory_hand;
             std::cout << std::endl;
           }
         }
@@ -266,16 +276,15 @@ void character::update(){
         if( keyListener::keyPressed[KEY_SPACE] || joy[0].button[0].b){
             push_message( "");
 
-
             // OPEN STORE
-            if( map_pointer -> get_tile_at( x, y, BACKGROUND) == 19){
+            if( map_pointer -> get_tile_at( tile_x, tile_y, BACKGROUND) == 19){
                 push_message( "Welcome to Danners Devices");
                 store_open = true;
             }
             // Hand
-            else if( inventory_item -> id == -1 && map_pointer -> get_tile_at( x, y, BACKGROUND) != 7){
-                if( map_pointer -> is_item_at( x, y) == true)
-                    push_message( "There is a " + map_pointer -> get_item_at( x, y) -> name + " here");
+            else if( inventory_item -> id == -1 && map_pointer -> get_tile_at( tile_x, tile_y, BACKGROUND) != 7){
+                if( map_pointer -> is_item_at( tile_x, tile_y) == true)
+                    push_message( "There is a " + map_pointer -> get_item_at( tile_x, tile_y) -> name + " here");
                 else{
                     push_message( "There is nothing of interest here");
                     play_sample( error, 255, 125, 1000, 0);

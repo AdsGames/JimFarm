@@ -55,6 +55,7 @@ class character
         FONT* pixelart;
 
         int x, y;
+        int tile_x, tile_y;
 
         int water;
         int sound_step;
