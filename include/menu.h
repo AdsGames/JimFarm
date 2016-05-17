@@ -24,12 +24,21 @@ class menu
 
     private:
 
-        void draw_slider(BITMAP *tempBitmap, int x, int y, int value);
+        void draw_slider(BITMAP *tempBitmap, int x, int y, int value, std::string title);
 
         int tick;
         int coin_frame;
         bool coin_direction;
         int indicator_location;
+        int music_volume;
+
+        // Fonts
+        FONT* f1;
+        FONT* f2;
+        FONT* f3;
+        FONT* f4;
+        FONT* f5;
+        FONT* pixelart;
 
         BITMAP *menu_image;
         BITMAP *story_image;
@@ -38,6 +47,7 @@ class menu
         BITMAP *coin_flip;
         BITMAP *options_slider;
         BITMAP *options_slidee;
+        BITMAP *options_indicator;
 
         SAMPLE *blip;
 

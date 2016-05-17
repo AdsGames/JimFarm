@@ -69,6 +69,7 @@ class character
         BITMAP *indicator;
         BITMAP *coin;
 
+
         SAMPLE* pickup;
         SAMPLE* drop;
         SAMPLE* step_1;

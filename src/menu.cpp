@@ -34,8 +34,26 @@ void menu::load_data(){
      if (!( options_slidee = load_bitmap("images/options_slidee.png", NULL)))
         abort_on_error("Cannot find image options_slidee.png\nPlease check your files and try again");
 
+     if (!( options_indicator = load_bitmap("images/options_indicator.png", NULL)))
+        abort_on_error("Cannot find image options_indicator.png\nPlease check your files and try again");
+
      if( !(blip = load_sample("sfx/blip.wav")))
         abort_on_error( "Cannot find file sfx/blip.wav \n Please check your files and try again");
+
+         // Load fonts
+    f1 = load_font("fonts/pixelart_condensed.pcx", NULL, NULL);
+    f2 = extract_font_range(f1, ' ', 'A'-1);
+    f3 = extract_font_range(f1, 'A', 'Z');
+    f4 = extract_font_range(f1, 'Z'+1, 'z');
+    pixelart = merge_fonts(f4, f5 = merge_fonts(f2, f3));
+    font = merge_fonts(f4, f5 = merge_fonts(f2, f3));
+
+    // Destroy temporary fonts
+    destroy_font(f1);
+    destroy_font(f2);
+    destroy_font(f3);
+    destroy_font(f4);
+    destroy_font(f5);
 
 
 }
@@ -55,14 +73,21 @@ void menu::draw( BITMAP *tempBitmap){
       draw_sprite(tempBitmap,story_image,0,0);
     }
     if(state==OPTIONS){
+
       draw_sprite(tempBitmap,options_image,0,0);
+      draw_slider(tempBitmap,45,25,100,"Volume");
+      masked_blit( options_indicator, tempBitmap,9*(coin_frame/5),0,30,52-(indicator_location*11),9,9);
+
     }
 
-}
-void menu::draw_slider(BITMAP *tempBitmap, int x, int y, int value){
 
-    draw_sprite(tempBitmap,options_slider,x,y);
-    draw_sprite(tempBitmap,options_slidee,x-2+value,y-1);
+}
+void menu::draw_slider(BITMAP *tempBitmap, int x, int y, int value, std::string title){
+
+    textprintf_ex( tempBitmap, pixelart, x, y, makecol(0,0,0), -1, title.c_str());
+
+    draw_sprite(tempBitmap,options_slider,x,y+16);
+    draw_sprite(tempBitmap,options_slidee,x-2+value,y-1+16);
 
 
 
@@ -79,19 +104,20 @@ int menu::update(){
           play_sample(blip,255,125,1000,0);
           return 2;
         }
-        if(indicator_location==3){
+        else if(indicator_location==3){
           play_sample(blip,255,125,1000,0);
           state=OPTIONS;
+          indicator_location=1;
         }
-        if(indicator_location==2){
+        else if(indicator_location==2){
           state=HELP;
           play_sample(blip,255,125,1000,0);
         }
-        if(indicator_location==1){
+        else if(indicator_location==1){
           state=STORY;
           play_sample(blip,255,125,1000,0);
         }
-        if(indicator_location==0)
+        else if(indicator_location==0)
           return 0;
       }
 
@@ -113,20 +139,34 @@ int menu::update(){
       if(indicator_location<0){
         indicator_location=4;
       }
-
-      // Coin spin
-      if(!coin_direction)
-        coin_frame++;
-      if(coin_direction)
-        coin_frame--;
-      if(coin_frame>18)
-        coin_direction=true;
-      if(coin_frame<0){
-        coin_frame=5;
-        coin_direction=false;
-      }
     }
-    if((state==HELP || state==STORY || state==OPTIONS) &&(key[KEY_SPACE] || key[KEY_LCONTROL] || key[KEY_UP] || key[KEY_DOWN] || key[KEY_LEFT] || key[KEY_RIGHT])&& tick>10){
+    if(state==OPTIONS){
+
+      if(key[KEY_DOWN] && tick>10){
+        play_sample(blip,255,125,1000,0);
+        tick=0;
+        indicator_location--;
+      }
+      if(key[KEY_UP] && tick>10){
+        play_sample(blip,255,125,1000,0);
+        tick=0;
+        indicator_location++;
+      }
+
+    }
+      // Coin spin
+    if(!coin_direction)
+      coin_frame++;
+    if(coin_direction)
+      coin_frame--;
+    if(coin_frame>18)
+      coin_direction=true;
+    if(coin_frame<0){
+      coin_frame=5;
+      coin_direction=false;
+    }
+
+    if((state==HELP || state==STORY) && (key[KEY_SPACE] || key[KEY_LCONTROL] || key[KEY_UP] || key[KEY_DOWN] || key[KEY_LEFT] || key[KEY_RIGHT])&& tick>10){
       play_sample(blip,255,125,1000,0);
       tick=0;
       state=MAIN_MENU;
