@@ -28,13 +28,23 @@ BITMAP *load_bitmap_ex( const char *path){
   if (!( temp_loader = load_bitmap(path, NULL)))
     abort_on_error(("Cannot find image " + std::string(path) + "\nPlease check your files and try again").c_str());
 
-    return temp_loader;
+  return temp_loader;
 }
 
+// Load and error check sounds
 SAMPLE *load_sample_ex( const char *path){
   SAMPLE *temp_loader;
   if (!( temp_loader = load_sample(path)))
     abort_on_error(("Cannot find sound " + std::string(path) + "\nPlease check your files and try again").c_str());
 
-    return temp_loader;
+  return temp_loader;
+}
+
+// Load and error check fonts
+FONT *load_font_ex( const char *path){
+  FONT *temp_loader;
+  if (!( temp_loader = load_font(path, NULL, NULL)))
+    abort_on_error(("Cannot find font " + std::string(path) + "\nPlease check your files and try again").c_str());
+
+  return extract_font_range(temp_loader, ' ', 'z');
 }

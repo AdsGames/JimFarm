@@ -32,7 +32,7 @@ void character::load_data(){
     coin = load_bitmap_ex("images/coin.png");
 
     // Sounds
-    pickup = load_sample_ex("sfx/pickup.wav");
+     pickup = load_sample_ex("sfx/pickup.wav");
     drop = load_sample_ex("sfx/drop.wav");
     step_1 = load_sample_ex("sfx/step_1.wav");
     step_2 = load_sample_ex("sfx/step_2.wav");
@@ -50,19 +50,8 @@ void character::load_data(){
     inventory_item = inventory_hand;
 
     // Load fonts
-    f1 = load_font("fonts/pixelart_condensed.pcx", NULL, NULL);
-    f2 = extract_font_range(f1, ' ', 'A'-1);
-    f3 = extract_font_range(f1, 'A', 'Z');
-    f4 = extract_font_range(f1, 'Z'+1, 'z');
-    pixelart = merge_fonts(f4, f5 = merge_fonts(f2, f3));
-    font = merge_fonts(f4, f5 = merge_fonts(f2, f3));
-
-    // Destroy temporary fonts
-    destroy_font(f1);
-    destroy_font(f2);
-    destroy_font(f3);
-    destroy_font(f4);
-    destroy_font(f5);
+    pixelart = load_font_ex("fonts/pixelart_condensed.pcx");
+    font = pixelart;
 }
 
 // Draw character to screen
