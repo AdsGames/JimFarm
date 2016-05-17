@@ -88,8 +88,7 @@ void store::update(){
         }
 
 
-        if(( key[KEY_LCONTROL] || mouse_b & 1 || joy[0].button[2].b || key[KEY_RCONTROL] ) && tick>10){
-            tick=0;
+        if( keyListener::keyPressed[KEY_LCONTROL] || keyListener::keyPressed[KEY_RCONTROL] || mouse_b & 1 || joy[0].button[2].b){
             if( selector_index < (signed)storeItems.size()){
                 if( customer_inventory -> inventory_item -> id == -1){
                     if(customer_inventory -> money >= storeItems.at(selector_index) -> value){
@@ -99,38 +98,38 @@ void store::update(){
                       play_sample(buy,255,125,1000,0);
                       customer_inventory -> push_message("Purchased item");
 
-                    }else{
+                    }
+                    else {
                       play_sample(error,255,125,1000,0);
                       customer_inventory -> push_message("Can't afford item!");
                     }
 
-                }else{
+                }
+                else {
                   play_sample(error,255,125,1000,0);
                   customer_inventory -> push_message("Hands full");
                 }
 
-            }else if( selector_index == (signed)storeItems.size() && customer_inventory -> inventory_item -> id != -1){
+            }
+            else if( selector_index == (signed)storeItems.size() && customer_inventory -> inventory_item -> id != -1){
                 customer_inventory -> money += customer_inventory -> inventory_item -> value;
                 customer_inventory -> remove_item();
                 play_sample(sell,255,125,1000,0);
 
             }
-            //rest( 200);
         }
     }
 }
 
-void store::close_store(){
+void store::close_store() {
     open = false;
     storeItems.clear();
-
 }
 
 
 void store::open_store( character *new_inventory){
     open = true;
     customer_inventory = new_inventory;
-
 
     // Give items to store
     if( storeItems.size() == 0){
@@ -143,7 +142,6 @@ void store::open_store( character *new_inventory){
             if( newType == 2){
                 newType = 6;
             }
-
 
             item *storeItem = new item( 0, 0, new_inventory -> map_pointer -> item_images[newType],
                                               new_inventory -> map_pointer -> item_images[newType],

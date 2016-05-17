@@ -8,6 +8,7 @@
 #include "math.h"
 #include "tile_map.h"
 #include "tile.h"
+#include "keyListener.h"
 
 #define MAX_MESSAGES 1
 
@@ -40,6 +41,7 @@ class character
         bool store_open;
 
         tile_map *map_pointer;
+
     protected:
 
     private:
@@ -83,8 +85,6 @@ class character
         char gameTick;
         char direction;
         bool moving;
-
-        int tick;
 
         std::string player_messages[MAX_MESSAGES];
         bool recent_message;

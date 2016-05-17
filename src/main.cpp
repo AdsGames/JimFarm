@@ -104,7 +104,6 @@ void update(){
         }
         else{
             main_store.close_store();
-            main_store.close_store();
         }
     }
 }

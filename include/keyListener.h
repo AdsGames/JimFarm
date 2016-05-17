@@ -10,6 +10,7 @@
 #define KEYLISTENER_H
 
 #include <allegro.h>
+#include <iostream>
 
 class keyListener
 {
@@ -21,10 +22,10 @@ class keyListener
 
     static bool keyPressed[KEY_MAX];
     static bool keyReleased[KEY_MAX];
+    static bool lastTicksKey[KEY_MAX];
 
   protected:
   private:
-    static bool lastTicksKey[KEY_MAX];
 };
 
 #endif // KEYLISTENER_H

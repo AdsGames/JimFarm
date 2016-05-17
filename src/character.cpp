@@ -155,15 +155,16 @@ void character::drawForeground( BITMAP *tempBuffer){
       draw_sprite( tempBuffer, coin, 190, 10);
 
       // Allan just died a little inside...
-      if(store_open)textprintf_ex( tempBuffer,pixelart,205,5,makecol(0,0,0),-1,"x %i",money);
-      else textprintf_ex( tempBuffer,pixelart,205,5,makecol(255,255,255),-1,"x %i",money);
+      if(store_open)
+        textprintf_ex( tempBuffer,pixelart,205,5,makecol(0,0,0),-1,"x %i",money);
+      else
+        textprintf_ex( tempBuffer,pixelart,205,5,makecol(255,255,255),-1,"x %i",money);
 
 
       // Message system
       for( int i = 0; i < MAX_MESSAGES; i++)
           textprintf_ex( tempBuffer,pixelart, 5, i * 10 + 145, makecol(255,255,255),-1,"> %s", (player_messages[i]).c_str());
     }
-
 }
 
 // Push message
@@ -177,9 +178,6 @@ void character::push_message( std::string new_message){
 
 // Update player
 void character::update(){
-    // Ticker
-    tick ++;
-
     // Ask joystick for keys
     poll_joystick();
 
@@ -194,14 +192,13 @@ void character::update(){
     inventory_item -> x = x;
     inventory_item -> y = y;
 
-    if(key[KEY_F1] && tick > 10){
-      draw_hud=!draw_hud;
-      tick=0;
+    if(keyListener::keyPressed[KEY_F1]){
+      draw_hud =! draw_hud;
     }
     // Close store
     if( store_open == true){
-        if((key[KEY_SPACE] || joy[0].button[0].b) && tick>10 ){
-            tick=0;
+        if( keyListener::keyPressed[KEY_SPACE] || joy[0].button[0].b ){
+            keyListener::keyPressed[KEY_SPACE] = false;
             store_open = false;
             push_message( "Come again");
         }
@@ -244,52 +241,44 @@ void character::update(){
         if(sound_step == 1 && moving)
           play_sample(step_1,50,125,1300,0);
 
-
         // Pickup
-        if(( key[KEY_LCONTROL] || mouse_b & 1 || joy[0].button[2].b ||  key[KEY_RCONTROL]) && tick > 10){
-            if(inventory_item -> id == -1){
-              tick = 0;
-              if( map_pointer -> is_item_at( x, y) == true){
+        if( keyListener::keyPressed[KEY_LCONTROL] || keyListener::keyPressed[KEY_RCONTROL] || mouse_b & 1 || joy[0].button[2].b ){
+          if( inventory_item -> id == -1){
+            if( map_pointer -> is_item_at( x, y) == true){
+              play_sample( pickup, 255, 125, 1000, 0);
 
-                  play_sample(pickup,255,125,1000,0);
-
-                  inventory_item = map_pointer -> get_item_at( x, y);
-                  push_message( "You pick up a " + map_pointer -> get_item_at( x, y) -> name);
-                  //map_pointer -> remove_item_at( x, y);
-              }
+              inventory_item = map_pointer -> get_item_at( x, y);
+              push_message( "You pick up a " + map_pointer -> get_item_at( x, y) -> name);
             }
-            else{
-                play_sample(drop,255,125,1000,0);
+          }
+          else{
+            play_sample(drop,255,125,1000,0);
+            inventory_item -> x = x;
+            inventory_item -> y = y;
+            inventory_item = inventory_hand;
 
-                tick = 0;
-                inventory_item -> x = x;
-                inventory_item -> y = y;
-                //map_pointer -> place_item( *inventory_item);
-                push_message( "You drop your " + inventory_item -> name);
-                inventory_item = inventory_hand;
-                std::cout << std::endl;
-            }
+            push_message( "You drop your " + inventory_item -> name);
+            std::cout << std::endl;
+          }
         }
 
         // Action button
-        if(( key[KEY_SPACE] || joy[0].button[0].b) && tick>5){
-
+        if( keyListener::keyPressed[KEY_SPACE] || joy[0].button[0].b){
             push_message( "");
 
 
             // OPEN STORE
-            if( map_pointer -> get_tile_at( x, y, BACKGROUND) == 19 && tick > 10){
+            if( map_pointer -> get_tile_at( x, y, BACKGROUND) == 19){
                 push_message( "Welcome to Danners Devices");
                 store_open = true;
-                tick=0;
             }
             // Hand
-            else if( inventory_item -> id == -1 && map_pointer -> get_tile_at(x,y,BACKGROUND) != 7){
+            else if( inventory_item -> id == -1 && map_pointer -> get_tile_at( x, y, BACKGROUND) != 7){
                 if( map_pointer -> is_item_at( x, y) == true)
                     push_message( "There is a " + map_pointer -> get_item_at( x, y) -> name + " here");
-                else if(tick>20){
+                else{
                     push_message( "There is nothing of interest here");
-                    play_sample(error,255,125,1000,0);
+                    play_sample( error, 255, 125, 1000, 0);
                 }
             }
             // Hoe
@@ -297,9 +286,10 @@ void character::update(){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 2){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 18, false);
                     play_sample(hoe,255,125,1000,0);
-                }else if(tick>20){
+                }
+                else {
                     push_message( "You can't hoe there");
-                    play_sample(error,255,125,1000,0);
+                    play_sample( error, 255, 125, 1000, 0);
                 }
             }
             // Scythe
@@ -308,9 +298,9 @@ void character::update(){
                     map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
                     play_sample(cut_scythe,255,125,1000,0);
                 }
-                else if(tick > 10){
+                else {
                     push_message( "You can't cut there");
-                    play_sample(error,255,125,1000,0);
+                    play_sample( error, 255, 125, 1000, 0);
                 }
             }
             // Berry
@@ -321,9 +311,9 @@ void character::update(){
                         remove_item();
                     }
                 }
-                else if(tick > 10){
+                else {
                     push_message( "You must plant in ploughed soil");
-                    play_sample(error,255,125,1000,0);
+                    play_sample( error, 255, 125, 1000, 0);
                 }
             }
             // Tomato
@@ -334,9 +324,9 @@ void character::update(){
                         remove_item();
                     }
                 }
-                else if(tick > 10){
+                else{
                     push_message( "You must plant in ploughed soil");
-                    play_sample(error,255,125,1000,0);
+                    play_sample( error, 255, 125, 1000, 0);
                 }
             }
             // Carrot
@@ -347,9 +337,9 @@ void character::update(){
                         remove_item();
                     }
                 }
-                else if(tick > 10){
+                else{
                     push_message( "You must plant in ploughed soil");
-                    play_sample(error,255,125,1000,0);
+                    play_sample( error, 255, 125, 1000, 0);
                 }
             }
             // Lavender
@@ -360,9 +350,9 @@ void character::update(){
                         remove_item();
                     }
                 }
-                else if(tick > 10){
+                else{
                     push_message( "You must plant in ploughed soil");
-                    play_sample(error,255,125,1000,0);
+                    play_sample( error, 255, 125, 1000, 0);
                 }
             }
             // Watering can
@@ -370,13 +360,13 @@ void character::update(){
                 if(map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND) == 7){
                     water = 4;
                     push_message( "Watering can filled");
-                    play_sample(water_fill,255,125,1000,0);
+                    play_sample( water_fill, 255, 125, 1000, 0);
                 }
 
-                else if(water > 0 && tick > 10){
+                else if(water > 0){
                     water--;
                     push_message("Watered");
-                    play_sample(water_pour,255,125,1000,0);
+                    play_sample( water_pour, 255, 125, 1000, 0);
 
                     // Berries
                     int wateringID = map_pointer -> get_tile_at( indicator_x, indicator_y, false);
@@ -386,43 +376,42 @@ void character::update(){
                         map_pointer -> replace_tile( indicator_x, indicator_y, wateringID + 1, false);
                     }
                 }
-                else if(tick>10){
+                else{
                     push_message("Out of water");
-                    play_sample(error,255,125,1000,0);
+                    play_sample( error, 255, 125, 1000, 0);
                 }
             }
             // Axe
             else if( inventory_item -> id == 4){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 5){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 11, true);
-                    play_sample(cut_axe,255,125,1000,0);
-                }else if(tick>20){
+                    play_sample( cut_axe, 255, 125, 1000, 0);
+                }
+                else{
                     push_message( "You can't chop that down");
-                    play_sample(error,255,125,1000,0);
+                    play_sample( error, 255, 125, 1000, 0);
                 }
             }
             // Shovel
             else if( inventory_item -> id == 5){
                 //Literally the worst formatted if statement I've seen all week
-                if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 6 ||
-                    map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 11){
+                if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 6
+                      || map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 11){
                     map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
                     play_sample(dig,255,125,1000,0);
                 }
                 else if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 0
-                        && map_pointer -> get_tile_at( indicator_x, indicator_y, true) == -1){
+                      && map_pointer -> get_tile_at( indicator_x, indicator_y, true) == -1){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 2,false);
                     play_sample(dig,255,125,1000,0);
                 }
-                else if(tick > 10){
+                else{
                     push_message( "You can't dig that up");
                     play_sample( error, 255, 125, 1000, 0);
                 }
             }
-            std::cout<<". Tile Back ID: "<<map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND)<<std::endl;
-            std::cout<<". Tile Front ID: "<<map_pointer -> get_tile_at( indicator_x, indicator_y, true)<<std::endl;
-
-            tick = 0;
+            std::cout << ". Tile Back ID: " << map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND) << std::endl;
+            std::cout << ". Tile Front ID: "<< map_pointer -> get_tile_at( indicator_x, indicator_y, true) << std::endl;
         }
     }
     if( moving){

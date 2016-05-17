@@ -7,6 +7,7 @@
 #include "tile.h"
 #include "tools.h"
 #include "character.h"
+#include "keyListener.h"
 
 class store
 {

@@ -627,7 +627,7 @@ void tile_map::remove_item_at( int positionX, int positionY){
 }
 
 // Create item
-void tile_map::place_new_item_at( int newX, int newY, char newItem){
+void tile_map::place_new_item_at( int newX, int newY, unsigned char newItem){
     item newItemx( newX, newY, item_images[newItem], item_images[newItem], newItem, item_names[newItem]);
     place_item( newItemx);
 }
