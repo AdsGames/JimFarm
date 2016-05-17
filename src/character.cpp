@@ -57,24 +57,22 @@ void character::load_data(){
 // Draw character to screen
 void character::draw( BITMAP *tempBuffer){
     // Indicator
-    if( inventory_item -> id != -1){
-        if( inventory_item -> id == 4 || inventory_item -> id == 5){
-            if( direction == 1 || direction == 2){
-                indicator_x = x;
-                indicator_y = y - (16 * ((direction * 2) - 3));
-                draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> x, indicator_y - map_pointer -> y);
-            }
-            else if( direction == 3 || direction == 4){
-                indicator_x = x - (16 * ((direction * 2) - 7));
-                indicator_y = y;
-                draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> x, indicator_y - map_pointer -> y);
-            }
-        }
-        else{
-            indicator_x = x;
-            indicator_y = y;
+    if( inventory_item -> id == 4 || inventory_item -> id == 5){
+        if( direction == 1 || direction == 2){
+            indicator_x = (x/16)*16;
+            indicator_y = (y/16)*16 - (16 * ((direction * 2) - 3));
             draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> x, indicator_y - map_pointer -> y);
         }
+        else if( direction == 3 || direction == 4){
+            indicator_x = (x/16)*16 - (16 * ((direction * 2) - 7));
+            indicator_y = (y/16)*16;
+            draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> x, indicator_y - map_pointer -> y);
+        }
+    }
+    else{
+        indicator_x = (x/16)*16;
+        indicator_y = (y/16)*16;
+        draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> x, indicator_y - map_pointer -> y);
     }
 
     // Draw frame
@@ -132,10 +130,6 @@ void character::update(){
     // Ask joystick for keys
     poll_joystick();
 
-    // Snap closest tile
-    tile_x = (x * 16)/16;
-    tile_y = (y * 16)/16;
-
     // Oh
     // Snap
     if( x % 16 == 0 && y % 16 == 0 ){
@@ -162,60 +156,62 @@ void character::update(){
     }
 
     // Move
-    if( !moving && !store_open){
-        // Up
-        if(( key[KEY_UP] || joy[0].stick[0].axis[1].d1)){
-            direction = 2;
-            if( !map_pointer -> is_solid_at( x, y - 16)){
-                moving = true;
-                sound_step++;
-            }
+    if( !store_open){
+        if( !moving){
+          // Up
+          if(( key[KEY_UP] || joy[0].stick[0].axis[1].d1)){
+              direction = 2;
+              if( !map_pointer -> is_solid_at( x, y - 16)){
+                  moving = true;
+                  sound_step++;
+              }
+          }
+          // Down
+          else if( (key[KEY_DOWN] || joy[0].stick[0].axis[1].d2)){
+              direction = 1;
+              if( !map_pointer -> is_solid_at( x, y + 16)){
+                  moving = true;
+                  sound_step++;
+              }
+          }
+          // Left
+          else if(( key[KEY_LEFT] || joy[0].stick[0].axis[0].d1)){
+              direction = 4;
+              if( !map_pointer -> is_solid_at( x - 16, y)){
+                  moving = true;
+                  sound_step++;
+              }
+          }
+          // Right
+          else if(( key[KEY_RIGHT] || joy[0].stick[0].axis[0].d2)){
+              direction = 3;
+              if( !map_pointer -> is_solid_at( x + 16, y)){
+                  moving = true;
+                  sound_step++;
+              }
+          }
+          if(sound_step > 1){
+            play_sample(step_2,50,125,1300,0);
+            sound_step = 0;
+          }
+          if(sound_step == 1 && moving)
+            play_sample(step_1,50,125,1300,0);
         }
-        // Down
-        else if( (key[KEY_DOWN] || joy[0].stick[0].axis[1].d2)){
-            direction = 1;
-            if( !map_pointer -> is_solid_at( x, y + 16)){
-                moving = true;
-                sound_step++;
-            }
-        }
-        // Left
-        else if(( key[KEY_LEFT] || joy[0].stick[0].axis[0].d1)){
-            direction = 4;
-            if( !map_pointer -> is_solid_at( x - 16, y)){
-                moving = true;
-                sound_step++;
-            }
-        }
-        // Right
-        else if(( key[KEY_RIGHT] || joy[0].stick[0].axis[0].d2)){
-            direction = 3;
-            if( !map_pointer -> is_solid_at( x + 16, y)){
-                moving = true;
-                sound_step++;
-            }
-        }
-        if(sound_step > 1){
-          play_sample(step_2,50,125,1300,0);
-          sound_step = 0;
-        }
-        if(sound_step == 1 && moving)
-          play_sample(step_1,50,125,1300,0);
 
         // Pickup
         if( keyListener::keyPressed[KEY_LCONTROL] || keyListener::keyPressed[KEY_RCONTROL] || mouse_b & 1 || joy[0].button[2].b ){
           if( inventory_item -> id == -1){
-            if( map_pointer -> is_item_at( x, y) == true){
+            if( map_pointer -> is_item_at( indicator_x, indicator_y) == true){
               play_sample( pickup, 255, 125, 1000, 0);
 
-              inventory_item = map_pointer -> get_item_at( tile_x, tile_y);
+              inventory_item = map_pointer -> get_item_at( indicator_x, indicator_y);
               push_message( "You pick up a " + inventory_item -> name);
             }
           }
           else{
             play_sample( drop, 255, 125, 1000, 0);
-            inventory_item -> x = tile_x;
-            inventory_item -> y = tile_y;
+            inventory_item -> x = indicator_x;
+            inventory_item -> y = indicator_y;
             push_message( "You drop your " + inventory_item -> name);
 
             inventory_item = inventory_hand;
@@ -228,14 +224,14 @@ void character::update(){
             push_message( "");
 
             // OPEN STORE
-            if( map_pointer -> get_tile_at( tile_x, tile_y, BACKGROUND) == 19){
+            if( map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND) == 19){
                 push_message( "Welcome to Danners Devices");
                 store_open = true;
             }
             // Hand
-            else if( inventory_item -> id == -1 && map_pointer -> get_tile_at( tile_x, tile_y, BACKGROUND) != 7){
-                if( map_pointer -> is_item_at( tile_x, tile_y) == true)
-                    push_message( "There is a " + map_pointer -> get_item_at( tile_x, tile_y) -> name + " here");
+            else if( inventory_item -> id == -1 && map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND) != 7){
+                if( map_pointer -> is_item_at( indicator_x, indicator_y) == true)
+                    push_message( "There is a " + map_pointer -> get_item_at( indicator_x, indicator_y) -> name + " here");
                 else{
                     push_message( "There is nothing of interest here");
                     play_sample( error, 255, 125, 1000, 0);

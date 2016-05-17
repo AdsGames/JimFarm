@@ -4,6 +4,7 @@
 #include <allegro.h>
 #include <string>
 #include <iostream>
+#include <math.h>
 
 #include "math.h"
 #include "tile_map.h"
@@ -56,7 +57,6 @@ class character
         FONT* pixelart;
 
         int x, y;
-        int tile_x, tile_y;
 
         int water;
         int sound_step;
