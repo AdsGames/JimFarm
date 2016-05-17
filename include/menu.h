@@ -24,6 +24,8 @@ class menu
 
     private:
 
+        void draw_slider(BITMAP *tempBitmap, int x, int y, int value);
+
         int tick;
         int coin_frame;
         bool coin_direction;
@@ -34,6 +36,8 @@ class menu
         BITMAP *help_image;
         BITMAP *options_image;
         BITMAP *coin_flip;
+        BITMAP *options_slider;
+        BITMAP *options_slidee;
 
         SAMPLE *blip;
 

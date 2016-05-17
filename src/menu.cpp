@@ -28,6 +28,12 @@ void menu::load_data(){
     if (!( coin_flip = load_bitmap("images/coin_flip.png", NULL)))
         abort_on_error("Cannot find image coin_flip.png\nPlease check your files and try again");
 
+     if (!( options_slider = load_bitmap("images/options_slider.png", NULL)))
+        abort_on_error("Cannot find image options_slider.png\nPlease check your files and try again");
+
+     if (!( options_slidee = load_bitmap("images/options_slidee.png", NULL)))
+        abort_on_error("Cannot find image options_slidee.png\nPlease check your files and try again");
+
      if( !(blip = load_sample("sfx/blip.wav")))
         abort_on_error( "Cannot find file sfx/blip.wav \n Please check your files and try again");
 
@@ -48,10 +54,17 @@ void menu::draw( BITMAP *tempBitmap){
     if(state==STORY){
       draw_sprite(tempBitmap,story_image,0,0);
     }
-
     if(state==OPTIONS){
       draw_sprite(tempBitmap,options_image,0,0);
     }
+
+}
+void menu::draw_slider(BITMAP *tempBitmap, int x, int y, int value){
+
+    draw_sprite(tempBitmap,options_slider,x,y);
+    draw_sprite(tempBitmap,options_slidee,x-2+value,y-1);
+
+
 
 }
 
