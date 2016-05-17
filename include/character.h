@@ -9,6 +9,7 @@
 #include "tile_map.h"
 #include "tile.h"
 #include "keyListener.h"
+#include "tools.h"
 
 #define MAX_MESSAGES 1
 
