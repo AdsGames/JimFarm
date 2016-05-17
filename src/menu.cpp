@@ -75,7 +75,7 @@ void menu::draw( BITMAP *tempBitmap){
     if(state==OPTIONS){
 
       draw_sprite(tempBitmap,options_image,0,0);
-      draw_slider(tempBitmap,45,25,100,"Volume");
+      draw_slider(tempBitmap,45,25,music_volume,"Music Volume");
       masked_blit( options_indicator, tempBitmap,9*(coin_frame/5),0,30,52-(indicator_location*11),9,9);
 
     }
@@ -84,7 +84,8 @@ void menu::draw( BITMAP *tempBitmap){
 }
 void menu::draw_slider(BITMAP *tempBitmap, int x, int y, int value, std::string title){
 
-    textprintf_ex( tempBitmap, pixelart, x, y, makecol(0,0,0), -1, title.c_str());
+    std::string text = title + ": %i";
+    textprintf_ex( tempBitmap, pixelart, x, y, makecol(0,0,0), -1, text.c_str(),value );
 
     draw_sprite(tempBitmap,options_slider,x,y+16);
     draw_sprite(tempBitmap,options_slidee,x-2+value,y-1+16);
@@ -152,6 +153,27 @@ int menu::update(){
         tick=0;
         indicator_location++;
       }
+      if(key[KEY_RIGHT] && tick>1){
+        if(indicator_location==1){
+         // play_sample(blip,255,125,1000,0);
+          tick=0;
+          music_volume++;
+        }
+      }
+      if(key[KEY_LEFT] && tick>1){
+        if(indicator_location==1){
+          //play_sample(blip,255,125,1000,0);
+          tick=0;
+          music_volume--;
+        }
+      }
+      if(music_volume>100)
+        music_volume=100;
+      if(music_volume<0)
+        music_volume=0;
+
+      FSOUND_SetVolumeAbsolute( 0, music_volume);
+
 
     }
       // Coin spin

@@ -7,6 +7,8 @@
 #include "tile.h"
 #include "tools.h"
 #include "character.h"
+#include "fmod/fmod.h"
+#include "fmod/fmod_errors.h"
 
 class menu
 {
@@ -30,7 +32,7 @@ class menu
         int coin_frame;
         bool coin_direction;
         int indicator_location;
-        int music_volume;
+        int music_volume=100;
 
         // Fonts
         FONT* f1;
