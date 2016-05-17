@@ -20,3 +20,21 @@ void abort_on_error(const char *message){
 	 allegro_message("%s.\n %s\n", message, allegro_error);
 	 exit(-1);
 }
+
+
+// Load bitmap with error checked_array_iterator
+BITMAP *load_bitmap_ex( const char *path){
+  BITMAP *temp_loader;
+  if (!( temp_loader = load_bitmap(path, NULL)))
+    abort_on_error(("Cannot find image " + std::string(path) + "\nPlease check your files and try again").c_str());
+
+    return temp_loader;
+}
+
+SAMPLE *load_sample_ex( const char *path){
+  SAMPLE *temp_loader;
+  if (!( temp_loader = load_sample(path)))
+    abort_on_error(("Cannot find sound " + std::string(path) + "\nPlease check your files and try again").c_str());
+
+    return temp_loader;
+}

@@ -223,222 +223,113 @@ void tile_map::generate_map(){
 
 // Load images
 void tile_map::load_images(){
-    if (!( tile_images[0] = load_bitmap("images/grass.png", NULL)))
-        abort_on_error("Cannot find image images/grass.png\nPlease check your files and try again");
-
-    if (!( tile_images[1] = load_bitmap("images/water.png", NULL)))
-        abort_on_error("Cannot find image images/water.png\nPlease check your files and try again");
-
-    if (!( tile_images[2] = load_bitmap("images/soil.png", NULL)))
-        abort_on_error("Cannot find image images/soil.png\nPlease check your files and try again");
-
-    if (!( tile_images[3] = load_bitmap("images/well.png", NULL)))
-        abort_on_error("Cannot find image images/well.png\nPlease check your files and try again");
-
-    if (!( tile_images[4] = load_bitmap("images/dense_grass.png", NULL)))
-        abort_on_error("Cannot find image images/dense_grass.png\nPlease check your files and try again");
-
-    if (!( tile_images[5] = load_bitmap("images/tree.png", NULL)))
-        abort_on_error("Cannot find image images/tree.png\nPlease check your files and try again");
-
-    //tile_images[6] did 9/11
-    if (!( tile_images[6] = load_bitmap("images/bush.png", NULL)))
-        abort_on_error("Cannot find image images/bush.png\nPlease check your files and try again");
-
-    if (!( tile_images[7] = load_bitmap("images/well_path.png", NULL)))
-        abort_on_error("Cannot find image images/well_path.png\nPlease check your files and try again");
-
-    if (!( tile_images[8] = load_bitmap("images/crop_2_1.png", NULL)))
-        abort_on_error("Cannot find image images/crop_2_1.png\nPlease check your files and try again");
-
-    if (!( tile_images[9] = load_bitmap("images/crop_2_2.png", NULL)))
-        abort_on_error("Cannot find image images/crop_2_2.png\nPlease check your files and try again");
-
-    if (!( tile_images[10] = load_bitmap("images/crop_2_3.png", NULL)))
-        abort_on_error("Cannot find image images/crop_2_3.png\nPlease check your files and try again");
-
-    if (!( tile_images[11] = load_bitmap("images/stump.png", NULL)))
-        abort_on_error("Cannot find image images/stump.png\nPlease check your files and try again");
-
-    if (!( tile_images[12] = load_bitmap("images/path_horizontal.png", NULL)))
-        abort_on_error("Cannot find image images/path_horizontal.png\nPlease check your files and try again");
-
-    if (!( tile_images[13] = load_bitmap("images/path_vertical.png", NULL)))
-        abort_on_error("Cannot find image images/path_vertical.png\nPlease check your files and try again");
-
-    if (!( tile_images[14] = load_bitmap("images/path_corner_1.png", NULL)))
-        abort_on_error("Cannot find image images/path_corner_1.png\nPlease check your files and try again");
-
-    if (!( tile_images[15] = load_bitmap("images/path_corner_2.png", NULL)))
-        abort_on_error("Cannot find image images/path_corner_2.png\nPlease check your files and try again");
-
-    if (!( tile_images[16] = load_bitmap("images/path_corner_3.png", NULL)))
-        abort_on_error("Cannot find image images/path_corner_3.png\nPlease check your files and try again");
-
-    if (!( tile_images[17] = load_bitmap("images/path_corner_4.png", NULL)))
-        abort_on_error("Cannot find image images/path_corner_4.png\nPlease check your files and try again");
-
-    if (!( tile_images[18] = load_bitmap("images/ploughed_soil.png", NULL)))
-        abort_on_error("Cannot find image images/ploughed_soil.png\nPlease check your files and try again");
-
-    if (!( tile_images[19] = load_bitmap("images/store_path.png", NULL)))
-        abort_on_error("Cannot find image images/store_path.png\nPlease check your files and try again");
-
-    if (!( tile_images[20] = load_bitmap("images/path_t_left.png", NULL)))
-        abort_on_error("Cannot find image images/path_t_left.png\nPlease check your files and try again");
-
+    // Tiles
+    tile_images[0] = load_bitmap_ex("images/grass.png");
+    tile_images[1] = load_bitmap_ex("images/water.png");
+    tile_images[2] = load_bitmap_ex("images/soil.png");
+    tile_images[3] = load_bitmap_ex("images/well.png");
+    tile_images[4] = load_bitmap_ex("images/dense_grass.png");
+    tile_images[5] = load_bitmap_ex("images/tree.png");
+    tile_images[6] = load_bitmap_ex("images/bush.png");
+    tile_images[7] = load_bitmap_ex("images/well_path.png");
+    tile_images[8] = load_bitmap_ex("images/crop_2_1.png");
+    tile_images[9] = load_bitmap_ex("images/crop_2_2.png");
+    tile_images[10] = load_bitmap_ex("images/crop_2_3.png");
+    tile_images[11] = load_bitmap_ex("images/stump.png");
+    tile_images[12] = load_bitmap_ex("images/path_horizontal.png");
+    tile_images[13] = load_bitmap_ex("images/path_vertical.png");
+    tile_images[14] = load_bitmap_ex("images/path_corner_1.png");
+    tile_images[15] = load_bitmap_ex("images/path_corner_2.png");
+    tile_images[16] = load_bitmap_ex("images/path_corner_3.png");
+    tile_images[17] = load_bitmap_ex("images/path_corner_4.png");
+    tile_images[18] = load_bitmap_ex("images/ploughed_soil.png");
+    tile_images[19] = load_bitmap_ex("images/store_path.png");
+    tile_images[20] = load_bitmap_ex("images/path_t_left.png");
 
     // Berry
-    if (!( tile_images[30] = load_bitmap("images/crop_1_1.png", NULL)))
-        abort_on_error("Cannot find image images/crop_1_1.png\nPlease check your files and try again");
-
-    if (!( tile_images[31] = load_bitmap("images/crop_1_2.png", NULL)))
-        abort_on_error("Cannot find image images/crop_1_2.png\nPlease check your files and try again");
-
-    if (!( tile_images[32] = load_bitmap("images/crop_1_3.png", NULL)))
-        abort_on_error("Cannot find image images/crop_1_3.png\nPlease check your files and try again");
+    tile_images[30] = load_bitmap_ex("images/crop_1_1.png");
+    tile_images[31] = load_bitmap_ex("images/crop_1_2.png");
+    tile_images[32] = load_bitmap_ex("images/crop_1_3.png");
 
     // Tomato
-    if (!( tile_images[33] = load_bitmap("images/crop_2_1.png", NULL)))
-        abort_on_error("Cannot find image images/crop_2_1.png\nPlease check your files and try again");
-
-    if (!( tile_images[34] = load_bitmap("images/crop_2_2.png", NULL)))
-        abort_on_error("Cannot find image images/crop_2_2.png\nPlease check your files and try again");
-
-    if (!( tile_images[35] = load_bitmap("images/crop_2_3.png", NULL)))
-        abort_on_error("Cannot find image images/crop_2_3.png\nPlease check your files and try again");
+    tile_images[33] = load_bitmap_ex("images/crop_2_1.png");
+    tile_images[34] = load_bitmap_ex("images/crop_2_2.png");
+    tile_images[35] = load_bitmap_ex("images/crop_2_3.png");
 
     // Carrot
-    if (!( tile_images[36] = load_bitmap("images/crop_4_1.png", NULL)))
-        abort_on_error("Cannot find image images/crop_4_1.2png\nPlease check your files and try again");
-
-    if (!( tile_images[37] = load_bitmap("images/crop_4_2.png", NULL)))
-        abort_on_error("Cannot find image images/crop_4_2.png\nPlease check your files and try again");
-
-    if (!( tile_images[38] = load_bitmap("images/crop_4_3.png", NULL)))
-        abort_on_error("Cannot find image images/crop_4_3.png\nPlease check your files and try again");
+    tile_images[36] = load_bitmap_ex("images/crop_4_1.png");
+    tile_images[37] = load_bitmap_ex("images/crop_4_2.png");
+    tile_images[38] = load_bitmap_ex("images/crop_4_3.png");
 
     // Lavender
-    if (!( tile_images[39] = load_bitmap("images/crop_5_1.png", NULL)))
-        abort_on_error("Cannot find image images/crop_3_1.png\nPlease check your files and try again");
+    tile_images[39] = load_bitmap_ex("images/crop_5_1.png");
+    tile_images[40] = load_bitmap_ex("images/crop_5_2.png");
+    tile_images[41] = load_bitmap_ex("images/crop_5_3.png");
 
-    if (!( tile_images[40] = load_bitmap("images/crop_5_2.png", NULL)))
-        abort_on_error("Cannot find image images/crop_5_2.png\nPlease check your files and try again");
-
-    if (!( tile_images[41] = load_bitmap("images/crop_5_3.png", NULL)))
-        abort_on_error("Cannot find image images/crop_5_3.png\nPlease check your files and try again");
-
-
-    // What's the difference between item_images[0] and Allan? Nothing.
-    if (!( tile_images[53] = load_bitmap("images/coop_fence.png", NULL)))
-        abort_on_error("Cannot find image images/coop_fence.png\nPlease check your files and try again");
-
-    if (!( tile_images[54] = load_bitmap("images/coop_gate.png", NULL)))
-        abort_on_error("Cannot find image images/coop_gate.png\nPlease check your files and try again");
-
-    if (!( tile_images[55] = load_bitmap("images/coop_corner.png", NULL)))
-        abort_on_error("Cannot find image images/coop_corner.png\nPlease check your files and try again");
-
-    if (!( tile_images[56] = load_bitmap("images/coop_left.png", NULL)))
-        abort_on_error("Cannot find image images/coop_left.png\nPlease check your files and try again");
-
-    if (!( tile_images[57] = load_bitmap("images/coop_corner_2.png", NULL)))
-        abort_on_error("Cannot find image images/coop_corner_2.png\nPlease check your files and try again");
-
-    if (!( tile_images[58] = load_bitmap("images/coop_right.png", NULL)))
-        abort_on_error("Cannot find image images/coop_right.png\nPlease check your files and try again");
-
-    if (!( tile_images[59] = load_bitmap("images/coop_grass.png", NULL)))
-        abort_on_error("Cannot find image images/coop_grass.png\nPlease check your files and try again");
-
-    if (!( tile_images[60] = load_bitmap("images/store.png", NULL)))
-        abort_on_error("Cannot find image images/store.png\nPlease check your files and try again");
-
-    if (!( tile_images[61] = load_bitmap("images/barn.png", NULL)))
-        abort_on_error("Cannot find image images/barn.png\nPlease check your files and try again");
-
-    if (!( tile_images[62] = load_bitmap("images/goat.png", NULL)))
-        abort_on_error("Cannot find image images/goat.png\nPlease check your files and try again");
-
-    if (!( tile_images[99] = load_bitmap("images/inv_wall.png", NULL)))
-        abort_on_error("Cannot find image images/inv_wall.png\nPlease check your files and try again");
-
-    if (!( tile_images[98] = load_bitmap("images/inv_wall.png", NULL)))
-        abort_on_error("Cannot find image images/inv_wall.png\nPlease check your files and try again");
+    tile_images[53] = load_bitmap_ex("images/coop_fence.png");
+    tile_images[54] = load_bitmap_ex("images/coop_gate.png");
+    tile_images[55] = load_bitmap_ex("images/coop_corner.png");
+    tile_images[56] = load_bitmap_ex("images/coop_left.png");
+    tile_images[57] = load_bitmap_ex("images/coop_corner_2.png");
+    tile_images[58] = load_bitmap_ex("images/coop_right.png");
+    tile_images[59] = load_bitmap_ex("images/coop_grass.png");
+    tile_images[60] = load_bitmap_ex("images/store.png");
+    tile_images[61] = load_bitmap_ex("images/barn.png");
+    tile_images[62] = load_bitmap_ex("images/goat.png");
+    tile_images[99] = load_bitmap_ex("images/inv_wall.png");
+    tile_images[98] = load_bitmap_ex("images/inv_wall.png");
 
     // What's the difference between item_images[0] and Allan? Everything!
-    if (!( item_images[0] = load_bitmap("images/hoe.png", NULL)))
-        abort_on_error("Cannot find image images/hoe.png\nPlease check your files and try again");
+    item_images[0] = load_bitmap_ex("images/hoe.png");
     item_names[0] = "hoe";
 
-    if (!( item_images[1] = load_bitmap("images/scythe.png", NULL)))
-        abort_on_error("Cannot find image images/scythe.png\nPlease check your files and try again");
+    item_images[1] = load_bitmap_ex("images/scythe.png");
     item_names[1] = "scythe";
 
-    if (!( item_images[3] = load_bitmap("images/watering_can.png", NULL)))
-        abort_on_error("Cannot find image images/watering_can.png\nPlease check your files and try again");
+    item_images[3] = load_bitmap_ex("images/watering_can.png");
     item_names[3] = "watering can";
 
-    if (!( item_images[4] = load_bitmap("images/axe.png", NULL)))
-        abort_on_error("Cannot find image images/axe.png\nPlease check your files and try again");
+    item_images[4] = load_bitmap_ex("images/axe.png");
     item_names[4] = "axe";
 
-    if (!( item_images[5] = load_bitmap("images/shovel.png", NULL)))
-        abort_on_error("Cannot find image images/shovel.png\nPlease check your files and try again");
+    item_images[5] = load_bitmap_ex("images/shovel.png");
     item_names[5] = "shovel";
 
-    if (!( item_images[6] = load_bitmap("images/chicken.png", NULL)))
-        abort_on_error("Cannot find image images/chicken.png\nPlease check your files and try again");
+    item_images[6] = load_bitmap_ex("images/chicken.png");
     item_names[6] = "chicken";
 
-    if (!( item_images[7] = load_bitmap("images/egg.png", NULL)))
-        abort_on_error("Cannot find image images/egg.png\nPlease check your files and try again");
+    item_images[7] = load_bitmap_ex("images/egg.png");
     item_names[7] = "egg";
 
-    if (!( item_images[8] = load_bitmap("images/crop_1_0.png", NULL)))
-        abort_on_error("Cannot find image images/crop_1_0.png\nPlease check your files and try again");
+    item_images[8] = load_bitmap_ex("images/crop_1_0.png");
     item_names[8] = "berry seed";
 
-    if (!( item_images[9] = load_bitmap("images/crop_1_4.png", NULL)))
-        abort_on_error("Cannot find image images/crop_1_4.png\nPlease check your files and try again");
+    item_images[9] = load_bitmap_ex("images/crop_1_4.png");
     item_names[9] = "berry";
 
-
-    if (!( item_images[10] = load_bitmap("images/crop_2_0.png", NULL)))
-        abort_on_error("Cannot find image images/crop_2_0.png\nPlease check your files and try again");
+    item_images[10] = load_bitmap_ex("images/crop_2_0.png");
     item_names[10] = "tomato seed";
 
-    if (!( item_images[11] = load_bitmap("images/crop_2_4.png", NULL)))
-        abort_on_error("Cannot find image images/crop_2_4.png\nPlease check your files and try again");
+    item_images[11] = load_bitmap_ex("images/crop_2_4.png");
     item_names[11] = "tomato";
 
-
-    if (!( item_images[12] = load_bitmap("images/crop_4_0.png", NULL)))
-        abort_on_error("Cannot find image images/crop_4_0.png\nPlease check your files and try again");
+    item_images[12] = load_bitmap_ex("images/crop_4_0.png");
     item_names[12] = "carrot seed";
 
-    if (!( item_images[13] = load_bitmap("images/crop_4_4.png", NULL)))
-        abort_on_error("Cannot find image images/crop_4_4.png\nPlease check your files and try again");
+    item_images[13] = load_bitmap_ex("images/crop_4_4.png");
     item_names[13] = "carrot";
 
-
-    if (!( item_images[14] = load_bitmap("images/crop_5_0.png", NULL)))
-        abort_on_error("Cannot find image images/crop_5_0.png\nPlease check your files and try again");
+    item_images[14] = load_bitmap_ex("images/crop_5_0.png");
     item_names[14] = "lavender seed";
 
-    if (!( item_images[15] = load_bitmap("images/crop_5_4.png", NULL)))
-        abort_on_error("Cannot find image images/crop_5_4.png\nPlease check your files and try again");
+    item_images[15] = load_bitmap_ex("images/crop_5_4.png");
     item_names[15] = "lavender";
 
-
-    if (!( item_images[16] = load_bitmap("images/stick.png", NULL)))
-        abort_on_error("Cannot find image images/stick.png\nPlease check your files and try again");
-
+    item_images[16] = load_bitmap_ex("images/stick.png");
     item_names[16] = "stick";
 
-    if( !(egg = load_sample("sfx/egg.wav")))
-        abort_on_error( "Cannot find file sfx/egg.wav \n Please check your files and try again");
 
+    egg = load_sample_ex("sfx/egg.wav");
 }
 
 // Replace tile on map

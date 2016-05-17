@@ -19,70 +19,32 @@ character::~character(){
 
 // Set image
 void character::load_data(){
+    // Images
+    image = load_bitmap_ex("images/character_1.png");
+    watering_can[0] = load_bitmap_ex("images/watering_can_0.png");
+    watering_can[1] = load_bitmap_ex("images/watering_can_1.png");
+    watering_can[2] = load_bitmap_ex("images/watering_can_2.png");
+    watering_can[3] = load_bitmap_ex("images/watering_can_3.png");
+    watering_can[4] = load_bitmap_ex("images/watering_can_4.png");
+    inventory_gui = load_bitmap_ex("images/GUI_INVENTORY.png");
+    hand = load_bitmap_ex("images/hand.png");
+    indicator = load_bitmap_ex("images/indicator.png");
+    coin = load_bitmap_ex("images/coin.png");
 
-     // Check if image exists
-    if (!( image = load_bitmap("images/character_1.png", NULL)))
-        abort_on_error("Cannot find image images/character_1.png\nPlease check your files and try again");
+    // Sounds
+    pickup = load_sample_ex("sfx/pickup.wav");
+    drop = load_sample_ex("sfx/drop.wav");
+    step_1 = load_sample_ex("sfx/step_1.wav");
+    step_2 = load_sample_ex("sfx/step_2.wav");
+    cut_axe = load_sample_ex("sfx/cut_axe.wav");
+    cut_scythe = load_sample_ex("sfx/cut_scythe.wav");
+    hoe = load_sample_ex("sfx/hoe.wav");
+    error = load_sample_ex("sfx/error.wav");
+    water_fill = load_sample_ex("sfx/water_fill.wav");
+    water_pour = load_sample_ex("sfx/water_pour.wav");
+    dig = load_sample_ex("sfx/dig.wav");
 
-    if (!( watering_can[0] = load_bitmap("images/watering_can_0.png", NULL)))
-        abort_on_error("Cannot find image images/watering_can_0.png\nPlease check your files and try again");
 
-    if (!( watering_can[1] = load_bitmap("images/watering_can_1.png", NULL)))
-        abort_on_error("Cannot find image images/watering_can_1.png\nPlease check your files and try again");
-
-    if (!( watering_can[2] = load_bitmap("images/watering_can_2.png", NULL)))
-        abort_on_error("Cannot find image images/watering_can_2.png\nPlease check your files and try again");
-
-    if (!( watering_can[3] = load_bitmap("images/watering_can_3.png", NULL)))
-        abort_on_error("Cannot find image images/watering_can_3.png\nPlease check your files and try again");
-
-    if (!( watering_can[4] = load_bitmap("images/watering_can_4.png", NULL)))
-        abort_on_error("Cannot find image images/watering_can_4.png\nPlease check your files and try again");
-
-    if (!( inventory_gui = load_bitmap("images/GUI_INVENTORY.png", NULL)))
-        abort_on_error("Cannot find image images/GUI_INVENTORY.png\nPlease check your files and try again");
-
-    if (!( hand = load_bitmap("images/hand.png", NULL)))
-        abort_on_error("Cannot find image images/hand.png\nPlease check your files and try again");
-
-    if (!( indicator = load_bitmap("images/indicator.png", NULL)))
-        abort_on_error("Cannot find image images/indicator.png\nPlease check your files and try again");
-
-    if (!( coin = load_bitmap("images/coin.png", NULL)))
-        abort_on_error("Cannot find image images/coin.png\nPlease check your files and try again");
-
-    if( !(pickup = load_sample("sfx/pickup.wav")))
-        abort_on_error( "Cannot find file sfx/pickup.wav \n Please check your files and try again");
-
-    if( !(drop = load_sample("sfx/drop.wav")))
-        abort_on_error( "Cannot find file sfx/drop.wav \n Please check your files and try again");
-
-    if( !(step_1 = load_sample("sfx/step_1.wav")))
-        abort_on_error( "Cannot find file sfx/step_1.wav \n Please check your files and try again");
-
-    if( !(step_2 = load_sample("sfx/step_2.wav")))
-        abort_on_error( "Cannot find file sfx/step_2.wav \n Please check your files and try again");
-
-    if( !(cut_axe= load_sample("sfx/cut_axe.wav")))
-        abort_on_error( "Cannot find file sfx/cut_axe.wav \n Please check your files and try again");
-
-    if( !(cut_scythe= load_sample("sfx/cut_scythe.wav")))
-        abort_on_error( "Cannot find file sfx/cut_scythe.wav \n Please check your files and try again");
-
-    if( !(hoe= load_sample("sfx/hoe.wav")))
-        abort_on_error( "Cannot find file sfx/hoe.wav \n Please check your files and try again");
-
-    if( !(error= load_sample("sfx/error.wav")))
-        abort_on_error( "Cannot find file sfx/error.wav \n Please check your files and try again");
-
-    if( !(water_fill= load_sample("sfx/water_fill.wav")))
-        abort_on_error( "Cannot find file sfx/water_fill.wav \n Please check your files and try again");
-
-    if( !(water_pour = load_sample("sfx/water_pour.wav")))
-        abort_on_error( "Cannot find file sfx/water_pour.wav \n Please check your files and try again");
-
-    if( !(dig = load_sample("sfx/dig.wav")))
-        abort_on_error( "Cannot find file sfx/dig.wav \n Please check your files and try again");
 
     inventory_hand = new item( 0, 0, hand, hand, -1, "hand");
     inventory_item = inventory_hand;
