@@ -50,11 +50,159 @@
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
 	</tile>
-	<!--DTree-->
+	<!--Tree-->
 	<tile id="5">
 		<name>Tree</name>
 		<images>
 			<image>images/tree.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Bush-->
+	<tile id="6">
+		<name>Bush</name>
+		<images>
+			<image>images/bush.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Well Path-->
+	<tile id="7">
+		<name>Well Path</name>
+		<images>
+			<image>images/well_path.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Tomatoes-->
+	<tile id="8">
+		<name>Tomatoes</name>
+		<images>
+			<image>images/crop_2_1.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<tile id="9">
+		<name>Tomatoes</name>
+		<images>
+			<image>images/crop_2_2.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<tile id="10">
+		<name>Tomatoes</name>
+		<images>
+			<image>images/crop_2_3.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Stump-->
+	<tile id="11">
+		<name>Stump</name>
+		<images>
+			<image>images/stump.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Path Horizontal-->
+	<tile id="12">
+		<name>Path Horizontal</name>
+		<images>
+			<image>images/path_horizontal.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Path Vertical-->
+	<tile id="13">
+		<name>Path Vertical</name>
+		<images>
+			<image>images/path_vertical.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Path Corner 1-->
+	<tile id="14">
+		<name>Path Corner 1</name>
+		<images>
+			<image>images/path_corner_1.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Path Corner 2---->
+	<tile id="15">
+		<name>Path Corner 2</name>
+		<images>
+			<image>images/path_corner_2.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Path Corner 3---->
+	<tile id="16">
+		<name>Path Corner 3</name>
+		<images>
+			<image>images/path_corner_3.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Path Corner 4---->
+	<tile id="17">
+		<name>Path Corner 4</name>
+		<images>
+			<image>images/path_corner_4.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Plowed soil---->
+	<tile id="18">
+		<name>Plowed soil</name>
+		<images>
+			<image>images/ploughed_soil.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Store path---->
+	<tile id="19">
+		<name>Store path</name>
+		<images>
+			<image>images/store_path.png</image>
+			<image2>NULL</image2>
+		</images>
+		<attrubite>NON_SOLID</attrubite>
+		<random>0</random>
+	</tile>
+	<!--Store path---->
+	<tile id="20">
+		<name>Path</name>
+		<images>
+			<image>images/path_t_left.png</image>
 			<image2>NULL</image2>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
