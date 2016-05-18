@@ -42,10 +42,10 @@ void store::draw( BITMAP *tempBitmap){
         draw_sprite( tempBitmap, image, 0, 0);
 
         for( int i = 0; i < (signed)storeItems.size(); i++){
-            if( storeItems.at(i) -> image[0] != NULL)
+            /*if( storeItems.at(i) -> image[0] != NULL)
                 draw_sprite( tempBitmap, storeItems.at(i) -> image[0], 25 + i * 19, 90);
             if( selector_index == i)
-                draw_sprite( tempBitmap, indicator, 25 + i * 19, 90);
+                draw_sprite( tempBitmap, indicator, 25 + i * 19, 90);*/
         }
         if( selector_index < (signed)storeItems.size())
             textprintf_ex( tempBitmap, font, 25, 106, makecol(0,0,0), -1, "%s : %i coins",
@@ -60,8 +60,8 @@ void store::draw( BITMAP *tempBitmap){
 
         }
 
-        if( customer_inventory != NULL)
-            draw_sprite( tempBitmap, customer_inventory -> inventory_item -> image[0], 185, 90);
+        /*if( customer_inventory != NULL)
+            draw_sprite( tempBitmap, customer_inventory -> inventory_item -> image[0], 185, 90);*/
 
         if( selector_index == (signed)storeItems.size())
             draw_sprite( tempBitmap, indicator, 185, 90);
@@ -143,8 +143,8 @@ void store::open_store( character *new_inventory){
                 newType = 6;
             }
 
-            item *storeItem = new item( 0, 0, new_inventory -> map_pointer -> item_images[newType],
-                                              new_inventory -> map_pointer -> item_images[newType],
+            item *storeItem = new item( 0, 0, new_inventory -> map_pointer -> tile_images_coordinates[newType][0],
+                                              new_inventory -> map_pointer -> tile_images_coordinates[newType][1],
                                               newType, new_inventory -> map_pointer -> item_names[newType]);
             add_item(storeItem);
         }

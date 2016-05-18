@@ -10,7 +10,7 @@
 class tile
 {
     public:
-        tile(int newX, int newY, BITMAP *newImage1, BITMAP *newImage2, char newID);
+        tile(int newX, int newY, char newImageX, char newImageY, char newID);
         virtual ~tile();
 
         void draw( BITMAP *tempBuffer);
@@ -23,8 +23,10 @@ class tile
         // ID
         char id;
 
-        // Images
-        BITMAP *image[2];
+        char data_value;
+
+        static BITMAP *sprite_sheet;
+        char image_cord_x, image_cord_y;
 
         // Sorting stuff
         bool operator< (const tile &other) const {
@@ -42,8 +44,12 @@ class tile
 class item : public tile
 {
     public:
-        item(int newX, int newY, BITMAP *newImage1, BITMAP *newImage2, char newID, std::string newName);
+        item(int newX, int newY, char newImageX, char newImageY, char newID, std::string newName);
         virtual ~item();
+
+        void draw( BITMAP *tempBuffer);
+
+        static BITMAP *sprite_sheet_items;
 
         std::string name;
 
@@ -57,7 +63,7 @@ class item : public tile
 class crop : public tile
 {
     public:
-        crop(int newX, int newY, BITMAP *newImage1, BITMAP *newImage2, char newID, std::string newName);
+        crop(int newX, int newY, char newImageX, char newImageY, char newID, std::string newName);
         virtual ~crop();
 
         std::string name;

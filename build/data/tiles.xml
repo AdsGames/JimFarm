@@ -4,8 +4,10 @@
 	<tile id="0">
 		<name>Grass</name>
 		<images>
-			<image>images/grass.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -14,8 +16,10 @@
 	<tile id="1">
 		<name>Grass</name>
 		<images>
-			<image>images/water.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -24,8 +28,10 @@
 	<tile id="2">
 		<name>Soil</name>
 		<images>
-			<image>images/soil.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -34,8 +40,10 @@
 	<tile id="3">
 		<name>Well</name>
 		<images>
-			<image>images/well.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -44,8 +52,10 @@
 	<tile id="4">
 		<name>Dense Grass</name>
 		<images>
-			<image>images/dense_grass.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -54,8 +64,10 @@
 	<tile id="5">
 		<name>Tree</name>
 		<images>
-			<image>images/tree.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -64,8 +76,10 @@
 	<tile id="6">
 		<name>Bush</name>
 		<images>
-			<image>images/bush.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -74,8 +88,10 @@
 	<tile id="7">
 		<name>Well Path</name>
 		<images>
-			<image>images/well_path.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -84,8 +100,10 @@
 	<tile id="8">
 		<name>Tomatoes</name>
 		<images>
-			<image>images/crop_2_1.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -93,8 +111,10 @@
 	<tile id="9">
 		<name>Tomatoes</name>
 		<images>
-			<image>images/crop_2_2.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -102,8 +122,10 @@
 	<tile id="10">
 		<name>Tomatoes</name>
 		<images>
-			<image>images/crop_2_3.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -112,8 +134,10 @@
 	<tile id="11">
 		<name>Stump</name>
 		<images>
-			<image>images/stump.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -122,8 +146,10 @@
 	<tile id="12">
 		<name>Path Horizontal</name>
 		<images>
-			<image>images/path_horizontal.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -132,8 +158,10 @@
 	<tile id="13">
 		<name>Path Vertical</name>
 		<images>
-			<image>images/path_vertical.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -142,8 +170,10 @@
 	<tile id="14">
 		<name>Path Corner 1</name>
 		<images>
-			<image>images/path_corner_1.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -152,8 +182,10 @@
 	<tile id="15">
 		<name>Path Corner 2</name>
 		<images>
-			<image>images/path_corner_2.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -162,8 +194,10 @@
 	<tile id="16">
 		<name>Path Corner 3</name>
 		<images>
-			<image>images/path_corner_3.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -172,8 +206,10 @@
 	<tile id="17">
 		<name>Path Corner 4</name>
 		<images>
-			<image>images/path_corner_4.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -182,8 +218,10 @@
 	<tile id="18">
 		<name>Plowed soil</name>
 		<images>
-			<image>images/ploughed_soil.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -192,8 +230,10 @@
 	<tile id="19">
 		<name>Store path</name>
 		<images>
-			<image>images/store_path.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
@@ -202,8 +242,10 @@
 	<tile id="20">
 		<name>Path</name>
 		<images>
-			<image>images/path_t_left.png</image>
-			<image2>NULL</image2>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+			<image_h>1</image_h>
+			<image_w>1</image_w>
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>

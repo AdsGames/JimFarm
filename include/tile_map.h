@@ -57,6 +57,9 @@ class tile_map
 
         std::string item_names[100];
 
+        char tile_images_coordinates[100][2];
+        char item_images_coordinates[100][2];
+
         tile_type_manager tile_dictionary;
 
     protected:
@@ -69,6 +72,7 @@ class tile_map
         std::vector<item> map_items;
 
         BITMAP *tile_images[100];
+
 
         SAMPLE* egg;
 

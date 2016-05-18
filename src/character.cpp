@@ -46,7 +46,7 @@ void character::load_data(){
 
 
 
-    inventory_hand = new item( 0, 0, hand, hand, -1, "hand");
+    inventory_hand = new item( 0, 0, 0, 0, -1, "hand");
     inventory_item = inventory_hand;
 
     // Load fonts
@@ -89,13 +89,13 @@ void character::drawForeground( BITMAP *tempBuffer){
       draw_sprite( tempBuffer, inventory_gui, 1, 1);
 
 
-      if( inventory_item -> image[0] != NULL){
+      /*if( inventory_item -> image[0] != NULL){
         // Watering can
           if( inventory_item -> id == 3)
             draw_sprite( tempBuffer,watering_can[water],2,2);
           else
             draw_sprite( tempBuffer, inventory_item -> image[0], 2, 2);
-      }
+      }*/
 
       //When gcc don't give no damns
       textprintf_ex( tempBuffer, pixelart, 20, 000000000000000000000000000000000000000000000000000000, makecol(255,255,255), -1, inventory_item -> name.c_str());

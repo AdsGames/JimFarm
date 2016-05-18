@@ -1,14 +1,17 @@
 #include "tile.h"
 
+
+BITMAP *tile::sprite_sheet = NULL;
+
 // TILE
-tile::tile(int newX, int newY, BITMAP *newImage1, BITMAP *newImage2, char newID)
+tile::tile(int newX, int newY, char newImageX, char newImageY, char newID)
 {
     // Set init variables
     x = newX;
     y = newY;
 
-    image[0] = newImage1;
-    image[1] = newImage2;
+    image_cord_x = newImageX;
+    image_cord_y = newImageY;
 
     id = newID;
 
@@ -27,7 +30,7 @@ tile::~tile()
 
 void tile::draw( BITMAP *tempBuffer)
 {
-    draw_sprite( tempBuffer, image[0], x, y - (image[0] -> h - 16));
+    blit( sprite_sheet, tempBuffer, image_cord_x * 16, image_cord_y * 16, x, y /*- (image[0] -> h - 16)*/, 16, 16);
 }
 
 void tile::run_tick(){
@@ -74,18 +77,11 @@ void tile::run_tick(){
 
 
 // ITEM
-item::item(int newX, int newY, BITMAP *newImage1, BITMAP *newImage2, char newID, std::string newName) :
-    tile( newX, newY, newImage1, newImage2, newID)
+BITMAP *item::sprite_sheet_items = NULL;
+
+item::item(int newX, int newY, char newImageX, char newImageY, char newID, std::string newName) :
+    tile( newX, newY, newImageX, newImageY, newID)
 {
-    // Set init variables
-    x = newX;
-    y = newY;
-
-    image[0] = newImage1;
-    image[1] = newImage2;
-
-    id = newID;
-
     name = newName;
 
     switch ( id){
@@ -147,23 +143,19 @@ item::~item()
     //dtor
 }
 
+void item::draw( BITMAP *tempBuffer)
+{
+    blit( sprite_sheet_items, tempBuffer, image_cord_x * 16, image_cord_y * 16, x, y /*- (image[0] -> h - 16)*/, 16, 16);
+}
+
 
 
 
 
 // CROP
-crop::crop(int newX, int newY, BITMAP *newImage1, BITMAP *newImage2, char newID, std::string newName) :
-    tile( newX, newY, newImage1, newImage2, newID)
+crop::crop(int newX, int newY, char newImageX, char newImageY, char newID, std::string newName) :
+    tile( newX, newY, newImageX, newImageY, newID)
 {
-    // Set init variables
-    x = newX;
-    y = newY;
-
-    image[0] = newImage1;
-    image[1] = newImage2;
-
-    id = newID;
-
     name = newName;
 }
 
