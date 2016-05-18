@@ -46,7 +46,7 @@ void character::load_data(){
 
 
 
-    inventory_hand = new item( 0, 0, -1);
+    inventory_hand = new item( 0, 0, 0);
     inventory_item = inventory_hand;
 
     // Load fonts
@@ -89,13 +89,11 @@ void character::drawForeground( BITMAP *tempBuffer){
       draw_sprite( tempBuffer, inventory_gui, 1, 1);
 
 
-      /*if( inventory_item -> image[0] != NULL){
-        // Watering can
-          if( inventory_item -> id == 3)
-            draw_sprite( tempBuffer,watering_can[water],2,2);
-          else
-            draw_sprite( tempBuffer, inventory_item -> image[0], 2, 2);
-      }*/
+      // Watering can
+      if( inventory_item -> getID() == 3)
+        draw_sprite( tempBuffer, watering_can[water], 2, 2);
+      else
+        inventory_item -> draw_at( 2, 2, tempBuffer);
 
       //When gcc don't give no damns
       textprintf_ex( tempBuffer, pixelart, 20, 000000000000000000000000000000000000000000000000000000, makecol(255,255,255), -1, inventory_item -> getName().c_str());
@@ -200,7 +198,7 @@ void character::update(){
 
         // Pickup
         if( keyListener::keyPressed[KEY_LCONTROL] || keyListener::keyPressed[KEY_RCONTROL] || mouse_b & 1 || joy[0].button[2].b ){
-          if( inventory_item -> getID() == -1){
+          if( inventory_item -> getID() == 0){
             if( map_pointer -> is_item_at( indicator_x, indicator_y) == true){
               play_sample( pickup, 255, 125, 1000, 0);
 
@@ -229,7 +227,7 @@ void character::update(){
                 store_open = true;
             }
             // Hand
-            else if( inventory_item -> getID() == -1 && map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND) != 7){
+            else if( inventory_item -> getID() == 0 && map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND) != 7){
                 if( map_pointer -> is_item_at( indicator_x, indicator_y) == true)
                     push_message( "There is a " + map_pointer -> get_item_at( indicator_x, indicator_y) -> getName() + " here");
                 else{
@@ -238,7 +236,7 @@ void character::update(){
                 }
             }
             // Hoe
-            else if( inventory_item -> getID() == 0){
+            else if( inventory_item -> getID() == 1){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 2){
                     map_pointer -> replace_tile( indicator_x, indicator_y, 18, false);
                     play_sample(hoe,255,125,1000,0);
@@ -249,7 +247,7 @@ void character::update(){
                 }
             }
             // Scythe
-            else if( inventory_item -> getID() == 1){
+            else if( inventory_item -> getID() == 2){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 4){
                     map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
                     play_sample(cut_scythe,255,125,1000,0);

@@ -16,7 +16,12 @@ class tile
 
         // Positioning
         int x, y;
+        int getWidth(){ return tile_pointer -> getWidth();}
+        int getHeight(){ return tile_pointer -> getHeight();}
+
+        // Drawing
         void draw( BITMAP *tempBuffer);
+        void draw_at( int newX, int newY, BITMAP *tempBuffer);
 
         // Sorting stuff
         bool operator< (const tile &other) const {
@@ -47,7 +52,7 @@ class item : public tile
 
         void draw( BITMAP *tempBuffer);
 
-        char value;
+        unsigned char getValue(){ return tile_pointer -> getValue();}
     protected:
 
     private:

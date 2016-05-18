@@ -17,7 +17,7 @@ class tile_type{
     virtual ~tile_type();
 
     // Get type
-    char getID(){ return id; }
+    unsigned char getID(){ return id; }
 
     // Get name
     std::string getName(){ return name; }
@@ -26,11 +26,11 @@ class tile_type{
     unsigned char getAttribute(){ return attribute; }
 
     // Tex
-    char getImageX(){ return image_cord_x; }
-    char getImageY(){ return image_cord_y; }
-    char getWidth(){ return image_w; }
-    char getHeight(){ return image_h; }
-    char getValue(){ return value; }
+    unsigned char getImageX(){ return image_cord_x; }
+    unsigned char getImageY(){ return image_cord_y; }
+    unsigned char getWidth(){ return image_w; }
+    unsigned char getHeight(){ return image_h; }
+    unsigned char getValue(){ return value; }
 
     // Draw
     void draw( int x, int y, BITMAP *tempBuffer);

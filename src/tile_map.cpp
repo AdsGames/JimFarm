@@ -183,10 +183,7 @@ void tile_map::generate_map(){
     }
 
     // Place hoe ( 1)
-    place_new_item_at( 17 * 16, 5 * 16, 0);
-
-    //item newItem2( 18 * 16, 5 * 16, item_images[3], item_images[3], 3, item_names[3]);
-   // place_item( newItem2);
+    place_new_item_at( 17 * 16, 5 * 16, 1);
 
     // Place chickens (4)
     int placed = 0;

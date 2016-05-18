@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <items>
-	<!--hoe-->
+	<!--hand-->
 	<item id="0">
+		<name>hand</name>
+		<images>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+		</images>
+		<value>0</value>
+	</item>
+	<!--hoe-->
+	<item id="1">
 		<name>hoe</name>
 		<images>
 			<image_x>3</image_x>
@@ -10,7 +19,7 @@
 		<value>10</value>
 	</item>
 	<!--scythe-->
-	<item id="1">
+	<item id="2">
 		<name>scythe</name>
 		<images>
 			<image_x>0</image_x>
@@ -49,7 +58,7 @@
 	<item id="6">
 		<name>chicken</name>
 		<images>
-			<image_x>0</image_x>
+			<image_x>3</image_x>
 			<image_y>0</image_y>
 		</images>
 		<value>30</value>

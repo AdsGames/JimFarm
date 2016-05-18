@@ -5,6 +5,7 @@ menu::menu()
 {
     state = MAIN_MENU;
     indicator_location = 4;
+    music_volume = 100;
 }
 
 menu::~menu()

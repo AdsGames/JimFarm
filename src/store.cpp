@@ -42,29 +42,29 @@ void store::draw( BITMAP *tempBitmap){
         draw_sprite( tempBitmap, image, 0, 0);
 
         for( int i = 0; i < (signed)storeItems.size(); i++){
-            /*if( storeItems.at(i) -> image[0] != NULL)
-                draw_sprite( tempBitmap, storeItems.at(i) -> image[0], 25 + i * 19, 90);
+            storeItems.at(i) -> draw_at( 25 + i * 19, 90, tempBitmap);
+
             if( selector_index == i)
-                draw_sprite( tempBitmap, indicator, 25 + i * 19, 90);*/
+                draw_sprite( tempBitmap, indicator, 25 + i * 19, 90);
         }
         if( selector_index < (signed)storeItems.size())
             textprintf_ex( tempBitmap, font, 25, 106, makecol(0,0,0), -1, "%s : %i coins",
-                        storeItems.at(selector_index) -> getName().c_str(), storeItems.at(selector_index) -> value);
+                        storeItems.at(selector_index) -> getName().c_str(), storeItems.at(selector_index) -> getValue());
         else{
-            if( customer_inventory -> inventory_item -> getID() == -1)
+            if( customer_inventory -> inventory_item -> getID() == 0)
                 textprintf_ex( tempBitmap, font, 25, 106, makecol(0,0,0), -1, "%s : %s",
                             customer_inventory -> inventory_item -> getName().c_str(), "NOT FOR SALE");
             else
                 textprintf_ex( tempBitmap, font, 25, 106, makecol(0,0,0), -1, "%s : %i coins",
-                            customer_inventory -> inventory_item -> getName().c_str(), customer_inventory -> inventory_item -> value);
+                            customer_inventory -> inventory_item -> getName().c_str(), customer_inventory -> inventory_item -> getValue());
 
         }
 
-        /*if( customer_inventory != NULL)
-            draw_sprite( tempBitmap, customer_inventory -> inventory_item -> image[0], 185, 90);*/
+        if( customer_inventory != NULL)
+          customer_inventory -> inventory_item -> draw_at( 185, 90, tempBitmap);
 
         if( selector_index == (signed)storeItems.size())
-            draw_sprite( tempBitmap, indicator, 185, 90);
+          draw_sprite( tempBitmap, indicator, 185, 90);
     }
 }
 
@@ -90,9 +90,9 @@ void store::update(){
 
         if( keyListener::keyPressed[KEY_LCONTROL] || keyListener::keyPressed[KEY_RCONTROL] || mouse_b & 1 || joy[0].button[2].b){
             if( selector_index < (signed)storeItems.size()){
-                if( customer_inventory -> inventory_item -> getID() == -1){
-                    if(customer_inventory -> money >= storeItems.at(selector_index) -> value){
-                      customer_inventory -> money -= storeItems.at(selector_index) -> value;
+                if( customer_inventory -> inventory_item -> getID() == 0){
+                    if(customer_inventory -> money >= storeItems.at(selector_index) -> getValue()){
+                      customer_inventory -> money -= storeItems.at(selector_index) -> getValue();
                       customer_inventory -> give_item( storeItems.at(selector_index) -> getID());
                       storeItems.erase(storeItems.begin() + selector_index);
                       play_sample(buy,255,125,1000,0);
@@ -111,8 +111,8 @@ void store::update(){
                 }
 
             }
-            else if( selector_index == (signed)storeItems.size() && customer_inventory -> inventory_item -> getID() != -1){
-                customer_inventory -> money += customer_inventory -> inventory_item -> value;
+            else if( selector_index == (signed)storeItems.size() && customer_inventory -> inventory_item -> getID() != 0){
+                customer_inventory -> money += customer_inventory -> inventory_item -> getValue();
                 customer_inventory -> remove_item();
                 play_sample(sell,255,125,1000,0);
 
@@ -134,14 +134,10 @@ void store::open_store( character *new_inventory){
     // Give items to store
     if( storeItems.size() == 0){
 
-        selector_index=8;
+        selector_index = 8;
 
         for( int i = 0; i < 8; i ++){
-            int newType = random(0, 15);
-
-            if( newType == 2){
-                newType = 6;
-            }
+            int newType = random(1, 15);
 
             item *storeItem = new item( 0, 0, newType);
             add_item(storeItem);

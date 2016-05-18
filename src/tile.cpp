@@ -22,6 +22,11 @@ void tile::draw( BITMAP *tempBuffer)
     tile_pointer -> draw( x, y, tempBuffer);
 }
 
+void tile::draw_at( int newX, int newY, BITMAP *tempBuffer)
+{
+    tile_pointer -> draw( newX, newY, tempBuffer);
+}
+
 void tile::setID( unsigned char newID){
   tile_pointer = tile_type_manager::getTileByID( newID);
 }

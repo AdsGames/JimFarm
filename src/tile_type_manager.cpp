@@ -41,7 +41,7 @@ void tile_type_manager::load( std::string newFile, bool items){
   }
 
   // Load tiles
-  for(cTile; cTile; cTile=cTile->next_sibling()){
+  for(cTile; cTile; cTile = cTile->next_sibling()){
     // Read xml variables
     // General
     int tileID = atoi(cTile-> first_attribute("id") -> value());
@@ -81,7 +81,7 @@ void tile_type_manager::load( std::string newFile, bool items){
       std::cout << "-> Loading Items:" << name << "  ID:" <<  tileID << "  X:" << image_x << "  Y:" << image_y << "  value:" << value << "\n";
 
       // Create item, set variables and add it to the item list
-      tile_type newTileType( image_x, image_y, 1, 1, tileID, name, 0, value);
+      tile_type newTileType( image_x, image_y, 1, 1, tileID, name, 0, (unsigned char)value);
       newTileType.setSpriteSheet( sprite_sheet_items);
 
       // Add the tile

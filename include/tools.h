@@ -28,4 +28,6 @@ extern SAMPLE *load_sample_ex( const char *path);
 // Load and error check fonts
 extern FONT *load_font_ex( const char *path);
 
+extern bool collision(int xMin1, int xMax1, int xMin2, int xMax2, int yMin1, int yMax1, int yMin2, int yMax2);
+
 #endif // TOOLS_H

@@ -32,7 +32,7 @@ class menu
         int coin_frame;
         bool coin_direction;
         int indicator_location;
-        int music_volume=100;
+        int music_volume;
 
         // Fonts
         FONT* f1;
