@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "tools.h"
+#include "tile_type_manager.h"
 
 class tile
 {
@@ -37,6 +38,8 @@ class tile
 
         virtual void run_tick();
         bool requirements_met;
+
+        tile_type *tile_pointer;
 
     protected:
 

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items>
+	<!--hoe-->
+	<item id="0">
+		<name>hoe</name>
+		<images>
+			<image_x>3</image_x>
+			<image_y>1</image_y>
+		</images>
+	</item>
+	<!--scythe-->
+	<item id="1">
+		<name>scythe</name>
+		<images>
+			<image_x>0</image_x>
+			<image_y>1</image_y>
+		</images>
+	</item>
+	<!--watering can-->
+	<item id="3">
+		<name>watering can</name>
+		<images>
+			<image_x>2</image_x>
+			<image_y>1</image_y>
+		</images>
+	</item>
+	<!--axe-->
+	<item id="4">
+		<name>axe</name>
+		<images>
+			<image_x>4</image_x>
+			<image_y>1</image_y>
+		</images>
+	</item>
+	<!--shovel-->
+	<item id="5">
+		<name>shovel</name>
+		<images>
+			<image_x>1</image_x>
+			<image_y>1</image_y>
+		</images>
+	</item>
+	<!--chicken-->
+	<item id="6">
+		<name>chicken</name>
+		<images>
+			<image_x>0</image_x>
+			<image_y>0</image_y>
+		</images>
+	</item>
+	<!--egg-->
+	<item id="7">
+		<name>egg</name>
+		<images>
+			<image_x>1</image_x>
+			<image_y>0</image_y>
+		</images>
+	</item>
+	<!--berry seed-->
+	<item id="8">
+		<name>berry seed</name>
+		<images>
+			<image_x>0</image_x>
+			<image_y>2</image_y>
+		</images>
+	</item>
+	<!--berry-->
+	<item id="9">
+		<name>berry</name>
+		<images>
+			<image_x>0</image_x>
+			<image_y>3</image_y>
+		</images>
+	</item>
+	<!--tomato seed-->
+	<item id="10">
+		<name>tomato seed</name>
+		<images>
+			<image_x>1</image_x>
+			<image_y>2</image_y>
+		</images>
+	</item>
+	<!--tomato-->
+	<item id="11">
+		<name>tomato</name>
+		<images>
+			<image_x>1</image_x>
+			<image_y>3</image_y>
+		</images>
+	</item>
+	<!--carrot seed-->
+	<item id="12">
+		<name>carrot seed</name>
+		<images>
+			<image_x>2</image_x>
+			<image_y>2</image_y>
+		</images>
+	</item>
+	<!--carrot-->
+	<item id="13">
+		<name>item</name>
+		<images>
+			<image_x>2</image_x>
+			<image_y>3</image_y>
+		</images>
+	</item>
+	<!--lavender seed-->
+	<item id="14">
+		<name>lavender seed</name>
+		<images>
+			<image_x>3</image_x>
+			<image_y>2</image_y>
+		</images>
+	</item>
+	<!--lavender-->
+	<item id="15">
+		<name>lavender</name>
+		<images>
+			<image_x>3</image_x>
+			<image_y>3</image_y>
+		</images>
+	</item>
+	<!--stick-->
+	<item id="16">
+		<name>stick</name>
+		<images>
+			<image_x>2</image_x>
+			<image_y>0</image_y>
+		</images>
+	</item>
+</items>

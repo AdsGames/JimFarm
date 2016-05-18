@@ -5,7 +5,8 @@ tile_map::tile_map()
     x = 128;
     y = 0;
 
-    tile_dictionary.load("data/tiles.xml");
+    tile_dictionary.load("data/tiles.xml", false);
+    tile_dictionary.load("data/items.xml", true);
 }
 
 tile_map::~tile_map()

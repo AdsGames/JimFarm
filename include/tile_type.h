@@ -14,6 +14,7 @@ class tile_type{
   public:
     tile_type( unsigned char newImageX = 0, unsigned char newImageY = 0, unsigned char newImageW = 1,
                unsigned char newImageH = 1, unsigned char newID = 0, std::string newName = "", int newAttribute = 0);
+    tile_type( unsigned char newImageX = 0, unsigned char newImageY = 0, unsigned char newID = 0, std::string newName = "");
     virtual ~tile_type();
 
     // Get type
