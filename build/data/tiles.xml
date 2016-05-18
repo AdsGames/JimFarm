@@ -81,7 +81,7 @@
 			<image_h>2</image_h>
 			<image_w>1</image_w>
 		</images>
-		<attrubite>NON_SOLID</attrubite>
+		<attrubite>SOLID</attrubite>
 		<random>0</random>
 	</tile>
 	<!--Well Path-->
@@ -89,40 +89,6 @@
 		<name>Well Path</name>
 		<images>
 			<image_x>4</image_x>
-			<image_y>4</image_y>
-			<image_h>1</image_h>
-			<image_w>1</image_w>
-		</images>
-		<attrubite>NON_SOLID</attrubite>
-		<random>0</random>
-	</tile>
-	<!--Tomatoes-->
-	<tile id="8">
-		<name>Tomatoes</name>
-		<images>
-			<image_x>0</image_x>
-			<image_y>4</image_y>
-			<image_h>1</image_h>
-			<image_w>1</image_w>
-		</images>
-		<attrubite>NON_SOLID</attrubite>
-		<random>0</random>
-	</tile>
-	<tile id="9">
-		<name>Tomatoes</name>
-		<images>
-			<image_x>1</image_x>
-			<image_y>4</image_y>
-			<image_h>1</image_h>
-			<image_w>1</image_w>
-		</images>
-		<attrubite>NON_SOLID</attrubite>
-		<random>0</random>
-	</tile>
-	<tile id="10">
-		<name>Tomatoes</name>
-		<images>
-			<image_x>2</image_x>
 			<image_y>4</image_y>
 			<image_h>1</image_h>
 			<image_w>1</image_w>
@@ -195,7 +161,7 @@
 		<name>Path Corner 3</name>
 		<images>
 			<image_x>5</image_x>
-			<image_y>0</image_y>
+			<image_y>1</image_y>
 			<image_h>1</image_h>
 			<image_w>1</image_w>
 		</images>
@@ -238,7 +204,7 @@
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
 	</tile>
-	<!--Store path-->
+	<!--path-->
 	<tile id="20">
 		<name>Path</name>
 		<images>
@@ -403,14 +369,14 @@
 		<random>0</random>
 	</tile>
 	<tile id="54">
-		<name>Fence</name>
+		<name>Fence Door</name>
 		<images>
 			<image_x>1</image_x>
 			<image_y>2</image_y>
 			<image_h>1</image_h>
 			<image_w>1</image_w>
 		</images>
-		<attrubite>SOLID</attrubite>
+		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
 	</tile>
 	<tile id="55">
@@ -418,7 +384,7 @@
 		<images>
 			<image_x>0</image_x>
 			<image_y>2</image_y>
-			<image_h>0</image_h>
+			<image_h>1</image_h>
 			<image_w>1</image_w>
 		</images>
 		<attrubite>SOLID</attrubite>
@@ -477,8 +443,8 @@
 		<images>
 			<image_x>10</image_x>
 			<image_y>14</image_y>
-			<image_h>3</image_h>
-			<image_w>2</image_w>
+			<image_h>2</image_h>
+			<image_w>3</image_w>
 		</images>
 		<attrubite>SOLID</attrubite>
 		<random>0</random>
