@@ -33,10 +33,10 @@ void tile_type_manager::load( std::string newFile){
     // General
     int tileID = atoi(cTile-> first_attribute("id") -> value());
     std::string name = cTile-> first_node("name") -> value();
-    std::string image_x = cTile-> first_node("images") -> first_node("image_x") -> value();
-    std::string image_y = cTile-> first_node("images") -> first_node("image_y") -> value();
-    std::string image_h = cTile-> first_node("images") -> first_node("image_h") -> value();
-    std::string image_w = cTile-> first_node("images") -> first_node("image_w") -> value();
+    int image_x = atoi(cTile-> first_node("images") -> first_node("image_x") -> value());
+    int image_y = atoi(cTile-> first_node("images") -> first_node("image_y") -> value());
+    int image_h = atoi(cTile-> first_node("images") -> first_node("image_h") -> value());
+    int image_w = atoi(cTile-> first_node("images") -> first_node("image_w") -> value());
     int randomness = atoi(cTile-> first_node("random") -> value());
 
     std::string attrubite_string = cTile-> first_node("attrubite") -> value();
@@ -49,13 +49,14 @@ void tile_type_manager::load( std::string newFile){
       attrubite = SOLID;
 
     // Draw to screen (debug)
-    std::cout << "-> Loading Tile:" << name << "  ID:" <<  tileID << "  ATTRIBUTE:" << attrubite_string << "  RANDOMNESS:" << randomness << "\n";
+    std::cout << "-> Loading Tile:" << name << "  ID:" <<  tileID << "  ATTRIBUTE:" << attrubite_string << "  RANDOMNESS:" << randomness
+              << "  X:" << image_x << "  Y:" << image_y << "  H:" << image_h << "  W:" << image_w << "\n";
 
     // Create tile, set variables and add it to the tile list
-    //tile newTileType( 0, 0, image_x, image_y, tileID);
+    tile_type newTileType( image_x, image_y, image_w, image_h, tileID, name, attrubite);
 
     // Add the tile
-    //tile_defs.push_back( newTileType);
+    tile_defs.push_back( newTileType);
   }
 
   std::cout << "\n\n";

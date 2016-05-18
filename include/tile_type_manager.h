@@ -23,6 +23,7 @@
 #include "tools.h"
 
 #include "tile_type.h"
+#include "tile.h"
 
 class tile_type_manager{
   public:
