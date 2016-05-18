@@ -60,6 +60,8 @@ class tile_map
         char tile_images_coordinates[100][2];
         char item_images_coordinates[100][2];
 
+        char tile_images_dimensions[100][2];
+
         tile_type_manager tile_dictionary;
 
     protected:

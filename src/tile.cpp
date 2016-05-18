@@ -4,7 +4,7 @@
 BITMAP *tile::sprite_sheet = NULL;
 
 // TILE
-tile::tile(int newX, int newY, char newImageX, char newImageY, char newID)
+tile::tile(int newX, int newY, char newImageX, char newImageY, char newImageW, char newImageH, char newID)
 {
     // Set init variables
     x = newX;
@@ -12,6 +12,9 @@ tile::tile(int newX, int newY, char newImageX, char newImageY, char newID)
 
     image_cord_x = newImageX;
     image_cord_y = newImageY;
+
+    image_h = newImageH;
+    image_w = newImageW;
 
     id = newID;
 
@@ -30,7 +33,7 @@ tile::~tile()
 
 void tile::draw( BITMAP *tempBuffer)
 {
-    blit( sprite_sheet, tempBuffer, image_cord_x * 16, image_cord_y * 16, x, y /*- (image[0] -> h - 16)*/, 16, 16);
+    masked_blit( sprite_sheet, tempBuffer, image_cord_x * 16, image_cord_y * 16, x, y - ((image_h * 16) - 16), (image_w * 16), (image_h * 16));
 }
 
 void tile::run_tick(){
@@ -80,7 +83,7 @@ void tile::run_tick(){
 BITMAP *item::sprite_sheet_items = NULL;
 
 item::item(int newX, int newY, char newImageX, char newImageY, char newID, std::string newName) :
-    tile( newX, newY, newImageX, newImageY, newID)
+    tile( newX, newY, newImageX, newImageY, 1, 1, newID)
 {
     name = newName;
 
@@ -145,7 +148,7 @@ item::~item()
 
 void item::draw( BITMAP *tempBuffer)
 {
-    blit( sprite_sheet_items, tempBuffer, image_cord_x * 16, image_cord_y * 16, x, y /*- (image[0] -> h - 16)*/, 16, 16);
+    masked_blit( sprite_sheet_items, tempBuffer, image_cord_x * 16, image_cord_y * 16, x, y /*- (image[0] -> h - 16)*/, 16, 16);
 }
 
 
@@ -153,8 +156,8 @@ void item::draw( BITMAP *tempBuffer)
 
 
 // CROP
-crop::crop(int newX, int newY, char newImageX, char newImageY, char newID, std::string newName) :
-    tile( newX, newY, newImageX, newImageY, newID)
+crop::crop(int newX, int newY, char newImageX, char newImageY, char newImageW, char newImageH, char newID, std::string newName) :
+    tile( newX, newY, newImageX, newImageY, newImageW, newImageH, newID)
 {
     name = newName;
 }

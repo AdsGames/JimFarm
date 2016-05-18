@@ -143,8 +143,8 @@ void store::open_store( character *new_inventory){
                 newType = 6;
             }
 
-            item *storeItem = new item( 0, 0, new_inventory -> map_pointer -> tile_images_coordinates[newType][0],
-                                              new_inventory -> map_pointer -> tile_images_coordinates[newType][1],
+            item *storeItem = new item( 0, 0, new_inventory -> map_pointer -> item_images_coordinates[newType][0],
+                                              new_inventory -> map_pointer -> item_images_coordinates[newType][1],
                                               newType, new_inventory -> map_pointer -> item_names[newType]);
             add_item(storeItem);
         }

@@ -47,7 +47,8 @@ void tile_map::load_map( std::string fileName){
                 read >> newTileType;
                 std::cout << newTileType;
                 // Set tile type
-                tile newTile( i * 16, t * 16, tile_images_coordinates[newTileType][0], tile_images_coordinates[newTileType][1], newTileType);
+                tile newTile( i * 16, t * 16, tile_images_coordinates[newTileType][0], tile_images_coordinates[newTileType][1],
+                             tile_images_dimensions[newTileType][0], tile_images_dimensions[newTileType][1], newTileType);
                 map_tiles.push_back( newTile);
             }
         }
@@ -63,7 +64,8 @@ void tile_map::load_map( std::string fileName){
                 std::cout << newTileType;
                 // Set tile type
                 if( newTileType != 0){
-                    tile newTile( i * 16, t * 16, tile_images_coordinates[newTileType][0], tile_images_coordinates[newTileType][1], newTileType);
+                    tile newTile( i * 16, t * 16, tile_images_coordinates[newTileType][0], tile_images_coordinates[newTileType][1],
+                             tile_images_dimensions[newTileType][0], tile_images_dimensions[newTileType][1], newTileType);
                     map_tiles_foreground.push_back( newTile);
                 }
             }
@@ -177,7 +179,9 @@ void tile_map::generate_map(){
         for( int t = 0; t < MAP_HEIGHT; t++){
             if( get_tile_at( i * 16, t * 16, false) == 0 && get_tile_at( i * 16, t * 16, true) == -1){
                 if( tempMapForeground[i][t] != 0){
-                    tile newTile2( i * 16, t * 16, tile_images_coordinates[tempMapForeground[i][t]][0], tile_images_coordinates[tempMapForeground[i][t]][1], tempMapForeground[i][t]);
+                    tile newTile2( i * 16, t * 16, tile_images_coordinates[tempMapForeground[i][t]][0], tile_images_coordinates[tempMapForeground[i][t]][1],
+                                   tile_images_dimensions[tempMapForeground[i][t]][0], tile_images_dimensions[tempMapForeground[i][t]][1],
+                                   tempMapForeground[i][t]);
                     map_tiles_foreground.push_back( newTile2);
                 }
             }
@@ -226,6 +230,12 @@ void tile_map::load_images(){
     tile::sprite_sheet = load_bitmap_ex( "images/tiles.png");
     item::sprite_sheet_items = load_bitmap_ex( "images/items.png");
 
+    for( int i = 0; i < 100; i ++){
+      tile_images_dimensions[i][0] = 1;
+      tile_images_dimensions[i][1] = 1;
+    }
+
+
     // Tiles
     tile_images[0] = load_bitmap_ex("images/grass.png");
     tile_images_coordinates[0][0] = 0;
@@ -238,19 +248,22 @@ void tile_map::load_images(){
     tile_images_coordinates[2][1] = 0;
     tile_images[3] = load_bitmap_ex("images/well.png");
     tile_images_coordinates[3][0] = 15;
-    tile_images_coordinates[3][1] = 15;
+    tile_images_coordinates[3][1] = 14;
+    tile_images_dimensions[3][1] = 2;
     tile_images[4] = load_bitmap_ex("images/dense_grass.png");
     tile_images_coordinates[4][0] = 3;
     tile_images_coordinates[4][1] = 0;
     tile_images[5] = load_bitmap_ex("images/tree.png");
     tile_images_coordinates[5][0] = 5;
-    tile_images_coordinates[5][1] = 15;
+    tile_images_coordinates[5][1] = 14;
+    tile_images_dimensions[5][1] = 2;
     tile_images[6] = load_bitmap_ex("images/bush.png");
     tile_images_coordinates[6][0] = 4;
-    tile_images_coordinates[6][1] = 15;
+    tile_images_coordinates[6][1] = 14;
+    tile_images_dimensions[6][1] = 2;
     tile_images[7] = load_bitmap_ex("images/well_path.png");
     tile_images_coordinates[7][0] = 4;
-    tile_images_coordinates[7][1] = 2;
+    tile_images_coordinates[7][1] = 4;
     tile_images[8] = load_bitmap_ex("images/crop_2_1.png");
     tile_images_coordinates[8][0] = 0;
     tile_images_coordinates[8][1] = 4;
@@ -273,10 +286,10 @@ void tile_map::load_images(){
     tile_images_coordinates[14][0] = 3;
     tile_images_coordinates[14][1] = 3;
     tile_images[15] = load_bitmap_ex("images/path_corner_2.png");
-    tile_images_coordinates[15][0] = 5;
+    tile_images_coordinates[15][0] = 3;
     tile_images_coordinates[15][1] = 1;
     tile_images[16] = load_bitmap_ex("images/path_corner_3.png");
-    tile_images_coordinates[16][0] = 3;
+    tile_images_coordinates[16][0] = 5;
     tile_images_coordinates[16][1] = 1;
     tile_images[17] = load_bitmap_ex("images/path_corner_4.png");
     tile_images_coordinates[17][0] = 5;
@@ -358,19 +371,18 @@ void tile_map::load_images(){
     tile_images_coordinates[59][1] = 1;
     tile_images[60] = load_bitmap_ex("images/store.png");
     tile_images_coordinates[60][0] = 10;
-    tile_images_coordinates[60][1] = 15;
+    tile_images_coordinates[60][1] = 14;
+    tile_images_dimensions[60][0] = 3;
+    tile_images_dimensions[60][1] = 2;
     tile_images[61] = load_bitmap_ex("images/barn.png");
-    tile_images_coordinates[61][0] = 7;
-    tile_images_coordinates[61][1] = 13;
+    tile_images_coordinates[61][0] = 6;
+    tile_images_coordinates[61][1] = 12;
+    tile_images_dimensions[61][0] = 4;
+    tile_images_dimensions[61][1] = 4;
     tile_images[62] = load_bitmap_ex("images/goat.png");
-    tile_images_coordinates[62][0] = 14;
-    tile_images_coordinates[62][1] = 15;
-    tile_images[99] = load_bitmap_ex("images/inv_wall.png");
-    tile_images_coordinates[99][0] = 0;
-    tile_images_coordinates[99][1] = 0;
-    tile_images[98] = load_bitmap_ex("images/inv_wall.png");
-    tile_images_coordinates[98][0] = 0;
-    tile_images_coordinates[98][1] = 15;
+    tile_images_coordinates[62][0] = 13;
+    tile_images_coordinates[62][1] = 14;
+    tile_images_dimensions[62][1] = 2;
 
     // What's the difference between item_images[0] and Allan? Everything!
     item_images[0] = load_bitmap_ex("images/hoe.png");
