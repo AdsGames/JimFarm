@@ -52,18 +52,6 @@ class tile_map
         void scroll( int player_x, int player_y);
 
         int x, y;
-
-        BITMAP *item_images[100];
-
-        std::string item_names[100];
-
-        char tile_images_coordinates[100][2];
-        char item_images_coordinates[100][2];
-
-        char tile_images_dimensions[100][2];
-
-        tile_type_manager tile_dictionary;
-
     protected:
 
     private:
@@ -73,14 +61,7 @@ class tile_map
 
         std::vector<item> map_items;
 
-        BITMAP *tile_images[100];
-
-
         SAMPLE* egg;
-
-
-
-
         BITMAP *map_buffer;
 };
 

@@ -31,18 +31,21 @@ class tile_type_manager{
     virtual ~tile_type_manager();
 
     // Load tile types
-    void load( std::string newFile, bool items);
+    static void load( std::string newFile, bool items);
 
     // Allows communication
-    int getNumberTiles(){ return tile_defs.size(); }
-    int getNumberItems(){ return item_defs.size(); }
-    tile_type *getTileByID( int tileID);
-    tile_type *getItemByID( int tileID);
+    static int getNumberTiles(){ return tile_defs.size(); }
+    static int getNumberItems(){ return item_defs.size(); }
+    static tile_type *getTileByID( int tileID);
+    static tile_type *getItemByID( int tileID);
+
+    static BITMAP *sprite_sheet_tiles;
+    static BITMAP *sprite_sheet_items;
 
   protected:
   private:
-    std::vector<tile_type> tile_defs;
-    std::vector<tile_type> item_defs;
+    static std::vector<tile_type> tile_defs;
+    static std::vector<tile_type> item_defs;
 };
 
 #endif // TILE_TYPE_MANAGER_H

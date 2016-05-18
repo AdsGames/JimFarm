@@ -1,5 +1,11 @@
 #include "tile_type_manager.h"
 
+std::vector<tile_type> tile_type_manager::tile_defs;
+std::vector<tile_type> tile_type_manager::item_defs;
+
+BITMAP *tile_type_manager::sprite_sheet_tiles = NULL;
+BITMAP *tile_type_manager::sprite_sheet_items = NULL;
+
 tile_type_manager::tile_type_manager(){
   //ctor
 }
@@ -63,16 +69,20 @@ void tile_type_manager::load( std::string newFile, bool items){
 
       // Create tile, set variables and add it to the tile list
       tile_type newTileType( image_x, image_y, image_w, image_h, tileID, name, attrubite);
+      newTileType.setSpriteSheet( sprite_sheet_tiles);
 
       // Add the tile
       tile_defs.push_back( newTileType);
     }
     else{
+      int value = atoi(cTile-> first_node("value") -> value());
+
       // Draw to screen (debug)
-      std::cout << "-> Loading Items:" << name << "  ID:" <<  tileID << "  X:" << image_x << "  Y:" << image_y << "\n";
+      std::cout << "-> Loading Items:" << name << "  ID:" <<  tileID << "  X:" << image_x << "  Y:" << image_y << "  value:" << value << "\n";
 
       // Create item, set variables and add it to the item list
-      tile_type newTileType( image_x, image_y, tileID, name);
+      tile_type newTileType( image_x, image_y, 1, 1, tileID, name, 0, value);
+      newTileType.setSpriteSheet( sprite_sheet_items);
 
       // Add the tile
       item_defs.push_back( newTileType);
@@ -83,9 +93,19 @@ void tile_type_manager::load( std::string newFile, bool items){
 }
 
 tile_type *tile_type_manager::getTileByID( int tileID){
-  return &tile_defs.at( tileID);
+  for( unsigned int i = 0; i < tile_defs.size(); i++){
+    if( tile_defs.at( i).getID() == tileID){
+      return &tile_defs.at( i);
+    }
+  }
+  return &tile_defs.at( 0);
 }
 
 tile_type *tile_type_manager::getItemByID( int tileID){
-  return &item_defs.at( tileID);
+  for( unsigned int i = 0; i < item_defs.size(); i++){
+    if( item_defs.at( i).getID() == tileID){
+      return &item_defs.at( i);
+    }
+  }
+  return &item_defs.at( 0);
 }

@@ -2,7 +2,7 @@
 
 // Init tile
 tile_type::tile_type( unsigned char newImageX, unsigned char newImageY, unsigned char newImageW,
-               unsigned char newImageH, unsigned char newID, std::string newName, int newAttribute){
+               unsigned char newImageH, unsigned char newID, std::string newName, int newAttribute, unsigned char newValue){
   // Set init variables
   id = newID;
   name = newName;
@@ -14,20 +14,10 @@ tile_type::tile_type( unsigned char newImageX, unsigned char newImageY, unsigned
   image_w = newImageW;
 
   attribute = newAttribute;
-}
 
-// Init item
-tile_type::tile_type( unsigned char newImageX, unsigned char newImageY, unsigned char newID, std::string newName){
-  // Set init variables
-  id = newID;
-  name = newName;
+  sprite_sheet = NULL;
 
-  image_cord_x = newImageX;
-  image_cord_y = newImageY;
-
-  image_h = 1;
-  image_w = 1;
-  attribute = 0;
+  value = newValue;
 }
 
 // Destroy tile
@@ -36,6 +26,7 @@ tile_type::~tile_type(){
 }
 
 // Draw tile
-void tile_type::draw( int x, int y){
-
+void tile_type::draw( int x, int y, BITMAP *tempBuffer){
+  if( sprite_sheet != NULL)
+    masked_blit( sprite_sheet, tempBuffer, image_cord_x * 16, image_cord_y * 16, x, y - ((image_h * 16) - 16), (image_w * 16), (image_h * 16));
 }

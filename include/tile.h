@@ -11,25 +11,12 @@
 class tile
 {
     public:
-        tile(int newX, int newY, char newImageX, char newImageY, char newImageW, char newImageH, char newID);
+        tile(int newX, int newY, char newID);
         virtual ~tile();
-
-        void draw( BITMAP *tempBuffer);
-
-        bool solid;
 
         // Positioning
         int x, y;
-
-        // ID
-        char id;
-
-        char data_value;
-
-        static BITMAP *sprite_sheet;
-
-        char image_cord_x, image_cord_y;
-        char image_h, image_w;
+        void draw( BITMAP *tempBuffer);
 
         // Sorting stuff
         bool operator< (const tile &other) const {
@@ -41,6 +28,12 @@ class tile
 
         tile_type *tile_pointer;
 
+        bool isSolid(){ return tile_pointer -> getAttribute(); }
+
+        unsigned char getID(){ return tile_pointer -> getID();}
+        void setID( unsigned char newID);
+
+        std::string getName(){ return tile_pointer -> getName();}
     protected:
 
     private:
@@ -49,14 +42,10 @@ class tile
 class item : public tile
 {
     public:
-        item(int newX, int newY, char newImageX, char newImageY, char newID, std::string newName);
+        item(int newX, int newY, char newID);
         virtual ~item();
 
         void draw( BITMAP *tempBuffer);
-
-        static BITMAP *sprite_sheet_items;
-
-        std::string name;
 
         char value;
     protected:
@@ -68,10 +57,9 @@ class item : public tile
 class crop : public tile
 {
     public:
-        crop(int newX, int newY, char newImageX, char newImage, char newImageW, char newImageH, char newID, std::string newName);
+        crop(int newX, int newY, char newID);
         virtual ~crop();
 
-        std::string name;
         char growth_tick;
 
         virtual void run_tick();

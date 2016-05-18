@@ -1,29 +1,15 @@
 #include "tile.h"
 
-
-BITMAP *tile::sprite_sheet = NULL;
-
 // TILE
-tile::tile(int newX, int newY, char newImageX, char newImageY, char newImageW, char newImageH, char newID)
+tile::tile(int newX, int newY, char newID)
 {
     // Set init variables
     x = newX;
     y = newY;
 
-    image_cord_x = newImageX;
-    image_cord_y = newImageY;
-
-    image_h = newImageH;
-    image_w = newImageW;
-
-    id = newID;
+    tile_pointer = tile_type_manager::getTileByID( newID);
 
     requirements_met = false;
-
-    if( id == 1 || id == 3 || id == 5 || id == 62 || id == 50 || id == 6 ||id == 50 || id == 51 || id == 52 || id == 53 || id == 55 || id == 56 || id == 57 || id == 58 || id ==60 || id == 61 || id == 99)
-        solid = true;
-    else
-        solid = false;
 }
 
 tile::~tile()
@@ -33,45 +19,49 @@ tile::~tile()
 
 void tile::draw( BITMAP *tempBuffer)
 {
-    masked_blit( sprite_sheet, tempBuffer, image_cord_x * 16, image_cord_y * 16, x, y - ((image_h * 16) - 16), (image_w * 16), (image_h * 16));
+    tile_pointer -> draw( x, y, tempBuffer);
+}
+
+void tile::setID( unsigned char newID){
+  tile_pointer = tile_type_manager::getTileByID( newID);
 }
 
 void tile::run_tick(){
     // Berries
-    if( id == 30 || id == 31 || id == 32){
+    if( tile_pointer -> getID() == 30 || tile_pointer -> getID() == 31 || tile_pointer -> getID() == 32){
         if( random( 0, 10) == 0){
             requirements_met = true;
         }
     }
 
     // Tomatoes
-    else if( id == 33 || id == 34 || id == 35){
+    else if( tile_pointer -> getID() == 33 || tile_pointer -> getID() == 34 || tile_pointer -> getID() == 35){
         if( random( 0, 30) == 0){
             requirements_met = true;
         }
     }
 
     // Carrot
-    else if( id == 36 || id == 37 || id == 38){
+    else if( tile_pointer -> getID() == 36 || tile_pointer -> getID() == 37 || tile_pointer -> getID() == 38){
         if( random( 0, 60) == 0){
             requirements_met = true;
         }
     }
 
     // Lavender
-    else if( id == 39 || id == 40 || id == 41){
+    else if( tile_pointer -> getID() == 39 || tile_pointer -> getID() == 40 || tile_pointer -> getID() == 41){
         if( random( 0, 100) == 0){
             requirements_met = true;
         }
     }
 
     // Plowed soil
-    else if( id == 2){
+    else if( tile_pointer -> getID() == 2){
         if( random( 0, 400) == 0){
             requirements_met = true;
         }
     }
-    else if( id == 18){
+    else if( tile_pointer -> getID() == 18){
         if( random( 0, 400) == 0){
             requirements_met = true;
         }
@@ -80,65 +70,10 @@ void tile::run_tick(){
 
 
 // ITEM
-BITMAP *item::sprite_sheet_items = NULL;
-
-item::item(int newX, int newY, char newImageX, char newImageY, char newID, std::string newName) :
-    tile( newX, newY, newImageX, newImageY, 1, 1, newID)
+item::item(int newX, int newY, char newID) :
+    tile( newX, newY, newID)
 {
-    name = newName;
-
-    switch ( id){
-        case 0:
-            value = 10;
-            break;
-        case 1:
-            value = 20;
-            break;
-        case 3:
-            value = 20;
-            break;
-        case 4:
-            value = 20;
-            break;
-        case 5:
-            value = 20;
-            break;
-        case 6:
-            value = 30;
-            break;
-        case 7:
-            value = 2;
-            break;
-        case 8:
-            value = 1;
-            break;
-        case 9:
-            value = 2;
-            break;
-        case 10:
-            value = 2;
-            break;
-        case 11:
-            value = 5;
-            break;
-        case 12:
-            value = 5;
-            break;
-        case 13:
-            value = 15;
-            break;
-        case 14:
-            value = 10;
-            break;
-        case 15:
-            value = 25;
-            break;
-        case 16:
-            value = 1;
-            break;
-        default:
-            value = 0;
-    }
+    tile_pointer = tile_type_manager::getItemByID( newID);
 }
 
 item::~item()
@@ -148,7 +83,7 @@ item::~item()
 
 void item::draw( BITMAP *tempBuffer)
 {
-    masked_blit( sprite_sheet_items, tempBuffer, image_cord_x * 16, image_cord_y * 16, x, y /*- (image[0] -> h - 16)*/, 16, 16);
+    tile_pointer -> draw( x, y, tempBuffer);
 }
 
 
@@ -156,10 +91,10 @@ void item::draw( BITMAP *tempBuffer)
 
 
 // CROP
-crop::crop(int newX, int newY, char newImageX, char newImageY, char newImageW, char newImageH, char newID, std::string newName) :
-    tile( newX, newY, newImageX, newImageY, newImageW, newImageH, newID)
+crop::crop(int newX, int newY, char newID) :
+    tile( newX, newY, newID)
 {
-    name = newName;
+
 }
 
 crop::~crop()

@@ -7,6 +7,7 @@
 			<image_x>3</image_x>
 			<image_y>1</image_y>
 		</images>
+		<value>10</value>
 	</item>
 	<!--scythe-->
 	<item id="1">
@@ -15,6 +16,7 @@
 			<image_x>0</image_x>
 			<image_y>1</image_y>
 		</images>
+		<value>20</value>
 	</item>
 	<!--watering can-->
 	<item id="3">
@@ -23,6 +25,7 @@
 			<image_x>2</image_x>
 			<image_y>1</image_y>
 		</images>
+		<value>20</value>
 	</item>
 	<!--axe-->
 	<item id="4">
@@ -31,6 +34,7 @@
 			<image_x>4</image_x>
 			<image_y>1</image_y>
 		</images>
+		<value>20</value>
 	</item>
 	<!--shovel-->
 	<item id="5">
@@ -39,6 +43,7 @@
 			<image_x>1</image_x>
 			<image_y>1</image_y>
 		</images>
+		<value>20</value>
 	</item>
 	<!--chicken-->
 	<item id="6">
@@ -47,6 +52,7 @@
 			<image_x>0</image_x>
 			<image_y>0</image_y>
 		</images>
+		<value>30</value>
 	</item>
 	<!--egg-->
 	<item id="7">
@@ -55,6 +61,7 @@
 			<image_x>1</image_x>
 			<image_y>0</image_y>
 		</images>
+		<value>2</value>
 	</item>
 	<!--berry seed-->
 	<item id="8">
@@ -63,6 +70,7 @@
 			<image_x>0</image_x>
 			<image_y>2</image_y>
 		</images>
+		<value>1</value>
 	</item>
 	<!--berry-->
 	<item id="9">
@@ -71,6 +79,7 @@
 			<image_x>0</image_x>
 			<image_y>3</image_y>
 		</images>
+		<value>2</value>
 	</item>
 	<!--tomato seed-->
 	<item id="10">
@@ -79,6 +88,7 @@
 			<image_x>1</image_x>
 			<image_y>2</image_y>
 		</images>
+		<value>2</value>
 	</item>
 	<!--tomato-->
 	<item id="11">
@@ -87,6 +97,7 @@
 			<image_x>1</image_x>
 			<image_y>3</image_y>
 		</images>
+		<value>5</value>
 	</item>
 	<!--carrot seed-->
 	<item id="12">
@@ -95,14 +106,16 @@
 			<image_x>2</image_x>
 			<image_y>2</image_y>
 		</images>
+		<value>5</value>
 	</item>
 	<!--carrot-->
 	<item id="13">
-		<name>item</name>
+		<name>carrot</name>
 		<images>
 			<image_x>2</image_x>
 			<image_y>3</image_y>
 		</images>
+		<value>15</value>
 	</item>
 	<!--lavender seed-->
 	<item id="14">
@@ -111,6 +124,7 @@
 			<image_x>3</image_x>
 			<image_y>2</image_y>
 		</images>
+		<value>15</value>
 	</item>
 	<!--lavender-->
 	<item id="15">
@@ -119,6 +133,7 @@
 			<image_x>3</image_x>
 			<image_y>3</image_y>
 		</images>
+		<value>25</value>
 	</item>
 	<!--stick-->
 	<item id="16">
@@ -127,5 +142,6 @@
 			<image_x>2</image_x>
 			<image_y>0</image_y>
 		</images>
+		<value>1</value>
 	</item>
 </items>

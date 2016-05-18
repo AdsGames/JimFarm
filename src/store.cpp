@@ -49,14 +49,14 @@ void store::draw( BITMAP *tempBitmap){
         }
         if( selector_index < (signed)storeItems.size())
             textprintf_ex( tempBitmap, font, 25, 106, makecol(0,0,0), -1, "%s : %i coins",
-                        storeItems.at(selector_index) -> name.c_str(), storeItems.at(selector_index) -> value);
+                        storeItems.at(selector_index) -> getName().c_str(), storeItems.at(selector_index) -> value);
         else{
-            if( customer_inventory -> inventory_item -> id == -1)
+            if( customer_inventory -> inventory_item -> getID() == -1)
                 textprintf_ex( tempBitmap, font, 25, 106, makecol(0,0,0), -1, "%s : %s",
-                            customer_inventory -> inventory_item -> name.c_str(), "NOT FOR SALE");
+                            customer_inventory -> inventory_item -> getName().c_str(), "NOT FOR SALE");
             else
                 textprintf_ex( tempBitmap, font, 25, 106, makecol(0,0,0), -1, "%s : %i coins",
-                            customer_inventory -> inventory_item -> name.c_str(), customer_inventory -> inventory_item -> value);
+                            customer_inventory -> inventory_item -> getName().c_str(), customer_inventory -> inventory_item -> value);
 
         }
 
@@ -90,10 +90,10 @@ void store::update(){
 
         if( keyListener::keyPressed[KEY_LCONTROL] || keyListener::keyPressed[KEY_RCONTROL] || mouse_b & 1 || joy[0].button[2].b){
             if( selector_index < (signed)storeItems.size()){
-                if( customer_inventory -> inventory_item -> id == -1){
+                if( customer_inventory -> inventory_item -> getID() == -1){
                     if(customer_inventory -> money >= storeItems.at(selector_index) -> value){
                       customer_inventory -> money -= storeItems.at(selector_index) -> value;
-                      customer_inventory -> give_item( storeItems.at(selector_index) -> id);
+                      customer_inventory -> give_item( storeItems.at(selector_index) -> getID());
                       storeItems.erase(storeItems.begin() + selector_index);
                       play_sample(buy,255,125,1000,0);
                       customer_inventory -> push_message("Purchased item");
@@ -111,7 +111,7 @@ void store::update(){
                 }
 
             }
-            else if( selector_index == (signed)storeItems.size() && customer_inventory -> inventory_item -> id != -1){
+            else if( selector_index == (signed)storeItems.size() && customer_inventory -> inventory_item -> getID() != -1){
                 customer_inventory -> money += customer_inventory -> inventory_item -> value;
                 customer_inventory -> remove_item();
                 play_sample(sell,255,125,1000,0);
@@ -143,9 +143,7 @@ void store::open_store( character *new_inventory){
                 newType = 6;
             }
 
-            item *storeItem = new item( 0, 0, new_inventory -> map_pointer -> item_images_coordinates[newType][0],
-                                              new_inventory -> map_pointer -> item_images_coordinates[newType][1],
-                                              newType, new_inventory -> map_pointer -> item_names[newType]);
+            item *storeItem = new item( 0, 0, newType);
             add_item(storeItem);
         }
     }

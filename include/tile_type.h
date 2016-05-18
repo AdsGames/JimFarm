@@ -13,8 +13,7 @@
 class tile_type{
   public:
     tile_type( unsigned char newImageX = 0, unsigned char newImageY = 0, unsigned char newImageW = 1,
-               unsigned char newImageH = 1, unsigned char newID = 0, std::string newName = "", int newAttribute = 0);
-    tile_type( unsigned char newImageX = 0, unsigned char newImageY = 0, unsigned char newID = 0, std::string newName = "");
+               unsigned char newImageH = 1, unsigned char newID = 0, std::string newName = "", int newAttribute = 0, unsigned char newValue = 0);
     virtual ~tile_type();
 
     // Get type
@@ -31,9 +30,13 @@ class tile_type{
     char getImageY(){ return image_cord_y; }
     char getWidth(){ return image_w; }
     char getHeight(){ return image_h; }
+    char getValue(){ return value; }
 
     // Draw
-    void draw( int x, int y);
+    void draw( int x, int y, BITMAP *tempBuffer);
+
+    // Set sprite sheet
+    void setSpriteSheet( BITMAP *newSpriteSheet){ sprite_sheet = newSpriteSheet; };
 
   protected:
   private:
@@ -43,6 +46,10 @@ class tile_type{
 
     unsigned char image_cord_x, image_cord_y;
     unsigned char image_h, image_w;
+
+    unsigned char value;
+
+    BITMAP *sprite_sheet;
 };
 
 #endif // TILE_TYPE_H
