@@ -56,8 +56,8 @@ class tile_map
 
     private:
         // Tiles
-        std::vector<tile> map_tiles;
-        std::vector<tile> map_tiles_foreground;
+        std::vector<tile*> map_tiles;
+        std::vector<tile*> map_tiles_foreground;
 
         std::vector<item> map_items;
 

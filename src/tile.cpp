@@ -32,7 +32,7 @@ void tile::setID( unsigned char newID){
 }
 
 void tile::run_tick(){
-    // Berries
+    /*// Berries
     if( tile_pointer -> getID() == 30 || tile_pointer -> getID() == 31 || tile_pointer -> getID() == 32){
         if( random( 0, 10) == 0){
             requirements_met = true;
@@ -58,10 +58,10 @@ void tile::run_tick(){
         if( random( 0, 100) == 0){
             requirements_met = true;
         }
-    }
+    }*/
 
     // Plowed soil
-    else if( tile_pointer -> getID() == 2){
+    if( tile_pointer -> getID() == 2){
         if( random( 0, 400) == 0){
             requirements_met = true;
         }
@@ -75,8 +75,7 @@ void tile::run_tick(){
 
 
 // ITEM
-item::item(int newX, int newY, char newID) :
-    tile( newX, newY, newID)
+item::item(int newX, int newY, char newID) : tile( newX, newY, newID)
 {
     tile_pointer = tile_type_manager::getItemByID( newID);
 }
@@ -96,8 +95,7 @@ void item::draw( BITMAP *tempBuffer)
 
 
 // CROP
-crop::crop(int newX, int newY, char newID) :
-    tile( newX, newY, newID)
+crop::crop(int newX, int newY, char newID) : tile( newX, newY, newID)
 {
 
 }
@@ -108,6 +106,14 @@ crop::~crop()
 }
 
 void crop::run_tick() {
-
+  if( random( 0, 30) == 0){
+    tile_data++;
+  }
 }
+
+void crop::draw( BITMAP *tempBuffer)
+{
+    //tile_pointer -> draw( x, y, tempBuffer, tile_data);
+}
+
 

@@ -20,7 +20,7 @@ class tile
         int getHeight(){ return tile_pointer -> getHeight();}
 
         // Drawing
-        void draw( BITMAP *tempBuffer);
+        virtual void draw( BITMAP *tempBuffer);
         void draw_at( int newX, int newY, BITMAP *tempBuffer);
 
         // Sorting stuff
@@ -30,6 +30,7 @@ class tile
 
         virtual void run_tick();
         bool requirements_met;
+        char tile_data;
 
         tile_type *tile_pointer;
 
@@ -65,7 +66,7 @@ class crop : public tile
         crop(int newX, int newY, char newID);
         virtual ~crop();
 
-        char growth_tick;
+        void draw( BITMAP *tempBuffer);
 
         virtual void run_tick();
     protected:

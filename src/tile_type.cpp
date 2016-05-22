@@ -26,7 +26,7 @@ tile_type::~tile_type(){
 }
 
 // Draw tile
-void tile_type::draw( int x, int y, BITMAP *tempBuffer){
+void tile_type::draw( int x, int y, BITMAP *tempBuffer, char offset){
   if( sprite_sheet != NULL)
-    masked_blit( sprite_sheet, tempBuffer, image_cord_x * 16, image_cord_y * 16, x, y - ((image_h * 16) - 16), (image_w * 16), (image_h * 16));
+    masked_blit( sprite_sheet, tempBuffer, (image_cord_x + offset) * 16, image_cord_y * 16, x, y - ((image_h * 16) - 16), (image_w * 16), (image_h * 16));
 }

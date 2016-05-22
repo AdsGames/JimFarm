@@ -33,7 +33,7 @@ class tile_type{
     unsigned char getValue(){ return value; }
 
     // Draw
-    void draw( int x, int y, BITMAP *tempBuffer);
+    void draw( int x, int y, BITMAP *tempBuffer, char offset = 0);
 
     // Set sprite sheet
     void setSpriteSheet( BITMAP *newSpriteSheet){ sprite_sheet = newSpriteSheet; };

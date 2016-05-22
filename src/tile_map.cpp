@@ -45,7 +45,7 @@ void tile_map::load_map( std::string fileName){
                 read >> newTileType;
                 std::cout << newTileType;
                 // Set tile type
-                tile newTile( i * 16, t * 16, newTileType);
+                tile* newTile = new tile( i * 16, t * 16, newTileType);
                 map_tiles.push_back( newTile);
             }
         }
@@ -61,7 +61,7 @@ void tile_map::load_map( std::string fileName){
                 std::cout << newTileType;
                 // Set tile type
                 if( newTileType != 0){
-                    tile newTile( i * 16, t * 16, newTileType);
+                    tile* newTile = new tile( i * 16, t * 16, newTileType);
                     map_tiles_foreground.push_back( newTile);
                 }
             }
@@ -77,7 +77,7 @@ void tile_map::load_map( std::string fileName){
 void tile_map::draw( BITMAP *tempBuffer){
     // Draw tiles
     for( unsigned int i = 0; i < map_tiles.size(); i++){
-        map_tiles.at(i).draw( map_buffer);
+        map_tiles.at(i) -> draw( map_buffer);
     }
 
     blit( map_buffer, tempBuffer, x, y, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
@@ -94,7 +94,7 @@ void tile_map::drawForeground( BITMAP *tempBuffer){
 
     // Draw foreground
     for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
-        map_tiles_foreground.at(i).draw( map_buffer);
+        map_tiles_foreground.at(i) -> draw( map_buffer);
     }
 
     masked_blit( map_buffer, tempBuffer, x, y, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
@@ -175,7 +175,7 @@ void tile_map::generate_map(){
         for( int t = 0; t < MAP_HEIGHT; t++){
             if( get_tile_at( i * 16, t * 16, false) == 0 && get_tile_at( i * 16, t * 16, true) == -1){
                 if( tempMapForeground[i][t] != 0){
-                    tile newTile2( i * 16, t * 16, tempMapForeground[i][t]);
+                    tile* newTile2 = new tile( i * 16, t * 16, tempMapForeground[i][t]);
                     map_tiles_foreground.push_back( newTile2);
                 }
             }
@@ -231,28 +231,27 @@ void tile_map::load_images(){
 void tile_map::replace_tile( int tileX, int tileY, int newID, bool foreground){
     if( !foreground){
         for( unsigned int i = 0; i < map_tiles.size(); i++){
-            if( map_tiles.at(i).x == tileX && map_tiles.at(i).y == tileY){
+            if( map_tiles.at(i) -> x == tileX && map_tiles.at(i) -> y == tileY){
                 if( newID == -1){
                     map_tiles.erase( map_tiles.begin() + i);
                 }
                 else{
-                    map_tiles.at(i).setID( newID);
-                    //map_tiles.at(i).image[0] = tile_images[newID];
-                    map_tiles.at(i).requirements_met = false;
+                    map_tiles.at(i) -> setID( newID);
+                    map_tiles.at(i) -> requirements_met = false;
                 }
             }
         }
     }
     else{
         for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
-            if( map_tiles_foreground.at(i).x == tileX && map_tiles_foreground.at(i).y == tileY){
+            if( map_tiles_foreground.at(i) -> x == tileX && map_tiles_foreground.at(i) -> y == tileY){
                 if( newID == -1){
                     map_tiles_foreground.erase( map_tiles_foreground.begin() + i);
                 }
                 else{
-                    map_tiles_foreground.at(i).setID( newID) ;
-                    //map_tiles_foreground.at(i).image[0] = tile_images[newID];
-                    map_tiles_foreground.at(i).requirements_met = false;
+                    map_tiles_foreground.at(i) -> setID( newID) ;
+                    //map_tiles_foreground.at(i) -> image[0] = tile_images[newID];
+                    map_tiles_foreground.at(i) -> requirements_met = false;
                 }
             }
         }
@@ -268,15 +267,15 @@ void tile_map::place_item( item newItem){
 int tile_map::get_tile_at( int positionX, int positionY, bool foreground){
     if( !foreground){
         for( unsigned int i = 0; i < map_tiles.size(); i++){
-            if( map_tiles.at(i).x == positionX && map_tiles.at(i).y == positionY){
-                return map_tiles.at(i).getID();
+            if( map_tiles.at(i) -> x == positionX && map_tiles.at(i) -> y == positionY){
+                return map_tiles.at(i) -> getID();
             }
         }
     }
     else{
         for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
-            if( map_tiles_foreground.at(i).x == positionX && map_tiles_foreground.at(i).y == positionY){
-                return map_tiles_foreground.at(i).getID();
+            if( map_tiles_foreground.at(i) -> x == positionX && map_tiles_foreground.at(i) -> y == positionY){
+                return map_tiles_foreground.at(i) -> getID();
             }
         }
     }
@@ -286,8 +285,8 @@ int tile_map::get_tile_at( int positionX, int positionY, bool foreground){
 // Check for solid tile
 bool tile_map::is_solid_at( int positionX, int positionY){
     for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
-        if( map_tiles_foreground.at(i).x == positionX && map_tiles_foreground.at(i).y == positionY){
-            return map_tiles_foreground.at(i).isSolid();
+        if( map_tiles_foreground.at(i) -> x == positionX && map_tiles_foreground.at(i) -> y == positionY){
+            return map_tiles_foreground.at(i) -> isSolid();
         }
     }
     return false;
@@ -336,64 +335,64 @@ void tile_map::update(){
 
     // Run tickers
     for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
-        map_tiles_foreground.at(i).run_tick();
+        map_tiles_foreground.at(i) -> run_tick();
     }
     for( unsigned int i = 0; i < map_tiles.size(); i++){
-        map_tiles.at(i).run_tick();
+        map_tiles.at(i) -> run_tick();
     }
 
 
     for( unsigned int i = 0; i < map_tiles.size(); i++){
         // Check crops
-        if( map_tiles.at(i).requirements_met == true){
+        if( map_tiles.at(i) -> requirements_met == true){
             // Berries
-            if( map_tiles.at(i).getID() == 30 || map_tiles.at(i).getID() == 31){
-                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, map_tiles.at(i).getID() + 1, false);
+            if( map_tiles.at(i) -> getID() == 30 || map_tiles.at(i) -> getID() == 31){
+                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, map_tiles.at(i) -> getID() + 1, false);
             }
             // YUM YUM
-            else if( map_tiles.at(i).getID() == 32){
-                place_new_item_at( map_tiles.at(i).x, map_tiles.at(i).y, 9);
-                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 2, false);
+            else if( map_tiles.at(i) -> getID() == 32){
+                place_new_item_at( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 9);
+                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
             }
 
             // Tomatoes
-            else if( map_tiles.at(i).getID() == 33 || map_tiles.at(i).getID() == 34){
-                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, map_tiles.at(i).getID() + 1, false);
+            else if( map_tiles.at(i) -> getID() == 33 || map_tiles.at(i) -> getID() == 34){
+                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, map_tiles.at(i) -> getID() + 1, false);
             }
             // YUM YUM
-            else if( map_tiles.at(i).getID() == 35){
-                place_new_item_at( map_tiles.at(i).x, map_tiles.at(i).y, 11);
-                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 2, false);
+            else if( map_tiles.at(i) -> getID() == 35){
+                place_new_item_at( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 11);
+                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
             }
 
             // Tomatoes
-            else if( map_tiles.at(i).getID() == 36 || map_tiles.at(i).getID() == 37){
-                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, map_tiles.at(i).getID() + 1, false);
+            else if( map_tiles.at(i) -> getID() == 36 || map_tiles.at(i) -> getID() == 37){
+                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, map_tiles.at(i) -> getID() + 1, false);
             }
             // YUM YUM
-            else if( map_tiles.at(i).getID() == 38){
-                place_new_item_at( map_tiles.at(i).x, map_tiles.at(i).y, 13);
-                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 2, false);
+            else if( map_tiles.at(i) -> getID() == 38){
+                place_new_item_at( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 13);
+                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
             }
 
             // Lavender
-            else if( map_tiles.at(i).getID() == 39 || map_tiles.at(i).getID() == 40){
-                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, map_tiles.at(i).getID() + 1, false);
+            else if( map_tiles.at(i) -> getID() == 39 || map_tiles.at(i) -> getID() == 40){
+                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, map_tiles.at(i) -> getID() + 1, false);
             }
             // YUM YUM
-            else if( map_tiles.at(i).getID() == 41){
-                place_new_item_at( map_tiles.at(i).x, map_tiles.at(i).y, 15);
-                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 2, false);
+            else if( map_tiles.at(i) -> getID() == 41){
+                place_new_item_at( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 15);
+                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
             }
 
             // Back to dirt
-            else if( map_tiles.at(i).getID() == 18){
-                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 2, false);
+            else if( map_tiles.at(i) -> getID() == 18){
+                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
             }
 
             // Back to grass
-            else if( map_tiles.at(i).getID() == 2){
-                replace_tile( map_tiles.at(i).x, map_tiles.at(i).y, 0, false);
+            else if( map_tiles.at(i) -> getID() == 2){
+                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 0, false);
             }
 
         }
