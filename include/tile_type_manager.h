@@ -30,6 +30,9 @@ class tile_type_manager{
     tile_type_manager();
     virtual ~tile_type_manager();
 
+    // Load a text file
+    static std::string load_script( std::string newFile);
+
     // Load tile types
     static void load( std::string newFile, bool items);
 

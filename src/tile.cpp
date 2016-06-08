@@ -71,6 +71,10 @@ void tile::run_tick(){
             requirements_met = true;
         }
     }
+
+    if( tile_pointer -> getScript() != ""){
+
+    }
 }
 
 
@@ -89,8 +93,6 @@ void item::draw( BITMAP *tempBuffer)
 {
     tile_pointer -> draw( x, y, tempBuffer);
 }
-
-
 
 
 

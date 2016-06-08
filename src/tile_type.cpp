@@ -2,7 +2,7 @@
 
 // Init tile
 tile_type::tile_type( unsigned char newImageX, unsigned char newImageY, unsigned char newImageW,
-               unsigned char newImageH, unsigned char newID, std::string newName, int newAttribute, unsigned char newValue){
+               unsigned char newImageH, unsigned char newID, std::string newName, int newAttribute, unsigned char newValue, std::string newScriptTick){
   // Set init variables
   id = newID;
   name = newName;
@@ -18,6 +18,8 @@ tile_type::tile_type( unsigned char newImageX, unsigned char newImageY, unsigned
   sprite_sheet = NULL;
 
   value = newValue;
+
+  script = newScriptTick;
 }
 
 // Destroy tile

@@ -11,6 +11,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--Water-->
 	<tile id="1">
@@ -23,6 +24,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--Soil-->
 	<tile id="2">
@@ -35,6 +37,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--Well-->
 	<tile id="3">
@@ -47,6 +50,7 @@
 		</images>
 		<attrubite>SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--Dense Grass-->
 	<tile id="4">
@@ -59,6 +63,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--Tree-->
 	<tile id="5">
@@ -71,6 +76,7 @@
 		</images>
 		<attrubite>SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--Bush-->
 	<tile id="6">
@@ -83,6 +89,7 @@
 		</images>
 		<attrubite>SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--Well Path-->
 	<tile id="7">
@@ -95,6 +102,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--Stump-->
 	<tile id="11">
@@ -107,6 +115,7 @@
 		</images>
 		<attrubite>SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--Path Horizontal-->
 	<tile id="12">
@@ -119,6 +128,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--Path Vertical-->
 	<tile id="13">
@@ -131,6 +141,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--Path Corner 1-->
 	<tile id="14">
@@ -143,6 +154,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--Path Corner 2-->
 	<tile id="15">
@@ -155,6 +167,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--Path Corner 3-->
 	<tile id="16">
@@ -167,6 +180,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--Path Corner 4-->
 	<tile id="17">
@@ -179,6 +193,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--Plowed soil-->
 	<tile id="18">
@@ -191,6 +206,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--Store path-->
 	<tile id="19">
@@ -203,6 +219,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!--path-->
 	<tile id="20">
@@ -215,6 +232,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	
 	<!--Berry-->
@@ -228,6 +246,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script>data/scripts/crop.jimScript</script>
 	</tile>
 	<tile id="31">
 		<name>Berry</name>
@@ -239,6 +258,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<tile id="32">
 		<name>Berry</name>
@@ -250,6 +270,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<!-- Tomato -->
 	<tile id="33">
@@ -262,6 +283,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<tile id="34">
 		<name>Tomato</name>
@@ -273,6 +295,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<tile id="35">
 		<name>Tomato</name>
@@ -284,6 +307,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	
 	<!-- Carrot -->
@@ -297,6 +321,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<tile id="37">
 		<name>Carrot</name>
@@ -308,6 +333,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<tile id="38">
 		<name>Carrot</name>
@@ -319,6 +345,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	
 	<!-- Lavender -->
@@ -332,6 +359,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<tile id="40">
 		<name>Lavender</name>
@@ -343,6 +371,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<tile id="41">
 		<name>Lavender</name>
@@ -354,6 +383,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	
 	<!-- COOP -->
@@ -367,6 +397,7 @@
 		</images>
 		<attrubite>SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<tile id="54">
 		<name>Fence Door</name>
@@ -378,6 +409,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<tile id="55">
 		<name>Fence</name>
@@ -389,6 +421,7 @@
 		</images>
 		<attrubite>SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<tile id="56">
 		<name>Fence</name>
@@ -400,6 +433,7 @@
 		</images>
 		<attrubite>SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<tile id="57">
 		<name>Fence</name>
@@ -411,6 +445,7 @@
 		</images>
 		<attrubite>SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	<tile id="58">
 		<name>Fence</name>
@@ -422,6 +457,7 @@
 		</images>
 		<attrubite>SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	
 	<!-- COOP Grass-->
@@ -435,6 +471,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	
 	<!-- Store -->
@@ -448,6 +485,7 @@
 		</images>
 		<attrubite>SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	
 	<!-- Barn -->
@@ -461,6 +499,7 @@
 		</images>
 		<attrubite>SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 	
 	<!-- Goat -->
@@ -474,5 +513,6 @@
 		</images>
 		<attrubite>SOLID</attrubite>
 		<random>0</random>
+		<script></script>
 	</tile>
 </tiles>

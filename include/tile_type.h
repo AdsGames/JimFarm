@@ -13,7 +13,7 @@
 class tile_type{
   public:
     tile_type( unsigned char newImageX = 0, unsigned char newImageY = 0, unsigned char newImageW = 1,
-               unsigned char newImageH = 1, unsigned char newID = 0, std::string newName = "", int newAttribute = 0, unsigned char newValue = 0);
+               unsigned char newImageH = 1, unsigned char newID = 0, std::string newName = "", int newAttribute = 0, unsigned char newValue = 0, std::string newScriptTick = "");
     virtual ~tile_type();
 
     // Get type
@@ -31,6 +31,7 @@ class tile_type{
     unsigned char getWidth(){ return image_w; }
     unsigned char getHeight(){ return image_h; }
     unsigned char getValue(){ return value; }
+    std::string getScript(){ return script; }
 
     // Draw
     void draw( int x, int y, BITMAP *tempBuffer, char offset = 0);
@@ -42,6 +43,7 @@ class tile_type{
   private:
     unsigned char id;
     std::string name;
+    std::string script;
     unsigned char attribute;
 
     unsigned char image_cord_x, image_cord_y;
