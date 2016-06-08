@@ -1,4 +1,4 @@
 # Grows that grass
 IF:RANDOM:20:1:2
-CHANGE:SET:0
+TILE:CHANGE:SET:0
 END

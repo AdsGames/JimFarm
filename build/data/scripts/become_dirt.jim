@@ -1,4 +1,4 @@
 # Flatten farmland
 IF:RANDOM:20:1:2
-CHANGE:SET:3
+TILE:CHANGE:SET:2
 END

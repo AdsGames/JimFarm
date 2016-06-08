@@ -94,8 +94,8 @@ void tile_map::run_script( std::string *newScript, tile* caller, int lineNumber)
   split_strings( newScript[lineNumber], line);
 
   // Debug
-  for( int i = 0; i < 10; i++)
-    std::cout << i << " " << line[i] << "\n";
+  /*for( int i = 0; i < 10; i++)
+    std::cout << i << " " << line[i] << "\n";*/
 
   // Process script line by line
 
@@ -112,12 +112,23 @@ void tile_map::run_script( std::string *newScript, tile* caller, int lineNumber)
     }
   }
   // Change tile at position
-  else if( line[0] == "CHANGE"){
-    if( line[1] == "ADD"){
-      replace_tile( caller -> x, caller -> y, caller -> getID() + stoi( line[2]), false);
+  else if( line[0] == "TILE"){
+    if( line[1] == "CHANGE"){
+      if( line[2] == "ADD"){
+        replace_tile( caller -> x, caller -> y, caller -> getID() + stoi( line[2]), false);
+      }
+      else if( line[2] == "SET"){
+        replace_tile( caller -> x, caller -> y, stoi( line[2]), false);
+      }
     }
-    else if( line[1] == "SET"){
-      replace_tile( caller -> x, caller -> y, stoi( line[2]), false);
+  }
+  // Edit items
+  else if( line[0] == "ITEM"){
+    if( line[1] == "PLACE"){
+      place_new_item_at( caller -> x, caller -> y, stoi( line[2]));
+    }
+    else if( line[1] == "REMOVE"){
+      remove_item_at( caller -> x, caller -> y);
     }
   }
   // Play sound
@@ -455,16 +466,6 @@ void tile_map::update(){
         else if( map_tiles.at(i) -> getID() == 41){
             place_new_item_at( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 15);
             replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
-        }
-
-        // Back to dirt
-        else if( map_tiles.at(i) -> getID() == 18){
-            replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
-        }
-
-        // Back to grass
-        else if( map_tiles.at(i) -> getID() == 2){
-            replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 0, false);
         }
       }
     }*/
