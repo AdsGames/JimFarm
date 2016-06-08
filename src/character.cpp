@@ -123,7 +123,7 @@ void character::push_message( std::string new_message){
         player_messages[i] = player_messages[i + 1];
 
     player_messages[MAX_MESSAGES - 1] = new_message;
-    std::cout << player_messages[0];
+    std::cout << player_messages[0] << "\n";
 }
 
 // Update player
@@ -263,8 +263,7 @@ void character::update(){
             // Berry
             else if( inventory_item -> getID() == 8){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18){
-                    map_pointer -> replace_tile( indicator_x, indicator_y, -1, false);
-                    map_pointer ->  place_new_crop_at( indicator_x, indicator_y, 30);
+                    map_pointer -> replace_tile( indicator_x, indicator_y, 30, false);
                     if( random( 0, 2) == 0){
                         remove_item();
                     }
@@ -277,8 +276,7 @@ void character::update(){
             // Tomato
             else if( inventory_item -> getID() == 10){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18){
-                    map_pointer -> replace_tile( indicator_x, indicator_y, -1, false);
-                    map_pointer ->  place_new_crop_at( indicator_x, indicator_y, 33);
+                    map_pointer -> replace_tile( indicator_x, indicator_y, 33, false);
                     if( random( 0, 2) == 0){
                         remove_item();
                     }
@@ -291,8 +289,7 @@ void character::update(){
             // Carrot
             else if( inventory_item -> getID() == 12){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18){
-                    map_pointer -> replace_tile( indicator_x, indicator_y, -1, false);
-                    map_pointer ->  place_new_crop_at( indicator_x, indicator_y, 36);
+                    map_pointer -> replace_tile( indicator_x, indicator_y, 36, false);
                     if( random( 0, 2) == 0){
                         remove_item();
                     }
@@ -305,8 +302,7 @@ void character::update(){
             // Lavender
             else if( inventory_item -> getID() == 14){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18){
-                    map_pointer -> replace_tile( indicator_x, indicator_y, -1, false);
-                    map_pointer ->  place_new_crop_at( indicator_x, indicator_y, 39);
+                    map_pointer -> replace_tile( indicator_x, indicator_y, 39, false);
                     if( random( 0, 2) == 0){
                         remove_item();
                     }

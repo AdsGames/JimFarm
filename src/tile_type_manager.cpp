@@ -14,22 +14,25 @@ tile_type_manager::~tile_type_manager(){
   //dtor
 }
 
-std::string tile_type_manager::load_script( std::string newFile){
-  std::string line, lines;
+void tile_type_manager::load_script( std::string newFile, std::string *stringToFill){
+  std::string line;
+
+  int i = 0;
+
   std::ifstream myfile (newFile.c_str());
 
   if (myfile.is_open()){
     while ( getline (myfile,line) ){
-      lines += line + "\n";
+      if( line.substr( 0, 1) != "#"){
+        stringToFill[i] = line;
+        //std::cout << i << line << "\n";
+        i++;
+      }
     }
     myfile.close();
-    return lines;
   }
-
   else
     std::cout << "\n ERROR: Unable to open file " + newFile + "\n\n";
-
-  return "";
 }
 
 // Load tiles
@@ -59,7 +62,7 @@ void tile_type_manager::load( std::string newFile, bool items){
   }
 
   // Load tiles
-  for(cTile; cTile; cTile = cTile->next_sibling()){
+  for(cTile; cTile; cTile = cTile -> next_sibling()){
     // Read xml variables
     // General
     int tileID = atoi(cTile-> first_attribute("id") -> value());
@@ -81,18 +84,18 @@ void tile_type_manager::load( std::string newFile, bool items){
       else if( attrubite_string == "SOLID")
         attrubite = SOLID;
 
-      // Process any scripts
-      if( script != ""){
-        script = load_script( script);
-      }
-
       // Draw to screen (debug)
       std::cout << "-> Loading Tile:" << name << "  ID:" <<  tileID << "  ATTRIBUTE:" << attrubite_string << "  RANDOMNESS:" << randomness
                 << "  X:" << image_x << "  Y:" << image_y << "  H:" << image_h << "  W:" << image_w << " Script:" << script << "\n";
 
       // Create tile, set variables and add it to the tile list
-      tile_type newTileType( image_x, image_y, image_w, image_h, tileID, name, attrubite, 0, script);
+      tile_type newTileType( image_x, image_y, image_w, image_h, tileID, name, attrubite);
       newTileType.setSpriteSheet( sprite_sheet_tiles);
+
+      // Scripts!
+      if( script != "")
+        load_script( script, newTileType.getScript());
+
 
       // Add the tile
       tile_defs.push_back( newTileType);

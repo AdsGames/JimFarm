@@ -30,4 +30,7 @@ extern FONT *load_font_ex( const char *path);
 
 extern bool collision(int xMin1, int xMax1, int xMin2, int xMax2, int yMin1, int yMax1, int yMin2, int yMax2);
 
+// Convert string to int
+extern int stoi(std::string text);
+
 #endif // TOOLS_H

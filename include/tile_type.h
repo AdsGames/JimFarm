@@ -9,11 +9,12 @@
 
 #include <allegro.h>
 #include <string>
+#include <iostream>
 
 class tile_type{
   public:
     tile_type( unsigned char newImageX = 0, unsigned char newImageY = 0, unsigned char newImageW = 1,
-               unsigned char newImageH = 1, unsigned char newID = 0, std::string newName = "", int newAttribute = 0, unsigned char newValue = 0, std::string newScriptTick = "");
+               unsigned char newImageH = 1, unsigned char newID = 0, std::string newName = "", int newAttribute = 0, unsigned char newValue = 0);
     virtual ~tile_type();
 
     // Get type
@@ -31,7 +32,7 @@ class tile_type{
     unsigned char getWidth(){ return image_w; }
     unsigned char getHeight(){ return image_h; }
     unsigned char getValue(){ return value; }
-    std::string getScript(){ return script; }
+    std::string* getScript(){ return script; }
 
     // Draw
     void draw( int x, int y, BITMAP *tempBuffer, char offset = 0);
@@ -43,7 +44,7 @@ class tile_type{
   private:
     unsigned char id;
     std::string name;
-    std::string script;
+    std::string script[100];
     unsigned char attribute;
 
     unsigned char image_cord_x, image_cord_y;

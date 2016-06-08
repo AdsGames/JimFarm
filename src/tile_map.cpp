@@ -68,8 +68,68 @@ void tile_map::load_map( std::string fileName){
         }
         read2.close();
     }
+    std::cout << "\n\n";
 
+}
 
+// Split up strings into array
+void tile_map::split_strings( std::string newScript, std::string *newContainer, int iteration = 0){
+  // Split it
+  for( int i = 0; i < newScript.size(); i++){
+    if( newScript.substr( i, 1) == ":"){
+      newContainer[iteration] = newScript.substr( 0, i);
+      split_strings( newScript.substr( i + 1, newScript.size() - ( i + 1)), newContainer, iteration + 1);
+      break;
+    }
+    else if( i == newScript.size() - 1){
+      newContainer[iteration] = newScript.substr( 0, newScript.size());
+      break;
+    }
+  }
+}
+
+// Run them scripts
+void tile_map::run_script( std::string *newScript, tile* caller, int lineNumber){
+  std::string line[10];
+  split_strings( newScript[lineNumber], line);
+
+  // Debug
+  for( int i = 0; i < 10; i++)
+    std::cout << i << " " << line[i] << "\n";
+
+  // Process script line by line
+
+  // If
+  if( line[0] == "IF"){
+    // Random
+    if( line[1] == "RANDOM"){
+      if( random( 0, stoi(line[2])) == 0){
+        run_script( newScript, caller, stoi(line[3]));
+      }
+      else{
+        run_script( newScript, caller, stoi(line[4]));
+      }
+    }
+  }
+  // Change tile at position
+  else if( line[0] == "CHANGE"){
+    if( line[1] == "ADD"){
+      replace_tile( caller -> x, caller -> y, caller -> getID() + stoi( line[2]), false);
+    }
+    else if( line[1] == "SET"){
+      replace_tile( caller -> x, caller -> y, stoi( line[2]), false);
+    }
+  }
+  // Play sound
+  else if( line[0] == "PLAY"){
+    SAMPLE *tempSound = load_sample_ex( line[1].c_str());
+    play_sample( tempSound, 100, 127, 1000, false);
+    //destroy_sample( tempSound);
+  }
+  // Run next line
+  else if( line[0] != "END"){
+    run_script( newScript, caller, lineNumber + 1);
+  }
 }
 
 
@@ -318,93 +378,99 @@ item *tile_map::get_item_at( int positionX, int positionY){
 }
 
 void tile_map::update(){
-
   timer++;
-  if(timer>=120){
-    timer=0;
+  if(timer >= 120){
+    timer = 0;
 
-    for( unsigned int i = 0; i < map_items.size(); i++){
-        // Chicken eggs
-        if( map_items.at(i).getID() == 6  && random(0,16) == 1 && get_tile_at(map_items.at(i).x,map_items.at(i).y,BACKGROUND) == 59){
-            int rand_1 = 16*random(-1,1);
-            int rand_2 = 16*random(-1,1);
-            if(!is_item_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2) && !is_solid_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2)){
-              item newItem( map_items.at(i).x+rand_1, map_items.at(i).y+rand_2, 7);
-              place_item( newItem);
-              play_sample(egg,100,125,1000,0);
+    // Run jimScripts!
+    for( unsigned int i = 0; i < map_tiles.size(); i++){
+      std::string *script_pointer = map_tiles.at(i) -> tile_pointer -> getScript();
+      if( script_pointer[0] != ""){
+        run_script( script_pointer, map_tiles.at(i));
+      }
+    }
 
-            }
+
+
+    /*for( unsigned int i = 0; i < map_items.size(); i++){
+      // Chicken eggs
+      if( map_items.at(i).getID() == 6  && random(0,16) == 1 && get_tile_at(map_items.at(i).x,map_items.at(i).y,BACKGROUND) == 59){
+        int rand_1 = 16*random(-1,1);
+        int rand_2 = 16*random(-1,1);
+        if(!is_item_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2) && !is_solid_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2)){
+          item newItem( map_items.at(i).x+rand_1, map_items.at(i).y+rand_2, 7);
+          place_item( newItem);
+          play_sample(egg,100,125,1000,0);
         }
+      }
     }
 
     // Run tickers
     for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
-        map_tiles_foreground.at(i) -> run_tick();
+      map_tiles_foreground.at(i) -> run_tick();
     }
     for( unsigned int i = 0; i < map_tiles.size(); i++){
-        map_tiles.at(i) -> run_tick();
+      map_tiles.at(i) -> run_tick();
     }
 
-
-    for( unsigned int i = 0; i < map_tiles.size(); i++){
-        // Check crops
-        if( map_tiles.at(i) -> requirements_met == true){
-            // Berries
-            if( map_tiles.at(i) -> getID() == 30 || map_tiles.at(i) -> getID() == 31){
-                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, map_tiles.at(i) -> getID() + 1, false);
-            }
-            // YUM YUM
-            else if( map_tiles.at(i) -> getID() == 32){
-                place_new_item_at( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 9);
-                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
-            }
-
-            // Tomatoes
-            else if( map_tiles.at(i) -> getID() == 33 || map_tiles.at(i) -> getID() == 34){
-                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, map_tiles.at(i) -> getID() + 1, false);
-            }
-            // YUM YUM
-            else if( map_tiles.at(i) -> getID() == 35){
-                place_new_item_at( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 11);
-                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
-            }
-
-            // Tomatoes
-            else if( map_tiles.at(i) -> getID() == 36 || map_tiles.at(i) -> getID() == 37){
-                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, map_tiles.at(i) -> getID() + 1, false);
-            }
-            // YUM YUM
-            else if( map_tiles.at(i) -> getID() == 38){
-                place_new_item_at( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 13);
-                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
-            }
-
-            // Lavender
-            else if( map_tiles.at(i) -> getID() == 39 || map_tiles.at(i) -> getID() == 40){
-                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, map_tiles.at(i) -> getID() + 1, false);
-            }
-            // YUM YUM
-            else if( map_tiles.at(i) -> getID() == 41){
-                place_new_item_at( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 15);
-                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
-            }
-
-            // Back to dirt
-            else if( map_tiles.at(i) -> getID() == 18){
-                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
-            }
-
-            // Back to grass
-            else if( map_tiles.at(i) -> getID() == 2){
-                replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 0, false);
-            }
-
+    /*for( unsigned int i = 0; i < map_tiles.size(); i++){
+      // Check crops
+      if( map_tiles.at(i) -> requirements_met == true){
+        // Berries
+        if( map_tiles.at(i) -> getID() == 30 || map_tiles.at(i) -> getID() == 31){
+            replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, map_tiles.at(i) -> getID() + 1, false);
         }
-    }
+        // YUM YUM
+        else if( map_tiles.at(i) -> getID() == 32){
+            place_new_item_at( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 9);
+            replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
+        }
+
+        // Tomatoes
+        else if( map_tiles.at(i) -> getID() == 33 || map_tiles.at(i) -> getID() == 34){
+            replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, map_tiles.at(i) -> getID() + 1, false);
+        }
+        // YUM YUM
+        else if( map_tiles.at(i) -> getID() == 35){
+            place_new_item_at( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 11);
+            replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
+        }
+
+        // Tomatoes
+        else if( map_tiles.at(i) -> getID() == 36 || map_tiles.at(i) -> getID() == 37){
+            replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, map_tiles.at(i) -> getID() + 1, false);
+        }
+        // YUM YUM
+        else if( map_tiles.at(i) -> getID() == 38){
+            place_new_item_at( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 13);
+            replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
+        }
+
+        // Lavender
+        else if( map_tiles.at(i) -> getID() == 39 || map_tiles.at(i) -> getID() == 40){
+            replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, map_tiles.at(i) -> getID() + 1, false);
+        }
+
+        // YUM YUM
+        else if( map_tiles.at(i) -> getID() == 41){
+            place_new_item_at( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 15);
+            replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
+        }
+
+        // Back to dirt
+        else if( map_tiles.at(i) -> getID() == 18){
+            replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
+        }
+
+        // Back to grass
+        else if( map_tiles.at(i) -> getID() == 2){
+            replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 0, false);
+        }
+      }
+    }*/
   }
-
-
 }
+
 // Pick up item at position
 void tile_map::remove_item_at( int positionX, int positionY){
     for( unsigned int i = 0; i < map_items.size(); i++){
@@ -419,12 +485,6 @@ void tile_map::remove_item_at( int positionX, int positionY){
 void tile_map::place_new_item_at( int newX, int newY, unsigned char newItem){
     item newItemx( newX, newY, newItem);
     place_item( newItemx);
-}
-
-// Create crop
-void tile_map::place_new_crop_at( int newX, int newY, unsigned char newCrop){
-    crop* newCropx = new crop( newX, newY, newCrop);
-    place_tile( newCropx);
 }
 
 // Scroll

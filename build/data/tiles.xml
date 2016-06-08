@@ -37,7 +37,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
-		<script></script>
+		<script>data/scripts/grow_grass.jim</script>
 	</tile>
 	<!--Well-->
 	<tile id="3">
@@ -206,7 +206,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
-		<script></script>
+		<script>data/scripts/become_dirt.jim</script>
 	</tile>
 	<!--Store path-->
 	<tile id="19">
@@ -246,7 +246,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
-		<script>data/scripts/crop.jimScript</script>
+		<script>data/scripts/crop.jim</script>
 	</tile>
 	<tile id="31">
 		<name>Berry</name>
@@ -258,7 +258,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
-		<script></script>
+		<script>data/scripts/crop.jim</script>
 	</tile>
 	<tile id="32">
 		<name>Berry</name>
@@ -283,7 +283,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
-		<script></script>
+		<script>data/scripts/crop.jim</script>
 	</tile>
 	<tile id="34">
 		<name>Tomato</name>
@@ -295,7 +295,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
-		<script></script>
+		<script>data/scripts/crop.jim</script>
 	</tile>
 	<tile id="35">
 		<name>Tomato</name>
@@ -321,7 +321,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
-		<script></script>
+		<script>data/scripts/crop.jim</script>
 	</tile>
 	<tile id="37">
 		<name>Carrot</name>
@@ -333,7 +333,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
-		<script></script>
+		<script>data/scripts/crop.jim</script>
 	</tile>
 	<tile id="38">
 		<name>Carrot</name>
@@ -359,7 +359,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
-		<script></script>
+		<script>data/scripts/crop.jim</script>
 	</tile>
 	<tile id="40">
 		<name>Lavender</name>
@@ -371,7 +371,7 @@
 		</images>
 		<attrubite>NON_SOLID</attrubite>
 		<random>0</random>
-		<script></script>
+		<script>data/scripts/crop.jim</script>
 	</tile>
 	<tile id="41">
 		<name>Lavender</name>

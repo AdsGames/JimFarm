@@ -28,6 +28,9 @@ class tile_map
         static const int VIEWPORT_WIDTH = 240;
         static const int VIEWPORT_HEIGHT = 160;
 
+        void split_strings( std::string newScript, std::string *newContainer, int iteration);
+        void run_script( std::string *newScript, tile* caller, int lineNumber = 0);
+
         void draw( BITMAP *tempBuffer);
         void drawForeground( BITMAP *tempBuffer);
 
@@ -37,7 +40,6 @@ class tile_map
         void place_item( item newItem);
         void place_tile( tile* newTile);
         void place_new_item_at( int newX, int newY, unsigned char newItem);
-        void place_new_crop_at( int newX, int newY, unsigned char newCrop);
         void update();
 
         bool is_solid_at( int positionX, int positionY);

@@ -71,10 +71,6 @@ void tile::run_tick(){
             requirements_met = true;
         }
     }
-
-    if( tile_pointer -> getScript() != ""){
-
-    }
 }
 
 
@@ -93,29 +89,3 @@ void item::draw( BITMAP *tempBuffer)
 {
     tile_pointer -> draw( x, y, tempBuffer);
 }
-
-
-
-// CROP
-crop::crop(int newX, int newY, char newID) : tile( newX, newY, newID)
-{
-
-}
-
-crop::~crop()
-{
-    //dtor
-}
-
-void crop::run_tick() {
-  if( random( 0, 30) == 0){
-    tile_data++;
-  }
-}
-
-void crop::draw( BITMAP *tempBuffer)
-{
-    tile_pointer -> draw( x, y, tempBuffer, tile_data);
-}
-
-

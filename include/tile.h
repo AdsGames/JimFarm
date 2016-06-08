@@ -60,19 +60,4 @@ class item : public tile
 
 };
 
-class crop : public tile
-{
-    public:
-        crop(int newX, int newY, char newID);
-        virtual ~crop();
-
-        void draw( BITMAP *tempBuffer);
-
-        virtual void run_tick();
-    protected:
-
-    private:
-
-};
-
 #endif // TILE_H

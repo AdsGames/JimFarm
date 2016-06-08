@@ -59,3 +59,8 @@ bool collision(int xMin1, int xMax1, int xMin2, int xMax2, int yMin1, int yMax1,
   }
   return false;
 }
+
+// Convert string to int
+int stoi(std::string text){
+  return atoi(text.c_str());
+}
