@@ -113,7 +113,7 @@ void crop::run_tick() {
 
 void crop::draw( BITMAP *tempBuffer)
 {
-    //tile_pointer -> draw( x, y, tempBuffer, tile_data);
+    tile_pointer -> draw( x, y, tempBuffer, tile_data);
 }
 
 

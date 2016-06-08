@@ -72,7 +72,10 @@ void character::draw( BITMAP *tempBuffer){
     else{
         indicator_x = (x/16)*16;
         indicator_y = (y/16)*16;
-        draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> x, indicator_y - map_pointer -> y);
+
+        // Only show if hands arent empty
+        if( inventory_item -> getID() != 0)
+          draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> x, indicator_y - map_pointer -> y);
     }
 
     // Draw frame
@@ -260,7 +263,8 @@ void character::update(){
             // Berry
             else if( inventory_item -> getID() == 8){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18){
-                    map_pointer -> replace_tile( indicator_x, indicator_y, 30, false);
+                    map_pointer -> replace_tile( indicator_x, indicator_y, -1, false);
+                    map_pointer ->  place_new_crop_at( indicator_x, indicator_y, 30);
                     if( random( 0, 2) == 0){
                         remove_item();
                     }
@@ -273,7 +277,8 @@ void character::update(){
             // Tomato
             else if( inventory_item -> getID() == 10){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18){
-                    map_pointer -> replace_tile( indicator_x, indicator_y, 33, false);
+                    map_pointer -> replace_tile( indicator_x, indicator_y, -1, false);
+                    map_pointer ->  place_new_crop_at( indicator_x, indicator_y, 33);
                     if( random( 0, 2) == 0){
                         remove_item();
                     }
@@ -286,7 +291,8 @@ void character::update(){
             // Carrot
             else if( inventory_item -> getID() == 12){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18){
-                    map_pointer -> replace_tile( indicator_x, indicator_y, 36, false);
+                    map_pointer -> replace_tile( indicator_x, indicator_y, -1, false);
+                    map_pointer ->  place_new_crop_at( indicator_x, indicator_y, 36);
                     if( random( 0, 2) == 0){
                         remove_item();
                     }
@@ -299,7 +305,8 @@ void character::update(){
             // Lavender
             else if( inventory_item -> getID() == 14){
                 if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18){
-                    map_pointer -> replace_tile( indicator_x, indicator_y, 39, false);
+                    map_pointer -> replace_tile( indicator_x, indicator_y, -1, false);
+                    map_pointer ->  place_new_crop_at( indicator_x, indicator_y, 39);
                     if( random( 0, 2) == 0){
                         remove_item();
                     }

@@ -35,7 +35,9 @@ class tile_map
         int get_tile_at( int positionX, int positionY, bool foreground);
 
         void place_item( item newItem);
+        void place_tile( tile* newTile);
         void place_new_item_at( int newX, int newY, unsigned char newItem);
+        void place_new_crop_at( int newX, int newY, unsigned char newCrop);
         void update();
 
         bool is_solid_at( int positionX, int positionY);

@@ -250,7 +250,6 @@ void tile_map::replace_tile( int tileX, int tileY, int newID, bool foreground){
                 }
                 else{
                     map_tiles_foreground.at(i) -> setID( newID) ;
-                    //map_tiles_foreground.at(i) -> image[0] = tile_images[newID];
                     map_tiles_foreground.at(i) -> requirements_met = false;
                 }
             }
@@ -261,6 +260,11 @@ void tile_map::replace_tile( int tileX, int tileY, int newID, bool foreground){
 // Place item on map
 void tile_map::place_item( item newItem){
     map_items.push_back( newItem);
+}
+
+// Place tile on map
+void tile_map::place_tile( tile* newTile){
+    map_tiles.push_back( newTile);
 }
 
 // Get tile at position
@@ -415,6 +419,12 @@ void tile_map::remove_item_at( int positionX, int positionY){
 void tile_map::place_new_item_at( int newX, int newY, unsigned char newItem){
     item newItemx( newX, newY, newItem);
     place_item( newItemx);
+}
+
+// Create crop
+void tile_map::place_new_crop_at( int newX, int newY, unsigned char newCrop){
+    crop* newCropx = new crop( newX, newY, newCrop);
+    place_tile( newCropx);
 }
 
 // Scroll
