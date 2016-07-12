@@ -76,7 +76,7 @@ void tile_map::load_map( std::string fileName){
 void tile_map::split_strings( std::string newScript, std::string *newContainer, int iteration = 0){
   // Split it
   for( int i = 0; i < newScript.size(); i++){
-    if( newScript.substr( i, 1) == ":"){
+    if( newScript.substr( i, 1) == ":" || newScript.substr( i, 1) == "(" || newScript.substr( i, 1) == ")"){
       newContainer[iteration] = newScript.substr( 0, i);
       split_strings( newScript.substr( i + 1, newScript.size() - ( i + 1)), newContainer, iteration + 1);
       break;

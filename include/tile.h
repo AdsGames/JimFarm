@@ -24,7 +24,7 @@ class tile
         void draw_at( int newX, int newY, BITMAP *tempBuffer);
 
         // Sorting stuff
-        bool operator< (const tile &other) const {
+        virtual bool operator< (const tile &other) const {
             return y < other.y;
         }
 

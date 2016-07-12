@@ -30,6 +30,7 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="include/character.h" />
+		<Unit filename="include/game_menu.h" />
 		<Unit filename="include/keyListener.h" />
 		<Unit filename="include/menu.h" />
 		<Unit filename="include/store.h" />
@@ -42,6 +43,7 @@
 			<Option compilerVar="WINDRES" />
 		</Unit>
 		<Unit filename="src/character.cpp" />
+		<Unit filename="src/game_menu.cpp" />
 		<Unit filename="src/keyListener.cpp" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/menu.cpp" />
