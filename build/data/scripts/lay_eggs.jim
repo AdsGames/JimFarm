@@ -1,4 +1,0 @@
-# Matures Crops!
-IF:RANDOM:2:1:2
-ADD:ITEM:7
-END

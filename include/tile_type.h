@@ -32,20 +32,25 @@ class tile_type{
     unsigned char getWidth(){ return image_w; }
     unsigned char getHeight(){ return image_h; }
     unsigned char getValue(){ return value; }
-    std::string* getScript(){ return script; }
 
     // Draw
     void draw( int x, int y, BITMAP *tempBuffer, char offset = 0);
 
     // Set sprite sheet
-    void setSpriteSheet( BITMAP *newSpriteSheet){ sprite_sheet = newSpriteSheet; };
+    void setSpriteSheet( BITMAP *newSpriteSheet);
+
+    // Set special image stuff
+    void setImageType( std::string newImageType, int newSheetWidth, int newSheetHeight, int newImageWidth, int newImageHeight);
 
   protected:
   private:
     unsigned char id;
     std::string name;
-    std::string script[100];
     unsigned char attribute;
+
+    std::string image_type;
+    int sheet_width;
+    int sheet_height;
 
     unsigned char image_cord_x, image_cord_y;
     unsigned char image_h, image_w;
@@ -53,6 +58,8 @@ class tile_type{
     unsigned char value;
 
     BITMAP *sprite_sheet;
+
+    BITMAP *images[16];
 };
 
 #endif // TILE_TYPE_H

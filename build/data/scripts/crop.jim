@@ -1,4 +1,0 @@
-# Matures Crops!
-IF:RANDOM:10:1:2
-TILE:CHANGE:ADD:1
-END

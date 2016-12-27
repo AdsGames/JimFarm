@@ -1,5 +1,9 @@
 #include "tile_map.h"
 
+bool comparePtrToNode(tile *a, tile *b){
+  return (*a < *b);
+}
+
 tile_map::tile_map()
 {
     x = 128;
@@ -71,78 +75,6 @@ void tile_map::load_map( std::string fileName){
     std::cout << "\n\n";
 
 }
-
-// Split up strings into array
-void tile_map::split_strings( std::string newScript, std::string *newContainer, int iteration = 0){
-  // Split it
-  for( int i = 0; i < newScript.size(); i++){
-    if( newScript.substr( i, 1) == ":" || newScript.substr( i, 1) == "(" || newScript.substr( i, 1) == ")"){
-      newContainer[iteration] = newScript.substr( 0, i);
-      split_strings( newScript.substr( i + 1, newScript.size() - ( i + 1)), newContainer, iteration + 1);
-      break;
-    }
-    else if( i == newScript.size() - 1){
-      newContainer[iteration] = newScript.substr( 0, newScript.size());
-      break;
-    }
-  }
-}
-
-// Run them scripts
-void tile_map::run_script( std::string *newScript, tile* caller, int lineNumber){
-  std::string line[10];
-  split_strings( newScript[lineNumber], line);
-
-  // Debug
-  /*for( int i = 0; i < 10; i++)
-    std::cout << i << " " << line[i] << "\n";*/
-
-  // Process script line by line
-
-  // If
-  if( line[0] == "IF"){
-    // Random
-    if( line[1] == "RANDOM"){
-      if( random( 0, stoi(line[2])) == 0){
-        run_script( newScript, caller, stoi(line[3]));
-      }
-      else{
-        run_script( newScript, caller, stoi(line[4]));
-      }
-    }
-  }
-  // Change tile at position
-  else if( line[0] == "TILE"){
-    if( line[1] == "CHANGE"){
-      if( line[2] == "ADD"){
-        replace_tile( caller -> x, caller -> y, caller -> getID() + stoi( line[2]), false);
-      }
-      else if( line[2] == "SET"){
-        replace_tile( caller -> x, caller -> y, stoi( line[2]), false);
-      }
-    }
-  }
-  // Edit items
-  else if( line[0] == "ITEM"){
-    if( line[1] == "PLACE"){
-      place_new_item_at( caller -> x, caller -> y, stoi( line[2]));
-    }
-    else if( line[1] == "REMOVE"){
-      remove_item_at( caller -> x, caller -> y);
-    }
-  }
-  // Play sound
-  else if( line[0] == "PLAY"){
-    SAMPLE *tempSound = load_sample_ex( line[1].c_str());
-    play_sample( tempSound, 100, 127, 1000, false);
-    //destroy_sample( tempSound);
-  }
-  // Run next line
-  else if( line[0] != "END"){
-    run_script( newScript, caller, lineNumber + 1);
-  }
-}
-
 
 // Draw tiles
 void tile_map::draw( BITMAP *tempBuffer){
@@ -222,23 +154,25 @@ void tile_map::generate_map(){
     }
 
     // Spread Trees
-    for( int i = 0; i < MAP_WIDTH; i++){
+    for( int j = 0; j < 5; j++){
+      for( int i = 0; i < MAP_WIDTH; i++){
         for( int t = 0; t < MAP_HEIGHT; t++){
-            if( tempMapForeground[i][t] == 5){
-                if( i > 0 && random( 0, 2) == 0  && tempMapForeground[i][t]==0){
-                    tempMapForeground[i - 1][t] = 5;
-                }
-                if( i < MAP_WIDTH - 1 && random( 0, 2) == 0 && tempMapForeground[i][t]==0){
-                    tempMapForeground[i + 1][t] = 5;
-                }
-                if( t > 0 && random( 0, 2) == 0 && tempMapForeground[i][t]==0){
-                    tempMapForeground[i][t - 1] = 5;
-                }
-                if( t < MAP_HEIGHT - 1 && random( 0, 2) == 0 && tempMapForeground[i][t]==0){
-                    tempMapForeground[i][t + 1] = 5;
-                }
+          if( tempMapForeground[i][t] == 5){
+            if( i > 0 && random( 0, 5) == 0  && tempMapForeground[i - 1][t] == 0){
+              tempMapForeground[i - 1][t] = 5;
             }
+            if( i < MAP_WIDTH - 1 && random( 0, 5) == 0 && tempMapForeground[i + 1][t] == 0){
+              tempMapForeground[i + 1][t] = 5;
+            }
+            if( t > 0 && random( 0, 5) == 0 && tempMapForeground[i][t - 1] == 0){
+              tempMapForeground[i][t - 1] = 5;
+            }
+            if( t < MAP_HEIGHT - 1 && random( 0, 5) == 0 && tempMapForeground[i][t + 1] == 0){
+              tempMapForeground[i][t + 1] = 5;
+            }
+          }
         }
+      }
     }
 
     // Turn numbers into objects
@@ -281,7 +215,7 @@ void tile_map::generate_map(){
 
 
     // SORT IT OUT!
-    std::sort( map_tiles_foreground.begin(), map_tiles_foreground.end());
+    std::sort( map_tiles_foreground.begin(), map_tiles_foreground.end(), comparePtrToNode);
 
     // Create map buffer
     map_buffer = create_bitmap( MAP_WIDTH * 16, MAP_HEIGHT * 16);
@@ -359,23 +293,27 @@ int tile_map::get_tile_at( int positionX, int positionY, bool foreground){
 
 // Check for solid tile
 bool tile_map::is_solid_at( int positionX, int positionY){
-    for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
-        if( map_tiles_foreground.at(i) -> x == positionX && map_tiles_foreground.at(i) -> y == positionY){
-            return map_tiles_foreground.at(i) -> isSolid();
-        }
+  for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
+    if( map_tiles_foreground.at(i) -> x <= positionX && (map_tiles_foreground.at(i) -> y + 16) - ceil(double(map_tiles_foreground.at(i) -> getHeight())/2) * 16 <= positionY &&
+        map_tiles_foreground.at(i) -> x + map_tiles_foreground.at(i) -> getWidth() * 16  > positionX &&
+        map_tiles_foreground.at(i) -> y + 16 > positionY){
+      if( map_tiles_foreground.at(i) -> isSolid()){
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 
 // Check if item exists
 bool tile_map::is_item_at( int positionX, int positionY){
-    for( unsigned int i = 0; i < map_items.size(); i++){
-        if( map_items.at(i).x == positionX && map_items.at(i).y == positionY){
-            return true;
-        }
+  for( unsigned int i = 0; i < map_items.size(); i++){
+    if( map_items.at(i).x == positionX && map_items.at(i).y == positionY){
+      return true;
     }
-    return false;
+  }
+  return false;
 }
 
 // Get item at position
@@ -393,17 +331,7 @@ void tile_map::update(){
   if(timer >= 120){
     timer = 0;
 
-    // Run jimScripts!
-    for( unsigned int i = 0; i < map_tiles.size(); i++){
-      std::string *script_pointer = map_tiles.at(i) -> tile_pointer -> getScript();
-      if( script_pointer[0] != ""){
-        run_script( script_pointer, map_tiles.at(i));
-      }
-    }
-
-
-
-    /*for( unsigned int i = 0; i < map_items.size(); i++){
+    for( unsigned int i = 0; i < map_items.size(); i++){
       // Chicken eggs
       if( map_items.at(i).getID() == 6  && random(0,16) == 1 && get_tile_at(map_items.at(i).x,map_items.at(i).y,BACKGROUND) == 59){
         int rand_1 = 16*random(-1,1);
@@ -424,7 +352,7 @@ void tile_map::update(){
       map_tiles.at(i) -> run_tick();
     }
 
-    /*for( unsigned int i = 0; i < map_tiles.size(); i++){
+    for( unsigned int i = 0; i < map_tiles.size(); i++){
       // Check crops
       if( map_tiles.at(i) -> requirements_met == true){
         // Berries
@@ -467,8 +395,18 @@ void tile_map::update(){
             place_new_item_at( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 15);
             replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
         }
+
+        // Back to dirt
+        else if( map_tiles.at(i) -> getID() == 18){
+            replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
+        }
+
+        // Back to grass
+        else if( map_tiles.at(i) -> getID() == 2){
+            replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 0, false);
+        }
       }
-    }*/
+    }
   }
 }
 
