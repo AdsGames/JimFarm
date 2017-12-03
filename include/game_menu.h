@@ -2,9 +2,6 @@
 #define GAME_MENU_H
 
 #include <allegro.h>
-#include "tools.h"
-#include "keyListener.h"
-
 
 class game_menu
 {

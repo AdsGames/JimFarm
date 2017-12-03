@@ -1,8 +1,13 @@
 #include "tile.h"
 
+#include <iostream>
+#include <math.h>
+
+#include "tools.h"
+#include "tile_type_manager.h"
+
 // TILE
-tile::tile(int newX, int newY, char newID)
-{
+tile::tile(int newX, int newY, char newID){
   // Set init variables
   x = newX;
   y = newY;
@@ -12,25 +17,19 @@ tile::tile(int newX, int newY, char newID)
   requirements_met = false;
 }
 
-tile::~tile()
-{
-  //dtor
-}
+tile::~tile(){}
 
-void tile::draw( BITMAP *tempBuffer)
-{
+void tile::draw( BITMAP *tempBuffer){
   tile_pointer -> draw( x, y, tempBuffer);
   if( requirements_met)
     rect( tempBuffer, x, y + 16, x + getWidth() * 16, (y + 16) - (ceil(double(getHeight())/2) * 16), 0xFFFF00);
 }
 
-void tile::draw_at( int newX, int newY, BITMAP *tempBuffer)
-{
+void tile::draw_at( int newX, int newY, BITMAP *tempBuffer){
   tile_pointer -> draw( newX, newY, tempBuffer);
 }
 
-void tile::setID( unsigned char newID)
-{
+void tile::setID( unsigned char newID){
   tile_pointer = tile_type_manager::getTileByID( newID);
 }
 
@@ -78,17 +77,14 @@ void tile::run_tick(){
 
 
 // ITEM
-item::item(int newX, int newY, char newID) : tile( newX, newY, newID)
-{
+item::item(int newX, int newY, char newID) : tile( newX, newY, newID){
   tile_pointer = tile_type_manager::getItemByID( newID);
 }
 
-item::~item()
-{
+item::~item(){
   //dtor
 }
 
-void item::draw( BITMAP *tempBuffer)
-{
+void item::draw( BITMAP *tempBuffer){
   tile_pointer -> draw( x, y, tempBuffer);
 }

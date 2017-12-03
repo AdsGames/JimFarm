@@ -8,7 +8,6 @@
 #define STORY 3
 
 #include <allegro.h>
-#include <time.h>
 #include <string>
 
 extern int game_state;

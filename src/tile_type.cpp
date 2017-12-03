@@ -25,9 +25,7 @@ tile_type::tile_type( unsigned char newImageX, unsigned char newImageY, unsigned
 }
 
 // Destroy tile
-tile_type::~tile_type(){
-  //dtor
-}
+tile_type::~tile_type(){}
 
 // Draw tile
 void tile_type::draw( int x, int y, BITMAP *tempBuffer, char offset){

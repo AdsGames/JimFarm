@@ -14,16 +14,8 @@
 
 #include <vector>
 #include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-
-#include "rapidxml.hpp"
-#include "rapidxml_print.hpp"
-#include "tools.h"
 
 #include "tile_type.h"
-#include "tile.h"
 
 class tile_type_manager{
   public:

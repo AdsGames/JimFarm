@@ -9,7 +9,6 @@
 
 #include <allegro.h>
 #include <string>
-#include <iostream>
 
 class tile_type{
   public:

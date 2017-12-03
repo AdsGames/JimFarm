@@ -1,5 +1,7 @@
 #include "tools.h"
 
+#include <time.h>
+
 int game_state = 0;
 
 // Random number generator. Use int random(highest,lowest);

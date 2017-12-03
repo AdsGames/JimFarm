@@ -3,67 +3,60 @@
 
 #include <allegro.h>
 #include <vector>
-
-#include <iostream>
 #include <string>
-#include <fstream>
-
-#include <algorithm>
 
 #include "tile.h"
-#include "tools.h"
-#include "tile_type_manager.h"
 
 class tile_map
 {
-    public:
-        tile_map();
-        virtual ~tile_map();
+  public:
+    tile_map();
+    virtual ~tile_map();
 
-        // Constant
-        int MAP_WIDTH;
-        int MAP_HEIGHT;
-        int timer;
+    // Constant
+    int MAP_WIDTH;
+    int MAP_HEIGHT;
+    int timer;
 
-        static const int VIEWPORT_WIDTH = 240;
-        static const int VIEWPORT_HEIGHT = 160;
+    static const int VIEWPORT_WIDTH = 240;
+    static const int VIEWPORT_HEIGHT = 160;
 
-        void draw( BITMAP *tempBuffer);
-        void drawForeground( BITMAP *tempBuffer);
+    void draw( BITMAP *tempBuffer);
+    void drawForeground( BITMAP *tempBuffer);
 
-        void replace_tile( int tileX, int tileY, int newID, bool foreground);
-        int get_tile_at( int positionX, int positionY, bool foreground);
+    void replace_tile( int tileX, int tileY, int newID, bool foreground);
+    int get_tile_at( int positionX, int positionY, bool foreground);
 
-        void place_item( item newItem);
-        void place_tile( tile* newTile);
-        void place_new_item_at( int newX, int newY, unsigned char newItem);
-        void update();
+    void place_item( item newItem);
+    void place_tile( tile* newTile);
+    void place_new_item_at( int newX, int newY, unsigned char newItem);
+    void update();
 
-        bool is_solid_at( int positionX, int positionY);
-        bool is_item_at( int positionX, int positionY);
-        item *get_item_at( int positionX, int positionY);
-        void remove_item_at( int positionX, int positionY);
+    bool is_solid_at( int positionX, int positionY);
+    bool is_item_at( int positionX, int positionY);
+    item *get_item_at( int positionX, int positionY);
+    void remove_item_at( int positionX, int positionY);
 
-        void load_map( std::string fileName);
+    void load_map( std::string fileName);
 
-        void generate_map();
+    void generate_map();
 
-        void load_images();
+    void load_images();
 
-        void scroll( int player_x, int player_y);
+    void scroll( int player_x, int player_y);
 
-        int x, y;
-    protected:
+    int x, y;
+  protected:
 
-    private:
-        // Tiles
-        std::vector<tile*> map_tiles;
-        std::vector<tile*> map_tiles_foreground;
+  private:
+    // Tiles
+    std::vector<tile*> map_tiles;
+    std::vector<tile*> map_tiles_foreground;
 
-        std::vector<item> map_items;
+    std::vector<item> map_items;
 
-        SAMPLE* egg;
-        BITMAP *map_buffer;
+    SAMPLE* egg;
+    BITMAP *map_buffer;
 };
 
 #endif // TILE_MAP_H

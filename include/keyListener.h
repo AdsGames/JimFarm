@@ -9,21 +9,19 @@
 #ifndef KEYLISTENER_H
 #define KEYLISTENER_H
 
-#include <allegro.h>
-#include <iostream>
+#define KL_KEY_MAX 127
 
 class keyListener
 {
   public:
-    keyListener();
-    virtual ~keyListener();
+    keyListener() {};
+    virtual ~keyListener() {};
 
     void update();
 
-    static bool keyPressed[KEY_MAX];
-    static bool keyReleased[KEY_MAX];
-    static bool lastTicksKey[KEY_MAX];
-
+    static bool keyPressed[KL_KEY_MAX];
+    static bool keyReleased[KL_KEY_MAX];
+    static bool lastTicksKey[KL_KEY_MAX];
   protected:
   private:
 };

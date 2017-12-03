@@ -1,5 +1,15 @@
 #include "tile_type_manager.h"
 
+#include <fstream>
+#include <sstream>
+#include <iostream>
+
+#include "rapidxml.hpp"
+#include "rapidxml_print.hpp"
+#include "tools.h"
+
+#include "tile.h"
+
 std::vector<tile_type> tile_type_manager::tile_defs;
 std::vector<tile_type> tile_type_manager::item_defs;
 
@@ -41,7 +51,7 @@ void tile_type_manager::load( std::string newFile, bool items){
   }
 
   // Load tiles
-  for(cTile; cTile; cTile = cTile -> next_sibling()){
+  for( ; cTile != NULL; cTile = cTile -> next_sibling()){
     // Read xml variables
     // General
     int tileID = atoi(cTile-> first_attribute("id") -> value());

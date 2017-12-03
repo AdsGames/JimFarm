@@ -1,14 +1,13 @@
 #include "game_menu.h"
 
-game_menu::game_menu()
-{
+#include "tools.h"
+#include "keyListener.h"
+
+game_menu::game_menu(){
   open = false;
 }
 
-game_menu::~game_menu()
-{
-  //dtor
-}
+game_menu::~game_menu(){}
 
 void game_menu::load_data(){
   image_menu = load_bitmap_ex("images/game_menu.png");

@@ -78,15 +78,15 @@ void update(){
   keys.update();
 
   if( game_state == MENU){
-      // HAXX
-      // halp plz how do i coed?
-      int menu_result = main_menu.update();
-      if(menu_result==2){
-        game_state = GAME;
-      }
-      if(menu_result==0){
-        close_button_pressed=true;
-      }
+    // HAXX
+    // halp plz how do i coed?
+    int menu_result = main_menu.update();
+    if(menu_result==2){
+      game_state = GAME;
+    }
+    if(menu_result==0){
+      close_button_pressed=true;
+    }
   }
   else if( game_state == GAME){
     // If lil menu not open

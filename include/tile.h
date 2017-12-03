@@ -3,60 +3,54 @@
 
 #include <allegro.h>
 #include <string>
-#include <iostream>
-#include <math.h>
 
-#include "tools.h"
-#include "tile_type_manager.h"
+#include "tile_type.h"
 
 class tile
 {
-    public:
-        tile(int newX, int newY, char newID);
-        virtual ~tile();
+  public:
+    tile(int newX, int newY, char newID);
+    virtual ~tile();
 
-        // Positioning
-        int x, y;
-        int getWidth(){ return tile_pointer -> getWidth();}
-        int getHeight(){ return tile_pointer -> getHeight();}
+    // Positioning
+    int x, y;
+    int getWidth(){ return tile_pointer -> getWidth();}
+    int getHeight(){ return tile_pointer -> getHeight();}
 
-        // Drawing
-        virtual void draw( BITMAP *tempBuffer);
-        void draw_at( int newX, int newY, BITMAP *tempBuffer);
+    // Drawing
+    virtual void draw( BITMAP *tempBuffer);
+    void draw_at( int newX, int newY, BITMAP *tempBuffer);
 
-        // Sorting stuff
-        virtual bool operator< (const tile &other) const { return (y < other.y); }
+    // Sorting stuff
+    virtual bool operator< (const tile &other) const { return (y < other.y); }
 
-        virtual void run_tick();
-        bool requirements_met;
-        char tile_data;
+    virtual void run_tick();
+    bool requirements_met;
+    char tile_data;
 
-        tile_type *tile_pointer;
+    tile_type *tile_pointer;
 
-        bool isSolid(){ return tile_pointer -> getAttribute(); }
+    bool isSolid(){ return tile_pointer -> getAttribute(); }
 
-        unsigned char getID(){ return tile_pointer -> getID();}
-        void setID( unsigned char newID);
+    unsigned char getID(){ return tile_pointer -> getID();}
+    void setID( unsigned char newID);
 
-        std::string getName(){ return tile_pointer -> getName();}
-    protected:
-
-    private:
+    std::string getName(){ return tile_pointer -> getName();}
+  protected:
+  private:
 };
 
 class item : public tile
 {
-    public:
-        item(int newX, int newY, char newID);
-        virtual ~item();
+  public:
+    item(int newX, int newY, char newID);
+    virtual ~item();
 
-        void draw( BITMAP *tempBuffer);
+    void draw( BITMAP *tempBuffer);
 
-        unsigned char getValue(){ return tile_pointer -> getValue();}
-    protected:
-
-    private:
-
+    unsigned char getValue(){ return tile_pointer -> getValue();}
+  protected:
+  private:
 };
 
 #endif // TILE_H

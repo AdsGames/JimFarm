@@ -3,95 +3,88 @@
 
 #include <allegro.h>
 #include <string>
-#include <iostream>
-#include <math.h>
 
-#include "math.h"
 #include "tile_map.h"
-#include "tile.h"
-#include "keyListener.h"
-#include "tools.h"
 
 #define MAX_MESSAGES 1
 
 class character
 {
-    public:
-        character();
-        virtual ~character();
+  public:
+    character();
+    virtual ~character();
 
-        void setPosition( int newX, int newY){ x = newX; y = newY;}
-        void load_data();
+    void setPosition( int newX, int newY){ x = newX; y = newY;}
+    void load_data();
 
-        void draw( BITMAP *tempBuffer);
-        void drawForeground( BITMAP *tempBuffer);
+    void draw( BITMAP *tempBuffer);
+    void drawForeground( BITMAP *tempBuffer);
 
-        void push_message( std::string new_message);
+    void push_message( std::string new_message);
 
-        void update();
+    void update();
 
-        void remove_item();
-        void give_item( char newItem);
+    void remove_item();
+    void give_item( char newItem);
 
-        void setWorld( tile_map *newTileMap);
+    void setWorld( tile_map *newTileMap);
 
-        item *inventory_item;
-        item *inventory_hand;
+    item *inventory_item;
+    item *inventory_hand;
 
-        int money;
+    int money;
 
-        bool store_open;
+    bool store_open;
 
-        tile_map *map_pointer;
+    tile_map *map_pointer;
 
-    protected:
+  protected:
 
-    private:
+  private:
 
-        // Fonts
-        FONT* f1;
-        FONT* f2;
-        FONT* f3;
-        FONT* f4;
-        FONT* f5;
-        FONT* pixelart;
+    // Fonts
+    FONT* f1;
+    FONT* f2;
+    FONT* f3;
+    FONT* f4;
+    FONT* f5;
+    FONT* pixelart;
 
-        int x, y;
+    int x, y;
 
-        int water;
-        int sound_step;
+    int water;
+    int sound_step;
 
-        bool draw_hud;
+    bool draw_hud;
 
-        BITMAP *image;
-        BITMAP *watering_can[5];
-        BITMAP *inventory_gui;
-        BITMAP *hand;
-        BITMAP *indicator;
-        BITMAP *coin;
+    BITMAP *image;
+    BITMAP *watering_can[5];
+    BITMAP *inventory_gui;
+    BITMAP *hand;
+    BITMAP *indicator;
+    BITMAP *coin;
 
 
-        SAMPLE* pickup;
-        SAMPLE* drop;
-        SAMPLE* step_1;
-        SAMPLE* step_2;
-        SAMPLE* cut_axe;
-        SAMPLE* cut_scythe;
-        SAMPLE* hoe;
-        SAMPLE* dig;
-        SAMPLE* error;
-        SAMPLE* water_fill;
-        SAMPLE* water_pour;
+    SAMPLE* pickup;
+    SAMPLE* drop;
+    SAMPLE* step_1;
+    SAMPLE* step_2;
+    SAMPLE* cut_axe;
+    SAMPLE* cut_scythe;
+    SAMPLE* hoe;
+    SAMPLE* dig;
+    SAMPLE* error;
+    SAMPLE* water_fill;
+    SAMPLE* water_pour;
 
-        int indicator_x, indicator_y;
+    int indicator_x, indicator_y;
 
-        char gameTick;
-        char direction;
-        bool moving;
+    char gameTick;
+    char direction;
+    bool moving;
 
-        std::string player_messages[MAX_MESSAGES];
-        bool recent_message;
-
+    std::string player_messages[MAX_MESSAGES];
+    bool recent_message;
 };
 
 #endif // CHARACTER_H
