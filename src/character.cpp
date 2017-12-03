@@ -5,6 +5,7 @@
 
 #include "math.h"
 #include "keyListener.h"
+#include "mouseListener.h"
 #include "tools.h"
 
 character::character(){
@@ -162,39 +163,39 @@ void character::update(){
   else{
     if( !moving){
       // Selector
-      if( keyListener::keyPressed[KEY_O])
+      if( keyListener::keyPressed[KEY_O] || mouseListener::mouse_z_change < 0)
         selected_item = (selected_item + (character_inv.getMaxSize() - 1)) % character_inv.getMaxSize();
-      if( keyListener::keyPressed[KEY_P])
+      if( keyListener::keyPressed[KEY_P] || mouseListener::mouse_z_change > 0)
         selected_item = (selected_item + 1) % character_inv.getMaxSize();
 
       // Up
-      if(( key[KEY_UP] || joy[0].stick[0].axis[1].d1)){
+      if( key[KEY_UP] || key[KEY_W] || joy[0].stick[0].axis[1].d1){
         direction = 2;
-        if( !map_pointer -> is_solid_at( x, y - 16)){
+        if( !map_pointer -> solid_at( x, y - 16)){
           moving = true;
           sound_step++;
         }
       }
       // Down
-      else if( (key[KEY_DOWN] || joy[0].stick[0].axis[1].d2)){
+      else if( key[KEY_DOWN] || key[KEY_S] || joy[0].stick[0].axis[1].d2){
         direction = 1;
-        if( !map_pointer -> is_solid_at( x, y + 16)){
+        if( !map_pointer -> solid_at( x, y + 16)){
           moving = true;
           sound_step++;
         }
       }
       // Left
-      else if(( key[KEY_LEFT] || joy[0].stick[0].axis[0].d1)){
+      else if( key[KEY_LEFT] || key[KEY_A] || joy[0].stick[0].axis[0].d1){
         direction = 4;
-        if( !map_pointer -> is_solid_at( x - 16, y)){
+        if( !map_pointer -> solid_at( x - 16, y)){
           moving = true;
           sound_step++;
         }
       }
       // Right
-      else if(( key[KEY_RIGHT] || joy[0].stick[0].axis[0].d2)){
+      else if( key[KEY_RIGHT] || key[KEY_D] || joy[0].stick[0].axis[0].d2){
         direction = 3;
-        if( !map_pointer -> is_solid_at( x + 16, y)){
+        if( !map_pointer -> solid_at( x + 16, y)){
           moving = true;
           sound_step++;
         }
@@ -208,22 +209,26 @@ void character::update(){
       }
 
       // Pickup
-      if( keyListener::keyPressed[KEY_LCONTROL] || keyListener::keyPressed[KEY_RCONTROL] || mouse_b & 1 || joy[0].button[2].b ){
-        if( map_pointer -> is_item_at( indicator_x, indicator_y) && character_inv.getItem(selected_item) == NULL){
-          play_sample( pickup, 255, 125, 1000, 0);
-          character_inv.addItem( map_pointer -> get_item_at( indicator_x, indicator_y), selected_item);
-          map_pointer -> remove_item_at( indicator_x, indicator_y);
-          push_message( "You pick up a " + character_inv.getItem(selected_item) -> getName());
-        }
-        else if( character_inv.getItem(selected_item) != NULL){
-          play_sample( drop, 255, 125, 1000, 0);
-          character_inv.getItem(selected_item) -> x = indicator_x;
-          character_inv.getItem(selected_item) -> y = indicator_y;
-          push_message( "You drop your " + character_inv.getItem(selected_item) -> getName());
-          std::cout << std::endl;
+      if( keyListener::keyPressed[KEY_LCONTROL] || mouseListener::mouse_pressed & 1 || joy[0].button[2].b ){
+        item *itemAtPos  = map_pointer -> item_at( indicator_x, indicator_y);
+        item *itemInHand = character_inv.getItem(selected_item);
 
+        if( itemInHand == NULL && itemAtPos != NULL){
+          play_sample( pickup, 255, 125, 1000, 0);
+          if( character_inv.addItem( itemAtPos, selected_item)){
+            map_pointer -> remove_item( itemAtPos);
+            push_message( "You pick up a " + character_inv.getItem(selected_item) -> getName());
+          }
+        }
+        else if( itemInHand != NULL && itemAtPos == NULL){
+          play_sample( drop, 255, 125, 1000, 0);
+
+          itemInHand -> x = indicator_x;
+          itemInHand -> y = indicator_y;
           map_pointer -> place_item( character_inv.getItem(selected_item));
-          character_inv.removeItem( selected_item);
+
+          if( character_inv.removeItem( selected_item))
+            push_message( "You drop your " + itemInHand -> getName());
         }
       }
 
@@ -232,14 +237,14 @@ void character::update(){
         push_message( "");
 
         // OPEN STORE
-        if( map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND) == 19){
+        if( map_pointer -> tile_at( indicator_x, indicator_y, BACKGROUND) == 19){
           push_message( "Welcome to Danners Devices");
           store_open = true;
         }
         // Hand
-        else if( character_inv.getItem(selected_item) == NULL && map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND) != 7){
-          if( map_pointer -> is_item_at( indicator_x, indicator_y) == true)
-            push_message( "There is a " + map_pointer -> get_item_at( indicator_x, indicator_y) -> getName() + " here");
+        else if( character_inv.getItem(selected_item) == NULL && map_pointer -> tile_at( indicator_x, indicator_y, BACKGROUND) != 7){
+          if( map_pointer -> item_at( indicator_x, indicator_y))
+            push_message( "There is a " + map_pointer -> item_at( indicator_x, indicator_y) -> getName() + " here");
           else{
             push_message( "There is nothing of interest here");
             play_sample( error, 255, 125, 1000, 0);
@@ -248,7 +253,7 @@ void character::update(){
         else if( character_inv.getItem( selected_item) != NULL){
           // Hoe
           if( character_inv.getItem(selected_item) -> getID() == 1){
-            if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 2){
+            if( map_pointer -> tile_at( indicator_x, indicator_y, false) == 2){
               map_pointer -> replace_tile( indicator_x, indicator_y, 18, false);
               play_sample(hoe,255,125,1000,0);
             }
@@ -259,7 +264,7 @@ void character::update(){
           }
           // Scythe
           else if( character_inv.getItem(selected_item) -> getID() == 2){
-            if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 4){
+            if( map_pointer -> tile_at( indicator_x, indicator_y, true) == 4){
               map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
               play_sample(cut_scythe,255,125,1000,0);
             }
@@ -270,7 +275,7 @@ void character::update(){
           }
           // Berry
           else if( character_inv.getItem(selected_item) -> getID() == 8){
-            if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18){
+            if( map_pointer -> tile_at( indicator_x, indicator_y, false) == 18){
               map_pointer -> replace_tile( indicator_x, indicator_y, 30, false);
               if( random( 0, 2) == 0){
                 remove_item();
@@ -283,7 +288,7 @@ void character::update(){
           }
           // Tomato
           else if( character_inv.getItem(selected_item) -> getID() == 10){
-            if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18){
+            if( map_pointer -> tile_at( indicator_x, indicator_y, false) == 18){
               map_pointer -> replace_tile( indicator_x, indicator_y, 33, false);
               if( random( 0, 2) == 0){
                 remove_item();
@@ -296,7 +301,7 @@ void character::update(){
           }
           // Carrot
           else if( character_inv.getItem(selected_item) -> getID() == 12){
-            if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18){
+            if( map_pointer -> tile_at( indicator_x, indicator_y, false) == 18){
               map_pointer -> replace_tile( indicator_x, indicator_y, 36, false);
               if( random( 0, 2) == 0){
                 remove_item();
@@ -309,7 +314,7 @@ void character::update(){
           }
           // Lavender
           else if( character_inv.getItem(selected_item) -> getID() == 14){
-            if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 18){
+            if( map_pointer -> tile_at( indicator_x, indicator_y, false) == 18){
               map_pointer -> replace_tile( indicator_x, indicator_y, 39, false);
               if( random( 0, 2) == 0){
                 remove_item();
@@ -322,7 +327,7 @@ void character::update(){
           }
           // Watering can
           else if( character_inv.getItem(selected_item) -> getID() == 3){
-            if(map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND) == 7){
+            if(map_pointer -> tile_at( indicator_x, indicator_y, BACKGROUND) == 7){
               water = 4;
               push_message( "Watering can filled");
               play_sample( water_fill, 255, 125, 1000, 0);
@@ -334,7 +339,7 @@ void character::update(){
               play_sample( water_pour, 255, 125, 1000, 0);
 
               // Berries
-              int wateringID = map_pointer -> get_tile_at( indicator_x, indicator_y, false);
+              int wateringID = map_pointer -> tile_at( indicator_x, indicator_y, false);
               if( wateringID == 30 || wateringID == 31 || wateringID == 33 || wateringID == 34 ||
                 wateringID == 36 || wateringID == 37 || wateringID == 39 || wateringID == 40){
 
@@ -348,7 +353,7 @@ void character::update(){
           }
           // Axe
           else if( character_inv.getItem(selected_item) -> getID() == 4){
-            if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 5){
+            if( map_pointer -> tile_at( indicator_x, indicator_y, true) == 5){
               map_pointer -> replace_tile( indicator_x, indicator_y, 11, true);
               play_sample( cut_axe, 255, 125, 1000, 0);
             }
@@ -360,13 +365,13 @@ void character::update(){
           // Shovel
           else if( character_inv.getItem(selected_item) -> getID() == 5){
             //Literally the worst formatted if statement I've seen all week
-            if( map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 6 ||
-                map_pointer -> get_tile_at( indicator_x, indicator_y, true) == 11){
+            if( map_pointer -> tile_at( indicator_x, indicator_y, true) == 6 ||
+                map_pointer -> tile_at( indicator_x, indicator_y, true) == 11){
               map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
               play_sample(dig,255,125,1000,0);
             }
-            else if( map_pointer -> get_tile_at( indicator_x, indicator_y, false) == 0 &&
-                     map_pointer -> get_tile_at( indicator_x, indicator_y, true) == -1){
+            else if( map_pointer -> tile_at( indicator_x, indicator_y, false) == 0 &&
+                     map_pointer -> tile_at( indicator_x, indicator_y, true) == -1){
               map_pointer -> replace_tile( indicator_x, indicator_y, 2,false);
               play_sample(dig,255,125,1000,0);
             }
@@ -376,8 +381,8 @@ void character::update(){
             }
           }
         }
-        std::cout << ". Tile Back ID: " << map_pointer -> get_tile_at( indicator_x, indicator_y, BACKGROUND) << std::endl;
-        std::cout << ". Tile Front ID: "<< map_pointer -> get_tile_at( indicator_x, indicator_y, true) << std::endl;
+        std::cout << ". Tile Back ID: " << map_pointer -> tile_at( indicator_x, indicator_y, BACKGROUND) << std::endl;
+        std::cout << ". Tile Front ID: "<< map_pointer -> tile_at( indicator_x, indicator_y, true) << std::endl;
       }
     }
     if( moving){
@@ -417,8 +422,8 @@ void character::remove_item(){
 
 // Give item
 void character::give_item( char newItem){
-  map_pointer -> place_new_item_at( x, y, newItem);
-  character_inv.addItem( map_pointer -> get_item_at( x, y), selected_item);
+  map_pointer -> place_item( new item( x, y, newItem));
+  character_inv.addItem( map_pointer -> item_at( x, y), selected_item);
 }
 
 // World object to point to (needs this!)

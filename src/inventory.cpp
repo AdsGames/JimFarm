@@ -10,9 +10,7 @@ inventory::inventory( int max_items){
   this -> max_items = max_items;
 
   contents.reserve(max_items);
-
-  for( int i = 0; i < max_items; i++)
-    contents.push_back( NULL);
+  emptyInv();
 }
 
 inventory::~inventory(){}
@@ -26,9 +24,10 @@ bool inventory::addItem( item *newItem, int index){
   return false;
 }
 
+// Remove item at index
 bool inventory::removeItem( int index){
   if( getItem( index) != NULL){
-    contents.erase( contents.begin() + index);
+    contents[index] = NULL;
     return true;
   }
   return false;
@@ -36,7 +35,7 @@ bool inventory::removeItem( int index){
 
 // Gets item at index if exists
 item* inventory::getItem( int index){
-  if( getSize() > index)
+  if( index < getMaxSize())
     return contents[index];
   return NULL;
 }
@@ -59,4 +58,7 @@ int inventory::getMaxSize(){
 // Clear all contents
 void inventory::emptyInv(){
   contents.clear();
+
+  for( int i = 0; i < getMaxSize(); i++)
+    contents.push_back( NULL);
 }

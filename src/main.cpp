@@ -8,6 +8,7 @@
 #include "store.h"
 #include "menu.h"
 #include "keyListener.h"
+#include "mouseListener.h"
 #include "game_menu.h"
 
 #include "fmod/fmod.h"
@@ -24,6 +25,7 @@ bool close_button_pressed;
 
 // Listen to the keys
 keyListener keys;
+mouseListener mouses;
 
 #define MENU 0
 #define GAME 1
@@ -76,6 +78,7 @@ END_OF_FUNCTION(ticker)
 void update(){
   // Checks keys JUST pressed or JUST released
   keys.update();
+  mouses.update();
 
   if( game_state == MENU){
     // HAXX
@@ -228,17 +231,15 @@ int main(){
   get_desktop_resolution(&w, &h);
 
   //set_gfx_mode(GFX_AUTODETECT, w,h, 0, 0);
-  set_gfx_mode(GFX_AUTODETECT_WINDOWED, 1280,960, 0, 0);
+  //set_gfx_mode(GFX_AUTODETECT_WINDOWED, 1280,960, 0, 0);
 
-  //set_gfx_mode(GFX_AUTODETECT_WINDOWED, 240,160, 0, 0);
+  set_gfx_mode(GFX_AUTODETECT_WINDOWED, 240*4,160*4, 0, 0);
   install_sound(DIGI_AUTODETECT,MIDI_AUTODETECT,".");
 
   set_window_title("Jim Farm");
   setup();
 
   while(!close_button_pressed){
-    // if( !jim.store_open)
-    //  break;
     while(ticks == 0){
       rest(1);
     }
