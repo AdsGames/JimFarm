@@ -95,9 +95,8 @@ void tile_map::drawForeground( BITMAP *tempBuffer){
   rectfill( map_buffer, 0, 0, map_buffer -> w, map_buffer -> h, makecol( 255, 0, 255));
 
   // Draw items
-  for( unsigned int i = 0; i < map_items.size(); i++){
-    map_items.at(i).draw( map_buffer);
-  }
+  for( unsigned int i = 0; i < map_items.size(); i++)
+    map_items.at(i) -> draw( map_buffer);
 
   // Draw foreground
   for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
@@ -198,7 +197,7 @@ void tile_map::generate_map(){
     int random_x = random( 0, MAP_WIDTH) * 16;
     int random_y = random( 0, MAP_HEIGHT) * 16;
     if(get_tile_at(random_x,random_y,FOREGROUND)==4){
-      item newItem( random_x, random_y, 6);
+      item *newItem = new item( random_x, random_y, 6);
       place_item( newItem);
       placed += 1;
     }
@@ -209,7 +208,7 @@ void tile_map::generate_map(){
     int random_x = random( 0, MAP_WIDTH) * 16;
     int random_y = random( 0, MAP_HEIGHT) * 16;
     if(!is_solid_at( random_x, random_y)){
-      item newItem( random_x, random_y, 16);
+      item *newItem = new item( random_x, random_y, 16);
       place_item( newItem);
       placed += 1;
     }
@@ -265,7 +264,7 @@ void tile_map::replace_tile( int tileX, int tileY, int newID, bool foreground){
 }
 
 // Place item on map
-void tile_map::place_item( item newItem){
+void tile_map::place_item( item* newItem){
   map_items.push_back( newItem);
 }
 
@@ -311,7 +310,7 @@ bool tile_map::is_solid_at( int positionX, int positionY){
 // Check if item exists
 bool tile_map::is_item_at( int positionX, int positionY){
   for( unsigned int i = 0; i < map_items.size(); i++){
-    if( map_items.at(i).x == positionX && map_items.at(i).y == positionY){
+    if( map_items.at(i) -> x == positionX && map_items.at(i) -> y == positionY){
       return true;
     }
   }
@@ -321,8 +320,8 @@ bool tile_map::is_item_at( int positionX, int positionY){
 // Get item at position
 item *tile_map::get_item_at( int positionX, int positionY){
   for( unsigned int i = 0; i < map_items.size(); i++){
-    if( map_items.at(i).x == positionX && map_items.at(i).y == positionY){
-      return &map_items.at(i);
+    if( map_items.at(i) -> x == positionX && map_items.at(i) -> y == positionY){
+      return map_items.at(i);
     }
   }
   return NULL;
@@ -335,11 +334,11 @@ void tile_map::update(){
 
     for( unsigned int i = 0; i < map_items.size(); i++){
       // Chicken eggs
-      if( map_items.at(i).getID() == 6  && random(0,16) == 1 && get_tile_at(map_items.at(i).x,map_items.at(i).y,BACKGROUND) == 59){
+      if( map_items.at(i) -> getID() == 6  && random(0,16) == 1 && get_tile_at(map_items.at(i) -> x,map_items.at(i) -> y,BACKGROUND) == 59){
         int rand_1 = 16*random(-1,1);
         int rand_2 = 16*random(-1,1);
-        if(!is_item_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2) && !is_solid_at(map_items.at(i).x+rand_1,map_items.at(i).y+rand_2)){
-          item newItem( map_items.at(i).x+rand_1, map_items.at(i).y+rand_2, 7);
+        if(!is_item_at(map_items.at(i) -> x+rand_1,map_items.at(i) -> y+rand_2) && !is_solid_at(map_items.at(i) -> x+rand_1,map_items.at(i) -> y+rand_2)){
+          item *newItem = new item( map_items.at(i) -> x+rand_1, map_items.at(i) -> y+rand_2, 7);
           place_item( newItem);
           play_sample(egg,100,125,1000,0);
         }
@@ -415,7 +414,7 @@ void tile_map::update(){
 // Pick up item at position
 void tile_map::remove_item_at( int positionX, int positionY){
   for( unsigned int i = 0; i < map_items.size(); i++){
-    if( map_items.at(i).x == positionX && map_items.at(i).y == positionY){
+    if( map_items.at(i) -> x == positionX && map_items.at(i) -> y == positionY){
       map_items.erase( map_items.begin() + i);
       break;
     }
@@ -424,7 +423,7 @@ void tile_map::remove_item_at( int positionX, int positionY){
 
 // Create item
 void tile_map::place_new_item_at( int newX, int newY, unsigned char newItem){
-  item newItemx( newX, newY, newItem);
+  item *newItemx = new item(newX, newY, newItem);
   place_item( newItemx);
 }
 

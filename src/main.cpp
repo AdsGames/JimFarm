@@ -100,7 +100,7 @@ void update(){
 
       // Open store
       if( jim.store_open){
-        main_store.open_store( &jim);
+        main_store.open_store( &(jim.character_inv));
       }
       else{
         main_store.close_store();

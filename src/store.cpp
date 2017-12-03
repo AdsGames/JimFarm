@@ -6,6 +6,7 @@
 
 store::store(){
   open = false;
+  storeItems = inventory( 8);
 }
 
 store::~store(){}
@@ -39,57 +40,57 @@ void store::draw( BITMAP *tempBitmap){
   if( open){
     draw_sprite( tempBitmap, image, 0, 0);
 
-    for( int i = 0; i < (signed)storeItems.size(); i++){
-      storeItems.at(i) -> draw_at( 25 + i * 19, 90, tempBitmap);
+    for( int i = 0; i < (signed)storeItems.getSize(); i++){
+      storeItems.getItem(i) -> draw_at( 25 + i * 19, 90, tempBitmap);
 
       if( selector_index == i)
         draw_sprite( tempBitmap, indicator, 25 + i * 19, 90);
     }
-    if( selector_index < (signed)storeItems.size())
+    if( selector_index < (signed)storeItems.getSize())
       textprintf_ex( tempBitmap, font, 25, 106, makecol(0,0,0), -1, "%s : %i coins",
-                    storeItems.at(selector_index) -> getName().c_str(),
-                    storeItems.at(selector_index) -> getValue());
+                    storeItems.getItem(selector_index) -> getName().c_str(),
+                    storeItems.getItem(selector_index) -> getValue());
     else{
-      if( customer_inventory -> inventory_item -> getID() == 0){
+      if( customer_inventory -> getItem(1) -> getID() == 0){
         textprintf_ex( tempBitmap, font, 25, 106, makecol(0,0,0), -1, "%s : %s",
-                       customer_inventory -> inventory_item -> getName().c_str(),
+                       customer_inventory -> getItem(1) -> getName().c_str(),
                        "NOT FOR SALE");
       }
       else{
         textprintf_ex( tempBitmap, font, 25, 106, makecol(0,0,0), -1, "%s : %i coins",
-                       customer_inventory -> inventory_item -> getName().c_str(),
-                       customer_inventory -> inventory_item -> getValue());
+                       customer_inventory -> getItem(1) -> getName().c_str(),
+                       customer_inventory -> getItem(1) -> getValue());
       }
     }
 
     if( customer_inventory != NULL)
-      customer_inventory -> inventory_item -> draw_at( 185, 90, tempBitmap);
+      customer_inventory -> getItem(1) -> draw_at( 185, 90, tempBitmap);
 
-    if( selector_index == (signed)storeItems.size())
+    if( selector_index == (signed)storeItems.getSize())
       draw_sprite( tempBitmap, indicator, 185, 90);
   }
 }
 
 void store::update(){
   tick++;
-  if( open){
+  /*if( open){
     if(( key[KEY_LEFT] || key[KEY_A] || joy[0].stick[0].axis[0].d1)  && tick>10){
       tick = 0;
       selector_index--;
       if( selector_index < 0)
-        selector_index = storeItems.size();
+        selector_index = storeItems.getSize();
     }
     else if(( key[KEY_RIGHT] || key[KEY_D] || joy[0].stick[0].axis[0].d2) && tick>10){
       tick = 0;
       selector_index++;
-      if(selector_index > (signed)storeItems.size())
+      if(selector_index > (signed)storeItems.getSize())
         selector_index = 0;
     }
 
     if( keyListener::keyPressed[KEY_LCONTROL] || keyListener::keyPressed[KEY_RCONTROL] || mouse_b & 1 || joy[0].button[2].b){
-      if( selector_index < (signed)storeItems.size()){
-        if( customer_inventory -> inventory_item -> getID() == 0){
-          if(customer_inventory -> money >= storeItems.at(selector_index) -> getValue()){
+      if( selector_index < (signed)storeItems.getSize()){
+        if( customer_inventory -> getItem(1) -> getID() == 0){
+          if(customer_inventory -> getItem(1) >= storeItems.at(selector_index) -> getValue()){
             customer_inventory -> money -= storeItems.at(selector_index) -> getValue();
             customer_inventory -> give_item( storeItems.at(selector_index) -> getID());
             storeItems.erase(storeItems.begin() + selector_index);
@@ -106,26 +107,26 @@ void store::update(){
           customer_inventory -> push_message("Hands full");
         }
       }
-      else if( selector_index == (signed)storeItems.size() && customer_inventory -> inventory_item -> getID() != 0){
+      else if( selector_index == (signed)storeItems.getSize() && customer_inventory -> inventory_item -> getID() != 0){
         customer_inventory -> money += customer_inventory -> inventory_item -> getValue();
         customer_inventory -> remove_item();
         play_sample(sell,255,125,1000,0);
       }
     }
-  }
+  }*/
 }
 
 void store::close_store() {
   open = false;
-  storeItems.clear();
+  storeItems.emptyInv();
 }
 
-void store::open_store( character *new_inventory){
+void store::open_store( inventory *new_inventory){
   open = true;
   customer_inventory = new_inventory;
 
   // Give items to store
-  if( storeItems.size() == 0){
+  if( storeItems.getSize() == 0){
     selector_index = 8;
 
     for( int i = 0; i < 8; i ++){

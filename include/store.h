@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "character.h"
+#include "inventory.h"
 
 class store
 {
@@ -14,17 +15,17 @@ class store
 
     bool open;
 
-    std::vector<item*> storeItems;
+    inventory storeItems;
 
     void draw( BITMAP *tempBitmap);
     void draw_background( BITMAP *tempBitmap);
 
-    void open_store( character *new_inventory);
+    void open_store( inventory *new_inventory);
     void close_store();
 
     void load_data();
 
-    void add_item( item *storeItem){ storeItems.push_back( storeItem);}
+    void add_item( item *storeItem){ storeItems.addItem( storeItem, 0);}
 
     void update();
 
@@ -41,7 +42,7 @@ class store
     SAMPLE *sell;
     SAMPLE *error;
 
-    character *customer_inventory;
+    inventory *customer_inventory;
 
     int selector_index;
 };

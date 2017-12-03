@@ -27,7 +27,7 @@ class tile_map
     void replace_tile( int tileX, int tileY, int newID, bool foreground);
     int get_tile_at( int positionX, int positionY, bool foreground);
 
-    void place_item( item newItem);
+    void place_item( item* newItem);
     void place_tile( tile* newTile);
     void place_new_item_at( int newX, int newY, unsigned char newItem);
     void update();
@@ -53,7 +53,7 @@ class tile_map
     std::vector<tile*> map_tiles;
     std::vector<tile*> map_tiles_foreground;
 
-    std::vector<item> map_items;
+    std::vector<item*> map_items;
 
     SAMPLE* egg;
     BITMAP *map_buffer;
