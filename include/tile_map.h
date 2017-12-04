@@ -33,29 +33,32 @@ class tile_map
     int MAP_HEIGHT;
     int timer;
 
+    // Viewport
     static const int VIEWPORT_WIDTH = 240;
     static const int VIEWPORT_HEIGHT = 160;
 
+    // Drawing
     void draw( BITMAP *tempBuffer);
     void drawForeground( BITMAP *tempBuffer);
+    void load_images();
 
-    int tile_at( int positionX, int positionY, bool foreground);
+    // Tiles
+    tile *tile_at( int positionX, int positionY, bool foreground);
     void place_tile( tile* newTile);
     void replace_tile( int tileX, int tileY, int newID, bool foreground);
+    bool solid_at( int positionX, int positionY);
 
+    // Items
     item *item_at( int positionX, int positionY);
     void place_item( item* newItem, int x, int y);
     void remove_item( item *newItem);
     void remove_item_at( int positionX, int positionY);
 
-    bool solid_at( int positionX, int positionY);
-
+    // Map
     void update();
-
+    void scroll( int player_x, int player_y);
     void load_map( std::string fileName);
     void generate_map();
-    void load_images();
-    void scroll( int player_x, int player_y);
 
     int x, y;
   protected:
