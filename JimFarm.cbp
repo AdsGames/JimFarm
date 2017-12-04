@@ -30,8 +30,10 @@
 		</Compiler>
 		<Unit filename="include/character.h" />
 		<Unit filename="include/game_menu.h" />
+		<Unit filename="include/inventory.h" />
 		<Unit filename="include/keyListener.h" />
 		<Unit filename="include/menu.h" />
+		<Unit filename="include/mouseListener.h" />
 		<Unit filename="include/store.h" />
 		<Unit filename="include/tile.h" />
 		<Unit filename="include/tile_map.h" />
@@ -43,9 +45,11 @@
 		</Unit>
 		<Unit filename="src/character.cpp" />
 		<Unit filename="src/game_menu.cpp" />
+		<Unit filename="src/inventory.cpp" />
 		<Unit filename="src/keyListener.cpp" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/menu.cpp" />
+		<Unit filename="src/mouseListener.cpp" />
 		<Unit filename="src/store.cpp" />
 		<Unit filename="src/tile.cpp" />
 		<Unit filename="src/tile_map.cpp" />

@@ -40,17 +40,4 @@ class tile
   private:
 };
 
-class item : public tile
-{
-  public:
-    item(int newX, int newY, char newID);
-    virtual ~item();
-
-    void draw( BITMAP *tempBuffer);
-
-    unsigned char getValue(){ return tile_pointer -> getValue();}
-  protected:
-  private:
-};
-
 #endif // TILE_H

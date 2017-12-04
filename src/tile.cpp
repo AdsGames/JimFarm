@@ -74,17 +74,3 @@ void tile::run_tick(){
     }
   }
 }
-
-
-// ITEM
-item::item(int newX, int newY, char newID) : tile( newX, newY, newID){
-  tile_pointer = tile_type_manager::getItemByID( newID);
-}
-
-item::~item(){
-  //dtor
-}
-
-void item::draw( BITMAP *tempBuffer){
-  tile_pointer -> draw( x, y, tempBuffer);
-}

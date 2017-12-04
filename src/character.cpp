@@ -99,8 +99,9 @@ void character::drawForeground( BITMAP *tempBuffer){
       if( i == selected_item)
         draw_sprite( tempBuffer, indicator, 18 * i + 2, 2);
       if( character_inv.getItem(i) != NULL){
-        character_inv.getItem(i) -> draw_at( 18 * i + 2, 2, tempBuffer);
-        textprintf_ex( tempBuffer, pixelart, 18 * i + 2, 22, makecol(255,255,255), -1, character_inv.getItem(i) -> getName().c_str());
+        character_inv.getItem(i) -> draw( 18 * i + 2, 2, tempBuffer);
+        if( i == selected_item)
+          textprintf_ex( tempBuffer, pixelart, 2, 22, makecol(255,255,255), -1, character_inv.getItem(i) -> getName().c_str());
       }
     }
 
@@ -121,7 +122,7 @@ void character::drawForeground( BITMAP *tempBuffer){
   // Selected item
   // Draw items
   if( character_inv.getItem(selected_item) != NULL)
-    character_inv.getItem(selected_item) -> draw_at( x - map_pointer -> x, y - map_pointer -> y, tempBuffer);
+    character_inv.getItem(selected_item) -> draw( x - map_pointer -> x, y - map_pointer -> y, tempBuffer);
 }
 
 // Push message
@@ -163,9 +164,9 @@ void character::update(){
   else{
     if( !moving){
       // Selector
-      if( keyListener::keyPressed[KEY_O] || mouseListener::mouse_z_change < 0)
+      if( keyListener::keyPressed[KEY_O] || mouseListener::mouse_z_change > 0)
         selected_item = (selected_item + (character_inv.getMaxSize() - 1)) % character_inv.getMaxSize();
-      if( keyListener::keyPressed[KEY_P] || mouseListener::mouse_z_change > 0)
+      if( keyListener::keyPressed[KEY_P] || mouseListener::mouse_z_change < 0)
         selected_item = (selected_item + 1) % character_inv.getMaxSize();
 
       // Up
@@ -222,10 +223,7 @@ void character::update(){
         }
         else if( itemInHand != NULL && itemAtPos == NULL){
           play_sample( drop, 255, 125, 1000, 0);
-
-          itemInHand -> x = indicator_x;
-          itemInHand -> y = indicator_y;
-          map_pointer -> place_item( character_inv.getItem(selected_item));
+          map_pointer -> place_item( character_inv.getItem(selected_item), x, y);
 
           if( character_inv.removeItem( selected_item))
             push_message( "You drop your " + itemInHand -> getName());
@@ -422,7 +420,7 @@ void character::remove_item(){
 
 // Give item
 void character::give_item( char newItem){
-  map_pointer -> place_item( new item( x, y, newItem));
+  map_pointer -> place_item( new item( newItem), x, y);
   character_inv.addItem( map_pointer -> item_at( x, y), selected_item);
 }
 

@@ -12,6 +12,23 @@ bool comparePtrToNode(tile *a, tile *b){
   return (*a < *b);
 }
 
+map_item::map_item(){
+  this -> x = 0;
+  this -> y = 0;
+  this -> itemPtr = NULL;
+}
+
+map_item::map_item( int x, int y, item *itemPtr){
+  this -> x = x;
+  this -> y = y;
+  this -> itemPtr = itemPtr;
+}
+
+void map_item::draw( BITMAP *tempBuffer){
+  itemPtr -> draw( x, y, tempBuffer);
+}
+
+
 tile_map::tile_map(){
   x = 128;
   y = 0;
@@ -83,9 +100,8 @@ void tile_map::load_map( std::string fileName){
 // Draw tiles
 void tile_map::draw( BITMAP *tempBuffer){
   // Draw tiles
-  for( unsigned int i = 0; i < map_tiles.size(); i++){
+  for( unsigned int i = 0; i < map_tiles.size(); i++)
     map_tiles.at(i) -> draw( map_buffer);
-  }
 
   blit( map_buffer, tempBuffer, x, y, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 }
@@ -99,9 +115,8 @@ void tile_map::drawForeground( BITMAP *tempBuffer){
     map_items.at(i) -> draw( map_buffer);
 
   // Draw foreground
-  for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
+  for( unsigned int i = 0; i < map_tiles_foreground.size(); i++)
     map_tiles_foreground.at(i) -> draw( map_buffer);
-  }
 
   masked_blit( map_buffer, tempBuffer, x, y, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 }
@@ -189,7 +204,7 @@ void tile_map::generate_map(){
   }
 
   // Place hoe ( 1)
-  place_item( new item(17 * 16, 5 * 16, 1));
+  place_item( new item(1), 17 * 16, 5 * 16);
 
   // Place chickens (4)
   int placed = 0;
@@ -197,7 +212,7 @@ void tile_map::generate_map(){
     int random_x = random( 0, MAP_WIDTH) * 16;
     int random_y = random( 0, MAP_HEIGHT) * 16;
     if( tile_at( random_x, random_y, FOREGROUND) == 4){
-      place_item( new item( random_x, random_y, 6));
+      place_item( new item( 6), random_x, random_y);
       placed += 1;
     }
   }
@@ -207,8 +222,7 @@ void tile_map::generate_map(){
     int random_x = random( 0, MAP_WIDTH) * 16;
     int random_y = random( 0, MAP_HEIGHT) * 16;
     if(!solid_at( random_x, random_y)){
-      item *newItem = new item( random_x, random_y, 16);
-      place_item( newItem);
+      place_item( new item( 16), random_x, random_y );
       placed += 1;
     }
   }
@@ -263,9 +277,11 @@ void tile_map::replace_tile( int tileX, int tileY, int newID, bool foreground){
 }
 
 // Place item on map
-void tile_map::place_item( item* newItem){
-  if( newItem != NULL)
-    map_items.push_back( newItem);
+void tile_map::place_item( item* newItem, int x, int y){
+  if( newItem != NULL){
+    map_item *newMapItem = new map_item( x, y, newItem);
+    map_items.push_back( newMapItem);
+  }
 }
 
 // Place tile on map
@@ -311,7 +327,7 @@ bool tile_map::solid_at( int positionX, int positionY){
 item *tile_map::item_at( int positionX, int positionY){
   for( unsigned int i = 0; i < map_items.size(); i++){
     if( map_items.at(i) -> x == positionX && map_items.at(i) -> y == positionY){
-      return map_items.at(i);
+      return map_items.at(i) -> itemPtr;
     }
   }
   return NULL;
@@ -324,12 +340,11 @@ void tile_map::update(){
 
     for( unsigned int i = 0; i < map_items.size(); i++){
       // Chicken eggs
-      if( map_items.at(i) -> getID() == 6  && random(0,16) == 1 && tile_at(map_items.at(i) -> x, map_items.at(i) -> y,BACKGROUND) == 59){
-        int rand_1 = 16*random(-1,1);
-        int rand_2 = 16*random(-1,1);
-        if(!item_at(map_items.at(i) -> x+rand_1,map_items.at(i) -> y+rand_2) && !solid_at(map_items.at(i) -> x+rand_1,map_items.at(i) -> y+rand_2)){
-          item *newItem = new item( map_items.at(i) -> x+rand_1, map_items.at(i) -> y+rand_2, 7);
-          place_item( newItem);
+      if( map_items.at(i) -> itemPtr -> getID() == 6  && random(0,16) == 1 && tile_at(map_items.at(i) -> x, map_items.at(i) -> y,BACKGROUND) == 59){
+        int rand_1 = 16 * random( -1, 1);
+        int rand_2 = 16 * random( -1, 1);
+        if(!item_at(map_items.at(i) -> x + rand_1, map_items.at(i) -> y + rand_2) && !solid_at( map_items.at(i) -> x + rand_1,map_items.at(i) -> y + rand_2)){
+          place_item( new item( 7), map_items.at(i) -> x+rand_1, map_items.at(i) -> y+rand_2);
           play_sample(egg,100,125,1000,0);
         }
       }
@@ -352,7 +367,7 @@ void tile_map::update(){
         }
         // YUM YUM
         else if( map_tiles.at(i) -> getID() == 32){
-          place_item( new item(map_tiles.at(i) -> x, map_tiles.at(i) -> y, 9));
+          place_item( new item(9), map_tiles.at(i) -> x, map_tiles.at(i) -> y);
           replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
         }
 
@@ -362,7 +377,7 @@ void tile_map::update(){
         }
         // YUM YUM
         else if( map_tiles.at(i) -> getID() == 35){
-          place_item( new item(map_tiles.at(i) -> x, map_tiles.at(i) -> y, 11));
+          place_item( new item(11), map_tiles.at(i) -> x, map_tiles.at(i) -> y);
           replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
         }
 
@@ -372,7 +387,7 @@ void tile_map::update(){
         }
         // YUM YUM
         else if( map_tiles.at(i) -> getID() == 38){
-          place_item( new item(map_tiles.at(i) -> x, map_tiles.at(i) -> y, 13));
+          place_item( new item(13), map_tiles.at(i) -> x, map_tiles.at(i) -> y);
           replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
         }
 
@@ -383,7 +398,7 @@ void tile_map::update(){
 
         // YUM YUM
         else if( map_tiles.at(i) -> getID() == 41){
-          place_item( new item(map_tiles.at(i) -> x, map_tiles.at(i) -> y, 15));
+          place_item( new item(15), map_tiles.at(i) -> x, map_tiles.at(i) -> y);
           replace_tile( map_tiles.at(i) -> x, map_tiles.at(i) -> y, 2, false);
         }
 
@@ -410,7 +425,12 @@ void tile_map::remove_item_at( int positionX, int positionY){
 
 // Remove item by value
 void tile_map::remove_item( item *newItem){
-  map_items.erase( std::remove(map_items.begin(), map_items.end(), newItem), map_items.end());
+  for( unsigned int i = 0; i < map_items.size(); i++){
+    if( map_items.at(i) -> itemPtr == newItem){
+      map_items.erase( map_items.begin() + i);
+      break;
+    }
+  }
 }
 
 // Scroll
@@ -426,11 +446,4 @@ void tile_map::scroll( int player_x, int player_y){
     y += 2;
   else if( (player_y - 48) - y < 0 && y > 0)
     y -= 2;
-}
-
-// Map item
-map_item::map_item(){
-  int x = 0;
-  int y = 0;
-  itemPtr = NULL;
 }

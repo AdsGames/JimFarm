@@ -6,6 +6,21 @@
 #include <string>
 
 #include "tile.h"
+#include "item.h"
+
+class map_item
+{
+  public:
+    map_item();
+    map_item( int x, int y, item *itemPtr);
+    ~map_item();
+
+    void draw( BITMAP *tempBuffer);
+
+    int x;
+    int y;
+    item *itemPtr;
+};
 
 class tile_map
 {
@@ -29,7 +44,7 @@ class tile_map
     void replace_tile( int tileX, int tileY, int newID, bool foreground);
 
     item *item_at( int positionX, int positionY);
-    void place_item( item* newItem);
+    void place_item( item* newItem, int x, int y);
     void remove_item( item *newItem);
     void remove_item_at( int positionX, int positionY);
 
@@ -50,21 +65,10 @@ class tile_map
     std::vector<tile*> map_tiles;
     std::vector<tile*> map_tiles_foreground;
 
-    std::vector<item*> map_items;
+    std::vector<map_item*> map_items;
 
     SAMPLE* egg;
     BITMAP *map_buffer;
-};
-
-class map_item
-{
-  public:
-    map_item();
-    ~map_item();
-
-    int x;
-    int y;
-    item *itemPtr;
 };
 
 #endif // TILE_MAP_H

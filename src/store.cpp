@@ -41,7 +41,7 @@ void store::draw( BITMAP *tempBitmap){
     draw_sprite( tempBitmap, image, 0, 0);
 
     for( int i = 0; i < (signed)storeItems.getSize(); i++){
-      storeItems.getItem(i) -> draw_at( 25 + i * 19, 90, tempBitmap);
+      storeItems.getItem(i) -> draw( 25 + i * 19, 90, tempBitmap);
 
       if( selector_index == i)
         draw_sprite( tempBitmap, indicator, 25 + i * 19, 90);
@@ -64,7 +64,7 @@ void store::draw( BITMAP *tempBitmap){
     }
 
     if( customer_inventory != NULL)
-      customer_inventory -> getItem(1) -> draw_at( 185, 90, tempBitmap);
+      customer_inventory -> getItem(1) -> draw( 185, 90, tempBitmap);
 
     if( selector_index == (signed)storeItems.getSize())
       draw_sprite( tempBitmap, indicator, 185, 90);
@@ -132,7 +132,7 @@ void store::open_store( inventory *new_inventory){
     for( int i = 0; i < 8; i ++){
       int newType = random(1, 15);
 
-      item *storeItem = new item( 0, 0, newType);
+      item *storeItem = new item( newType);
       add_item(storeItem);
     }
   }

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "tile.h"
+#include "item.h"
 
 class inventory
 {
