@@ -22,7 +22,7 @@ class tile
     void draw_at( int newX, int newY, BITMAP *tempBuffer);
 
     // Sorting stuff
-    virtual bool operator< (const tile &other) const { return (y < other.y); }
+    virtual bool operator < (const tile &other) const { return (y < other.y); }
 
     virtual void run_tick();
     bool requirements_met;

@@ -12,6 +12,9 @@ bool comparePtrToNode(tile *a, tile *b){
   return (*a < *b);
 }
 
+/*************
+ * MAP ITEMS *
+ *************/
 map_item::map_item(){
   this -> x = 0;
   this -> y = 0;
@@ -29,6 +32,9 @@ void map_item::draw( BITMAP *tempBuffer){
 }
 
 
+/************
+ * TILE MAP *
+ ************/
 tile_map::tile_map(){
   x = 128;
   y = 0;
@@ -153,6 +159,10 @@ void tile_map::remove_item( item *newItem){
   }
 }
 
+
+/*
+ * MAP
+ */
 // Pick up item at position
 void tile_map::remove_item_at( int positionX, int positionY){
   item *tempItem = item_at( positionX, positionY);

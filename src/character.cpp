@@ -84,6 +84,11 @@ void character::draw( BITMAP *tempBuffer){
 
   // Draw frame
   masked_blit( image, tempBuffer, floor(gameTick/4) * 16, (direction - 1) * 20, x - map_pointer -> x, y - map_pointer -> y - 8, 16, 20);
+
+  // Selected item
+  // Draw items
+  if( character_inv.getItem(selected_item) != NULL)
+    character_inv.getItem(selected_item) -> draw( x - map_pointer -> x, y - map_pointer -> y, tempBuffer);
 }
 
 // Draw character to screen
@@ -118,11 +123,6 @@ void character::drawForeground( BITMAP *tempBuffer){
     for( int i = 0; i < MAX_MESSAGES; i++)
       textprintf_ex( tempBuffer,pixelart, 5, i * 10 + 145, makecol(255,255,255),-1,"> %s", (player_messages[i]).c_str());
   }
-
-  // Selected item
-  // Draw items
-  if( character_inv.getItem(selected_item) != NULL)
-    character_inv.getItem(selected_item) -> draw( x - map_pointer -> x, y - map_pointer -> y, tempBuffer);
 }
 
 // Push message
@@ -210,7 +210,7 @@ void character::update(){
       }
 
       // Pickup
-      if( keyListener::keyPressed[KEY_LCONTROL] || mouseListener::mouse_pressed & 1 || joy[0].button[2].b ){
+      if( keyListener::keyPressed[KEY_LCONTROL] || mouseListener::mouse_pressed & 2 || joy[0].button[2].b ){
         item *itemAtPos  = map_pointer -> item_at( indicator_x, indicator_y);
         item *itemInHand = character_inv.getItem(selected_item);
 
@@ -231,24 +231,24 @@ void character::update(){
       }
 
       // Action button
-      if( keyListener::keyPressed[KEY_SPACE] || joy[0].button[0].b){
+      if( keyListener::keyPressed[KEY_SPACE] || mouseListener::mouse_pressed & 1 || joy[0].button[0].b){
         push_message( "");
 
         tile *foregroundTile = map_pointer -> tile_at( indicator_x, indicator_y, FOREGROUND);
         tile *backgroundTile = map_pointer -> tile_at( indicator_x, indicator_y, BACKGROUND);
 
-        if( foregroundTile != NULL)
-          std::cout << ". Tile Front ID: "<< foregroundTile -> getID() << std::endl;
-        if( backgroundTile != NULL)
-          std::cout << ". Tile Back ID: " <<  backgroundTile -> getID() << std::endl;
+        if( foregroundTile)
+          std::cout << " Tile Front ID: " << int(foregroundTile -> getID()) << std::endl;
+        if( backgroundTile)
+          std::cout << " Tile Back ID: "  << int(backgroundTile -> getID()) << std::endl;
 
         // OPEN STORE
-        if( backgroundTile != NULL && backgroundTile -> getID() == 19){
+        if( backgroundTile && backgroundTile -> getID() == 19){
           push_message( "Welcome to Danners Devices");
           store_open = true;
         }
         // Hand
-        else if( character_inv.getItem(selected_item) == NULL && backgroundTile != NULL && backgroundTile -> getID() != 7){
+        else if( !character_inv.getItem(selected_item) && backgroundTile && backgroundTile -> getID() != 7){
           if( map_pointer -> item_at( indicator_x, indicator_y))
             push_message( "There is a " + map_pointer -> item_at( indicator_x, indicator_y) -> getName() + " here");
           else{
@@ -256,12 +256,21 @@ void character::update(){
             play_sample( error, 255, 125, 1000, 0);
           }
         }
-        else if( character_inv.getItem( selected_item) != NULL){
+        else if( character_inv.getItem( selected_item)){
           // Hoe
           if( character_inv.getItem(selected_item) -> getID() == 1){
-            if( backgroundTile != NULL && backgroundTile -> getID() == 2){
-              map_pointer -> replace_tile( indicator_x, indicator_y, 18, false);
-              play_sample(hoe,255,125,1000,0);
+            if( backgroundTile && !foregroundTile){
+              if( backgroundTile -> getID() == 0){
+                map_pointer -> replace_tile( indicator_x, indicator_y, 2, false);
+                play_sample( hoe, 255, 125, 1000, 0);
+              }
+              else if( backgroundTile -> getID() == 2){
+                map_pointer -> replace_tile( indicator_x, indicator_y, 18, false);
+                play_sample( hoe, 255, 125, 1000, 0);
+              }
+              else {
+                push_message( "You can't hoe that");
+              }
             }
             else {
               push_message( "You can't hoe there");
@@ -270,9 +279,9 @@ void character::update(){
           }
           // Scythe
           else if( character_inv.getItem(selected_item) -> getID() == 2){
-            if( foregroundTile != NULL && foregroundTile -> getID() == 4){
+            if( foregroundTile && foregroundTile -> getID() == 4){
               map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
-              play_sample(cut_scythe,255,125,1000,0);
+              play_sample( cut_scythe, 255, 125, 1000, 0);
             }
             else {
               push_message( "You can't cut there");
@@ -281,7 +290,7 @@ void character::update(){
           }
           // Berry
           else if( character_inv.getItem(selected_item) -> getID() == 8){
-            if( backgroundTile != NULL && backgroundTile -> getID() == 18){
+            if( backgroundTile && backgroundTile -> getID() == 18){
               map_pointer -> replace_tile( indicator_x, indicator_y, 30, false);
               if( random( 0, 2) == 0){
                 remove_item();
@@ -294,7 +303,7 @@ void character::update(){
           }
           // Tomato
           else if( character_inv.getItem(selected_item) -> getID() == 10){
-            if( backgroundTile != NULL && backgroundTile -> getID() == 18){
+            if( backgroundTile && backgroundTile -> getID() == 18){
               map_pointer -> replace_tile( indicator_x, indicator_y, 33, false);
               if( random( 0, 2) == 0){
                 remove_item();
@@ -307,7 +316,7 @@ void character::update(){
           }
           // Carrot
           else if( character_inv.getItem(selected_item) -> getID() == 12){
-            if( backgroundTile != NULL && backgroundTile -> getID() == 18){
+            if( backgroundTile && backgroundTile -> getID() == 18){
               map_pointer -> replace_tile( indicator_x, indicator_y, 36, false);
               if( random( 0, 2) == 0){
                 remove_item();
@@ -320,7 +329,7 @@ void character::update(){
           }
           // Lavender
           else if( character_inv.getItem(selected_item) -> getID() == 14){
-            if( backgroundTile != NULL && backgroundTile -> getID() == 18){
+            if( backgroundTile && backgroundTile -> getID() == 18){
               map_pointer -> replace_tile( indicator_x, indicator_y, 39, false);
               if( random( 0, 2) == 0){
                 remove_item();
@@ -333,7 +342,7 @@ void character::update(){
           }
           // Watering can
           else if( character_inv.getItem(selected_item) -> getID() == 3){
-            if( backgroundTile != NULL && backgroundTile -> getID() == 7){
+            if( backgroundTile && backgroundTile -> getID() == 7){
               water = 4;
               push_message( "Watering can filled");
               play_sample( water_fill, 255, 125, 1000, 0);
@@ -345,7 +354,7 @@ void character::update(){
               play_sample( water_pour, 255, 125, 1000, 0);
 
               // Berries
-              if( backgroundTile != NULL){
+              if( backgroundTile){
                 int wateringID = backgroundTile -> getID();
                 if( wateringID == 30 || wateringID == 31 || wateringID == 33 || wateringID == 34 ||
                   wateringID == 36 || wateringID == 37 || wateringID == 39 || wateringID == 40){
@@ -361,7 +370,7 @@ void character::update(){
           }
           // Axe
           else if( character_inv.getItem(selected_item) -> getID() == 4){
-            if( foregroundTile != NULL && foregroundTile  -> getID() == 5){
+            if( foregroundTile && foregroundTile  -> getID() == 5){
               map_pointer -> replace_tile( indicator_x, indicator_y, 11, true);
               play_sample( cut_axe, 255, 125, 1000, 0);
             }
@@ -373,11 +382,11 @@ void character::update(){
           // Shovel
           else if( character_inv.getItem(selected_item) -> getID() == 5){
             //Literally the worst formatted if statement I've seen all week
-            if( foregroundTile != NULL && (foregroundTile  -> getID() == 6 || foregroundTile  -> getID() == 11)){
+            if( foregroundTile && (foregroundTile  -> getID() == 6 || foregroundTile  -> getID() == 11)){
               map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
               play_sample(dig,255,125,1000,0);
             }
-            else if(  backgroundTile != NULL && backgroundTile -> getID() == 0 && foregroundTile == NULL){
+            else if(  backgroundTile && backgroundTile -> getID() == 0 && foregroundTile){
               map_pointer -> replace_tile( indicator_x, indicator_y, 2,false);
               play_sample(dig,255,125,1000,0);
             }

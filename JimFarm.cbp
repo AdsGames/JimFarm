@@ -31,6 +31,7 @@
 		<Unit filename="include/character.h" />
 		<Unit filename="include/game_menu.h" />
 		<Unit filename="include/inventory.h" />
+		<Unit filename="include/item.h" />
 		<Unit filename="include/keyListener.h" />
 		<Unit filename="include/menu.h" />
 		<Unit filename="include/mouseListener.h" />
@@ -46,6 +47,7 @@
 		<Unit filename="src/character.cpp" />
 		<Unit filename="src/game_menu.cpp" />
 		<Unit filename="src/inventory.cpp" />
+		<Unit filename="src/item.cpp" />
 		<Unit filename="src/keyListener.cpp" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/menu.cpp" />

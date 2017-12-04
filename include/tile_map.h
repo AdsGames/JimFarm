@@ -70,7 +70,7 @@ class tile_map
 
     std::vector<map_item*> map_items;
 
-    SAMPLE* egg;
+    SAMPLE *egg;
     BITMAP *map_buffer;
 };
 
