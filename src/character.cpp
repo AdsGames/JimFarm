@@ -86,7 +86,6 @@ void character::draw( BITMAP *tempBuffer){
   masked_blit( image, tempBuffer, floor(gameTick/4) * 16, (direction - 1) * 20, x - map_pointer -> x, y - map_pointer -> y - 8, 16, 20);
 
   // Selected item
-  // Draw items
   if( character_inv.getItem(selected_item) != NULL)
     character_inv.getItem(selected_item) -> draw( x - map_pointer -> x, y - map_pointer -> y, tempBuffer);
 }
@@ -131,7 +130,7 @@ void character::push_message( std::string new_message){
     player_messages[i] = player_messages[i + 1];
 
   player_messages[MAX_MESSAGES - 1] = new_message;
-  std::cout << player_messages[0] << "\n";
+  //std::cout << player_messages[0] << "\n";
 }
 
 // Update player
@@ -209,11 +208,12 @@ void character::update(){
         play_sample(step_1,50,125,1300,0);
       }
 
-      // Pickup
+      // Pickup and drop
       if( keyListener::keyPressed[KEY_LCONTROL] || mouseListener::mouse_pressed & 2 || joy[0].button[2].b ){
         item *itemAtPos  = map_pointer -> item_at( indicator_x, indicator_y);
         item *itemInHand = character_inv.getItem(selected_item);
 
+        // Pickup
         if( itemInHand == NULL && itemAtPos != NULL){
           play_sample( pickup, 255, 125, 1000, 0);
           if( character_inv.addItem( itemAtPos, selected_item)){
@@ -221,9 +221,10 @@ void character::update(){
             push_message( "You pick up a " + character_inv.getItem(selected_item) -> getName());
           }
         }
+        // Drop
         else if( itemInHand != NULL && itemAtPos == NULL){
           play_sample( drop, 255, 125, 1000, 0);
-          map_pointer -> place_item( character_inv.getItem(selected_item), x, y);
+          map_pointer -> place_item( character_inv.getItem(selected_item), indicator_x, indicator_y);
 
           if( character_inv.removeItem( selected_item))
             push_message( "You drop your " + itemInHand -> getName());
