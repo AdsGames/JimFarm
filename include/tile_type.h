@@ -12,8 +12,8 @@
 
 class tile_type{
   public:
-    tile_type( unsigned char newImageX = 0, unsigned char newImageY = 0, unsigned char newImageW = 1,
-               unsigned char newImageH = 1, unsigned char newID = 0, std::string newName = "", int newAttribute = 0, unsigned char newValue = 0);
+    tile_type( unsigned char newWidth = 1, unsigned char newHeight = 1, unsigned char newID = 0,
+               std::string newName = "", int newAttribute = 0, unsigned char newValue = 0);
     virtual ~tile_type();
 
     // Get type
@@ -28,8 +28,10 @@ class tile_type{
     // Tex
     unsigned char getImageX(){ return image_cord_x; }
     unsigned char getImageY(){ return image_cord_y; }
-    unsigned char getWidth(){ return image_w; }
-    unsigned char getHeight(){ return image_h; }
+    unsigned char getImgWidth(){ return image_w; }
+    unsigned char getImgHeight(){ return image_h; }
+    unsigned char getWidth(){ return width; }
+    unsigned char getHeight(){ return height; }
     unsigned char getValue(){ return value; }
 
     // Draw
@@ -39,7 +41,7 @@ class tile_type{
     void setSpriteSheet( BITMAP *newSpriteSheet);
 
     // Set special image stuff
-    void setImageType( std::string newImageType, int newSheetWidth, int newSheetHeight, int newImageWidth, int newImageHeight);
+    void setImageType( std::string newImageType, int newSheetWidth, int newSheetHeight, int newImageX, int newImageY, int newImageWidth, int newImageHeight);
 
   protected:
   private:
@@ -50,6 +52,9 @@ class tile_type{
     std::string image_type;
     int sheet_width;
     int sheet_height;
+
+    int width;
+    int height;
 
     unsigned char image_cord_x, image_cord_y;
     unsigned char image_h, image_w;

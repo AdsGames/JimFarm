@@ -1,27 +1,26 @@
 #include "tile_type.h"
 
 // Init tile
-tile_type::tile_type( unsigned char newImageX, unsigned char newImageY, unsigned char newImageW,
-               unsigned char newImageH, unsigned char newID, std::string newName, int newAttribute, unsigned char newValue){
+tile_type::tile_type( unsigned char newWidth, unsigned char newHeight, unsigned char newID,
+                      std::string newName, int newAttribute, unsigned char newValue){
   // Set init variables
   id = newID;
   name = newName;
 
-  image_cord_x = newImageX;
-  image_cord_y = newImageY;
-
-  image_h = newImageH;
-  image_w = newImageW;
+  width = newWidth;
+  height = newHeight;
 
   attribute = newAttribute;
-
-  sprite_sheet = NULL;
-
   value = newValue;
 
+  sprite_sheet = NULL;
   image_type = "";
   sheet_width = 1;
   sheet_height = 1;
+  image_w = 1;
+  image_h = 1;
+  image_cord_x = 0;
+  image_cord_y = 0;
 }
 
 // Destroy tile
@@ -43,13 +42,15 @@ void tile_type::setSpriteSheet( BITMAP *newSpriteSheet){
 }
 
 // Set special image stuff
-void tile_type::setImageType( std::string newImageType, int newSheetWidth, int newSheetHeight, int newImageWidth, int newImageHeight){
+void tile_type::setImageType( std::string newImageType, int newSheetWidth, int newSheetHeight, int newImageX, int newImageY, int newImageWidth, int newImageHeight){
   // Default, dynamic or animated
   image_type = newImageType;
   sheet_width = newSheetWidth;
   sheet_height = newSheetHeight;
   image_w = newImageWidth;
   image_h = newImageHeight;
+  image_cord_x = newImageX;
+  image_cord_y = newImageY;
 
   // Split up those images
   if( image_type == "dynamic"){

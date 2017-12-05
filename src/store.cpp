@@ -3,6 +3,8 @@
 #include "tile.h"
 #include "tools.h"
 #include "keyListener.h"
+#include "tile_defs.h"
+#include "item_defs.h"
 
 store::store(){
   open = false;

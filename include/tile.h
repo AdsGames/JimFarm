@@ -14,6 +14,10 @@ class tile
 
     // Positioning
     int x, y;
+
+    int getImgWidth(){ return tile_pointer -> getImgWidth();}
+    int getImgHeight(){ return tile_pointer -> getImgHeight();}
+
     int getWidth(){ return tile_pointer -> getWidth();}
     int getHeight(){ return tile_pointer -> getHeight();}
 

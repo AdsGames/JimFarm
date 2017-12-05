@@ -62,6 +62,10 @@ void tile_type_manager::load( std::string newFile, bool items){
     if( !items){
       int image_h = atoi(cTile-> first_node("images") -> first_node("image_h") -> value());
       int image_w = atoi(cTile-> first_node("images") -> first_node("image_w") -> value());
+
+      int width = atoi(cTile-> first_node("width") -> value());
+      int height = atoi(cTile-> first_node("height") -> value());
+
       int randomness = atoi(cTile-> first_node("random") -> value());
       std::string attrubite_string = cTile-> first_node("attrubite") -> value();
       int attrubite = NON_SOLID;
@@ -71,7 +75,6 @@ void tile_type_manager::load( std::string newFile, bool items){
       int sheet_height = atoi(cTile-> first_node("images") -> first_attribute("s_height") -> value());
       std::string image_type = cTile-> first_node("images") -> first_attribute("type") -> value();
 
-
       // Get attrubite
       if( attrubite_string == "NON_SOLID")
         attrubite = NON_SOLID;
@@ -80,12 +83,12 @@ void tile_type_manager::load( std::string newFile, bool items){
 
       // Draw to screen (debug)
       std::cout << "-> Loading Tile:" << name << "  ID:" <<  tileID << "  ATTRIBUTE:" << attrubite_string << "  RANDOMNESS:" << randomness
-                << "  X:" << image_x << "  Y:" << image_y << "  H:" << image_h << "  W:" << image_w << "\n";
+                << "  X:" << image_x << "  Y:" << image_y << "  H:" << image_h << "  W:" << image_w << "  SH:" << height << "  SW:" << width << "\n";
 
       // Create tile, set variables and add it to the tile list
-      tile_type newTileType( image_x, image_y, image_w, image_h, tileID, name, attrubite);
+      tile_type newTileType( width * 16, height * 16, tileID, name, attrubite);
       newTileType.setSpriteSheet( sprite_sheet_tiles);
-      newTileType.setImageType( image_type, sheet_width, sheet_height, image_w, image_h);
+      newTileType.setImageType( image_type, sheet_width, sheet_height, image_x, image_y, image_w, image_h);
 
       // Add the tile
       tile_defs.push_back( newTileType);
@@ -97,9 +100,9 @@ void tile_type_manager::load( std::string newFile, bool items){
       std::cout << "-> Loading Items:" << name << "  ID:" <<  tileID << "  X:" << image_x << "  Y:" << image_y << "  value:" << value << "\n";
 
       // Create item, set variables and add it to the item list
-      tile_type newTileType( image_x, image_y, 1, 1, tileID, name, 0, (unsigned char)value);
+      tile_type newTileType( 1, 1, tileID, name, 0, (unsigned char)value);
       newTileType.setSpriteSheet( sprite_sheet_items);
-      newTileType.setImageType( "", 1, 1, 1, 1);
+      newTileType.setImageType( "", 1, 1, image_x, image_y, 1, 1);
 
       // Add the tile
       item_defs.push_back( newTileType);

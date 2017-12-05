@@ -3,6 +3,8 @@
   <!--GRASS-->
   <tile id="0">
     <name>Grass</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>0</image_x>
       <image_y>0</image_y>
@@ -15,6 +17,8 @@
   <!--WATER-->
   <tile id="1">
     <name>Water</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>1</image_x>
       <image_y>0</image_y>
@@ -27,6 +31,8 @@
   <!--SOIL-->
   <tile id="2">
     <name>Soil</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>2</image_x>
       <image_y>0</image_y>
@@ -39,6 +45,8 @@
   <!--WELL-->
   <tile id="3">
     <name>Well</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>15</image_x>
       <image_y>14</image_y>
@@ -51,6 +59,8 @@
   <!--DENSE GRASS-->
   <tile id="4">
     <name>Dense Grass</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>3</image_x>
       <image_y>0</image_y>
@@ -63,6 +73,8 @@
   <!--TREE-->
   <tile id="5">
     <name>Tree</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>5</image_x>
       <image_y>14</image_y>
@@ -75,6 +87,8 @@
   <!--BUSH-->
   <tile id="6">
     <name>Bush</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>4</image_x>
       <image_y>14</image_y>
@@ -87,6 +101,8 @@
   <!--WELL PATH-->
   <tile id="7">
     <name>Well Path</name>
+		<width>1</width>
+		<height>1</height>
     <images type="animated" s_width="3" s_height="3">
       <image_x>4</image_x>
       <image_y>4</image_y>
@@ -99,6 +115,8 @@
   <!--STUMP-->
   <tile id="11">
     <name>Stump</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>5</image_x>
       <image_y>13</image_y>
@@ -111,6 +129,8 @@
   <!--PLOWED SOIL-->
   <tile id="18">
     <name>Plowed soil</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>4</image_x>
       <image_y>0</image_y>
@@ -123,6 +143,8 @@
   <!--STORE PATH-->
   <tile id="19">
     <name>Store path</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>3</image_x>
       <image_y>4</image_y>
@@ -135,6 +157,8 @@
   <!--PATH-->
   <tile id="20">
     <name>Path</name>
+		<width>1</width>
+		<height>1</height>
     <images type="dynamic" s_width="4" s_height="4">
       <image_x>12</image_x>
       <image_y>0</image_y>
@@ -146,7 +170,9 @@
 	</tile>
   <!--BERRY-->
   <tile id="30">
-    <name>Berry</name>
+    <name>Berry 1</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>0</image_x>
       <image_y>3</image_y>
@@ -158,7 +184,9 @@
 	</tile>
   <!--BERRY-->
   <tile id="31">
-    <name>Berry</name>
+    <name>Berry 2</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>1</image_x>
       <image_y>3</image_y>
@@ -170,7 +198,9 @@
 	</tile>
   <!--BERRY-->
   <tile id="32">
-    <name>Berry</name>
+    <name>Berry 3</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>2</image_x>
       <image_y>3</image_y>
@@ -182,7 +212,9 @@
 	</tile>
   <!--TOMATO-->
   <tile id="33">
-    <name>Tomato</name>
+    <name>Tomato 1</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>0</image_x>
       <image_y>4</image_y>
@@ -194,7 +226,9 @@
 	</tile>
   <!--TOMATO-->
   <tile id="34">
-    <name>Tomato</name>
+    <name>Tomato 2</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>1</image_x>
       <image_y>4</image_y>
@@ -206,7 +240,9 @@
 	</tile>
   <!--TOMATO-->
   <tile id="35">
-    <name>Tomato</name>
+    <name>Tomato 3</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>2</image_x>
       <image_y>4</image_y>
@@ -218,7 +254,9 @@
 	</tile>
   <!--CARROT-->
   <tile id="36">
-    <name>Carrot</name>
+    <name>Carrot 1</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>0</image_x>
       <image_y>5</image_y>
@@ -230,7 +268,9 @@
 	</tile>
   <!--CARROT-->
   <tile id="37">
-    <name>Carrot</name>
+    <name>Carrot 2</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>1</image_x>
       <image_y>5</image_y>
@@ -242,7 +282,9 @@
 	</tile>
   <!--CARROT-->
   <tile id="38">
-    <name>Carrot</name>
+    <name>Carrot 3</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>2</image_x>
       <image_y>5</image_y>
@@ -254,7 +296,9 @@
 	</tile>
   <!--LAVENDER-->
   <tile id="39">
-    <name>Lavender</name>
+    <name>Lavender 1</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>0</image_x>
       <image_y>6</image_y>
@@ -266,7 +310,9 @@
 	</tile>
   <!--LAVENDER-->
   <tile id="40">
-    <name>Lavender</name>
+    <name>Lavender 2</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>1</image_x>
       <image_y>6</image_y>
@@ -278,7 +324,9 @@
 	</tile>
   <!--LAVENDER-->
   <tile id="41">
-    <name>Lavender</name>
+    <name>Lavender 3</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>2</image_x>
       <image_y>6</image_y>
@@ -290,7 +338,9 @@
 	</tile>
   <!--FENCE-->
   <tile id="53">
-    <name>Fence</name>
+    <name>Fence 1</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>5</image_x>
       <image_y>0</image_y>
@@ -303,6 +353,8 @@
   <!--FENCE DOOR-->
   <tile id="54">
     <name>Fence Door</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>1</image_x>
       <image_y>2</image_y>
@@ -314,7 +366,9 @@
 	</tile>
   <!--FENCE-->
   <tile id="55">
-    <name>Fence</name>
+    <name>Fence 2</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>0</image_x>
       <image_y>2</image_y>
@@ -326,7 +380,9 @@
 	</tile>
   <!--FENCE-->
   <tile id="56">
-    <name>Fence</name>
+    <name>Fence 3</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>0</image_x>
       <image_y>1</image_y>
@@ -338,7 +394,9 @@
 	</tile>
   <!--FENCE-->
   <tile id="57">
-    <name>Fence</name>
+    <name>Fence 4</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>2</image_x>
       <image_y>2</image_y>
@@ -350,7 +408,9 @@
 	</tile>
   <!--FENCE-->
   <tile id="58">
-    <name>Fence</name>
+    <name>Fence 5</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>2</image_x>
       <image_y>1</image_y>
@@ -363,6 +423,8 @@
   <!--PATCHY GRASS-->
   <tile id="59">
     <name>Patchy Grass</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>1</image_x>
       <image_y>1</image_y>
@@ -375,6 +437,8 @@
   <!--STORE-->
   <tile id="60">
     <name>Store</name>
+		<width>3</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>10</image_x>
       <image_y>14</image_y>
@@ -387,11 +451,13 @@
   <!--BARN-->
   <tile id="61">
     <name>Barn</name>
+		<width>3</width>
+		<height>2</height>
     <images type="" s_width="1" s_height="1">
       <image_x>6</image_x>
       <image_y>12</image_y>
       <image_h>4</image_h>
-      <image_w>4</image_w>
+      <image_w>3</image_w>
     </images>
     <attrubite>SOLID</attrubite>
     <random>0</random>
@@ -399,6 +465,8 @@
   <!--GOAT-->
   <tile id="62">
     <name>Goat</name>
+		<width>1</width>
+		<height>1</height>
     <images type="" s_width="1" s_height="1">
       <image_x>13</image_x>
       <image_y>14</image_y>
