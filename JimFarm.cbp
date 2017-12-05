@@ -2,7 +2,7 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Template" />
+		<Option title="JimFarm" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
@@ -23,6 +23,9 @@
 					<Add option="-lfmod" />
 					<Add directory="G:/TOJAM/Tojam11game/lib" />
 				</Linker>
+				<ExtraCommands>
+					<Add before="python updateDefs.py" />
+				</ExtraCommands>
 			</Target>
 		</Build>
 		<Compiler>
@@ -32,11 +35,13 @@
 		<Unit filename="include/game_menu.h" />
 		<Unit filename="include/inventory.h" />
 		<Unit filename="include/item.h" />
+		<Unit filename="include/item_defs.h" />
 		<Unit filename="include/keyListener.h" />
 		<Unit filename="include/menu.h" />
 		<Unit filename="include/mouseListener.h" />
 		<Unit filename="include/store.h" />
 		<Unit filename="include/tile.h" />
+		<Unit filename="include/tile_defs.h" />
 		<Unit filename="include/tile_map.h" />
 		<Unit filename="include/tile_type.h" />
 		<Unit filename="include/tile_type_manager.h" />
