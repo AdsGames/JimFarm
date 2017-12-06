@@ -1,8 +1,9 @@
 #define SOUND_NULL -1
 #define SOUND_ERROR 0
-#define SOUND_HOE 1
-#define SOUND_AXE 2
-#define SOUND_SCYTHE 3
-#define SOUND_SHOVEL 4
-#define SOUND_WATER_FILL 5
-#define SOUND_WATER_POUR 6
+#define SOUND_EGG 1
+#define SOUND_HOE 2
+#define SOUND_AXE 3
+#define SOUND_SCYTHE 4
+#define SOUND_SHOVEL 5
+#define SOUND_WATER_FILL 6
+#define SOUND_WATER_POUR 7

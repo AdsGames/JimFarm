@@ -102,12 +102,12 @@ void update(){
       main_store.update();
 
       // Open store
-      if( jim.store_open){
+      /*if( jim.store_open){
         main_store.open_store( &(jim.character_inv));
       }
       else{
         main_store.close_store();
-      }
+      }*/
     }
     main_game_menu.update();
   }

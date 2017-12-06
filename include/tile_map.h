@@ -84,7 +84,6 @@ class tile_map
 
     int x, y;
 
-    SAMPLE *egg;
     BITMAP *map_buffer;
 
     static volatile int ticks;

@@ -11,7 +11,7 @@ class character
 {
   public:
     character();
-    virtual ~character();
+    virtual ~character() {};
 
     void setPosition( int newX, int newY){ x = newX; y = newY;}
     void load_data();
@@ -21,64 +21,38 @@ class character
 
     void update();
 
-    void remove_item();
-    void give_item( char newItem);
-
     void setWorld( tile_map *newTileMap);
-
-    inventory character_inv;
-    int selected_item;
-
-    int money;
-
-    bool store_open;
-
-    tile_map *map_pointer;
-
   protected:
 
   private:
+    // Directions
+    enum directions{ DIR_DOWN = 1, DIR_UP = 2, DIR_RIGHT = 3, DIR_LEFT = 4 };
 
     // Fonts
-    FONT *f1;
-    FONT *f2;
-    FONT *f3;
-    FONT *f4;
-    FONT *f5;
     FONT *pixelart;
+    tile_map *map_pointer;
+
+    inventory character_inv;
+
+    int selected_item;
+    int money;
 
     int x, y;
+    int indicator_x, indicator_y;
 
-    int water;
-    int sound_step;
-
-    bool draw_hud;
+    bool sound_step;
+    char aniTick;
+    char direction;
+    bool moving;
 
     BITMAP *image;
-    BITMAP *watering_can[5];
     BITMAP *inventory_gui;
-    BITMAP *hand;
     BITMAP *indicator;
     BITMAP *coin;
 
-
     SAMPLE *pickup;
     SAMPLE *drop;
-    SAMPLE *step_1;
-    SAMPLE *step_2;
-    SAMPLE *cut_axe;
-    SAMPLE *cut_scythe;
-    SAMPLE *hoe;
-    SAMPLE *dig;
-    SAMPLE *error;
-    SAMPLE *water_fill;
-    SAMPLE *water_pour;
-
-    int indicator_x, indicator_y;
-
-    char gameTick;
-    char direction;
-    bool moving;
+    SAMPLE *step[2];
 };
 
 #endif // CHARACTER_H

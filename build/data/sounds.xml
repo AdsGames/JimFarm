@@ -9,6 +9,15 @@
 		<frequency>1000</frequency>
 		<frequency_rand>0</frequency_rand>
 	</sound>
+	<!--egg-->
+	<sound>
+		<name>egg</name>
+		<file>egg.wav</file>
+		<volume>255</volume>
+		<panning>128</panning>
+		<frequency>1000</frequency>
+		<frequency_rand>0</frequency_rand>
+	</sound>
 	<!--hoe-->
 	<sound>
 		<name>hoe</name>

@@ -105,8 +105,6 @@ void tile_map::load_images(){
   tile_type_manager::load("data/tiles.xml", false);
   tile_type_manager::load("data/items.xml", true);
   sound_manager::load("data/sounds.xml");
-
-  egg = load_sample_ex("sfx/egg.wav");
 }
 
 
@@ -279,13 +277,13 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
     if( backgroundTile && backgroundTile -> getID() == TILE_WELL_PATH){
       water = 4;
       push_message( "Watering can filled");
-      play_sample( water_fill, 255, 125, 1000, 0);
+      sound_manager::play( SOUND_WATER_FILL);
     }
 
     else if(water > 0){
       water--;
       push_message("Watered");
-      play_sample( water_pour, 255, 125, 1000, 0);
+      sound_manager::play( SOUND_WATER_POUR);
 
       // Berries
       if( backgroundTile){
@@ -306,7 +304,7 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
   else if( inHand -> getID() == ITEM_AXE){
     if( foregroundTile && foregroundTile  -> getID() == TILE_TREE){
       replace_tile( inter_x, inter_y, TILE_STUMP, true);
-      //play_sample( cut_axe, 255, 125, 1000, 0);
+      sound_manager::play( SOUND_AXE);
     }
     else{
       map_messages -> push_message( "You can't chop that down");
@@ -336,20 +334,32 @@ void tile_map::update(){
   if( ticks >= 1){
     ticks = 0;
 
+    // Run tickers for itens
     for( unsigned int i = 0; i < map_items.size(); i++){
-      // Chicken eggs
+      // Current item
+      item *current = map_items.at(i) -> itemPtr;
+
+      // Tile near item
+      tile *foregroundTile = tile_at( map_items.at(i) -> x, map_items.at(i) -> y, FOREGROUND);
       tile *backgroundTile = tile_at( map_items.at(i) -> x, map_items.at(i) -> y, BACKGROUND);
-      if( map_items.at(i) -> itemPtr -> getID() == ITEM_CHICKEN && random(0,16) == 1 && backgroundTile != NULL && backgroundTile -> getID() == TILE_PATCHY_GRASS){
-        int rand_1 = 16 * random( -1, 1);
-        int rand_2 = 16 * random( -1, 1);
-        if( !item_at(map_items.at(i) -> x + rand_1, map_items.at(i) -> y + rand_2) && !solid_at( map_items.at(i) -> x + rand_1,map_items.at(i) -> y + rand_2)){
-          place_item( new item( ITEM_EGG), map_items.at(i) -> x + rand_1, map_items.at(i) -> y + rand_2);
-          play_sample(egg,100,125,1000,0);
+
+      // Chicken eggs
+      if( current -> getID() == ITEM_CHICKEN){
+        if( backgroundTile && backgroundTile -> getID() == TILE_PATCHY_GRASS){
+          if( !random(0,16)){
+            int rand_1 = 16 * random( -1, 1);
+            int rand_2 = 16 * random( -1, 1);
+            if( !item_at( map_items.at(i) -> x + rand_1, map_items.at(i) -> y + rand_2) &&
+                !solid_at( map_items.at(i) -> x + rand_1, map_items.at(i) -> y + rand_2)){
+              place_item( new item( ITEM_EGG), map_items.at(i) -> x + rand_1, map_items.at(i) -> y + rand_2);
+              sound_manager::play( SOUND_EGG);
+            }
+          }
         }
       }
     }
 
-    // Run tickers
+    // Run tickers for tiles
     for( unsigned int i = 0; i < map_tiles.size(); i++){
       // Current tile
       tile *current = map_tiles.at(i);
