@@ -10,18 +10,25 @@
 class character
 {
   public:
+    // Ctor and dtor
     character();
     virtual ~character() {};
 
-    void setPosition( int newX, int newY){ x = newX; y = newY;}
+    // Set world pointer
+    void setWorld( tile_map *newTileMap);
+
+    // Load images and samples
     void load_data();
 
+    // Position character
+    void setPosition( int newX, int newY){ x = newX; y = newY;}
+
+    // Draw
     void draw( BITMAP *tempBuffer);
     void drawForeground( BITMAP *tempBuffer);
 
+    // Update
     void update();
-
-    void setWorld( tile_map *newTileMap);
   protected:
 
   private:
@@ -32,24 +39,34 @@ class character
     FONT *pixelart;
     tile_map *map_pointer;
 
+    // Inventory
     inventory character_inv;
 
+    // Item in hand
     int selected_item;
+
+    // Money
     int money;
 
+    // Position
     int x, y;
+
+    // What tile you are over
     int indicator_x, indicator_y;
 
-    bool sound_step;
-    char aniTick;
+    // Movement
     char direction;
     bool moving;
+    bool sound_step;
+    char ani_ticker;
 
+    // Images for ui and character
     BITMAP *image;
     BITMAP *inventory_gui;
     BITMAP *indicator;
     BITMAP *coin;
 
+    // Sounds
     SAMPLE *pickup;
     SAMPLE *drop;
     SAMPLE *step[2];

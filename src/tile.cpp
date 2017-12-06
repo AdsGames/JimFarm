@@ -8,27 +8,20 @@
 #include "tile_defs.h"
 #include "item_defs.h"
 
-// TILE
+// Ctor for tile
 tile::tile(int newX, int newY, char newID){
-  // Set init variables
   this -> x = newX;
   this -> y = newY;
-
   this -> tile_pointer = tile_type_manager::getTileByID( newID);
-
   this -> meta = 0;
 }
 
-tile::~tile(){}
-
+// Draw tile to screen
 void tile::draw( BITMAP *tempBuffer){
   tile_pointer -> draw( x, y, tempBuffer, getMeta());
 }
 
+// Draw tile at specific position
 void tile::draw_at( int newX, int newY, BITMAP *tempBuffer){
   tile_pointer -> draw( newX, newY, tempBuffer);
-}
-
-void tile::setID( unsigned char newID){
-  tile_pointer = tile_type_manager::getTileByID( newID);
 }

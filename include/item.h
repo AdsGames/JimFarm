@@ -11,20 +11,23 @@
 class item
 {
   public:
+    // Ctor and Dtor
     item( char newID);
-    virtual ~item();
+    virtual ~item() {};
 
+    // Draw to screen
     void draw( int newX, int newY, BITMAP *tempBuffer);
 
-    tile_type *item_pointer;
-
+    // Get value of item
     unsigned char getValue(){ return item_pointer -> getValue();}
 
+    // Modify ID
     unsigned char getID(){ return item_pointer -> getID();}
-    void setID( unsigned char newID);
 
+    // Get the name of item
     std::string getName(){ return item_pointer -> getName();}
 
+    // Access and set meta data byte
     void setMeta( unsigned char meta ){ this -> meta = meta; }
     void addMeta( unsigned char amt ){ this -> meta += amt; }
     unsigned char getMeta(){ return this -> meta; }
@@ -32,6 +35,9 @@ class item
   private:
     // Metadata info
     unsigned char meta;
+
+    // Pointer to item type
+    tile_type *item_pointer;
 };
 
 #endif // ITEM_H

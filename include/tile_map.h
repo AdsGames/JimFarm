@@ -5,6 +5,9 @@
 #include <vector>
 #include <string>
 
+#define LAYER_FOREGROUND 1
+#define LAYER_BACKGROUND 0
+
 #include "tile.h"
 #include "item.h"
 #include "messenger.h"
@@ -48,15 +51,15 @@ class tile_map
 
     // Tiles
     tile *tile_at( int positionX, int positionY, bool foreground);
-    void place_tile( tile* newTile);
-    void replace_tile( int tileX, int tileY, int newID, bool foreground);
+    void place_tile( tile* newTile, bool foreground);
+    void replace_tile( tile *oldTile, int newID, bool foreground);
+    void remove_tile( tile *newTile, bool foreground);
     bool solid_at( int positionX, int positionY);
 
     // Items
     item *item_at( int positionX, int positionY);
     void place_item( item* newItem, int x, int y);
     void remove_item( item *newItem);
-    void remove_item_at( int positionX, int positionY);
 
     // Interact with
     void interact( int inter_x, int inter_y, item *inHand);
@@ -80,15 +83,20 @@ class tile_map
     std::vector<tile*> map_tiles;
     std::vector<tile*> map_tiles_foreground;
 
+    // Items
     std::vector<map_item*> map_items;
 
+    // Scroll position
     int x, y;
 
+    // Buffer that holds whole map image
     BITMAP *map_buffer;
 
+    // Ticker for world
     static volatile int ticks;
     static void tick_counter();
 
+    // Messager
     messenger *map_messages;
 };
 

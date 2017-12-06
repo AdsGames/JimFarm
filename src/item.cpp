@@ -2,20 +2,13 @@
 
 #include "tile_type_manager.h"
 
-// ITEM
+// Ctor for item
 item::item( char newID){
   this -> item_pointer = tile_type_manager::getItemByID( newID);
   this -> meta = 0;
 }
 
-item::~item(){
-  //dtor
-}
-
+// Draw item to screen
 void item::draw( int newX, int newY, BITMAP *tempBuffer){
   item_pointer -> draw( newX, newY, tempBuffer, getMeta());
-}
-
-void item::setID( unsigned char newID){
-  item_pointer = tile_type_manager::getTileByID( newID);
 }

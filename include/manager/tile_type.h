@@ -28,8 +28,6 @@ class tile_type{
     // Tex
     unsigned char getImageX(){ return image_cord_x; }
     unsigned char getImageY(){ return image_cord_y; }
-    unsigned char getImgWidth(){ return image_w; }
-    unsigned char getImgHeight(){ return image_h; }
     unsigned char getWidth(){ return width; }
     unsigned char getHeight(){ return height; }
     unsigned char getValue(){ return value; }

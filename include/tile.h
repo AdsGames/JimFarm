@@ -11,12 +11,14 @@
 class tile
 {
   public:
+    // Ctor and Dtor
     tile(int newX, int newY, char newID);
-    virtual ~tile();
+    virtual ~tile() {};
 
-    int getImgWidth(){ return tile_pointer -> getImgWidth();}
-    int getImgHeight(){ return tile_pointer -> getImgHeight();}
+    // Define < operator for sorting
+    virtual bool operator < (const tile &other) const { return (y < other.y); }
 
+    // Gets size
     int getWidth(){ return tile_pointer -> getWidth();}
     int getHeight(){ return tile_pointer -> getHeight();}
 
@@ -24,24 +26,21 @@ class tile
     virtual void draw( BITMAP *tempBuffer);
     void draw_at( int newX, int newY, BITMAP *tempBuffer);
 
-    // Sorting stuff
-    virtual bool operator < (const tile &other) const { return (y < other.y); }
-
-
-
+    // Is this type solid?
     bool isSolid(){ return tile_pointer -> getAttribute(); }
 
+    // Modify ID
     unsigned char getID(){ return tile_pointer -> getID();}
-    void setID( unsigned char newID);
 
+    // Get name of tile
     std::string getName(){ return tile_pointer -> getName();}
 
-    tile_type *tile_pointer;
-
+    // Access and set meta data byte
     void setMeta( unsigned char meta ){ this -> meta = meta; }
     unsigned char getMeta(){ return this -> meta; }
     void addMeta( unsigned char amt ){ this -> meta += amt; }
 
+    // Get position
     int getX(){ return this -> x; }
     int getY(){ return this -> y; }
   protected:
@@ -51,6 +50,9 @@ class tile
 
     // Metadata info
     unsigned char meta;
+
+    // Ptr to tile type
+    tile_type *tile_pointer;
 };
 
 #endif // TILE_H

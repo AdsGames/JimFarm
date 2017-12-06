@@ -10,6 +10,7 @@
 #include "tile_defs.h"
 #include "item_defs.h"
 
+// Ctor for character
 character::character(){
   moving = false;
   direction = 1;
@@ -60,7 +61,7 @@ void character::draw( BITMAP *tempBuffer){
     draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> getX(), indicator_y - map_pointer -> getY());
 
   // Draw frame
-  masked_blit( image, tempBuffer, floor(aniTick/4) * 16, (direction - 1) * 20, x - map_pointer -> getX(), y - map_pointer -> getY() - 8, 16, 20);
+  masked_blit( image, tempBuffer, floor(ani_ticker/4) * 16, (direction - 1) * 20, x - map_pointer -> getX(), y - map_pointer -> getY() - 8, 16, 20);
 
   // Selected item
   if( character_inv.getItem(selected_item) != NULL)
@@ -70,7 +71,7 @@ void character::draw( BITMAP *tempBuffer){
 // Draw character to screen
 void character::drawForeground( BITMAP *tempBuffer){
   // Top of head
-  masked_blit( image, tempBuffer, floor(aniTick/4) * 16, (direction - 1) * 20, x - map_pointer -> getX(), y - map_pointer -> getY() - 8, 16, 8);
+  masked_blit( image, tempBuffer, floor(ani_ticker/4) * 16, (direction - 1) * 20, x - map_pointer -> getX(), y - map_pointer -> getY() - 8, 16, 8);
 
   // Draw items
   for( int i = 0; i < character_inv.getMaxSize(); i++){
@@ -148,28 +149,20 @@ void character::update(){
   // Update movement
   if( moving){
     // Smooth move
-    if( direction == DIR_UP){
-      if( y > 0)
-        y -= 2;
-    }
-    else if( direction == DIR_DOWN){
-      if( y < (map_pointer -> MAP_HEIGHT * 16) - 16)
-        y += 2;
-    }
-    else if( direction == DIR_LEFT){
-      if( x > 0)
-        x -= 2;
-    }
-    else if( direction == DIR_RIGHT){
-      if( x < (map_pointer -> MAP_WIDTH * 16)  - 16)
-        x += 2;
-    }
+    if( direction == DIR_UP && y > 0)
+      y -= 2;
+    else if( direction == DIR_DOWN && y < (map_pointer -> MAP_HEIGHT * 16) - 16)
+      y += 2;
+    else if( direction == DIR_LEFT && x > 0)
+      x -= 2;
+    else if( direction == DIR_RIGHT && x < (map_pointer -> MAP_WIDTH * 16)  - 16)
+      x += 2;
 
     // Scroll map
     map_pointer -> scroll( x, y);
 
     // Increase animation ticker
-    aniTick = (aniTick + 1) % 16;
+    ani_ticker = (ani_ticker + 1) % 16;
   }
 
   // Pickup and drop

@@ -70,7 +70,7 @@ void tile_map::init_ticker(){
 /*
  * IMAGES
  */
-// Draw tiles
+// Draw bottom tiles
 void tile_map::draw( BITMAP *tempBuffer){
   // Draw tiles
   for( unsigned int i = 0; i < map_tiles.size(); i++)
@@ -79,11 +79,11 @@ void tile_map::draw( BITMAP *tempBuffer){
   blit( map_buffer, tempBuffer, x, y, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 }
 
-// Draw tiles
+// Draw foreground tiles
 void tile_map::drawForeground( BITMAP *tempBuffer){
   rectfill( map_buffer, 0, 0, map_buffer -> w, map_buffer -> h, makecol( 255, 0, 255));
 
-  // Draw items
+  // Draw items on map
   for( unsigned int i = 0; i < map_items.size(); i++)
     map_items.at(i) -> draw( map_buffer);
 
@@ -134,23 +134,30 @@ tile *tile_map::tile_at( int positionX, int positionY, bool foreground){
 }
 
 // Place tile on map
-void tile_map::place_tile( tile* newTile){
-  if( newTile != NULL)
-    map_tiles.push_back( newTile);
+void tile_map::place_tile( tile* newTile, bool foreground){
+  if( newTile != NULL){
+    if( foreground)
+      map_tiles_foreground.push_back( newTile);
+    else
+      map_tiles.push_back( newTile);
+  }
 }
 
 // Replace tile on map
-void tile_map::replace_tile( int tileX, int tileY, int newID, bool foreground){
-  std::vector<tile*> *layer = &map_tiles;
-  if( foreground)
-    layer = &map_tiles_foreground;
+void tile_map::replace_tile( tile *oldTile, int newID, bool foreground){
+  if( oldTile != NULL){
+    remove_tile( oldTile, foreground);
+    place_tile( new tile(oldTile -> getX(), oldTile -> getY(), newID), foreground);
+  }
+}
 
-  for( unsigned int i = 0; i < layer -> size(); i++){
-    if( layer -> at(i) -> getX() == tileX && layer -> at(i) -> getY() == tileY){
-      if( newID == -1)
-        layer -> erase( layer -> begin() + i);
-      else{
-        layer -> at(i) -> setID( newID);
+// Remove tile from map
+void tile_map::remove_tile( tile* newTile, bool foreground){
+  if( newTile != NULL){
+    for( unsigned int i = 0; i < map_tiles.size(); i++){
+      if( map_tiles.at(i) == newTile){
+        map_tiles.erase( map_tiles.begin() + i);
+        break;
       }
     }
   }
@@ -162,7 +169,6 @@ bool tile_map::solid_at( int positionX, int positionY){
     return tile_at( positionX, positionY, true) -> isSolid();
   return false;
 }
-
 
 /*
  * ITEMS
@@ -183,23 +189,17 @@ void tile_map::place_item( item* newItem, int x, int y){
   }
 }
 
-// Remove item by value
+// Remove item from map
 void tile_map::remove_item( item *newItem){
-  for( unsigned int i = 0; i < map_items.size(); i++){
-    if( map_items.at(i) -> itemPtr == newItem){
-      map_items.erase( map_items.begin() + i);
-      break;
+  if( newItem != NULL){
+    for( unsigned int i = 0; i < map_items.size(); i++){
+      if( map_items.at(i) -> itemPtr == newItem){
+        map_items.erase( map_items.begin() + i);
+        break;
+      }
     }
   }
 }
-
-// Pick up item at position
-void tile_map::remove_item_at( int positionX, int positionY){
-  item *tempItem = item_at( positionX, positionY);
-  if( tempItem != NULL)
-    remove_item( tempItem);
-}
-
 
 /*
  * MAP
@@ -213,11 +213,11 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
   if( inHand -> getID() == ITEM_HOE){
     if( backgroundTile && !foregroundTile){
       if( backgroundTile -> getID() == TILE_GRASS){
-        replace_tile( inter_x, inter_y, TILE_SOIL, false);
+        replace_tile( backgroundTile, TILE_SOIL, LAYER_BACKGROUND);
         sound_manager::play( SOUND_HOE);
       }
       else if( backgroundTile -> getID() == TILE_SOIL){
-        replace_tile( inter_x, inter_y, TILE_PLOWED_SOIL, false);
+        replace_tile( backgroundTile, TILE_PLOWED_SOIL, LAYER_BACKGROUND);
         sound_manager::play( SOUND_HOE);
       }
       else {
@@ -232,7 +232,7 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
   // Scythe
   else if( inHand -> getID() == ITEM_SCYTHE){
     if( foregroundTile && foregroundTile -> getID() == TILE_DENSE_GRASS){
-      replace_tile( inter_x, inter_y, -1, true);
+      remove_tile( foregroundTile, LAYER_FOREGROUND);
       sound_manager::play( SOUND_SCYTHE);
     }
     else {
@@ -243,7 +243,7 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
   // Berry
   else if( inHand -> getID() == ITEM_BERRY_SEED){
     if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
-      replace_tile( inter_x, inter_y, TILE_BERRY, false);
+      replace_tile( backgroundTile, TILE_BERRY, LAYER_BACKGROUND);
     }
     else {
       map_messages -> push_message( "You must plant in ploughed soil");
@@ -253,7 +253,7 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
   // Tomato
   else if( inHand -> getID() == ITEM_TOMATO_SEED){
     if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
-      replace_tile( inter_x, inter_y, TILE_TOMATO, false);
+      replace_tile( backgroundTile, TILE_TOMATO, LAYER_BACKGROUND);
     }
     else{
       map_messages -> push_message( "You must plant in ploughed soil");
@@ -263,7 +263,7 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
   // Carrot
   else if( inHand -> getID() == ITEM_CARROT_SEED){
     if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
-      replace_tile( inter_x, inter_y, TILE_CARROT, false);
+      replace_tile( backgroundTile, TILE_CARROT, LAYER_BACKGROUND);
     }
     else{
       map_messages -> push_message( "You must plant in ploughed soil");
@@ -273,7 +273,7 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
   // Lavender
   else if( inHand -> getID() == ITEM_LAVENDER_SEED){
     if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
-      replace_tile( inter_x, inter_y, TILE_LAVENDER, false);
+      replace_tile( backgroundTile, TILE_LAVENDER, LAYER_BACKGROUND);
     }
     else{
       map_messages -> push_message( "You must plant in ploughed soil");
@@ -299,7 +299,7 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
         if( wateringID == TILE_BERRY_1 || wateringID == TILE_BERRY_2 || wateringID == TILE_BERRY_1 || wateringID == TILE_BERRY_2 ||
           wateringID == TILE_CARROT_1 || wateringID == TILE_CARROT_2 || wateringID == TILE_LAVENDER_1 || wateringID == TILE_LAVENDER_2){
 
-          map_pointer -> replace_tile( indicator_x, indicator_y, wateringID + 1, false);
+          map_pointer -> replace_tile( indicator_x, indicator_y, wateringID + 1, LAYER_BACKGROUND);
         }
       }
     }
@@ -311,7 +311,7 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
   // Axe
   else if( inHand -> getID() == ITEM_AXE){
     if( foregroundTile && foregroundTile  -> getID() == TILE_TREE){
-      replace_tile( inter_x, inter_y, TILE_STUMP, true);
+      replace_tile( foregroundTile, TILE_STUMP, LAYER_FOREGROUND);
       sound_manager::play( SOUND_AXE);
     }
     else{
@@ -321,13 +321,12 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
   }
   // Shovel
   else if( inHand -> getID() == ITEM_SHOVEL){
-    //Literally the worst formatted if statement I've seen all week
     if( foregroundTile && (foregroundTile  -> getID() == TILE_BUSH || foregroundTile  -> getID() == TILE_STUMP)){
-      replace_tile( inter_x, inter_y, TILE_NULL, true);
+      remove_tile( foregroundTile, LAYER_FOREGROUND);
       sound_manager::play( SOUND_SHOVEL);
     }
     else if(  backgroundTile && backgroundTile -> getID() == TILE_GRASS && foregroundTile){
-      replace_tile( inter_x, inter_y, 2,false);
+      replace_tile( backgroundTile, TILE_SOIL, LAYER_BACKGROUND);
       sound_manager::play( SOUND_SHOVEL);
     }
     else{
@@ -385,7 +384,7 @@ void tile_map::update(){
         // Done Growing
         if( current -> getMeta() >= MAX_TILE_META){
           place_item( new item(ITEM_BERRY), current -> getX(), current -> getY());
-          replace_tile( current -> getX(), current -> getY(), TILE_SOIL, false);
+          replace_tile( current, TILE_SOIL, LAYER_BACKGROUND);
         }
       }
       // Tomatos
@@ -396,7 +395,7 @@ void tile_map::update(){
         // Done Growing
         if( current -> getMeta() >= MAX_TILE_META){
           place_item( new item(ITEM_TOMATO), current -> getX(), current -> getY());
-          replace_tile( current -> getX(), current -> getY(), TILE_SOIL, false);
+          replace_tile( current, TILE_SOIL, LAYER_BACKGROUND);
         }
       }
       // Carrots
@@ -407,7 +406,7 @@ void tile_map::update(){
         // Done Growing
         if( current -> getMeta() >= MAX_TILE_META){
           place_item( new item(ITEM_CARROT), current -> getX(), current -> getY());
-          replace_tile( current -> getX(), current -> getY(), TILE_SOIL, false);
+          replace_tile( current, TILE_SOIL, LAYER_BACKGROUND);
         }
       }
       // Lavender
@@ -418,7 +417,7 @@ void tile_map::update(){
         // Done Growing
         if( current -> getMeta() >= MAX_TILE_META){
           place_item( new item(ITEM_LAVENDER), current -> getX(), current -> getY());
-          replace_tile( current -> getX(), current -> getY(), TILE_SOIL, false);
+          replace_tile( current, TILE_SOIL, LAYER_BACKGROUND);
         }
       }
     }
