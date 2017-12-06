@@ -5,7 +5,7 @@ import string;
 import xml.etree.ElementTree as ET
 
 # TILES
-out_file = open("include/tile_defs.h","w"); #.H OUTPUT FILE NAME
+out_file = open("include/manager/tile_defs.h","w"); #.H OUTPUT FILE NAME
 
 tree = ET.parse('build/data/tiles.xml')
 root = tree.getroot()
@@ -30,7 +30,7 @@ out_file.close()
 
 
 # ITEMS
-out_file = open("include/item_defs.h","w"); #.H OUTPUT FILE NAME
+out_file = open("include/manager/item_defs.h","w"); #.H OUTPUT FILE NAME
 
 tree = ET.parse('build/data/items.xml')
 root = tree.getroot()
@@ -53,7 +53,7 @@ out_file.close()
 
 
 # SOUNDS
-out_file = open("include/sound_defs.h","w"); #.H OUTPUT FILE NAME
+out_file = open("include/manager/sound_defs.h","w"); #.H OUTPUT FILE NAME
 
 tree = ET.parse('build/data/sounds.xml')
 root = tree.getroot()
