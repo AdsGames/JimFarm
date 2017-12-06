@@ -5,7 +5,6 @@
 #include "character.h"
 #include "tile_map.h"
 #include "tools.h"
-#include "store.h"
 #include "menu.h"
 #include "keyListener.h"
 #include "mouseListener.h"
@@ -34,7 +33,6 @@ tile_map farm_map;
 character jim;
 menu main_menu;
 
-store main_store;
 game_menu main_game_menu;
 
 // FPS System
@@ -84,10 +82,10 @@ void update(){
     // HAXX
     // halp plz how do i coed?
     int menu_result = main_menu.update();
-    if(menu_result==2){
+    if(menu_result == 2){
       game_state = GAME;
     }
-    if(menu_result==0){
+    if(menu_result == 0){
       close_button_pressed=true;
     }
   }
@@ -97,17 +95,6 @@ void update(){
       // Update character
       farm_map.update();
       jim.update();
-
-      // Store update
-      main_store.update();
-
-      // Open store
-      /*if( jim.store_open){
-        main_store.open_store( &(jim.character_inv));
-      }
-      else{
-        main_store.close_store();
-      }*/
     }
     main_game_menu.update();
   }
@@ -139,15 +126,9 @@ void draw(){
     // Draw map
     farm_map.drawForeground( buffer);
 
-
-    // Allan says this is bad code.
-    // I disagree halfheartedly.
-    main_store.draw_background(buffer);
-
     // Draw JIM
     jim.drawForeground( buffer);
 
-    main_store.draw( buffer);
     main_game_menu.draw( buffer);
 
     // Stretch screen
@@ -207,8 +188,6 @@ void setup(){
   jim.load_data();
   jim.setWorld( &farm_map);
 
-  // Store
-  main_store.load_data();
   main_game_menu.load_data();
 }
 
