@@ -27,8 +27,9 @@ unsigned int messenger::numberMessages(){
 
 void messenger::draw( BITMAP *buffer, int x, int y){
   int offset = 0;
-  for( unsigned int i = 0; i < numberMessages(); i++){
-    textprintf_ex( buffer, font, x, y + offset, font_col, bg_col, ">%s %d", msgs.at(i).c_str(), numberMessages());
+  int numMsg = (signed)numberMessages();
+  for( int i = numMsg - 1; i > -1; i--){
+    textprintf_ex( buffer, font, x, y + offset, font_col, bg_col, ">%s", msgs.at(i).c_str());
 
     if( topDown)
       offset += text_height( font) + padding;

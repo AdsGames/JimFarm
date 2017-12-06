@@ -52,3 +52,26 @@ for item in root.findall('item'):
   out_file.write( "#define ITEM_%s %s\n" % (name, id))
 
 out_file.close()
+
+
+# SOUNDS
+out_file = open("include/sound_defs.h","w"); #.H OUTPUT FILE NAME
+
+tree = ET.parse('build/data/sounds.xml')
+root = tree.getroot()
+ 
+out_file.write( "#define SOUND_NULL -1\n")
+id = 0
+for sound in root.findall('sound'):
+  name = ""
+  if( sound.find('name').text != None):
+    name = sound.find('name').text
+  
+  name = name.upper()
+  name = "_".join(name.split())
+  
+  # print( name, id)
+  out_file.write( "#define SOUND_%s %s\n" % (name, id))
+  id += 1;
+
+out_file.close()

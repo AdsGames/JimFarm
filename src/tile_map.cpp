@@ -10,6 +10,9 @@
 #include "tile_defs.h"
 #include "item_defs.h"
 
+#include "sound_manager.h"
+#include "sound_defs.h"
+
 bool comparePtrToNode(tile *a, tile *b){
   return (*a < *b);
 }
@@ -44,7 +47,7 @@ tile_map::tile_map(){
 
   ticks = 0;
 
-  map_messages = new messenger( 4, false, -4);
+  map_messages = new messenger( 1, false, -4);
 }
 
 
@@ -101,6 +104,7 @@ void tile_map::load_images(){
 
   tile_type_manager::load("data/tiles.xml", false);
   tile_type_manager::load("data/items.xml", true);
+  sound_manager::load("data/sounds.xml");
 
   egg = load_sample_ex("sfx/egg.wav");
 }
@@ -204,30 +208,30 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
     if( backgroundTile && !foregroundTile){
       if( backgroundTile -> getID() == TILE_GRASS){
         replace_tile( inter_x, inter_y, TILE_SOIL, false);
-        //play_sample( hoe, 255, 125, 1000, 0);
+        sound_manager::play( SOUND_HOE);
       }
       else if( backgroundTile -> getID() == TILE_SOIL){
         replace_tile( inter_x, inter_y, TILE_PLOWED_SOIL, false);
-        //play_sample( hoe, 255, 125, 1000, 0);
+        sound_manager::play( SOUND_HOE);
       }
       else {
-        //push_message( "You can't hoe that");
+        map_messages -> push_message( "You can't hoe that");
       }
     }
     else {
-      //push_message( "You can't hoe there");
-      //play_sample( error, 255, 125, 1000, 0);
+      map_messages -> push_message( "You can't hoe there");
+      sound_manager::play( SOUND_ERROR);
     }
   }
   // Scythe
   else if( inHand -> getID() == ITEM_SCYTHE){
     if( foregroundTile && foregroundTile -> getID() == TILE_DENSE_GRASS){
       replace_tile( inter_x, inter_y, -1, true);
-      //play_sample( cut_scythe, 255, 125, 1000, 0);
+      sound_manager::play( SOUND_SCYTHE);
     }
     else {
-      //push_message( "You can't cut there");
-      //play_sample( error, 255, 125, 1000, 0);
+      map_messages -> push_message( "You can't cut there");
+      sound_manager::play( SOUND_ERROR);
     }
   }
   // Berry
@@ -236,8 +240,8 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
       replace_tile( inter_x, inter_y, TILE_BERRY, false);
     }
     else {
-      //push_message( "You must plant in ploughed soil");
-      //play_sample( error, 255, 125, 1000, 0);
+      map_messages -> push_message( "You must plant in ploughed soil");
+      sound_manager::play( SOUND_ERROR);
     }
   }
   // Tomato
@@ -246,8 +250,8 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
       replace_tile( inter_x, inter_y, TILE_TOMATO, false);
     }
     else{
-      //push_message( "You must plant in ploughed soil");
-      //play_sample( error, 255, 125, 1000, 0);
+      map_messages -> push_message( "You must plant in ploughed soil");
+      sound_manager::play( SOUND_ERROR);
     }
   }
   // Carrot
@@ -256,8 +260,8 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
       replace_tile( inter_x, inter_y, TILE_CARROT, false);
     }
     else{
-      //push_message( "You must plant in ploughed soil");
-      //play_sample( error, 255, 125, 1000, 0);
+      map_messages -> push_message( "You must plant in ploughed soil");
+      sound_manager::play( SOUND_ERROR);
     }
   }
   // Lavender
@@ -266,8 +270,8 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
       replace_tile( inter_x, inter_y, TILE_LAVENDER, false);
     }
     else{
-      //push_message( "You must plant in ploughed soil");
-      //play_sample( error, 255, 125, 1000, 0);
+      map_messages -> push_message( "You must plant in ploughed soil");
+      sound_manager::play( SOUND_ERROR);
     }
   }
   // Watering can
@@ -295,7 +299,7 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
     }
     else{
       push_message("Out of water");
-      play_sample( error, 255, 125, 1000, 0);
+      sound_manager::play( SOUND_ERROR);
     }
   }*/
   // Axe
@@ -305,8 +309,8 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
       //play_sample( cut_axe, 255, 125, 1000, 0);
     }
     else{
-      //push_message( "You can't chop that down");
-      //play_sample( error, 255, 125, 1000, 0);
+      map_messages -> push_message( "You can't chop that down");
+      sound_manager::play( SOUND_ERROR);
     }
   }
   // Shovel
@@ -314,15 +318,15 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
     //Literally the worst formatted if statement I've seen all week
     if( foregroundTile && (foregroundTile  -> getID() == TILE_BUSH || foregroundTile  -> getID() == TILE_STUMP)){
       replace_tile( inter_x, inter_y, TILE_NULL, true);
-      //play_sample(dig,255,125,1000,0);
+      sound_manager::play( SOUND_SHOVEL);
     }
     else if(  backgroundTile && backgroundTile -> getID() == TILE_GRASS && foregroundTile){
       replace_tile( inter_x, inter_y, 2,false);
-      //play_sample(dig,255,125,1000,0);
+      sound_manager::play( SOUND_SHOVEL);
     }
     else{
-      //push_message( "You can't dig that up");
-      //play_sample( error, 255, 125, 1000, 0);
+      map_messages -> push_message( "You can't dig that up");
+      sound_manager::play( SOUND_ERROR);
     }
   }
 }

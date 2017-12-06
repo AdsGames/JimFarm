@@ -221,8 +221,6 @@ void character::update(){
 
       // Action button
       if( keyListener::keyPressed[KEY_SPACE] || mouseListener::mouse_pressed & 1 || joy[0].button[0].b){
-        map_pointer -> getMessenger() -> push_message( "");
-
         tile *foregroundTile = map_pointer -> tile_at( indicator_x, indicator_y, FOREGROUND);
         tile *backgroundTile = map_pointer -> tile_at( indicator_x, indicator_y, BACKGROUND);
 
