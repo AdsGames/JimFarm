@@ -28,6 +28,9 @@ class tile_map
     tile_map();
     virtual ~tile_map();
 
+    // Init ticker
+    void init_ticker();
+
     // Constant
     int MAP_WIDTH;
     int MAP_HEIGHT;
@@ -54,13 +57,19 @@ class tile_map
     void remove_item( item *newItem);
     void remove_item_at( int positionX, int positionY);
 
+    // Interact with
+    void interact( int x, int y, item *inHand);
+
     // Map
     void update();
     void scroll( int player_x, int player_y);
     void load_map( std::string fileName);
     void generate_map();
 
-    int x, y;
+    // Get x and y
+    int getX(){ return this -> x; }
+    int getY(){ return this -> y; }
+
   protected:
 
   private:
@@ -70,8 +79,13 @@ class tile_map
 
     std::vector<map_item*> map_items;
 
+    int x, y;
+
     SAMPLE *egg;
     BITMAP *map_buffer;
+
+    static volatile int ticks;
+    static void tick_counter();
 };
 
 #endif // TILE_MAP_H

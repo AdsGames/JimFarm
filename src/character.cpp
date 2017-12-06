@@ -67,12 +67,12 @@ void character::draw( BITMAP *tempBuffer){
     if( direction == 1 || direction == 2){
       indicator_x = (x/16)*16;
       indicator_y = (y/16)*16 - (16 * ((direction * 2) - 3));
-      draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> x, indicator_y - map_pointer -> y);
+      draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> getX(), indicator_y - map_pointer -> getY());
     }
     else if( direction == 3 || direction == 4){
       indicator_x = (x/16)*16 - (16 * ((direction * 2) - 7));
       indicator_y = (y/16)*16;
-      draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> x, indicator_y - map_pointer -> y);
+      draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> getX(), indicator_y - map_pointer -> getY());
     }
   }
   else{
@@ -81,21 +81,21 @@ void character::draw( BITMAP *tempBuffer){
 
     // Only show if hands arent empty
     if( character_inv.getItem(selected_item) != NULL)
-      draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> x, indicator_y - map_pointer -> y);
+      draw_sprite( tempBuffer, indicator, indicator_x - map_pointer -> getX(), indicator_y - map_pointer -> getY());
   }
 
   // Draw frame
-  masked_blit( image, tempBuffer, floor(gameTick/4) * 16, (direction - 1) * 20, x - map_pointer -> x, y - map_pointer -> y - 8, 16, 20);
+  masked_blit( image, tempBuffer, floor(gameTick/4) * 16, (direction - 1) * 20, x - map_pointer -> getX(), y - map_pointer -> getY() - 8, 16, 20);
 
   // Selected item
   if( character_inv.getItem(selected_item) != NULL)
-    character_inv.getItem(selected_item) -> draw( x - map_pointer -> x, y - map_pointer -> y, tempBuffer);
+    character_inv.getItem(selected_item) -> draw( x - map_pointer -> getX(), y - map_pointer -> getY(), tempBuffer);
 }
 
 // Draw character to screen
 void character::drawForeground( BITMAP *tempBuffer){
   // Top of head
-  masked_blit( image, tempBuffer, floor(gameTick/4) * 16, (direction - 1) * 20, x - map_pointer -> x, y - map_pointer -> y - 8, 16, 8);
+  masked_blit( image, tempBuffer, floor(gameTick/4) * 16, (direction - 1) * 20, x - map_pointer -> getX(), y - map_pointer -> getY() - 8, 16, 8);
 
   // Inventory box
   if(draw_hud){
@@ -296,7 +296,7 @@ void character::update(){
           // Berry
           else if( character_inv.getItem(selected_item) -> getID() == ITEM_BERRY_SEED){
             if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
-              map_pointer -> replace_tile( indicator_x, indicator_y, TILE_BERRY_1, false);
+              map_pointer -> replace_tile( indicator_x, indicator_y, TILE_BERRY, false);
               if( random( 0, 2) == 0)
                 remove_item();
             }
@@ -308,7 +308,7 @@ void character::update(){
           // Tomato
           else if( character_inv.getItem(selected_item) -> getID() == ITEM_TOMATO_SEED){
             if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
-              map_pointer -> replace_tile( indicator_x, indicator_y, TILE_TOMATO_1, false);
+              map_pointer -> replace_tile( indicator_x, indicator_y, TILE_TOMATO, false);
               if( random( 0, 2) == 0)
                 remove_item();
             }
@@ -320,7 +320,7 @@ void character::update(){
           // Carrot
           else if( character_inv.getItem(selected_item) -> getID() == ITEM_CARROT_SEED){
             if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
-              map_pointer -> replace_tile( indicator_x, indicator_y, TILE_CARROT_1, false);
+              map_pointer -> replace_tile( indicator_x, indicator_y, TILE_CARROT, false);
               if( random( 0, 2) == 0)
                 remove_item();
             }
@@ -332,7 +332,7 @@ void character::update(){
           // Lavender
           else if( character_inv.getItem(selected_item) -> getID() == ITEM_LAVENDER_SEED){
             if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
-              map_pointer -> replace_tile( indicator_x, indicator_y, TILE_LAVENDER_1, false);
+              map_pointer -> replace_tile( indicator_x, indicator_y, TILE_LAVENDER, false);
               if( random( 0, 2) == 0)
                 remove_item();
             }
@@ -342,7 +342,7 @@ void character::update(){
             }
           }
           // Watering can
-          else if( character_inv.getItem(selected_item) -> getID() == ITEM_WATERING_CAN){
+          /*else if( character_inv.getItem(selected_item) -> getID() == ITEM_WATERING_CAN){
             if( backgroundTile && backgroundTile -> getID() == TILE_WELL_PATH){
               water = 4;
               push_message( "Watering can filled");
@@ -368,7 +368,7 @@ void character::update(){
               push_message("Out of water");
               play_sample( error, 255, 125, 1000, 0);
             }
-          }
+          }*/
           // Axe
           else if( character_inv.getItem(selected_item) -> getID() == ITEM_AXE){
             if( foregroundTile && foregroundTile  -> getID() == TILE_TREE){

@@ -6,14 +6,13 @@
 
 #include "tile_type.h"
 
+#define MAX_TILE_META 255
+
 class tile
 {
   public:
     tile(int newX, int newY, char newID);
     virtual ~tile();
-
-    // Positioning
-    int x, y;
 
     int getImgWidth(){ return tile_pointer -> getImgWidth();}
     int getImgHeight(){ return tile_pointer -> getImgHeight();}
@@ -28,11 +27,7 @@ class tile
     // Sorting stuff
     virtual bool operator < (const tile &other) const { return (y < other.y); }
 
-    virtual void run_tick();
-    bool requirements_met;
-    char tile_data;
 
-    tile_type *tile_pointer;
 
     bool isSolid(){ return tile_pointer -> getAttribute(); }
 
@@ -40,8 +35,22 @@ class tile
     void setID( unsigned char newID);
 
     std::string getName(){ return tile_pointer -> getName();}
+
+    tile_type *tile_pointer;
+
+    void setMeta( unsigned char meta ){ this -> meta = meta; }
+    unsigned char getMeta(){ return this -> meta; }
+    void addMeta( unsigned char amt ){ this -> meta += amt; }
+
+    int getX(){ return this -> x; }
+    int getY(){ return this -> y; }
   protected:
   private:
+    // Positioning
+    int x, y;
+
+    // Metadata info
+    unsigned char meta;
 };
 
 #endif // TILE_H

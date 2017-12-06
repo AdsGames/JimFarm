@@ -4,7 +4,8 @@
 
 // ITEM
 item::item( char newID){
-  item_pointer = tile_type_manager::getItemByID( newID);
+  this -> item_pointer = tile_type_manager::getItemByID( newID);
+  this -> meta = 0;
 }
 
 item::~item(){
@@ -12,7 +13,7 @@ item::~item(){
 }
 
 void item::draw( int newX, int newY, BITMAP *tempBuffer){
-  item_pointer -> draw( newX, newY, tempBuffer);
+  item_pointer -> draw( newX, newY, tempBuffer, getMeta());
 }
 
 void item::setID( unsigned char newID){

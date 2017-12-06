@@ -194,6 +194,7 @@ void setup(){
   set_close_button_callback(close_button_handler);
 
   // Nice Map
+  farm_map.init_ticker();
   farm_map.load_images();
   farm_map.generate_map();
 

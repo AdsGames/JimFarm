@@ -35,7 +35,7 @@ class tile_type{
     unsigned char getValue(){ return value; }
 
     // Draw
-    void draw( int x, int y, BITMAP *tempBuffer, char offset = 0);
+    void draw( int x, int y, BITMAP *tempBuffer, unsigned char meta = 0, char offset = 0);
 
     // Set sprite sheet
     void setSpriteSheet( BITMAP *newSpriteSheet);
@@ -60,6 +60,8 @@ class tile_type{
     unsigned char image_h, image_w;
 
     unsigned char value;
+
+    unsigned char num_images;
 
     BITMAP *sprite_sheet;
 

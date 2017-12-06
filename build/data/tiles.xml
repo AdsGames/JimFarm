@@ -19,8 +19,8 @@
     <name>Water</name>
 		<width>1</width>
 		<height>1</height>
-    <images type="" s_width="1" s_height="1">
-      <image_x>1</image_x>
+    <images type="animated" s_width="4" s_height="1">
+      <image_x>6</image_x>
       <image_y>0</image_y>
       <image_h>1</image_h>
       <image_w>1</image_w>
@@ -170,10 +170,10 @@
 	</tile>
   <!--BERRY-->
   <tile id="30">
-    <name>Berry 1</name>
+    <name>Berry</name>
 		<width>1</width>
 		<height>1</height>
-    <images type="" s_width="1" s_height="1">
+    <images type="meta_map" s_width="3" s_height="1">
       <image_x>0</image_x>
       <image_y>3</image_y>
       <image_h>1</image_h>
@@ -182,153 +182,41 @@
     <attrubite>NON_SOLID</attrubite>
     <random>0</random>
 	</tile>
-  <!--BERRY-->
+  <!--TOMATO-->
   <tile id="31">
-    <name>Berry 2</name>
+    <name>Tomato</name>
 		<width>1</width>
 		<height>1</height>
-    <images type="" s_width="1" s_height="1">
-      <image_x>1</image_x>
-      <image_y>3</image_y>
+    <images type="meta_map" s_width="3" s_height="1">
+      <image_x>0</image_x>
+      <image_y>4</image_y>
       <image_h>1</image_h>
       <image_w>1</image_w>
     </images>
     <attrubite>NON_SOLID</attrubite>
     <random>0</random>
 	</tile>
-  <!--BERRY-->
+  <!--CARROT-->
   <tile id="32">
-    <name>Berry 3</name>
+    <name>Carrot</name>
 		<width>1</width>
 		<height>1</height>
-    <images type="" s_width="1" s_height="1">
-      <image_x>2</image_x>
-      <image_y>3</image_y>
+    <images type="meta_map" s_width="3" s_height="1">
+      <image_x>0</image_x>
+      <image_y>4</image_y>
       <image_h>1</image_h>
       <image_w>1</image_w>
     </images>
     <attrubite>NON_SOLID</attrubite>
     <random>0</random>
 	</tile>
-  <!--TOMATO-->
+  <!--LAVENDER-->
   <tile id="33">
-    <name>Tomato 1</name>
+    <name>Lavender</name>
 		<width>1</width>
 		<height>1</height>
-    <images type="" s_width="1" s_height="1">
+    <images type="meta_map" s_width="3" s_height="1">
       <image_x>0</image_x>
-      <image_y>4</image_y>
-      <image_h>1</image_h>
-      <image_w>1</image_w>
-    </images>
-    <attrubite>NON_SOLID</attrubite>
-    <random>0</random>
-	</tile>
-  <!--TOMATO-->
-  <tile id="34">
-    <name>Tomato 2</name>
-		<width>1</width>
-		<height>1</height>
-    <images type="" s_width="1" s_height="1">
-      <image_x>1</image_x>
-      <image_y>4</image_y>
-      <image_h>1</image_h>
-      <image_w>1</image_w>
-    </images>
-    <attrubite>NON_SOLID</attrubite>
-    <random>0</random>
-	</tile>
-  <!--TOMATO-->
-  <tile id="35">
-    <name>Tomato 3</name>
-		<width>1</width>
-		<height>1</height>
-    <images type="" s_width="1" s_height="1">
-      <image_x>2</image_x>
-      <image_y>4</image_y>
-      <image_h>1</image_h>
-      <image_w>1</image_w>
-    </images>
-    <attrubite>NON_SOLID</attrubite>
-    <random>0</random>
-	</tile>
-  <!--CARROT-->
-  <tile id="36">
-    <name>Carrot 1</name>
-		<width>1</width>
-		<height>1</height>
-    <images type="" s_width="1" s_height="1">
-      <image_x>0</image_x>
-      <image_y>5</image_y>
-      <image_h>1</image_h>
-      <image_w>1</image_w>
-    </images>
-    <attrubite>NON_SOLID</attrubite>
-    <random>0</random>
-	</tile>
-  <!--CARROT-->
-  <tile id="37">
-    <name>Carrot 2</name>
-		<width>1</width>
-		<height>1</height>
-    <images type="" s_width="1" s_height="1">
-      <image_x>1</image_x>
-      <image_y>5</image_y>
-      <image_h>1</image_h>
-      <image_w>1</image_w>
-    </images>
-    <attrubite>NON_SOLID</attrubite>
-    <random>0</random>
-	</tile>
-  <!--CARROT-->
-  <tile id="38">
-    <name>Carrot 3</name>
-		<width>1</width>
-		<height>1</height>
-    <images type="" s_width="1" s_height="1">
-      <image_x>2</image_x>
-      <image_y>5</image_y>
-      <image_h>1</image_h>
-      <image_w>1</image_w>
-    </images>
-    <attrubite>NON_SOLID</attrubite>
-    <random>0</random>
-	</tile>
-  <!--LAVENDER-->
-  <tile id="39">
-    <name>Lavender 1</name>
-		<width>1</width>
-		<height>1</height>
-    <images type="" s_width="1" s_height="1">
-      <image_x>0</image_x>
-      <image_y>6</image_y>
-      <image_h>1</image_h>
-      <image_w>1</image_w>
-    </images>
-    <attrubite>NON_SOLID</attrubite>
-    <random>0</random>
-	</tile>
-  <!--LAVENDER-->
-  <tile id="40">
-    <name>Lavender 2</name>
-		<width>1</width>
-		<height>1</height>
-    <images type="" s_width="1" s_height="1">
-      <image_x>1</image_x>
-      <image_y>6</image_y>
-      <image_h>1</image_h>
-      <image_w>1</image_w>
-    </images>
-    <attrubite>NON_SOLID</attrubite>
-    <random>0</random>
-	</tile>
-  <!--LAVENDER-->
-  <tile id="41">
-    <name>Lavender 3</name>
-		<width>1</width>
-		<height>1</height>
-    <images type="" s_width="1" s_height="1">
-      <image_x>2</image_x>
       <image_y>6</image_y>
       <image_h>1</image_h>
       <image_w>1</image_w>
