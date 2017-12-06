@@ -43,6 +43,8 @@ tile_map::tile_map(){
   y = 0;
 
   ticks = 0;
+
+  map_messages = new messenger( 4, false, -4);
 }
 
 
@@ -87,6 +89,9 @@ void tile_map::drawForeground( BITMAP *tempBuffer){
     map_tiles_foreground.at(i) -> draw( map_buffer);
 
   masked_blit( map_buffer, tempBuffer, x, y, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+
+  // Message system
+  map_messages -> draw( tempBuffer, 5, 145);
 }
 
 // Load images
@@ -190,8 +195,136 @@ void tile_map::remove_item_at( int positionX, int positionY){
  * MAP
  */
 // Interact with
-void tile_map::interact( int x, int y, item *inHand){
+void tile_map::interact( int inter_x, int inter_y, item *inHand){
+  tile *foregroundTile = tile_at( inter_x, inter_y, FOREGROUND);
+  tile *backgroundTile = tile_at( inter_x, inter_y, BACKGROUND);
 
+  // Hoe
+  if( inHand -> getID() == ITEM_HOE){
+    if( backgroundTile && !foregroundTile){
+      if( backgroundTile -> getID() == TILE_GRASS){
+        replace_tile( inter_x, inter_y, TILE_SOIL, false);
+        //play_sample( hoe, 255, 125, 1000, 0);
+      }
+      else if( backgroundTile -> getID() == TILE_SOIL){
+        replace_tile( inter_x, inter_y, TILE_PLOWED_SOIL, false);
+        //play_sample( hoe, 255, 125, 1000, 0);
+      }
+      else {
+        //push_message( "You can't hoe that");
+      }
+    }
+    else {
+      //push_message( "You can't hoe there");
+      //play_sample( error, 255, 125, 1000, 0);
+    }
+  }
+  // Scythe
+  else if( inHand -> getID() == ITEM_SCYTHE){
+    if( foregroundTile && foregroundTile -> getID() == TILE_DENSE_GRASS){
+      replace_tile( inter_x, inter_y, -1, true);
+      //play_sample( cut_scythe, 255, 125, 1000, 0);
+    }
+    else {
+      //push_message( "You can't cut there");
+      //play_sample( error, 255, 125, 1000, 0);
+    }
+  }
+  // Berry
+  else if( inHand -> getID() == ITEM_BERRY_SEED){
+    if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
+      replace_tile( inter_x, inter_y, TILE_BERRY, false);
+    }
+    else {
+      //push_message( "You must plant in ploughed soil");
+      //play_sample( error, 255, 125, 1000, 0);
+    }
+  }
+  // Tomato
+  else if( inHand -> getID() == ITEM_TOMATO_SEED){
+    if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
+      replace_tile( inter_x, inter_y, TILE_TOMATO, false);
+    }
+    else{
+      //push_message( "You must plant in ploughed soil");
+      //play_sample( error, 255, 125, 1000, 0);
+    }
+  }
+  // Carrot
+  else if( inHand -> getID() == ITEM_CARROT_SEED){
+    if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
+      replace_tile( inter_x, inter_y, TILE_CARROT, false);
+    }
+    else{
+      //push_message( "You must plant in ploughed soil");
+      //play_sample( error, 255, 125, 1000, 0);
+    }
+  }
+  // Lavender
+  else if( inHand -> getID() == ITEM_LAVENDER_SEED){
+    if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
+      replace_tile( inter_x, inter_y, TILE_LAVENDER, false);
+    }
+    else{
+      //push_message( "You must plant in ploughed soil");
+      //play_sample( error, 255, 125, 1000, 0);
+    }
+  }
+  // Watering can
+  /*else if( character_inv.getItem(selected_item) -> getID() == ITEM_WATERING_CAN){
+    if( backgroundTile && backgroundTile -> getID() == TILE_WELL_PATH){
+      water = 4;
+      push_message( "Watering can filled");
+      play_sample( water_fill, 255, 125, 1000, 0);
+    }
+
+    else if(water > 0){
+      water--;
+      push_message("Watered");
+      play_sample( water_pour, 255, 125, 1000, 0);
+
+      // Berries
+      if( backgroundTile){
+        int wateringID = backgroundTile -> getID();
+        if( wateringID == TILE_BERRY_1 || wateringID == TILE_BERRY_2 || wateringID == TILE_BERRY_1 || wateringID == TILE_BERRY_2 ||
+          wateringID == TILE_CARROT_1 || wateringID == TILE_CARROT_2 || wateringID == TILE_LAVENDER_1 || wateringID == TILE_LAVENDER_2){
+
+          map_pointer -> replace_tile( indicator_x, indicator_y, wateringID + 1, false);
+        }
+      }
+    }
+    else{
+      push_message("Out of water");
+      play_sample( error, 255, 125, 1000, 0);
+    }
+  }*/
+  // Axe
+  else if( inHand -> getID() == ITEM_AXE){
+    if( foregroundTile && foregroundTile  -> getID() == TILE_TREE){
+      replace_tile( inter_x, inter_y, TILE_STUMP, true);
+      //play_sample( cut_axe, 255, 125, 1000, 0);
+    }
+    else{
+      //push_message( "You can't chop that down");
+      //play_sample( error, 255, 125, 1000, 0);
+    }
+  }
+  // Shovel
+  else if( inHand -> getID() == ITEM_SHOVEL){
+    //Literally the worst formatted if statement I've seen all week
+    if( foregroundTile && (foregroundTile  -> getID() == TILE_BUSH || foregroundTile  -> getID() == TILE_STUMP)){
+      replace_tile( inter_x, inter_y, TILE_NULL, true);
+      //play_sample(dig,255,125,1000,0);
+    }
+    else if(  backgroundTile && backgroundTile -> getID() == TILE_GRASS && foregroundTile){
+      replace_tile( inter_x, inter_y, 2,false);
+      //play_sample(dig,255,125,1000,0);
+    }
+    else{
+      //push_message( "You can't dig that up");
+      //play_sample( error, 255, 125, 1000, 0);
+    }
+  }
 }
 
 // Update tile map

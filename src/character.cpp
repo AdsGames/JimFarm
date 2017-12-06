@@ -18,9 +18,6 @@ character::character(){
   character_inv = inventory(8);
   selected_item = 0;
 
-  for( int i = 0; i < MAX_MESSAGES; i++)
-    player_messages[i] = "";
-
   money = 2;
 
   store_open = false;
@@ -119,20 +116,7 @@ void character::drawForeground( BITMAP *tempBuffer){
       textprintf_ex( tempBuffer,pixelart,205,5,makecol(0,0,0),-1,"x %i",money);
     else
       textprintf_ex( tempBuffer,pixelart,205,5,makecol(255,255,255),-1,"x %i",money);
-
-    // Message system
-    for( int i = 0; i < MAX_MESSAGES; i++)
-      textprintf_ex( tempBuffer,pixelart, 5, i * 10 + 145, makecol(255,255,255),-1,"> %s", (player_messages[i]).c_str());
   }
-}
-
-// Push message
-void character::push_message( std::string new_message){
-  for( int i = 0; i < MAX_MESSAGES - 1; i++)
-    player_messages[i] = player_messages[i + 1];
-
-  player_messages[MAX_MESSAGES - 1] = new_message;
-  //std::cout << player_messages[0] << "\n";
 }
 
 // Update player
@@ -158,7 +142,7 @@ void character::update(){
       keyListener::keyPressed[KEY_SPACE] = false;
 
       store_open = false;
-      push_message( "Come again");
+      map_pointer -> getMessenger() -> push_message( "Come again");
     }
   }
   // Move
@@ -222,7 +206,7 @@ void character::update(){
           play_sample( pickup, 255, 125, 1000, 0);
           if( character_inv.addItem( itemAtPos, selected_item)){
             map_pointer -> remove_item( itemAtPos);
-            push_message( "You pick up a " + character_inv.getItem(selected_item) -> getName());
+            map_pointer -> getMessenger() -> push_message( "You pick up a " + character_inv.getItem(selected_item) -> getName());
           }
         }
         // Drop
@@ -231,13 +215,13 @@ void character::update(){
           map_pointer -> place_item( character_inv.getItem(selected_item), indicator_x, indicator_y);
 
           if( character_inv.removeItem( selected_item))
-            push_message( "You drop your " + itemInHand -> getName());
+            map_pointer -> getMessenger() -> push_message( "You drop your " + itemInHand -> getName());
         }
       }
 
       // Action button
       if( keyListener::keyPressed[KEY_SPACE] || mouseListener::mouse_pressed & 1 || joy[0].button[0].b){
-        push_message( "");
+        map_pointer -> getMessenger() -> push_message( "");
 
         tile *foregroundTile = map_pointer -> tile_at( indicator_x, indicator_y, FOREGROUND);
         tile *backgroundTile = map_pointer -> tile_at( indicator_x, indicator_y, BACKGROUND);
@@ -249,153 +233,22 @@ void character::update(){
 
         // OPEN STORE
         if( backgroundTile && backgroundTile -> getID() == TILE_STORE_PATH){
-          push_message( "Danners Devices is CLOSED");
+          map_pointer -> getMessenger() -> push_message( "Danners Devices is CLOSED");
           //store_open = true;
         }
         // Nothing
         else if( !character_inv.getItem(selected_item) && backgroundTile && backgroundTile -> getID() != TILE_WELL_PATH){
           if( map_pointer -> item_at( indicator_x, indicator_y))
-            push_message( "There is a " + map_pointer -> item_at( indicator_x, indicator_y) -> getName() + " here");
+            map_pointer -> getMessenger() -> push_message( "There is a " + map_pointer -> item_at( indicator_x, indicator_y) -> getName() + " here");
           else{
-            push_message( "There is nothing of interest here");
+            map_pointer -> getMessenger() -> push_message( "There is nothing of interest here");
             play_sample( error, 255, 125, 1000, 0);
           }
         }
+
+        // Interact with map
         else if( character_inv.getItem( selected_item)){
-          // Hoe
-          if( character_inv.getItem(selected_item) -> getID() == ITEM_HOE){
-            if( backgroundTile && !foregroundTile){
-              if( backgroundTile -> getID() == TILE_GRASS){
-                map_pointer -> replace_tile( indicator_x, indicator_y, TILE_SOIL, false);
-                play_sample( hoe, 255, 125, 1000, 0);
-              }
-              else if( backgroundTile -> getID() == TILE_SOIL){
-                map_pointer -> replace_tile( indicator_x, indicator_y, TILE_PLOWED_SOIL, false);
-                play_sample( hoe, 255, 125, 1000, 0);
-              }
-              else {
-                push_message( "You can't hoe that");
-              }
-            }
-            else {
-              push_message( "You can't hoe there");
-              play_sample( error, 255, 125, 1000, 0);
-            }
-          }
-          // Scythe
-          else if( character_inv.getItem(selected_item) -> getID() == ITEM_SCYTHE){
-            if( foregroundTile && foregroundTile -> getID() == TILE_DENSE_GRASS){
-              map_pointer -> replace_tile( indicator_x, indicator_y, -1, true);
-              play_sample( cut_scythe, 255, 125, 1000, 0);
-            }
-            else {
-              push_message( "You can't cut there");
-              play_sample( error, 255, 125, 1000, 0);
-            }
-          }
-          // Berry
-          else if( character_inv.getItem(selected_item) -> getID() == ITEM_BERRY_SEED){
-            if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
-              map_pointer -> replace_tile( indicator_x, indicator_y, TILE_BERRY, false);
-              if( random( 0, 2) == 0)
-                remove_item();
-            }
-            else {
-              push_message( "You must plant in ploughed soil");
-              play_sample( error, 255, 125, 1000, 0);
-            }
-          }
-          // Tomato
-          else if( character_inv.getItem(selected_item) -> getID() == ITEM_TOMATO_SEED){
-            if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
-              map_pointer -> replace_tile( indicator_x, indicator_y, TILE_TOMATO, false);
-              if( random( 0, 2) == 0)
-                remove_item();
-            }
-            else{
-              push_message( "You must plant in ploughed soil");
-              play_sample( error, 255, 125, 1000, 0);
-            }
-          }
-          // Carrot
-          else if( character_inv.getItem(selected_item) -> getID() == ITEM_CARROT_SEED){
-            if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
-              map_pointer -> replace_tile( indicator_x, indicator_y, TILE_CARROT, false);
-              if( random( 0, 2) == 0)
-                remove_item();
-            }
-            else{
-              push_message( "You must plant in ploughed soil");
-              play_sample( error, 255, 125, 1000, 0);
-            }
-          }
-          // Lavender
-          else if( character_inv.getItem(selected_item) -> getID() == ITEM_LAVENDER_SEED){
-            if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
-              map_pointer -> replace_tile( indicator_x, indicator_y, TILE_LAVENDER, false);
-              if( random( 0, 2) == 0)
-                remove_item();
-            }
-            else{
-              push_message( "You must plant in ploughed soil");
-              play_sample( error, 255, 125, 1000, 0);
-            }
-          }
-          // Watering can
-          /*else if( character_inv.getItem(selected_item) -> getID() == ITEM_WATERING_CAN){
-            if( backgroundTile && backgroundTile -> getID() == TILE_WELL_PATH){
-              water = 4;
-              push_message( "Watering can filled");
-              play_sample( water_fill, 255, 125, 1000, 0);
-            }
-
-            else if(water > 0){
-              water--;
-              push_message("Watered");
-              play_sample( water_pour, 255, 125, 1000, 0);
-
-              // Berries
-              if( backgroundTile){
-                int wateringID = backgroundTile -> getID();
-                if( wateringID == TILE_BERRY_1 || wateringID == TILE_BERRY_2 || wateringID == TILE_BERRY_1 || wateringID == TILE_BERRY_2 ||
-                  wateringID == TILE_CARROT_1 || wateringID == TILE_CARROT_2 || wateringID == TILE_LAVENDER_1 || wateringID == TILE_LAVENDER_2){
-
-                  map_pointer -> replace_tile( indicator_x, indicator_y, wateringID + 1, false);
-                }
-              }
-            }
-            else{
-              push_message("Out of water");
-              play_sample( error, 255, 125, 1000, 0);
-            }
-          }*/
-          // Axe
-          else if( character_inv.getItem(selected_item) -> getID() == ITEM_AXE){
-            if( foregroundTile && foregroundTile  -> getID() == TILE_TREE){
-              map_pointer -> replace_tile( indicator_x, indicator_y, TILE_STUMP, true);
-              play_sample( cut_axe, 255, 125, 1000, 0);
-            }
-            else{
-              push_message( "You can't chop that down");
-              play_sample( error, 255, 125, 1000, 0);
-            }
-          }
-          // Shovel
-          else if( character_inv.getItem(selected_item) -> getID() == ITEM_SHOVEL){
-            //Literally the worst formatted if statement I've seen all week
-            if( foregroundTile && (foregroundTile  -> getID() == TILE_BUSH || foregroundTile  -> getID() == TILE_STUMP)){
-              map_pointer -> replace_tile( indicator_x, indicator_y, TILE_NULL, true);
-              play_sample(dig,255,125,1000,0);
-            }
-            else if(  backgroundTile && backgroundTile -> getID() == TILE_GRASS && foregroundTile){
-              map_pointer -> replace_tile( indicator_x, indicator_y, 2,false);
-              play_sample(dig,255,125,1000,0);
-            }
-            else{
-              push_message( "You can't dig that up");
-              play_sample( error, 255, 125, 1000, 0);
-            }
-          }
+          map_pointer -> interact( indicator_x, indicator_y, character_inv.getItem( selected_item));
         }
       }
     }

@@ -7,8 +7,6 @@
 #include "tile_map.h"
 #include "inventory.h"
 
-#define MAX_MESSAGES 1
-
 class character
 {
   public:
@@ -20,8 +18,6 @@ class character
 
     void draw( BITMAP *tempBuffer);
     void drawForeground( BITMAP *tempBuffer);
-
-    void push_message( std::string new_message);
 
     void update();
 
@@ -83,9 +79,6 @@ class character
     char gameTick;
     char direction;
     bool moving;
-
-    std::string player_messages[MAX_MESSAGES];
-    bool recent_message;
 };
 
 #endif // CHARACTER_H

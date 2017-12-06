@@ -7,6 +7,7 @@
 
 #include "tile.h"
 #include "item.h"
+#include "messenger.h"
 
 class map_item
 {
@@ -58,7 +59,7 @@ class tile_map
     void remove_item_at( int positionX, int positionY);
 
     // Interact with
-    void interact( int x, int y, item *inHand);
+    void interact( int inter_x, int inter_y, item *inHand);
 
     // Map
     void update();
@@ -70,6 +71,8 @@ class tile_map
     int getX(){ return this -> x; }
     int getY(){ return this -> y; }
 
+    // Get messenger
+    messenger *getMessenger(){ return this -> map_messages; }
   protected:
 
   private:
@@ -86,6 +89,8 @@ class tile_map
 
     static volatile int ticks;
     static void tick_counter();
+
+    messenger *map_messages;
 };
 
 #endif // TILE_MAP_H
