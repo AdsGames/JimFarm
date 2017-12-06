@@ -102,9 +102,17 @@ void tile_map::load_images(){
   tile_type_manager::sprite_sheet_tiles = load_bitmap_ex( "images/tiles.png");
   tile_type_manager::sprite_sheet_items = load_bitmap_ex( "images/items.png");
 
-  tile_type_manager::load("data/tiles.xml", false);
-  tile_type_manager::load("data/items.xml", true);
-  sound_manager::load("data/sounds.xml");
+  std::cout << "Loading data/tiles.xml \n";
+  if( tile_type_manager::load_tiles( "data/tiles.xml"))
+    abort_on_error( "Could not load data/tiles.xml");
+
+  std::cout << "Loading data/items.xml \n";
+  if( tile_type_manager::load_items( "data/items.xml"))
+    abort_on_error( "Could not load data/items.xml");
+
+  std::cout << "Loading data/sounds.xml \n";
+  if( sound_manager::load( "data/sounds.xml"))
+    abort_on_error( "Could not load data/sounds.xml");
 }
 
 
@@ -556,9 +564,6 @@ void tile_map::generate_map(){
 
 // Manually load new file
 void tile_map::load_map( std::string fileName){
-  // Loading
-  std::cout << "   MAPS\n-------------\n";
-
   //Change size
   std::string fileLoad = fileName + ".txt";
   std::ifstream findSize(fileLoad.c_str());
@@ -613,5 +618,4 @@ void tile_map::load_map( std::string fileName){
     }
     read2.close();
   }
-  std::cout << "\n\n";
 }

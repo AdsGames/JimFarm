@@ -18,55 +18,70 @@ sample_wrapper::sample_wrapper( SAMPLE *sample_ptr, int vol, int pan, int freq, 
   this -> loop = loop;
 }
 
+// List of sounds
 std::vector<sample_wrapper*> sound_manager::sound_defs;
 
-// Load sounds from file
-void sound_manager::load( std::string newFile){
-  rapidxml::xml_document<> doc;
-  std::ifstream file;
+/*
+ * Delete samples from memory on destroy
+ */
+sound_manager::~sound_manager() {
+  for( unsigned int i = 0; i < sound_defs.size(); i++)
+    destroy_sample( sound_defs.at(i) -> sample_ptr);
 
-  // Check exist
-  file.open(newFile.c_str());
+  sound_defs.clear();
+}
+
+/*
+ * Load sounds from file
+ * Errors: 1 File Not Found,
+ */
+int sound_manager::load( std::string newFile){
+  // Open file or abort if it does not exist
+  std::ifstream file(newFile.c_str());
+  if( !file)
+    return 1;
 
   // Create buffer
   std::stringstream buffer;
   buffer << file.rdbuf();
   std::string content(buffer.str());
+
+  // Get first node
+  rapidxml::xml_document<> doc;
   doc.parse<0>(&content[0]);
-
-  // Get first node and def iterator
   rapidxml::xml_node<> *allSounds = doc.first_node();
-  rapidxml::xml_node<> *cSound;
 
-  // Loading
-  std::cout << "   SOUNDS\n-------------\n";
+  // Define iterator
+  rapidxml::xml_node<> *cSound;
   cSound = allSounds -> first_node("sound");
 
-  // Load tiles
+  // Parse sounds
   for( ; cSound != NULL; cSound = cSound -> next_sibling()){
-    // Read xml variables
     std::string file = "sfx/";
     file += cSound-> first_node("file") -> value();
 
-    int volume = atoi(cSound-> first_node("volume") -> value());
-    int panning = atoi(cSound-> first_node("panning") -> value());
-    int frequency = atoi(cSound-> first_node("frequency") -> value());
-    int frequency_rand = atoi(cSound-> first_node("frequency_rand") -> value());
+    int volume = atoi( cSound -> first_node("volume") -> value());
+    int panning = atoi( cSound -> first_node("panning") -> value());
+    int frequency = atoi( cSound -> first_node("frequency") -> value());
+    int frequency_rand = atoi( cSound -> first_node("frequency_rand") -> value());
 
-    std::cout << "-> Loading sound:" << file << "  vol:" <<  volume << "  pan:" << panning << "  freq:" << frequency << "  freq rand:" << frequency_rand << "\n";
-
-    SAMPLE *tempSample = load_sample_ex(file.c_str());
+    SAMPLE *tempSample = load_sample_ex( file.c_str());
     sample_wrapper *tempWrapper = new sample_wrapper( tempSample, volume, panning, frequency, frequency_rand, false);
     sound_defs.push_back( tempWrapper);
   }
 
-  std::cout << "\n\n";
+  // Close
+  file.close();
+  return 0;
 }
 
 // Play sample
 void sound_manager::play( unsigned int sound_id){
-  if( sound_id < sound_defs.size())
+  if( sound_id < sound_defs.size()){
+    // Frequency randomization if requested
+    int freq_modulator = random( -sound_defs.at(sound_id) -> freq_rand, sound_defs.at(sound_id) -> freq_rand);
     play_sample( sound_defs.at(sound_id) -> sample_ptr, sound_defs.at(sound_id) -> vol,
-                 sound_defs.at(sound_id) -> pan, sound_defs.at(sound_id) -> freq,
+                 sound_defs.at(sound_id) -> pan, sound_defs.at(sound_id) -> freq + freq_modulator,
                  sound_defs.at(sound_id) -> loop);
+  }
 }

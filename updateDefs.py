@@ -36,6 +36,7 @@ tree = ET.parse('build/data/items.xml')
 root = tree.getroot()
  
 out_file.write( "#define ITEM_NULL -1\n")
+id = 0
 for item in root.findall('item'):
   name = ""
   if( item.find('name').text != None):
@@ -44,12 +45,9 @@ for item in root.findall('item'):
   name = name.upper()
   name = "_".join(name.split())
   
-  id = ""
-  if( item.get('id') != None):
-    id = item.get('id')
-  
   # print( name, id)
-  out_file.write( "#define ITEM_%s %s\n" % (name, id))
+  out_file.write( "#define ITEM_%s %d\n" % (name, id))
+  id += 1;
 
 out_file.close()
 
