@@ -43,7 +43,7 @@ void tile_type::draw( int x, int y, BITMAP *tempBuffer, unsigned char meta, char
   else if( image_type == "meta_map_2"){
     int imageNum = meta % num_images;
     draw_sprite( tempBuffer, images[imageNum], x, y - ((image_h * 16) - 16));
-    textprintf_ex( tempBuffer, font, x, y, 0xFFFFFF, -1, "%d", meta);
+    //textprintf_ex( tempBuffer, font, x, y, 0xFFFFFF, -1, "%d", meta);
   }
   else{
     draw_sprite( tempBuffer, images[0], x, y - ((image_h * 16) - 16));

@@ -15,8 +15,7 @@
 class map_item
 {
   public:
-    map_item();
-    map_item( int x, int y, item *itemPtr);
+    map_item( int x = 0, int y = 0, item *itemPtr = NULL);
     ~map_item();
 
     void draw( BITMAP *tempBuffer);
@@ -70,6 +69,7 @@ class tile_map
     void scroll( int player_x, int player_y);
     void load_map( std::string fileName);
     void generate_map();
+    void clear_map();
 
     // Get x and y
     int getX(){ return this -> x; }

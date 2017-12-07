@@ -20,10 +20,8 @@ bool comparePtrToNode(tile *a, tile *b){
 /*************
  * MAP ITEMS *
  *************/
-map_item::map_item(){
-  this -> x = 0;
-  this -> y = 0;
-  this -> itemPtr = NULL;
+map_item::~map_item(){
+  delete itemPtr;
 }
 
 map_item::map_item( int x, int y, item *itemPtr){
@@ -46,6 +44,7 @@ tile_map::tile_map(){
   y = 0;
 
   ticks = 0;
+  map_buffer = NULL;
 
   map_messages = new messenger( 1, false, -4);
 }
@@ -143,7 +142,7 @@ void tile_map::place_tile( tile* newTile, bool foreground){
   }
 }
 
-// Place tile on map if there isnt one
+// Place tile on map if there isnt one otherwise it deletes it
 bool tile_map::place_tile_safe( tile* newTile, bool foreground, int opposite_layer_id){
   tile *layerTile = tile_at( newTile -> getX(), newTile -> getY(), foreground);
   tile *notLayerTile = tile_at( newTile -> getX(), newTile -> getY(), !foreground);
@@ -157,6 +156,7 @@ bool tile_map::place_tile_safe( tile* newTile, bool foreground, int opposite_lay
       return true;
     }
   }
+  delete newTile;
   return false;
 }
 
@@ -173,7 +173,9 @@ void tile_map::remove_tile( tile* newTile, bool foreground){
   if( newTile){
     for( unsigned int i = 0; i < map_tiles.size(); i++){
       if( map_tiles.at(i) == newTile){
+        tile *tempPtr = map_tiles.at(i);
         map_tiles.erase( map_tiles.begin() + i);
+        delete tempPtr;
         break;
       }
     }
@@ -200,7 +202,7 @@ item *tile_map::item_at( int positionX, int positionY){
 
 // Place item on map
 void tile_map::place_item( item* newItem, int x, int y){
-  if( newItem != NULL){
+  if( newItem){
     map_item *newMapItem = new map_item( x, y, newItem);
     map_items.push_back( newMapItem);
   }
@@ -211,7 +213,9 @@ void tile_map::remove_item( item *newItem){
   if( newItem != NULL){
     for( unsigned int i = 0; i < map_items.size(); i++){
       if( map_items.at(i) -> itemPtr == newItem){
+        map_item *tempPtr = map_items.at(i);
         map_items.erase( map_items.begin() + i);
+        delete tempPtr;
         break;
       }
     }
@@ -355,6 +359,12 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
 
 // Update tile map
 void tile_map::update(){
+  //Reload map (used to test memory leaks)
+  if( key[KEY_R]){
+    clear_map();
+    generate_map();
+  }
+
   if( ticks >= 1){
     ticks = 0;
 
@@ -499,7 +509,7 @@ void tile_map::generate_map(){
       if( map_tiles_foreground.at(t) -> getID() == TILE_TREE && !random(0, 10))
         placed += place_tile_safe( new tile(TILE_TREE, map_tiles_foreground.at(t) -> getX() + random(-1, 1) * 16, map_tiles_foreground.at(t) -> getY() + random(-1, 1) * 16), FOREGROUND, TILE_GRASS);
 
-  // Place chickens (4)
+  // Place chickens
   placed = 0;
   while( placed < 3){
     int random_x = random( 0, MAP_WIDTH) * 16;
@@ -511,9 +521,9 @@ void tile_map::generate_map(){
     }
   }
 
-  // Place sticks (35)
+  // Place sticks
   placed = 0;
-  while( placed < 35){
+  while( placed < 10){
     int random_x = random( 0, MAP_WIDTH) * 16;
     int random_y = random( 0, MAP_HEIGHT) * 16;
     if(!solid_at( random_x, random_y)){
@@ -532,7 +542,8 @@ void tile_map::generate_map(){
   // SORT IT OUT!
   std::sort( map_tiles_foreground.begin(), map_tiles_foreground.end(), comparePtrToNode);
 
-  // Create map buffer
+  // Create map buffer (and destroy the old one)
+  destroy_bitmap(map_buffer);
   map_buffer = create_bitmap( MAP_WIDTH * 16, MAP_HEIGHT * 16);
 }
 
@@ -541,23 +552,20 @@ void tile_map::load_map( std::string fileName){
   //Change size
   std::string fileLoad = fileName + ".txt";
   std::ifstream findSize(fileLoad.c_str());
+
   MAP_WIDTH = 0;
   MAP_HEIGHT = 0;
+
   int data;
   while (findSize >> data) {
-    if(MAP_HEIGHT == 0){
-        MAP_WIDTH++;
-    }
-    if(findSize.peek() == '\n'){
-        MAP_HEIGHT++;
-    }
+    if(MAP_HEIGHT == 0)
+      MAP_WIDTH++;
+    if(findSize.peek() == '\n')
+      MAP_HEIGHT++;
   }
 
   //Setup Map
   if(fileName != "blank"){
-    map_tiles.clear();
-    map_tiles_foreground.clear();
-
     fileLoad = fileName + ".txt";
     std::ifstream read(fileLoad.c_str());
     std::cout << "Loading " << fileLoad << "\n";
@@ -566,8 +574,6 @@ void tile_map::load_map( std::string fileName){
       for (int i = 0; i < MAP_WIDTH; i++){
         int newTileType;
         read >> newTileType;
-        //std::cout << newTileType;
-        // Set tile type
         tile* newTile = new tile( newTileType, i * 16, t * 16);
         map_tiles.push_back( newTile);
       }
@@ -582,8 +588,6 @@ void tile_map::load_map( std::string fileName){
       for (int i = 0; i < MAP_WIDTH; i++){
         int newTileType;
         read2 >> newTileType;
-        //std::cout << newTileType;
-        // Set tile type
         if( newTileType != TILE_NULL){
           tile* newTile = new tile( newTileType, i * 16, t * 16);
           map_tiles_foreground.push_back( newTile);
@@ -592,4 +596,18 @@ void tile_map::load_map( std::string fileName){
     }
     read2.close();
   }
+}
+
+// Clear map
+void tile_map::clear_map(){
+  for( std::vector<tile*>::iterator i = map_tiles.begin(); i != map_tiles.end(); ++i)
+    delete *i;
+  for( std::vector<tile*>::iterator i = map_tiles_foreground.begin(); i != map_tiles_foreground.end(); ++i)
+    delete *i;
+  for( std::vector<map_item*>::iterator i = map_items.begin(); i != map_items.end(); ++i)
+    delete *i;
+
+  map_tiles.clear();
+  map_tiles_foreground.clear();
+  map_items.clear();
 }

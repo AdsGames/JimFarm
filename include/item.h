@@ -13,7 +13,7 @@ class item
   public:
     // Ctor and Dtor
     item( char newID, unsigned char meta = 0);
-    virtual ~item() {};
+    ~item();
 
     // Draw to screen
     void draw( int newX, int newY, BITMAP *tempBuffer);

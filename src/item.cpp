@@ -8,6 +8,11 @@ item::item( char newID, unsigned char meta){
   this -> meta = meta;
 }
 
+// Dtor
+item::~item(){
+
+}
+
 // Draw item to screen
 void item::draw( int newX, int newY, BITMAP *tempBuffer){
   item_pointer -> draw( newX, newY, tempBuffer, getMeta());
