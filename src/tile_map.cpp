@@ -415,7 +415,7 @@ void tile_map::update(){
         }
       }
       // Tomatos
-      if( current -> getID() == TILE_TOMATO){
+      else if( current -> getID() == TILE_TOMATO){
         // Grow a bit
         if( !random( 0, 2))
           current -> addMeta(1);
@@ -426,7 +426,7 @@ void tile_map::update(){
         }
       }
       // Carrots
-      if( current -> getID() == TILE_CARROT){
+      else if( current -> getID() == TILE_CARROT){
         // Grow a bit
         if( !random( 0, 5))
           current -> addMeta(1);
@@ -437,7 +437,7 @@ void tile_map::update(){
         }
       }
       // Lavender
-      if( current -> getID() == TILE_LAVENDER){
+      else if( current -> getID() == TILE_LAVENDER){
         // Grow a bit
         if( !random( 0, 10))
           current -> addMeta(1);
@@ -446,6 +446,20 @@ void tile_map::update(){
           place_item( new item(ITEM_LAVENDER), current -> getX(), current -> getY());
           replace_tile( current, TILE_SOIL, LAYER_BACKGROUND);
         }
+      }
+      // Plowed soil to soil
+      else if( current -> getID() == TILE_PLOWED_SOIL){
+        if( !random( 0, 10))
+          current -> addMeta(1);
+        if( current -> getMeta() >= 64)
+          replace_tile( current, TILE_SOIL, LAYER_BACKGROUND);
+      }
+      // Soil to grass
+      else if( current -> getID() == TILE_SOIL){
+        if( !random( 0, 10))
+          current -> addMeta(1);
+        if( current -> getMeta() >= 64)
+          replace_tile( current, TILE_GRASS, LAYER_BACKGROUND);
       }
     }
   }
