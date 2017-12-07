@@ -15,13 +15,14 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add directory="include" />
+					<Add directory="include/utility" />
+					<Add directory="include/manager" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 					<Add option="-lalpng" />
 					<Add option="-lalleg" />
 					<Add option="-lfmod" />
-					<Add directory="G:/TOJAM/Tojam11game/lib" />
 				</Linker>
 				<ExtraCommands>
 					<Add before="python updateDefs.py" />
@@ -35,17 +36,19 @@
 		<Unit filename="include/game_menu.h" />
 		<Unit filename="include/inventory.h" />
 		<Unit filename="include/item.h" />
-		<Unit filename="include/item_defs.h" />
-		<Unit filename="include/keyListener.h" />
+		<Unit filename="include/manager/item_defs.h" />
+		<Unit filename="include/manager/sound_defs.h" />
+		<Unit filename="include/manager/sound_manager.h" />
+		<Unit filename="include/manager/tile_defs.h" />
+		<Unit filename="include/manager/tile_type.h" />
+		<Unit filename="include/manager/tile_type_manager.h" />
 		<Unit filename="include/menu.h" />
-		<Unit filename="include/mouseListener.h" />
-		<Unit filename="include/store.h" />
+		<Unit filename="include/messenger.h" />
 		<Unit filename="include/tile.h" />
-		<Unit filename="include/tile_defs.h" />
 		<Unit filename="include/tile_map.h" />
-		<Unit filename="include/tile_type.h" />
-		<Unit filename="include/tile_type_manager.h" />
-		<Unit filename="include/tools.h" />
+		<Unit filename="include/utility/keyListener.h" />
+		<Unit filename="include/utility/mouseListener.h" />
+		<Unit filename="include/utility/tools.h" />
 		<Unit filename="res/resources.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
@@ -53,16 +56,17 @@
 		<Unit filename="src/game_menu.cpp" />
 		<Unit filename="src/inventory.cpp" />
 		<Unit filename="src/item.cpp" />
-		<Unit filename="src/keyListener.cpp" />
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/manager/sound_manager.cpp" />
+		<Unit filename="src/manager/tile_type.cpp" />
+		<Unit filename="src/manager/tile_type_manager.cpp" />
 		<Unit filename="src/menu.cpp" />
-		<Unit filename="src/mouseListener.cpp" />
-		<Unit filename="src/store.cpp" />
+		<Unit filename="src/messenger.cpp" />
 		<Unit filename="src/tile.cpp" />
 		<Unit filename="src/tile_map.cpp" />
-		<Unit filename="src/tile_type.cpp" />
-		<Unit filename="src/tile_type_manager.cpp" />
-		<Unit filename="src/tools.cpp" />
+		<Unit filename="src/utility/keyListener.cpp" />
+		<Unit filename="src/utility/mouseListener.cpp" />
+		<Unit filename="src/utility/tools.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
