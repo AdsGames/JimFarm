@@ -9,11 +9,11 @@
 #include "item_defs.h"
 
 // Ctor for tile
-tile::tile(int newX, int newY, char newID){
+tile::tile( char newID, int newX, int newY, unsigned char meta){
   this -> x = newX;
   this -> y = newY;
   this -> tile_pointer = tile_type_manager::getTileByID( newID);
-  this -> meta = 0;
+  this -> meta = meta;
 }
 
 // Draw tile to screen

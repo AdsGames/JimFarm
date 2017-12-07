@@ -3,9 +3,9 @@
 #include "tile_type_manager.h"
 
 // Ctor for item
-item::item( char newID){
+item::item( char newID, unsigned char meta){
   this -> item_pointer = tile_type_manager::getItemByID( newID);
-  this -> meta = 0;
+  this -> meta = meta;
 }
 
 // Draw item to screen

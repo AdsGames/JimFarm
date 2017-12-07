@@ -52,6 +52,7 @@ class tile_map
     // Tiles
     tile *tile_at( int positionX, int positionY, bool foreground);
     void place_tile( tile* newTile, bool foreground);
+    bool place_tile_safe( tile* newTile, bool foreground, int opposite_layer_id = -1);
     void replace_tile( tile *oldTile, int newID, bool foreground);
     void remove_tile( tile *newTile, bool foreground);
     bool solid_at( int positionX, int positionY);

@@ -38,6 +38,11 @@ void tile_type::draw( int x, int y, BITMAP *tempBuffer, unsigned char meta, char
   else if( image_type == "meta_map" || image_type == "animated"){
     int imageNum = floor((float(num_images) / 256.0f) * (float)meta);
     draw_sprite( tempBuffer, images[imageNum], x, y - ((image_h * 16) - 16));
+    //textprintf_ex( tempBuffer, font, x, y, 0xFFFFFF, -1, "%d", meta);
+  }
+  else if( image_type == "meta_map_2"){
+    int imageNum = meta % num_images;
+    draw_sprite( tempBuffer, images[imageNum], x, y - ((image_h * 16) - 16));
     textprintf_ex( tempBuffer, font, x, y, 0xFFFFFF, -1, "%d", meta);
   }
   else{
@@ -64,7 +69,7 @@ void tile_type::setImageType( std::string newImageType, int newSheetWidth, int n
   num_images = sheet_width * sheet_height;
 
   // Split up those images
-  if( image_type == "dynamic" || image_type == "meta_map" || image_type == "animated"){
+  if( image_type == "dynamic" || image_type == "meta_map" || image_type == "meta_map_2" || image_type == "animated"){
     for( int t = 0; t < sheet_height; t++){
       for( int i = 0; i < sheet_width; i++){
         images[(t * sheet_width) + i] = create_bitmap( image_w * 16, image_h * 16);

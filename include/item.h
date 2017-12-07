@@ -12,7 +12,7 @@ class item
 {
   public:
     // Ctor and Dtor
-    item( char newID);
+    item( char newID, unsigned char meta = 0);
     virtual ~item() {};
 
     // Draw to screen

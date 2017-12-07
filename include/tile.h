@@ -12,7 +12,7 @@ class tile
 {
   public:
     // Ctor and Dtor
-    tile(int newX, int newY, char newID);
+    tile( char newID, int newX, int newY, unsigned char meta = 0);
     virtual ~tile() {};
 
     // Define < operator for sorting

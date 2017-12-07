@@ -135,7 +135,7 @@ tile *tile_map::tile_at( int positionX, int positionY, bool foreground){
 
 // Place tile on map
 void tile_map::place_tile( tile* newTile, bool foreground){
-  if( newTile != NULL){
+  if( newTile){
     if( foreground)
       map_tiles_foreground.push_back( newTile);
     else
@@ -143,17 +143,34 @@ void tile_map::place_tile( tile* newTile, bool foreground){
   }
 }
 
+// Place tile on map if there isnt one
+bool tile_map::place_tile_safe( tile* newTile, bool foreground, int opposite_layer_id){
+  tile *layerTile = tile_at( newTile -> getX(), newTile -> getY(), foreground);
+  tile *notLayerTile = tile_at( newTile -> getX(), newTile -> getY(), !foreground);
+
+  if( opposite_layer_id == -1 || (notLayerTile && notLayerTile -> getID() == opposite_layer_id)){
+    if( newTile && !layerTile){
+      if( foreground)
+        map_tiles_foreground.push_back( newTile);
+      else
+        map_tiles.push_back( newTile);
+      return true;
+    }
+  }
+  return false;
+}
+
 // Replace tile on map
 void tile_map::replace_tile( tile *oldTile, int newID, bool foreground){
-  if( oldTile != NULL){
+  if( oldTile){
     remove_tile( oldTile, foreground);
-    place_tile( new tile(oldTile -> getX(), oldTile -> getY(), newID), foreground);
+    place_tile( new tile( newID, oldTile -> getX(), oldTile -> getY()), foreground);
   }
 }
 
 // Remove tile from map
 void tile_map::remove_tile( tile* newTile, bool foreground){
-  if( newTile != NULL){
+  if( newTile){
     for( unsigned int i = 0; i < map_tiles.size(); i++){
       if( map_tiles.at(i) == newTile){
         map_tiles.erase( map_tiles.begin() + i);
@@ -441,118 +458,76 @@ void tile_map::scroll( int player_x, int player_y){
 
 // Generate map
 void tile_map::generate_map(){
+  // Base map
   load_map( "data/map");
 
-  int tempMapForeground[MAP_WIDTH][MAP_HEIGHT];
-
-  // Generate map
-  for( int i = 0; i < MAP_WIDTH; i++){
-    for( int t = 0; t < MAP_HEIGHT; t++){
-      tempMapForeground[i][t] = TILE_NULL;
-
-      // Dense grass
-      if( random( 0, 10) == 0){
-        tempMapForeground[i][t] = TILE_DENSE_GRASS;
-      }
-      // Trees
-      else if( random( 0, 30) == 0){
-        tempMapForeground[i][t] = TILE_TREE;
-      }
-      // Bushes
-      else if( random( 0, 20) == 0){
-        tempMapForeground[i][t] = TILE_BUSH;
-      }
-    }
+  // Place grass
+  int placed = 0;
+  while( placed < 10){
+    int random_x = random( 0, MAP_WIDTH) * 16;
+    int random_y = random( 0, MAP_HEIGHT) * 16;
+    tile *backgroundTile = tile_at( random_x, random_y, BACKGROUND);
+    placed += place_tile_safe( new tile( TILE_DENSE_GRASS, random_x, random_y, random(0, 5)), FOREGROUND, TILE_GRASS);
   }
 
   // Grow Grass
-  for( int i = 0; i < MAP_WIDTH; i++){
-    // Who the frick uses t as an iterator?
-    // Allan, that's who!
-    for( int t = 0; t < MAP_HEIGHT; t++){
-      if( tempMapForeground[i][t] == TILE_DENSE_GRASS){
-        if( i > 0 && random( 0, 2) == 0 && tempMapForeground[i][t] == TILE_NULL){
-          tempMapForeground[i - 1][t] = TILE_DENSE_GRASS;
-        }
-        if( i < MAP_WIDTH - 1 && random( 0, 2) == 0 && tempMapForeground[i][t] == TILE_NULL){
-          tempMapForeground[i + 1][t] = TILE_DENSE_GRASS;
-        }
-        if( t > 0 && random( 0, 2) == 0 && tempMapForeground[i][t] == TILE_NULL){
-          tempMapForeground[i][t - 1] = TILE_DENSE_GRASS;
-        }
-        if( t < MAP_HEIGHT - 1 && random( 0, 2) == 0 && tempMapForeground[i][t] == TILE_NULL){
-          tempMapForeground[i][t + 1] = TILE_DENSE_GRASS;
-        }
+  placed = 0;
+  while( placed < 100){
+    for( unsigned int t = 0; t < map_tiles_foreground.size(); t++){
+      if( map_tiles_foreground.at(t) -> getID() == TILE_DENSE_GRASS && !random(0, 10)){
+        tile *current = map_tiles_foreground.at(t);
+        placed += place_tile_safe( new tile(TILE_DENSE_GRASS, current -> getX() + random(-1, 1) * 16,
+                                            current -> getY() + random(-1, 1) * 16, current -> getMeta()),
+                                  FOREGROUND, TILE_GRASS);
       }
     }
   }
 
-  // Spread Trees
-  for( int j = 0; j < 5; j++){
-    for( int i = 0; i < MAP_WIDTH; i++){
-      for( int t = 0; t < MAP_HEIGHT; t++){
-        if( tempMapForeground[i][t] == TILE_TREE){
-          if( i > 0 && random( 0, 5) == 0  && tempMapForeground[i - 1][t] == TILE_NULL){
-            tempMapForeground[i - 1][t] = TILE_TREE;
-          }
-          if( i < MAP_WIDTH - 1 && random( 0, 5) == 0 && tempMapForeground[i + 1][t] == TILE_NULL){
-            tempMapForeground[i + 1][t] = TILE_TREE;
-          }
-          if( t > 0 && random( 0, 5) == 0 && tempMapForeground[i][t - 1] == TILE_NULL){
-            tempMapForeground[i][t - 1] = TILE_TREE;
-          }
-          if( t < MAP_HEIGHT - 1 && random( 0, 5) == 0 && tempMapForeground[i][t + 1] == TILE_NULL){
-            tempMapForeground[i][t + 1] = TILE_TREE;
-          }
-        }
-      }
-    }
+  // Place trees
+  placed = 0;
+  while( placed < 20){
+    int random_x = random( 0, MAP_WIDTH) * 16;
+    int random_y = random( 0, MAP_HEIGHT) * 16;
+    tile *backgroundTile = tile_at( random_x, random_y, BACKGROUND);
+    placed += place_tile_safe( new tile( TILE_TREE, random_x, random_y), FOREGROUND, TILE_GRASS);
   }
 
-  // Turn numbers into objects
-  for( int i = 0; i < MAP_WIDTH; i++){
-    for( int t = 0; t < MAP_HEIGHT; t++){
-      tile *backgroundTile = tile_at( i * 16, t * 16, BACKGROUND);
-      tile *foregroundTile = tile_at( i * 16, t * 16, FOREGROUND);
-      if( backgroundTile && backgroundTile -> getID() == TILE_GRASS && !foregroundTile){
-        if( tempMapForeground[i][t] != TILE_NULL){
-          tile* newTile2 = new tile( i * 16, t * 16, tempMapForeground[i][t]);
-          map_tiles_foreground.push_back( newTile2);
-        }
-      }
-    }
-  }
-
-  // Place hoe ( 1)
-  place_item( new item(ITEM_HOE), 17 * 16, 5 * 16);
-
-  place_item( new item(ITEM_CARROT_SEED), 18 * 16, 5 * 16);
-  place_item( new item(ITEM_LAVENDER_SEED), 19 * 16, 5 * 16);
-  place_item( new item(ITEM_BERRY_SEED), 20 * 16, 5 * 16);
-  place_item( new item(ITEM_TOMATO_SEED), 21 * 16, 5 * 16);
+  // Grow trees
+  placed = 0;
+  while( placed < 40)
+    for( unsigned int t = 0; t < map_tiles_foreground.size(); t++)
+      if( map_tiles_foreground.at(t) -> getID() == TILE_TREE && !random(0, 10))
+        placed += place_tile_safe( new tile(TILE_TREE, map_tiles_foreground.at(t) -> getX() + random(-1, 1) * 16, map_tiles_foreground.at(t) -> getY() + random(-1, 1) * 16), FOREGROUND, TILE_GRASS);
 
   // Place chickens (4)
-  int placed = 100;
+  placed = 0;
   while( placed < 3){
     int random_x = random( 0, MAP_WIDTH) * 16;
     int random_y = random( 0, MAP_HEIGHT) * 16;
     tile *foregroundTile = tile_at( random_x, random_y, FOREGROUND);
     if( foregroundTile && foregroundTile -> getID() == TILE_DENSE_GRASS){
       place_item( new item( ITEM_CHICKEN), random_x, random_y);
-      placed += 1;
+      placed ++;
     }
   }
 
-  placed = 110;
+  // Place sticks (35)
+  placed = 0;
   while( placed < 35){
     int random_x = random( 0, MAP_WIDTH) * 16;
     int random_y = random( 0, MAP_HEIGHT) * 16;
     if(!solid_at( random_x, random_y)){
       place_item( new item( ITEM_STICK), random_x, random_y );
-      placed += 1;
+      placed ++;
     }
   }
 
+  // Place items
+  place_item( new item(ITEM_HOE), 17 * 16, 5 * 16);
+  place_item( new item(ITEM_CARROT_SEED), 18 * 16, 5 * 16);
+  place_item( new item(ITEM_LAVENDER_SEED), 19 * 16, 5 * 16);
+  place_item( new item(ITEM_BERRY_SEED), 20 * 16, 5 * 16);
+  place_item( new item(ITEM_TOMATO_SEED), 21 * 16, 5 * 16);
 
   // SORT IT OUT!
   std::sort( map_tiles_foreground.begin(), map_tiles_foreground.end(), comparePtrToNode);
@@ -593,7 +568,7 @@ void tile_map::load_map( std::string fileName){
         read >> newTileType;
         //std::cout << newTileType;
         // Set tile type
-        tile* newTile = new tile( i * 16, t * 16, newTileType);
+        tile* newTile = new tile( newTileType, i * 16, t * 16);
         map_tiles.push_back( newTile);
       }
     }
@@ -610,7 +585,7 @@ void tile_map::load_map( std::string fileName){
         //std::cout << newTileType;
         // Set tile type
         if( newTileType != TILE_NULL){
-          tile* newTile = new tile( i * 16, t * 16, newTileType);
+          tile* newTile = new tile( newTileType, i * 16, t * 16);
           map_tiles_foreground.push_back( newTile);
         }
       }
