@@ -70,8 +70,8 @@ class tile_map
     void load_map( std::string fileName);
     void generate_map();
     void clear_map();
-    void update_bitmask( tile *newTile);
-    void update_bitmask_surround( tile *newTile);
+    void update_bitmask( tile *newTile, bool layer = LAYER_BACKGROUND);
+    void update_bitmask_surround( tile *newTile, bool layer = LAYER_BACKGROUND);
 
     // Get x and y
     int getX(){ return this -> x; }

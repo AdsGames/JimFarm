@@ -439,14 +439,9 @@ void tile_map::update(){
           replace_tile( current, TILE_SOIL, LAYER_BACKGROUND);
         }
       }
-      // Plowed soil to soil
+      // Plowed soil to grass
       /*else if( current -> getID() == TILE_PLOWED_SOIL){
-        if( !random( 0, 100))
-          replace_tile( current, TILE_SOIL, LAYER_BACKGROUND);
-      }
-      // Soil to grass
-      else if( current -> getID() == TILE_SOIL){
-        if( !random( 0, 100))
+        if( !random( 0, 1000))
           replace_tile( current, TILE_GRASS, LAYER_BACKGROUND);
       }*/
     }
@@ -469,14 +464,14 @@ void tile_map::scroll( int player_x, int player_y){
 }
 
 // Update bitmask
-void tile_map::update_bitmask( tile *newTile){
+void tile_map::update_bitmask( tile *newTile, bool layer){
   if( newTile && newTile -> needsBitmask()){
     int mask = 0;
 
     for( int i = 0; i < 4; i ++){
       int offset_x = sin( M_PI * ( i / 2.0f)) *  16;
       int offset_y = cos( M_PI * ( i / 2.0f)) * -16;
-      tile *current = tile_at( newTile -> getX() + offset_x, newTile -> getY() + offset_y, LAYER_BACKGROUND);
+      tile *current = tile_at( newTile -> getX() + offset_x, newTile -> getY() + offset_y, layer);
       if( current && current -> getID() == newTile -> getID())
         mask += pow( 2, i);
     }
@@ -486,13 +481,13 @@ void tile_map::update_bitmask( tile *newTile){
 }
 
 // Update bitmask (and neighbours)
-void tile_map::update_bitmask_surround( tile *newTile){
+void tile_map::update_bitmask_surround( tile *newTile, bool layer){
   if( newTile){
     update_bitmask( newTile);
     for( int i = 0; i < 4; i ++){
       int offset_x = sin( M_PI * ( i / 2.0f)) *  16;
       int offset_y = cos( M_PI * ( i / 2.0f)) * -16;
-      tile *current = tile_at( newTile -> getX() + offset_x, newTile -> getY() + offset_y, LAYER_BACKGROUND);
+      tile *current = tile_at( newTile -> getX() + offset_x, newTile -> getY() + offset_y, layer);
       if( current)
         update_bitmask( current);
     }
@@ -576,6 +571,8 @@ void tile_map::generate_map(){
   // Update masks
   for( unsigned int i = 0; i < map_tiles.size(); i++)
     update_bitmask( map_tiles.at(i));
+  for( unsigned int i = 0; i < map_tiles_foreground.size(); i++)
+    update_bitmask( map_tiles_foreground.at(i), LAYER_FOREGROUND);
 
   // SORT IT OUT!
   std::sort( map_tiles_foreground.begin(), map_tiles_foreground.end(), comparePtrToNode);

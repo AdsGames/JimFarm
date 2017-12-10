@@ -61,7 +61,23 @@
     <name>Well Path</name>
     <width>1</width>
     <height>1</height>
-    <image type="animated" s_w="3" s_h="3" x="4" y="4" h="1" w="1" />
+    <image type="" s_w="1" s_h="1" x="1" y="0" h="1" w="1" />
+    <attrubite>NON_SOLID</attrubite>
+  </tile>
+	<!--FENCE-->
+  <tile id="8">
+    <name>Fence</name>
+    <width>1</width>
+    <height>1</height>
+    <image type="dynamic" s_w="4" s_h="4" x="12" y="8" h="1" w="1" />
+    <attrubite>SOLID</attrubite>
+  </tile>
+  <!--FENCE DOOR-->
+  <tile id="9">
+    <name>Fence Door</name>
+    <width>1</width>
+    <height>1</height>
+    <image type="" s_w="1" s_h="1" x="1" y="2" h="1" w="1" />
     <attrubite>NON_SOLID</attrubite>
   </tile>
   <!--STUMP-->
@@ -85,7 +101,7 @@
     <name>Store path</name>
     <width>1</width>
     <height>1</height>
-    <image type="" s_w="1" s_h="1" x="3" y="4" h="1" w="1" />
+    <image type="" s_w="1" s_h="1" x="1" y="0" h="1" w="1" />
     <attrubite>NON_SOLID</attrubite>
   </tile>
   <!--PATH-->
@@ -127,54 +143,6 @@
     <height>1</height>
     <image type="meta_map" s_w="3" s_h="1" x="0" y="6" h="1" w="1" />
     <attrubite>NON_SOLID</attrubite>
-  </tile>
-  <!--FENCE 1-->
-  <tile id="53">
-    <name>Fence 1</name>
-    <width>1</width>
-    <height>1</height>
-    <image type="" s_w="1" s_h="1" x="5" y="0" h="1" w="1" />
-    <attrubite>SOLID</attrubite>
-  </tile>
-  <!--FENCE DOOR-->
-  <tile id="54">
-    <name>Fence Door</name>
-    <width>1</width>
-    <height>1</height>
-    <image type="" s_w="1" s_h="1" x="1" y="2" h="1" w="1" />
-    <attrubite>NON_SOLID</attrubite>
-  </tile>
-  <!--FENCE 2-->
-  <tile id="55">
-    <name>Fence 2</name>
-    <width>1</width>
-    <height>1</height>
-    <image type="" s_w="1" s_h="1" x="0" y="2" h="1" w="1" />
-    <attrubite>SOLID</attrubite>
-  </tile>
-  <!--FENCE 3-->
-  <tile id="56">
-    <name>Fence 3</name>
-    <width>1</width>
-    <height>1</height>
-    <image type="" s_w="1" s_h="1" x="0" y="1" h="1" w="1" />
-    <attrubite>SOLID</attrubite>
-  </tile>
-  <!--FENCE 4-->
-  <tile id="57">
-    <name>Fence 4</name>
-    <width>1</width>
-    <height>1</height>
-    <image type="" s_w="1" s_h="1" x="2" y="2" h="1" w="1" />
-    <attrubite>SOLID</attrubite>
-  </tile>
-  <!--FENCE 5-->
-  <tile id="58">
-    <name>Fence 5</name>
-    <width>1</width>
-    <height>1</height>
-    <image type="" s_w="1" s_h="1" x="2" y="1" h="1" w="1" />
-    <attrubite>SOLID</attrubite>
   </tile>
   <!--PATCHY GRASS-->
   <tile id="59">
