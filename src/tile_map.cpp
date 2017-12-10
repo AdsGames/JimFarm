@@ -305,33 +305,22 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
     }
   }
   // Watering can
-  /*else if( character_inv.getItem(selected_item) -> getID() == ITEM_WATERING_CAN){
+  else if( inHand -> getID() == ITEM_WATERING_CAN){
     if( backgroundTile && backgroundTile -> getID() == TILE_WELL_PATH){
-      water = 4;
-      push_message( "Watering can filled");
+      map_messages -> push_message( "Watering can filled");
+      inHand -> setMeta(8);
       sound_manager::play( SOUND_WATER_FILL);
     }
-
-    else if(water > 0){
-      water--;
-      push_message("Watered");
+    else if( inHand -> getMeta() > 0){
+      inHand -> changeMeta(-1);
+      map_messages -> push_message("Watered");
       sound_manager::play( SOUND_WATER_POUR);
-
-      // Berries
-      if( backgroundTile){
-        int wateringID = backgroundTile -> getID();
-        if( wateringID == TILE_BERRY_1 || wateringID == TILE_BERRY_2 || wateringID == TILE_BERRY_1 || wateringID == TILE_BERRY_2 ||
-          wateringID == TILE_CARROT_1 || wateringID == TILE_CARROT_2 || wateringID == TILE_LAVENDER_1 || wateringID == TILE_LAVENDER_2){
-
-          map_pointer -> replace_tile( indicator_x, indicator_y, wateringID + 1, LAYER_BACKGROUND);
-        }
-      }
     }
     else{
-      push_message("Out of water");
+      map_messages -> push_message("Out of water");
       sound_manager::play( SOUND_ERROR);
     }
-  }*/
+  }
   // Axe
   else if( inHand -> getID() == ITEM_AXE){
     if( foregroundTile && foregroundTile  -> getID() == TILE_TREE){
@@ -403,14 +392,14 @@ void tile_map::update(){
 
       // Animations
       if( current -> getID() == TILE_WATER){
-        current -> addMeta(8);
+        current -> changeMeta(8);
       }
 
       // Berries
       if( current -> getID() == TILE_BERRY){
         // Grow a bit
         if( true)
-          current -> addMeta(1);
+          current -> changeMeta(1);
         // Done Growing
         if( current -> getMeta() >= MAX_TILE_META){
           place_item( new item(ITEM_BERRY), current -> getX(), current -> getY());
@@ -421,7 +410,7 @@ void tile_map::update(){
       else if( current -> getID() == TILE_TOMATO){
         // Grow a bit
         if( !random( 0, 2))
-          current -> addMeta(1);
+          current -> changeMeta(1);
         // Done Growing
         if( current -> getMeta() >= MAX_TILE_META){
           place_item( new item(ITEM_TOMATO), current -> getX(), current -> getY());
@@ -432,7 +421,7 @@ void tile_map::update(){
       else if( current -> getID() == TILE_CARROT){
         // Grow a bit
         if( !random( 0, 5))
-          current -> addMeta(1);
+          current -> changeMeta(1);
         // Done Growing
         if( current -> getMeta() >= MAX_TILE_META){
           place_item( new item(ITEM_CARROT), current -> getX(), current -> getY());
@@ -443,7 +432,7 @@ void tile_map::update(){
       else if( current -> getID() == TILE_LAVENDER){
         // Grow a bit
         if( !random( 0, 10))
-          current -> addMeta(1);
+          current -> changeMeta(1);
         // Done Growing
         if( current -> getMeta() >= MAX_TILE_META){
           place_item( new item(ITEM_LAVENDER), current -> getX(), current -> getY());
@@ -582,6 +571,7 @@ void tile_map::generate_map(){
   place_item( new item(ITEM_LAVENDER_SEED), 19 * 16, 5 * 16);
   place_item( new item(ITEM_BERRY_SEED), 20 * 16, 5 * 16);
   place_item( new item(ITEM_TOMATO_SEED), 21 * 16, 5 * 16);
+  place_item( new item(ITEM_WATERING_CAN), 17 * 16, 6 * 16);
 
   // Update masks
   for( unsigned int i = 0; i < map_tiles.size(); i++)

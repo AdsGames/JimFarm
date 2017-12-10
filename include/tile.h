@@ -38,7 +38,7 @@ class tile
     // Access and set meta data byte
     void setMeta( unsigned char meta ){ this -> meta = meta; }
     unsigned char getMeta(){ return this -> meta; }
-    void addMeta( unsigned char amt ){ this -> meta += amt; }
+    void changeMeta( unsigned char amt ){ this -> meta += amt; }
 
     // Get position
     int getX(){ return this -> x; }
