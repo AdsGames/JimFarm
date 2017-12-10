@@ -32,15 +32,12 @@ tile_type::~tile_type(){}
 
 // Draw tile
 void tile_type::draw( int x, int y, BITMAP *tempBuffer, unsigned char meta, char offset){
-  if( image_type == "dynamic"){
-    draw_sprite( tempBuffer, images[0], x, y - ((image_h * 16) - 16));
-  }
-  else if( image_type == "meta_map" || image_type == "animated"){
+  if( image_type == "meta_map" || image_type == "animated"){
     int imageNum = floor((float(num_images) / 256.0f) * (float)meta);
     draw_sprite( tempBuffer, images[imageNum], x, y - ((image_h * 16) - 16));
     //textprintf_ex( tempBuffer, font, x, y, 0xFFFFFF, -1, "%d", meta);
   }
-  else if( image_type == "meta_map_2"){
+  else if( image_type == "meta_map_2" || image_type == "dynamic"){
     int imageNum = meta % num_images;
     draw_sprite( tempBuffer, images[imageNum], x, y - ((image_h * 16) - 16));
     //textprintf_ex( tempBuffer, font, x, y, 0xFFFFFF, -1, "%d", meta);

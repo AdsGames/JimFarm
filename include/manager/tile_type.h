@@ -40,7 +40,7 @@ class tile_type{
 
     // Set special image stuff
     void setImageType( std::string newImageType, int newSheetWidth, int newSheetHeight, int newImageX, int newImageY, int newImageWidth, int newImageHeight);
-
+    std::string getImageType(){ return this -> image_type; }
   protected:
   private:
     unsigned char id;

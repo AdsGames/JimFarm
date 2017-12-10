@@ -43,6 +43,9 @@ class tile
     // Get position
     int getX(){ return this -> x; }
     int getY(){ return this -> y; }
+
+    // Get image type
+    bool needsBitmask(){ return (this -> tile_pointer -> getImageType() == "dynamic"); }
   protected:
   private:
     // Positioning

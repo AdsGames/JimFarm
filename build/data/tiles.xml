@@ -77,7 +77,7 @@
     <name>Plowed soil</name>
     <width>1</width>
     <height>1</height>
-    <image type="" s_w="1" s_h="1" x="4" y="0" h="1" w="1" />
+    <image type="dynamic" s_w="4" s_h="4" x="12" y="4" h="1" w="1" />
     <attrubite>NON_SOLID</attrubite>
   </tile>
   <!--STORE PATH-->

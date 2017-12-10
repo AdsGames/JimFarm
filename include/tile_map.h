@@ -40,8 +40,8 @@ class tile_map
     int timer;
 
     // Viewport
-    static const int VIEWPORT_WIDTH = 240;
-    static const int VIEWPORT_HEIGHT = 160;
+    static const int VIEWPORT_WIDTH = 240*2;
+    static const int VIEWPORT_HEIGHT = 160*2;
 
     // Drawing
     void draw( BITMAP *tempBuffer);
@@ -70,6 +70,8 @@ class tile_map
     void load_map( std::string fileName);
     void generate_map();
     void clear_map();
+    void update_bitmask( tile *newTile);
+    void update_bitmask_surround( tile *newTile);
 
     // Get x and y
     int getX(){ return this -> x; }

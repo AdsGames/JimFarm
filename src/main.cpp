@@ -142,7 +142,7 @@ void draw(){
  *********************/
 void setup(){
   // Create buffer
-  buffer = create_bitmap( 240, 160);
+  buffer = create_bitmap( 240*2, 160*2);
 
   srand(time(NULL));
 
@@ -213,7 +213,7 @@ int main(){
   //set_gfx_mode(GFX_AUTODETECT, w,h, 0, 0);
   //set_gfx_mode(GFX_AUTODETECT_WINDOWED, 1280,960, 0, 0);
 
-  set_gfx_mode(GFX_AUTODETECT_WINDOWED, 240*4,160*4, 0, 0);
+  set_gfx_mode(GFX_AUTODETECT_WINDOWED, 240*6,160*6, 0, 0);
   install_sound(DIGI_AUTODETECT,MIDI_AUTODETECT,".");
 
   set_window_title("Jim Farm");

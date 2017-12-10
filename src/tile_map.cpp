@@ -132,17 +132,18 @@ tile *tile_map::tile_at( int positionX, int positionY, bool foreground){
   return NULL;
 }
 
-// Place tile on map
+// Place tile on map (world gen)
 void tile_map::place_tile( tile* newTile, bool foreground){
   if( newTile){
     if( foreground)
       map_tiles_foreground.push_back( newTile);
-    else
+    else{
       map_tiles.push_back( newTile);
+    }
   }
 }
 
-// Place tile on map if there isnt one otherwise it deletes it
+// Place tile on map if there isnt one otherwise it deletes it (world gen)
 bool tile_map::place_tile_safe( tile* newTile, bool foreground, int opposite_layer_id){
   tile *layerTile = tile_at( newTile -> getX(), newTile -> getY(), foreground);
   tile *notLayerTile = tile_at( newTile -> getX(), newTile -> getY(), !foreground);
@@ -164,7 +165,11 @@ bool tile_map::place_tile_safe( tile* newTile, bool foreground, int opposite_lay
 void tile_map::replace_tile( tile *oldTile, int newID, bool foreground){
   if( oldTile){
     remove_tile( oldTile, foreground);
-    place_tile( new tile( newID, oldTile -> getX(), oldTile -> getY()), foreground);
+    tile *newTile = new tile( newID, oldTile -> getX(), oldTile -> getY());
+    place_tile( newTile, foreground);
+
+    // Update bitmasks
+    update_bitmask_surround(newTile);
   }
 }
 
@@ -213,9 +218,7 @@ void tile_map::remove_item( item *newItem){
   if( newItem != NULL){
     for( unsigned int i = 0; i < map_items.size(); i++){
       if( map_items.at(i) -> itemPtr == newItem){
-        map_item *tempPtr = map_items.at(i);
         map_items.erase( map_items.begin() + i);
-        delete tempPtr;
         break;
       }
     }
@@ -234,7 +237,7 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
   if( inHand -> getID() == ITEM_HOE){
     if( backgroundTile && !foregroundTile){
       if( backgroundTile -> getID() == TILE_GRASS){
-        replace_tile( backgroundTile, TILE_SOIL, LAYER_BACKGROUND);
+        replace_tile( backgroundTile, TILE_PLOWED_SOIL, LAYER_BACKGROUND);
         sound_manager::play( SOUND_HOE);
       }
       else if( backgroundTile -> getID() == TILE_SOIL){
@@ -448,19 +451,15 @@ void tile_map::update(){
         }
       }
       // Plowed soil to soil
-      else if( current -> getID() == TILE_PLOWED_SOIL){
-        if( !random( 0, 10))
-          current -> addMeta(1);
-        if( current -> getMeta() >= 64)
+      /*else if( current -> getID() == TILE_PLOWED_SOIL){
+        if( !random( 0, 100))
           replace_tile( current, TILE_SOIL, LAYER_BACKGROUND);
       }
       // Soil to grass
       else if( current -> getID() == TILE_SOIL){
-        if( !random( 0, 10))
-          current -> addMeta(1);
-        if( current -> getMeta() >= 64)
+        if( !random( 0, 100))
           replace_tile( current, TILE_GRASS, LAYER_BACKGROUND);
-      }
+      }*/
     }
   }
 }
@@ -478,6 +477,37 @@ void tile_map::scroll( int player_x, int player_y){
     y += 2;
   else if( (player_y - 48) - y < 0 && y > 0)
     y -= 2;
+}
+
+// Update bitmask
+void tile_map::update_bitmask( tile *newTile){
+  if( newTile && newTile -> needsBitmask()){
+    int mask = 0;
+
+    for( int i = 0; i < 4; i ++){
+      int offset_x = sin( M_PI * ( i / 2.0f)) *  16;
+      int offset_y = cos( M_PI * ( i / 2.0f)) * -16;
+      tile *current = tile_at( newTile -> getX() + offset_x, newTile -> getY() + offset_y, LAYER_BACKGROUND);
+      if( current && current -> getID() == newTile -> getID())
+        mask += pow( 2, i);
+    }
+
+    newTile -> setMeta( mask);
+  }
+}
+
+// Update bitmask (and neighbours)
+void tile_map::update_bitmask_surround( tile *newTile){
+  if( newTile){
+    update_bitmask( newTile);
+    for( int i = 0; i < 4; i ++){
+      int offset_x = sin( M_PI * ( i / 2.0f)) *  16;
+      int offset_y = cos( M_PI * ( i / 2.0f)) * -16;
+      tile *current = tile_at( newTile -> getX() + offset_x, newTile -> getY() + offset_y, LAYER_BACKGROUND);
+      if( current)
+        update_bitmask( current);
+    }
+  }
 }
 
 // Generate map
@@ -552,6 +582,10 @@ void tile_map::generate_map(){
   place_item( new item(ITEM_LAVENDER_SEED), 19 * 16, 5 * 16);
   place_item( new item(ITEM_BERRY_SEED), 20 * 16, 5 * 16);
   place_item( new item(ITEM_TOMATO_SEED), 21 * 16, 5 * 16);
+
+  // Update masks
+  for( unsigned int i = 0; i < map_tiles.size(); i++)
+    update_bitmask( map_tiles.at(i));
 
   // SORT IT OUT!
   std::sort( map_tiles_foreground.begin(), map_tiles_foreground.end(), comparePtrToNode);
