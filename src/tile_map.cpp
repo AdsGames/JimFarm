@@ -176,10 +176,14 @@ void tile_map::replace_tile( tile *oldTile, int newID, bool foreground){
 // Remove tile from map
 void tile_map::remove_tile( tile* newTile, bool foreground){
   if( newTile){
-    for( unsigned int i = 0; i < map_tiles.size(); i++){
-      if( map_tiles.at(i) == newTile){
-        tile *tempPtr = map_tiles.at(i);
-        map_tiles.erase( map_tiles.begin() + i);
+    std::vector<tile*> *layer = &map_tiles;
+    if( foreground)
+      layer = &map_tiles_foreground;
+
+    for( unsigned int i = 0; i < layer -> size(); i++){
+      if( layer -> at(i) == newTile){
+        tile *tempPtr = layer -> at(i);
+        layer -> erase( layer -> begin() + i);
         delete tempPtr;
         break;
       }
@@ -266,18 +270,18 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
   }
   // Berry
   else if( inHand -> getID() == ITEM_BERRY_SEED){
-    if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
-      replace_tile( backgroundTile, TILE_BERRY, LAYER_BACKGROUND);
+    if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile){
+      place_tile( new tile( TILE_BERRY, inter_x, inter_y), LAYER_FOREGROUND);
     }
-    else {
+    else{
       map_messages -> push_message( "You must plant in ploughed soil");
       sound_manager::play( SOUND_ERROR);
     }
   }
   // Tomato
   else if( inHand -> getID() == ITEM_TOMATO_SEED){
-    if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
-      replace_tile( backgroundTile, TILE_TOMATO, LAYER_BACKGROUND);
+    if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile){
+      place_tile( new tile( TILE_TOMATO, inter_x, inter_y), LAYER_FOREGROUND);
     }
     else{
       map_messages -> push_message( "You must plant in ploughed soil");
@@ -286,8 +290,8 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
   }
   // Carrot
   else if( inHand -> getID() == ITEM_CARROT_SEED){
-    if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
-      replace_tile( backgroundTile, TILE_CARROT, LAYER_BACKGROUND);
+    if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile){
+      place_tile( new tile( TILE_CARROT, inter_x, inter_y), LAYER_FOREGROUND);
     }
     else{
       map_messages -> push_message( "You must plant in ploughed soil");
@@ -296,8 +300,8 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
   }
   // Lavender
   else if( inHand -> getID() == ITEM_LAVENDER_SEED){
-    if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL){
-      replace_tile( backgroundTile, TILE_LAVENDER, LAYER_BACKGROUND);
+    if( backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile){
+      place_tile( new tile( TILE_LAVENDER, inter_x, inter_y), LAYER_FOREGROUND);
     }
     else{
       map_messages -> push_message( "You must plant in ploughed soil");
@@ -394,6 +398,13 @@ void tile_map::update(){
       if( current -> getID() == TILE_WATER){
         current -> changeMeta(8);
       }
+    }
+
+    // Foreground tiles
+    for( unsigned int i = 0; i < map_tiles_foreground.size(); i++){
+      // Current tile
+      tile *current = map_tiles_foreground.at(i);
+      tile *backgroundTile = tile_at( current -> getX(), current -> getY(), BACKGROUND);
 
       // Berries
       if( current -> getID() == TILE_BERRY){
@@ -403,7 +414,9 @@ void tile_map::update(){
         // Done Growing
         if( current -> getMeta() >= MAX_TILE_META){
           place_item( new item(ITEM_BERRY), current -> getX(), current -> getY());
-          replace_tile( current, TILE_SOIL, LAYER_BACKGROUND);
+          remove_tile( current, LAYER_FOREGROUND);
+          if( backgroundTile)
+            replace_tile( backgroundTile, TILE_GRASS, LAYER_BACKGROUND);
         }
       }
       // Tomatos
@@ -414,7 +427,9 @@ void tile_map::update(){
         // Done Growing
         if( current -> getMeta() >= MAX_TILE_META){
           place_item( new item(ITEM_TOMATO), current -> getX(), current -> getY());
-          replace_tile( current, TILE_SOIL, LAYER_BACKGROUND);
+          remove_tile( current, LAYER_FOREGROUND);
+          if( backgroundTile)
+            replace_tile( backgroundTile, TILE_GRASS, LAYER_BACKGROUND);
         }
       }
       // Carrots
@@ -425,7 +440,9 @@ void tile_map::update(){
         // Done Growing
         if( current -> getMeta() >= MAX_TILE_META){
           place_item( new item(ITEM_CARROT), current -> getX(), current -> getY());
-          replace_tile( current, TILE_SOIL, LAYER_BACKGROUND);
+          remove_tile( current, LAYER_FOREGROUND);
+          if( backgroundTile)
+            replace_tile( backgroundTile, TILE_GRASS, LAYER_BACKGROUND);
         }
       }
       // Lavender
@@ -436,7 +453,9 @@ void tile_map::update(){
         // Done Growing
         if( current -> getMeta() >= MAX_TILE_META){
           place_item( new item(ITEM_LAVENDER), current -> getX(), current -> getY());
-          replace_tile( current, TILE_SOIL, LAYER_BACKGROUND);
+          remove_tile( current, LAYER_FOREGROUND);
+          if( backgroundTile)
+            replace_tile( backgroundTile, TILE_GRASS, LAYER_BACKGROUND);
         }
       }
       // Plowed soil to grass
@@ -567,6 +586,8 @@ void tile_map::generate_map(){
   place_item( new item(ITEM_BERRY_SEED), 20 * 16, 5 * 16);
   place_item( new item(ITEM_TOMATO_SEED), 21 * 16, 5 * 16);
   place_item( new item(ITEM_WATERING_CAN), 17 * 16, 6 * 16);
+  place_item( new item(ITEM_AXE), 18 * 16, 6 * 16);
+  place_item( new item(ITEM_SCYTHE), 19 * 16, 6 * 16);
 
   // Update masks
   for( unsigned int i = 0; i < map_tiles.size(); i++)

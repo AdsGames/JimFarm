@@ -133,7 +133,7 @@
     <name>Carrot</name>
     <width>1</width>
     <height>1</height>
-    <image type="meta_map" s_w="3" s_h="1" x="0" y="4" h="1" w="1" />
+    <image type="meta_map" s_w="3" s_h="1" x="0" y="5" h="1" w="1" />
     <attrubite>NON_SOLID</attrubite>
   </tile>
   <!--LAVENDER-->
