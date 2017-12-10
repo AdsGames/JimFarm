@@ -40,8 +40,8 @@ class tile_map
     int timer;
 
     // Viewport
-    static const int VIEWPORT_WIDTH = 240*2;
-    static const int VIEWPORT_HEIGHT = 160*2;
+    static const int VIEWPORT_WIDTH = 240;
+    static const int VIEWPORT_HEIGHT = 160;
 
     // Drawing
     void draw( BITMAP *tempBuffer);
