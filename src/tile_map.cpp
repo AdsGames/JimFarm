@@ -335,6 +335,11 @@ void tile_map::interact( int inter_x, int inter_y, item *inHand){
       map_messages -> push_message( "You can't chop that down");
       sound_manager::play( SOUND_ERROR);
     }
+
+    if( backgroundTile && backgroundTile  -> getID() == TILE_GRASS){
+      replace_tile( backgroundTile, TILE_PATH, LAYER_BACKGROUND);
+      sound_manager::play( SOUND_AXE);
+    }
   }
   // Shovel
   else if( inHand -> getID() == ITEM_SHOVEL){
