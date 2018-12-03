@@ -15,10 +15,10 @@
 class map_item
 {
   public:
-    map_item( int x = 0, int y = 0, item *itemPtr = NULL);
+    map_item (int x = 0, int y = 0, item *itemPtr = NULL);
     ~map_item();
 
-    void draw( BITMAP *tempBuffer);
+    void draw (BITMAP *tempBuffer);
 
     int x;
     int y;
@@ -44,41 +44,41 @@ class tile_map
     static const int VIEWPORT_HEIGHT = 160;
 
     // Drawing
-    void draw( BITMAP *tempBuffer);
-    void drawForeground( BITMAP *tempBuffer);
+    void draw (BITMAP *tempBuffer);
+    void drawForeground (BITMAP *tempBuffer);
     void load_images();
 
     // Tiles
-    tile *tile_at( int positionX, int positionY, bool foreground);
-    void place_tile( tile* newTile, bool foreground);
-    bool place_tile_safe( tile* newTile, bool foreground, int opposite_layer_id = -1);
-    void replace_tile( tile *oldTile, int newID, bool foreground);
-    void remove_tile( tile *newTile, bool foreground);
-    bool solid_at( int positionX, int positionY);
+    tile *tile_at (int positionX, int positionY, bool foreground);
+    void place_tile (tile* newTile, bool foreground);
+    bool place_tile_safe (tile* newTile, bool foreground, int opposite_layer_id = -1);
+    void replace_tile (tile *oldTile, int newID, bool foreground);
+    void remove_tile (tile *newTile, bool foreground);
+    bool solid_at (int positionX, int positionY);
 
     // Items
-    item *item_at( int positionX, int positionY);
-    void place_item( item* newItem, int x, int y);
-    void remove_item( item *newItem);
+    item *item_at (int positionX, int positionY);
+    void place_item (item* newItem, int x, int y);
+    void remove_item (item *newItem);
 
     // Interact with
-    void interact( int inter_x, int inter_y, item *inHand);
+    void interact (int inter_x, int inter_y, item *inHand);
 
     // Map
     void update();
-    void scroll( int player_x, int player_y);
-    void load_map( std::string fileName);
+    void scroll (int player_x, int player_y);
+    void load_map (std::string fileName);
     void generate_map();
     void clear_map();
-    void update_bitmask( tile *newTile, bool layer = LAYER_BACKGROUND);
-    void update_bitmask_surround( tile *newTile, bool layer = LAYER_BACKGROUND);
+    void update_bitmask (tile *newTile, bool layer = LAYER_BACKGROUND);
+    void update_bitmask_surround (tile *newTile, bool layer = LAYER_BACKGROUND);
 
     // Get x and y
-    int getX(){ return this -> x; }
-    int getY(){ return this -> y; }
+    int getX() { return this -> x; }
+    int getY() { return this -> y; }
 
     // Get messenger
-    messenger *getMessenger(){ return this -> map_messages; }
+    messenger *getMessenger() { return this -> map_messages; }
   protected:
 
   private:

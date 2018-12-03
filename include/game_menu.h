@@ -12,7 +12,7 @@ class game_menu
     void load_data();
     void trigger();
     void update();
-    void draw( BITMAP *tempImage);
+    void draw (BITMAP *tempImage);
     bool isOpen();
   protected:
   private:

@@ -14,14 +14,14 @@
 
 class messenger{
   public:
-    messenger( int listSize = 1, bool topDown = false, int padding = 5, int font_col = 0xFFFFFF, int bg_col = -1);
+    messenger (int listSize = 1, bool topDown = false, int padding = 5, int font_col = 0xFFFFFF, int bg_col = -1);
     virtual ~messenger();
 
     unsigned int numberMessages();
-    void draw( BITMAP *buffer, int x, int y);
-    void setColors( int font_col, int bg_col);
+    void draw (BITMAP *buffer, int x, int y);
+    void setColors (int font_col, int bg_col);
 
-    void push_message( std::string new_message);
+    void push_message (std::string new_message);
   protected:
 
   private:

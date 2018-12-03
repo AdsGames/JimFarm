@@ -15,17 +15,17 @@ class character
     virtual ~character() {};
 
     // Set world pointer
-    void setWorld( tile_map *newTileMap);
+    void setWorld (tile_map *newTileMap);
 
     // Load images and samples
     void load_data();
 
     // Position character
-    void setPosition( int newX, int newY){ x = newX; y = newY;}
+    void setPosition (int newX, int newY) { x = newX; y = newY;}
 
     // Draw
-    void draw( BITMAP *tempBuffer);
-    void drawForeground( BITMAP *tempBuffer);
+    void draw (BITMAP *tempBuffer);
+    void drawForeground (BITMAP *tempBuffer);
 
     // Update
     void update();

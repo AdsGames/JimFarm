@@ -12,35 +12,35 @@
 
 class tile_type{
   public:
-    tile_type( unsigned char newWidth = 1, unsigned char newHeight = 1, unsigned char newID = 0,
+    tile_type (unsigned char newWidth = 1, unsigned char newHeight = 1, unsigned char newID = 0,
                std::string newName = "", int newAttribute = 0, unsigned char newValue = 0);
     virtual ~tile_type();
 
     // Get type
-    unsigned char getID(){ return id; }
+    unsigned char getID() { return id; }
 
     // Get name
-    std::string getName(){ return name; }
+    std::string getName() { return name; }
 
     // Get type
-    unsigned char getAttribute(){ return attribute; }
+    unsigned char getAttribute() { return attribute; }
 
     // Tex
-    unsigned char getImageX(){ return image_cord_x; }
-    unsigned char getImageY(){ return image_cord_y; }
-    unsigned char getWidth(){ return width; }
-    unsigned char getHeight(){ return height; }
-    unsigned char getValue(){ return value; }
+    unsigned char getImageX() { return image_cord_x; }
+    unsigned char getImageY() { return image_cord_y; }
+    unsigned char getWidth() { return width; }
+    unsigned char getHeight() { return height; }
+    unsigned char getValue() { return value; }
 
     // Draw
-    void draw( int x, int y, BITMAP *tempBuffer, unsigned char meta = 0, char offset = 0);
+    void draw (int x, int y, BITMAP *tempBuffer, unsigned char meta = 0, char offset = 0);
 
     // Set sprite sheet
-    void setSpriteSheet( BITMAP *newSpriteSheet);
+    void setSpriteSheet (BITMAP *newSpriteSheet);
 
     // Set special image stuff
-    void setImageType( std::string newImageType, int newSheetWidth, int newSheetHeight, int newImageX, int newImageY, int newImageWidth, int newImageHeight);
-    std::string getImageType(){ return this -> image_type; }
+    void setImageType (std::string newImageType, int newSheetWidth, int newSheetHeight, int newImageX, int newImageY, int newImageWidth, int newImageHeight);
+    std::string getImageType() { return this -> image_type; }
   protected:
   private:
     unsigned char id;

@@ -17,16 +17,16 @@ BITMAP *tile_type_manager::sprite_sheet_tiles = NULL;
 BITMAP *tile_type_manager::sprite_sheet_items = NULL;
 
 // Destructor
-tile_type_manager::~tile_type_manager(){
+tile_type_manager::~tile_type_manager() {
   item_defs.clear();
   tile_defs.clear();
 }
 
 // Load tiles
-int tile_type_manager::load_tiles( std::string newFile){
+int tile_type_manager::load_tiles (std::string newFile) {
   // Open file or abort if it does not exist
   std::ifstream file(newFile.c_str());
-  if( !file)
+  if (!file)
     return 1;
 
   // Create buffer
@@ -44,7 +44,7 @@ int tile_type_manager::load_tiles( std::string newFile){
   cTile = allTiles -> first_node("tile");
 
   // Parse data
-  for( ; cTile != NULL; cTile = cTile -> next_sibling()){
+  for (; cTile != NULL; cTile = cTile -> next_sibling()) {
     // Name
     std::string name = cTile -> first_node("name") -> value();
 
@@ -52,33 +52,33 @@ int tile_type_manager::load_tiles( std::string newFile){
     int id = atoi(cTile -> first_attribute("id") -> value());
 
     // Spritesheet coordinates
-    int image_x = atoi( cTile -> first_node("image") -> first_attribute("x") -> value());
-    int image_y = atoi( cTile -> first_node("image") -> first_attribute("y") -> value());
-    int image_h = atoi( cTile -> first_node("image") -> first_attribute("h") -> value());
-    int image_w = atoi( cTile -> first_node("image") -> first_attribute("w") -> value());
+    int image_x = atoi (cTile -> first_node("image") -> first_attribute("x") -> value());
+    int image_y = atoi (cTile -> first_node("image") -> first_attribute("y") -> value());
+    int image_h = atoi (cTile -> first_node("image") -> first_attribute("h") -> value());
+    int image_w = atoi (cTile -> first_node("image") -> first_attribute("w") -> value());
 
     // Size
-    int width  = atoi( cTile -> first_node("width" ) -> value());
-    int height = atoi( cTile -> first_node("height") -> value());
+    int width  = atoi (cTile -> first_node("width" ) -> value());
+    int height = atoi (cTile -> first_node("height") -> value());
 
     // Special tile types
-    int sheet_width  = atoi( cTile-> first_node("image") -> first_attribute("s_w") -> value());
-    int sheet_height = atoi( cTile-> first_node("image") -> first_attribute("s_h") -> value());
+    int sheet_width  = atoi (cTile-> first_node("image") -> first_attribute("s_w") -> value());
+    int sheet_height = atoi (cTile-> first_node("image") -> first_attribute("s_h") -> value());
     std::string image_type = cTile-> first_node("image") -> first_attribute("type") -> value();
 
     // Get attrubite
     std::string attrubite_string = cTile-> first_node("attrubite") -> value();
     int attrubite = NON_SOLID;
-    if( attrubite_string == "NON_SOLID")
+    if (attrubite_string == "NON_SOLID")
       attrubite = NON_SOLID;
-    else if( attrubite_string == "SOLID")
+    else if (attrubite_string == "SOLID")
       attrubite = SOLID;
 
     // Create tile, set variables and add it to the tile list
-    tile_type newTileType( width * 16, height * 16, id, name, attrubite);
-    newTileType.setSpriteSheet( sprite_sheet_tiles);
-    newTileType.setImageType( image_type, sheet_width, sheet_height, image_x, image_y, image_w, image_h);
-    tile_defs.push_back( newTileType);
+    tile_type newTileType (width * 16, height * 16, id, name, attrubite);
+    newTileType.setSpriteSheet (sprite_sheet_tiles);
+    newTileType.setImageType (image_type, sheet_width, sheet_height, image_x, image_y, image_w, image_h);
+    tile_defs.push_back (newTileType);
   }
 
   // Close
@@ -87,10 +87,10 @@ int tile_type_manager::load_tiles( std::string newFile){
 }
 
 // Load tiles
-int tile_type_manager::load_items( std::string newFile){
+int tile_type_manager::load_items (std::string newFile) {
   // Open file or abort if it does not exist
   std::ifstream file(newFile.c_str());
-  if( !file)
+  if (!file)
     return 1;
 
   // Create buffer
@@ -108,7 +108,7 @@ int tile_type_manager::load_items( std::string newFile){
   cItem = allItems -> first_node("item");
 
   // Parse data
-  for( int i = 0; cItem != NULL; cItem = cItem -> next_sibling(), i++){
+  for (int i = 0; cItem != NULL; cItem = cItem -> next_sibling(), i++) {
     // Name of item
     std::string name = cItem-> first_node("name") -> value();
 
@@ -120,10 +120,10 @@ int tile_type_manager::load_items( std::string newFile){
     int value = atoi(cItem-> first_node("value") -> value());
 
     // Create item, set variables and add it to the item list
-    tile_type newTileType( 1, 1, i, name, 0, (unsigned char)value);
-    newTileType.setSpriteSheet( sprite_sheet_items);
-    newTileType.setImageType( "", 1, 1, image_x, image_y, 1, 1);
-    item_defs.push_back( newTileType);
+    tile_type newTileType (1, 1, i, name, 0, (unsigned char)value);
+    newTileType.setSpriteSheet (sprite_sheet_items);
+    newTileType.setImageType ("", 1, 1, image_x, image_y, 1, 1);
+    item_defs.push_back (newTileType);
   }
 
   // Close
@@ -132,21 +132,21 @@ int tile_type_manager::load_items( std::string newFile){
 }
 
 // Returns tile at ID
-tile_type *tile_type_manager::getTileByID( int tileID){
-  for( unsigned int i = 0; i < tile_defs.size(); i++){
-    if( tile_defs.at( i).getID() == tileID){
-      return &tile_defs.at( i);
+tile_type *tile_type_manager::getTileByID (int tileID) {
+  for (unsigned int i = 0; i < tile_defs.size(); i++) {
+    if (tile_defs.at (i).getID() == tileID) {
+      return &tile_defs.at (i);
     }
   }
-  return &tile_defs.at( 0);
+  return &tile_defs.at (0);
 }
 
 // Returns item at ID
-tile_type *tile_type_manager::getItemByID( int tileID){
-  for( unsigned int i = 0; i < item_defs.size(); i++){
-    if( item_defs.at( i).getID() == tileID){
-      return &item_defs.at( i);
+tile_type *tile_type_manager::getItemByID (int tileID) {
+  for (unsigned int i = 0; i < item_defs.size(); i++) {
+    if (item_defs.at (i).getID() == tileID) {
+      return &item_defs.at (i);
     }
   }
-  return &item_defs.at( 0);
+  return &item_defs.at (0);
 }

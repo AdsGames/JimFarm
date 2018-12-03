@@ -10,14 +10,14 @@ class inventory
 {
   public:
     inventory();
-    inventory( int max_items);
+    inventory (int max_items);
 
     virtual ~inventory();
 
-    bool addItem( item *newItem, int index);
-    bool removeItem( int index);
+    bool addItem (item *newItem, int index);
+    bool removeItem (int index);
 
-    item *getItem( int index);
+    item *getItem (int index);
     item *getFirstItem();
 
     int getSize();

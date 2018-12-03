@@ -8,14 +8,14 @@ unsigned char mouseListener::mouse_old = 0;
 int mouseListener::mouse_z_change = 0;
 int mouseListener::mouse_z_old = 0;
 
-mouseListener::mouseListener(){ }
+mouseListener::mouseListener() { }
 
-mouseListener::~mouseListener(){ }
+mouseListener::~mouseListener() { }
 
 // Check those buttons!
-void mouseListener::update(){
+void mouseListener::update() {
   // Check button just pressed
-  for( int i = 0; i < MAX_MOUSE_BUTTONS; i ++){
+  for (int i = 0; i < MAX_MOUSE_BUTTONS; i ++) {
     // Clear old values
     mouse_pressed &= ~(1 << i);
     mouse_released &= ~(1 << i);
@@ -25,19 +25,19 @@ void mouseListener::update(){
     mouse_button = (mouse_button & ~(1 << i)) | (check_state << i);
 
     // Pressed since last tick?
-    if( ((mouse_button >> i) & 1) != 0 && ((mouse_old >> i) & 1) == 0){
+    if (((mouse_button >> i) & 1) != 0 && ((mouse_old >> i) & 1) == 0) {
       mouse_pressed |= 1 << i;
       //std::cout << "Button: " << i << " pressed. \n";
     }
 
     // Released since last tick?
-    if( ((mouse_button >> i) & 1) == 0 && ((mouse_old >> i) & 1) != 0){
+    if (((mouse_button >> i) & 1) == 0 && ((mouse_old >> i) & 1) != 0) {
       mouse_released |= 1 << i;
       //std::cout << "Button: " << i << " released. \n";
     }
 
     // Button changed
-    if( ((mouse_button >> i) & 1) != ((mouse_old >> i) & 1)){
+    if (((mouse_button >> i) & 1) != ((mouse_old >> i) & 1)) {
         //std::cout << "Button: " << i << " was " << ((mouse_old >> i) & 1) << " and became " << ((mouse_button >> i) & 1) << "\n";
         mouse_old ^= 1 << i;
     }
@@ -45,7 +45,7 @@ void mouseListener::update(){
 
   // Update scroll wheel
   mouse_z_change = 0;
-  if( mouse_z != mouse_z_old){
+  if (mouse_z != mouse_z_old) {
     mouse_z_change = mouse_z - mouse_z_old;
     mouse_z_old = mouse_z;
 

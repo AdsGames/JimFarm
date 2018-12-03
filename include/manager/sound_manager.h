@@ -19,7 +19,7 @@
  */
 class sample_wrapper{
   public:
-    sample_wrapper( SAMPLE *sample_ptr = NULL, int vol = 255, int pan = 128, int freq = 1000, int freq_rand = 0, bool loop = false);
+    sample_wrapper (SAMPLE *sample_ptr = NULL, int vol = 255, int pan = 128, int freq = 1000, int freq_rand = 0, bool loop = false);
 
     SAMPLE *sample_ptr;
     int vol;
@@ -39,10 +39,10 @@ class sound_manager{
     ~sound_manager();
 
     // Load tile types
-    static int load( std::string newFile);
+    static int load (std::string newFile);
 
     // Play sample
-    static void play( unsigned int sound_id);
+    static void play (unsigned int sound_id);
 
   private:
     // List of sounds

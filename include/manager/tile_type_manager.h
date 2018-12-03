@@ -21,12 +21,12 @@ class tile_type_manager{
     ~tile_type_manager();
 
     // Load tile types
-    static int load_tiles( std::string newFile);
-    static int load_items( std::string newFile);
+    static int load_tiles (std::string newFile);
+    static int load_items (std::string newFile);
 
     // Allows communication
-    static tile_type *getTileByID( int tileID);
-    static tile_type *getItemByID( int tileID);
+    static tile_type *getTileByID (int tileID);
+    static tile_type *getItemByID (int tileID);
 
     static BITMAP *sprite_sheet_tiles;
     static BITMAP *sprite_sheet_items;

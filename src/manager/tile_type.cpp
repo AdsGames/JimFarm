@@ -5,8 +5,8 @@
 #include <math.h>
 
 // Init tile
-tile_type::tile_type( unsigned char newWidth, unsigned char newHeight, unsigned char newID,
-                      std::string newName, int newAttribute, unsigned char newValue){
+tile_type::tile_type (unsigned char newWidth, unsigned char newHeight, unsigned char newID,
+                      std::string newName, int newAttribute, unsigned char newValue) {
   // Set init variables
   id = newID;
   name = newName;
@@ -28,32 +28,32 @@ tile_type::tile_type( unsigned char newWidth, unsigned char newHeight, unsigned 
 }
 
 // Destroy tile
-tile_type::~tile_type(){}
+tile_type::~tile_type() {}
 
 // Draw tile
-void tile_type::draw( int x, int y, BITMAP *tempBuffer, unsigned char meta, char offset){
-  if( image_type == "meta_map" || image_type == "animated"){
+void tile_type::draw (int x, int y, BITMAP *tempBuffer, unsigned char meta, char offset) {
+  if (image_type == "meta_map" || image_type == "animated") {
     int imageNum = floor((float(num_images) / 256.0f) * (float)meta);
-    draw_sprite( tempBuffer, images[imageNum], x, y - ((image_h * 16) - 16));
-    //textprintf_ex( tempBuffer, font, x, y, 0xFFFFFF, -1, "%d", meta);
+    draw_sprite (tempBuffer, images[imageNum], x, y - ((image_h * 16) - 16));
+    //textprintf_ex (tempBuffer, font, x, y, 0xFFFFFF, -1, "%d", meta);
   }
-  else if( image_type == "meta_map_2" || image_type == "dynamic"){
+  else if (image_type == "meta_map_2" || image_type == "dynamic") {
     int imageNum = meta % num_images;
-    draw_sprite( tempBuffer, images[imageNum], x, y - ((image_h * 16) - 16));
-    //textprintf_ex( tempBuffer, font, x, y, 0xFFFFFF, -1, "%d", meta);
+    draw_sprite (tempBuffer, images[imageNum], x, y - ((image_h * 16) - 16));
+    //textprintf_ex (tempBuffer, font, x, y, 0xFFFFFF, -1, "%d", meta);
   }
   else{
-    draw_sprite( tempBuffer, images[0], x, y - ((image_h * 16) - 16));
+    draw_sprite (tempBuffer, images[0], x, y - ((image_h * 16) - 16));
   }
 }
 
 // Give a sprite sheet to this tile
-void tile_type::setSpriteSheet( BITMAP *newSpriteSheet){
+void tile_type::setSpriteSheet (BITMAP *newSpriteSheet) {
   sprite_sheet = newSpriteSheet;
 }
 
 // Set special image stuff
-void tile_type::setImageType( std::string newImageType, int newSheetWidth, int newSheetHeight, int newImageX, int newImageY, int newImageWidth, int newImageHeight){
+void tile_type::setImageType (std::string newImageType, int newSheetWidth, int newSheetHeight, int newImageX, int newImageY, int newImageWidth, int newImageHeight) {
   // Default, dynamic or animated
   image_type = newImageType;
   sheet_width = newSheetWidth;
@@ -66,16 +66,16 @@ void tile_type::setImageType( std::string newImageType, int newSheetWidth, int n
   num_images = sheet_width * sheet_height;
 
   // Split up those images
-  if( image_type == "dynamic" || image_type == "meta_map" || image_type == "meta_map_2" || image_type == "animated"){
-    for( int t = 0; t < sheet_height; t++){
-      for( int i = 0; i < sheet_width; i++){
-        images[(t * sheet_width) + i] = create_bitmap( image_w * 16, image_h * 16);
-        blit( sprite_sheet, images[(t * sheet_width) + i], image_cord_x * 16 + i * 16, image_cord_y * 16 + t * 16, 0, 0, image_w * 16, image_h * 16);
+  if (image_type == "dynamic" || image_type == "meta_map" || image_type == "meta_map_2" || image_type == "animated") {
+    for (int t = 0; t < sheet_height; t++) {
+      for (int i = 0; i < sheet_width; i++) {
+        images[(t * sheet_width) + i] = create_bitmap (image_w * 16, image_h * 16);
+        blit (sprite_sheet, images[(t * sheet_width) + i], image_cord_x * 16 + i * 16, image_cord_y * 16 + t * 16, 0, 0, image_w * 16, image_h * 16);
       }
     }
   }
   else{
-    images[0] = create_bitmap( image_w * 16, image_h * 16);
-    blit( sprite_sheet, images[0], image_cord_x * 16, image_cord_y * 16, 0, 0, image_w * 16, image_h * 16);
+    images[0] = create_bitmap (image_w * 16, image_h * 16);
+    blit (sprite_sheet, images[0], image_cord_x * 16, image_cord_y * 16, 0, 0, image_w * 16, image_h * 16);
   }
 }

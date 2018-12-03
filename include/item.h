@@ -12,25 +12,25 @@ class item
 {
   public:
     // Ctor and Dtor
-    item( char newID, unsigned char meta = 0);
+    item (char newID, unsigned char meta = 0);
     ~item();
 
     // Draw to screen
-    void draw( int newX, int newY, BITMAP *tempBuffer);
+    void draw (int newX, int newY, BITMAP *tempBuffer);
 
     // Get value of item
-    unsigned char getValue(){ return item_pointer -> getValue();}
+    unsigned char getValue() { return item_pointer -> getValue();}
 
     // Modify ID
-    unsigned char getID(){ return item_pointer -> getID();}
+    unsigned char getID() { return item_pointer -> getID();}
 
     // Get the name of item
-    std::string getName(){ return item_pointer -> getName();}
+    std::string getName() { return item_pointer -> getName();}
 
     // Access and set meta data byte
-    void setMeta( unsigned char meta ){ this -> meta = meta; }
-    void changeMeta( unsigned char amt ){ this -> meta += amt; }
-    unsigned char getMeta(){ return this -> meta; }
+    void setMeta (unsigned char meta ) { this -> meta = meta; }
+    void changeMeta (unsigned char amt ) { this -> meta += amt; }
+    unsigned char getMeta() { return this -> meta; }
   protected:
   private:
     // Metadata info

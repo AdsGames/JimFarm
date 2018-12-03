@@ -19,13 +19,13 @@ extern int random(int newLowest, int newHighest);
 extern void abort_on_error(const char *message);
 
 // Load and error check images
-extern BITMAP *load_bitmap_ex( const char *path);
+extern BITMAP *load_bitmap_ex (const char *path);
 
 // Load and error check sounds
-extern SAMPLE *load_sample_ex( const char *path);
+extern SAMPLE *load_sample_ex (const char *path);
 
 // Load and error check fonts
-extern FONT *load_font_ex( const char *path);
+extern FONT *load_font_ex (const char *path);
 
 extern bool collision(int xMin1, int xMax1, int xMin2, int xMax2, int yMin1, int yMax1, int yMin2, int yMax2);
 

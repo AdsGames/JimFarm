@@ -16,7 +16,7 @@ class menu
         menu();
         virtual ~menu();
 
-        void draw( BITMAP *tempBitmap);
+        void draw (BITMAP *tempBitmap);
 
         void load_data();
 

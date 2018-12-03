@@ -44,17 +44,17 @@ int fps;
 int frames_done;
 int old_time;
 
-void ticker(){
+void ticker() {
   ticks++;
 }
 END_OF_FUNCTION(ticker)
 
-void game_time_ticker(){
+void game_time_ticker() {
   game_time++;
 }
 END_OF_FUNCTION(ticker)
 
-void close_button_handler(void){
+void close_button_handler(void) {
   close_button_pressed = TRUE;
 }
 END_OF_FUNCTION(close_button_handler)
@@ -62,9 +62,9 @@ END_OF_FUNCTION(close_button_handler)
 // Game clock
 int animationFrame = 0;
 
-void animationTicker(){
+void animationTicker() {
   animationFrame++;
-  if( animationFrame > 10)
+  if (animationFrame > 10)
     animationFrame = 0;
 }
 END_OF_FUNCTION(ticker)
@@ -73,32 +73,32 @@ END_OF_FUNCTION(ticker)
 /*********************
  *   Update logic
  *********************/
-void update(){
+void update() {
   // Checks keys JUST pressed or JUST released
   keys.update();
   mouses.update();
 
-  if( game_state == MENU){
+  if (game_state == MENU) {
     // HAXX
     // halp plz how do i coed?
     int menu_result = main_menu.update();
-    if(menu_result == 2){
+    if(menu_result == 2) {
       game_state = GAME;
     }
-    if(menu_result == 0){
+    if(menu_result == 0) {
       close_button_pressed=true;
     }
   }
-  else if( game_state == GAME){
+  else if (game_state == GAME) {
     // If lil menu not open
-    if( !main_game_menu.isOpen()){
+    if (!main_game_menu.isOpen()) {
       // Update character
       farm_map.update();
       jim.update();
     }
     main_game_menu.update();
   }
-  else if( game_state == -1){
+  else if (game_state == -1) {
     close_button_pressed = true;
   }
 }
@@ -106,33 +106,33 @@ void update(){
 /*********************
  *  Draw to screen
  *********************/
-void draw(){
-  if( game_state == MENU){
+void draw() {
+  if (game_state == MENU) {
     main_menu.draw(buffer);
 
     // Stretch screen
-    stretch_sprite( screen, buffer, 0, 0, SCREEN_W, SCREEN_H);
+    stretch_sprite (screen, buffer, 0, 0, SCREEN_W, SCREEN_H);
   }
-  else if( game_state == GAME){
+  else if (game_state == GAME) {
     // Draw background
-    rectfill( buffer, 0, 0, 160, 240, makecol( 0, 0, 0));
+    rectfill (buffer, 0, 0, 160, 240, makecol (0, 0, 0));
 
     // Draw map
-    farm_map.draw( buffer);
+    farm_map.draw (buffer);
 
     // Draw JIM
-    jim.draw( buffer);
+    jim.draw (buffer);
 
     // Draw map
-    farm_map.drawForeground( buffer);
+    farm_map.drawForeground (buffer);
 
     // Draw JIM
-    jim.drawForeground( buffer);
+    jim.drawForeground (buffer);
 
-    main_game_menu.draw( buffer);
+    main_game_menu.draw (buffer);
 
     // Stretch screen
-    stretch_sprite( screen, buffer, 0, 0, SCREEN_W, SCREEN_H);
+    stretch_sprite (screen, buffer, 0, 0, SCREEN_W, SCREEN_H);
   }
 }
 
@@ -140,9 +140,9 @@ void draw(){
 /*********************
  *   Setup game
  *********************/
-void setup(){
+void setup() {
   // Create buffer
-  buffer = create_bitmap( 240, 160);
+  buffer = create_bitmap (240, 160);
 
   srand(time(NULL));
 
@@ -150,9 +150,9 @@ void setup(){
   game_state = GAME;
 
   // Music
-  music = FSOUND_Stream_Open( "sfx/farmy.mp3", 2, 0, 0);
-  FSOUND_Stream_Play( 0, music);
-  FSOUND_SetVolumeAbsolute( 0, 0);
+  music = FSOUND_Stream_Open ("sfx/farmy.mp3", 2, 0, 0);
+  FSOUND_Stream_Play (0, music);
+  FSOUND_SetVolumeAbsolute (0, 0);
 
    // Setup for FPS system
   LOCK_VARIABLE(ticks);
@@ -166,8 +166,8 @@ void setup(){
   // Animation ticks
   LOCK_VARIABLE(animationFrame);
   LOCK_FUNCTION(animationTicker);
-  install_int( animationTicker,10);
-  install_int_ex( animationTicker, BPS_TO_TIMER(100));
+  install_int (animationTicker,10);
+  install_int_ex (animationTicker, BPS_TO_TIMER(100));
 
 
   // Close button
@@ -183,10 +183,10 @@ void setup(){
   main_menu.load_data();
 
   // Setup jim
-  jim.setPosition( 15 * 16, 5 * 16);
+  jim.setPosition (15 * 16, 5 * 16);
 
   jim.load_data();
-  jim.setWorld( &farm_map);
+  jim.setWorld (&farm_map);
 
   main_game_menu.load_data();
 }
@@ -195,7 +195,7 @@ void setup(){
 /*********************
  *   Start here
  *********************/
-int main(){
+int main() {
 
   allegro_init();
   alpng_init();
@@ -219,21 +219,21 @@ int main(){
   set_window_title("Jim Farm");
   setup();
 
-  while(!close_button_pressed){
-    while(ticks == 0){
+  while(!close_button_pressed) {
+    while(ticks == 0) {
       rest(1);
     }
-    while(ticks > 0){
+    while(ticks > 0) {
       int old_ticks = ticks;
 
       update();
 
       ticks--;
-      if(old_ticks <= ticks){
+      if(old_ticks <= ticks) {
           break;
       }
     }
-    if(game_time - old_time >= 10){
+    if(game_time - old_time >= 10) {
       fps = frames_done;
       frames_done = 0;
       old_time = game_time;
