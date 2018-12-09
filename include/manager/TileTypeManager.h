@@ -15,26 +15,26 @@
 
 #include "TileType.h"
 
-class tile_type_manager{
+class TileTypeManager {
   public:
-    tile_type_manager() {};
-    ~tile_type_manager();
+    TileTypeManager() {};
+    ~TileTypeManager();
 
     // Load tile types
     static int load_tiles (std::string newFile);
     static int load_items (std::string newFile);
 
     // Allows communication
-    static tile_type *getTileByID (int tileID);
-    static tile_type *getItemByID (int tileID);
+    static TileType *getTileByID (int tileID);
+    static TileType *getItemByID (int tileID);
 
     static BITMAP *sprite_sheet_tiles;
     static BITMAP *sprite_sheet_items;
 
   private:
     // Stores all tiles and items
-    static std::vector<tile_type> tile_defs;
-    static std::vector<tile_type> item_defs;
+    static std::vector<TileType> tile_defs;
+    static std::vector<TileType> item_defs;
 };
 
 #endif // TILE_TYPE_MANAGER_H

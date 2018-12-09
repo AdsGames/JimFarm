@@ -17,9 +17,9 @@
  * That would be passed to play_sample along with
  * Additional, frequency randomization
  */
-class sample_wrapper{
+class SampleWrapper {
   public:
-    sample_wrapper (SAMPLE *sample_ptr = NULL, int vol = 255, int pan = 128, int freq = 1000, int freq_rand = 0, bool loop = false);
+    SampleWrapper (SAMPLE *sample_ptr = NULL, int vol = 255, int pan = 128, int freq = 1000, int freq_rand = 0, bool loop = false);
 
     SAMPLE *sample_ptr;
     int vol;
@@ -31,12 +31,12 @@ class sample_wrapper{
 
 /**
  * Sound manager class loads, from xml, all samples
- * and allows play. Works with sample_wrapper.
+ * and allows play. Works with SampleWrapper.
  */
-class sound_manager{
+class SoundManager{
   public:
-    sound_manager() {};
-    ~sound_manager();
+    SoundManager() {};
+    ~SoundManager();
 
     // Load tile types
     static int load (std::string newFile);
@@ -46,7 +46,7 @@ class sound_manager{
 
   private:
     // List of sounds
-    static std::vector<sample_wrapper*> sound_defs;
+    static std::vector<SampleWrapper*> sound_defs;
 };
 
 #endif // SOUND_MANAGER_H

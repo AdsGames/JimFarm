@@ -8,15 +8,14 @@
 
 #define MAX_TILE_META 255
 
-class tile
-{
+class Tile {
   public:
     // Ctor and Dtor
-    tile (char newID, int newX, int newY, unsigned char meta = 0);
-    virtual ~tile() {};
+    Tile (char newID, int newX, int newY, unsigned char meta = 0);
+    virtual ~Tile() {};
 
     // Define < operator for sorting
-    virtual bool operator < (const tile &other) const { return (y < other.y); }
+    virtual bool operator < (const Tile &other) const { return (y < other.y); }
 
     // Gets size
     int getWidth() { return tile_pointer -> getWidth();}
@@ -55,7 +54,7 @@ class tile
     unsigned char meta;
 
     // Ptr to tile type
-    tile_type *tile_pointer;
+    TileType *tile_pointer;
 };
 
 #endif // TILE_H

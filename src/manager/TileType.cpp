@@ -6,7 +6,7 @@
 #include <math.h>
 
 // Init tile
-tile_type::tile_type (unsigned char newWidth, unsigned char newHeight, unsigned char newID,
+TileType::TileType (unsigned char newWidth, unsigned char newHeight, unsigned char newID,
                       std::string newName, int newAttribute, unsigned char newValue) {
   // Set init variables
   id = newID;
@@ -29,10 +29,10 @@ tile_type::tile_type (unsigned char newWidth, unsigned char newHeight, unsigned 
 }
 
 // Destroy tile
-tile_type::~tile_type() {}
+TileType::~TileType() {}
 
 // Draw tile
-void tile_type::draw (int x, int y, BITMAP *tempBuffer, unsigned char meta, char offset) {
+void TileType::draw (int x, int y, BITMAP *tempBuffer, unsigned char meta, char offset) {
   if (image_type == "meta_map" || image_type == "animated") {
     int imageNum = floor((float(num_images) / 256.0f) * (float)meta);
     draw_sprite (tempBuffer, images[imageNum], x, y - ((image_h * 16) - 16));
@@ -49,12 +49,12 @@ void tile_type::draw (int x, int y, BITMAP *tempBuffer, unsigned char meta, char
 }
 
 // Give a sprite sheet to this tile
-void tile_type::setSpriteSheet (BITMAP *newSpriteSheet) {
+void TileType::setSpriteSheet (BITMAP *newSpriteSheet) {
   sprite_sheet = newSpriteSheet;
 }
 
 // Set special image stuff
-void tile_type::setImageType (std::string newImageType, int newSheetWidth, int newSheetHeight, int newImageX, int newImageY, int newImageWidth, int newImageHeight) {
+void TileType::setImageType (std::string newImageType, int newSheetWidth, int newSheetHeight, int newImageX, int newImageY, int newImageWidth, int newImageHeight) {
   // Default, dynamic or animated
   image_type = newImageType;
   sheet_width = newSheetWidth;

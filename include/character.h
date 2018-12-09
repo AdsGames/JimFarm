@@ -7,15 +7,14 @@
 #include "TileMap.h"
 #include "Inventory.h"
 
-class character
-{
+class Character {
   public:
     // Ctor and dtor
-    character();
-    virtual ~character() {};
+    Character();
+    virtual ~Character() {};
 
     // Set world pointer
-    void setWorld (tile_map *newTileMap);
+    void setWorld (TileMap *newTileMap);
 
     // Load images and samples
     void load_data();
@@ -37,10 +36,10 @@ class character
 
     // Fonts
     FONT *pixelart;
-    tile_map *map_pointer;
+    TileMap *map_pointer;
 
     // Inventory
-    inventory character_inv;
+    Inventory character_inv;
 
     // Item in hand
     int selected_item;

@@ -9,15 +9,15 @@
 //#include <iostream>
 #include <allegro.h>
 
-#ifndef MOUSELISTENER_H
-#define MOUSELISTENER_H
+#ifndef MouseListener_H
+#define MouseListener_H
 
 #define MAX_MOUSE_BUTTONS 3
 
-class mouseListener{
+class MouseListener {
   public:
-    mouseListener();
-    virtual ~mouseListener();
+    MouseListener();
+    virtual ~MouseListener();
 
     void update();
 
@@ -32,4 +32,4 @@ class mouseListener{
     static int mouse_z_old;
 };
 
-#endif // MOUSELISTENER_H
+#endif // MouseListener_H

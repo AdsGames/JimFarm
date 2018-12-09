@@ -6,19 +6,18 @@
 #include "Tile.h"
 #include "Item.h"
 
-class inventory
-{
+class Inventory {
   public:
-    inventory();
-    inventory (int max_items);
+    Inventory();
+    Inventory (int max_items);
 
-    virtual ~inventory();
+    virtual ~Inventory();
 
-    bool addItem (item *newItem, int index);
+    bool addItem (Item *newItem, int index);
     bool removeItem (int index);
 
-    item *getItem (int index);
-    item *getFirstItem();
+    Item *getItem (int index);
+    Item *getFirstItem();
 
     int getSize();
     int getMaxSize();
@@ -28,7 +27,7 @@ class inventory
   protected:
 
   private:
-    std::vector<item*> contents;
+    std::vector<Item*> contents;
     int max_items;
 };
 

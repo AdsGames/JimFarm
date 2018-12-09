@@ -3,11 +3,10 @@
 
 #include <allegro.h>
 
-class game_menu
-{
+class GameMenu {
   public:
-    game_menu();
-    virtual ~game_menu();
+    GameMenu();
+    virtual ~GameMenu();
 
     void load_data();
     void trigger();

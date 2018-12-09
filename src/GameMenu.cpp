@@ -3,35 +3,35 @@
 #include "Tools.h"
 #include "KeyListener.h"
 
-game_menu::game_menu() {
+GameMenu::GameMenu() {
   open = false;
 }
 
-game_menu::~game_menu() {}
+GameMenu::~GameMenu() {}
 
-void game_menu::load_data() {
+void GameMenu::load_data() {
   image_menu = load_bitmap_ex("images/game_menu.png");
 }
 
-void game_menu::trigger() {
+void GameMenu::trigger() {
   open = !open;
   indicator_position = 0;
 }
 
-void game_menu::update() {
+void GameMenu::update() {
   // Menu
-  if (keyListener::keyPressed[KEY_ESC]) {
+  if (KeyListener::keyPressed[KEY_ESC]) {
     trigger();
   }
 
   // Change cursor location
-  if (keyListener::keyPressed[KEY_DOWN]) {
+  if (KeyListener::keyPressed[KEY_DOWN]) {
     indicator_position++;
     if (indicator_position > 2) {
       indicator_position = 0;
     }
   }
-  else if (keyListener::keyPressed[KEY_UP]) {
+  else if (KeyListener::keyPressed[KEY_UP]) {
     indicator_position--;
     if (indicator_position < 0) {
       indicator_position = 2;
@@ -57,7 +57,7 @@ void game_menu::update() {
 }
 
 // Draw menu
-void game_menu::draw (BITMAP *tempImage) {
+void GameMenu::draw (BITMAP *tempImage) {
   if (open) {
     draw_sprite (tempImage, image_menu, 0, 0);
     rectfill (tempImage, 84, 58 + (indicator_position * 17), 84 + 9, 58 + (indicator_position * 17) + 9, makecol (0, 0, 0));
@@ -66,6 +66,6 @@ void game_menu::draw (BITMAP *tempImage) {
 }
 
 // Return if opened
-bool game_menu::isOpen() {
+bool GameMenu::isOpen() {
   return open;
 }

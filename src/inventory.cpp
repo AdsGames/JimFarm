@@ -2,21 +2,21 @@
 
 #include <iostream>
 
-inventory::inventory() {
+Inventory::Inventory() {
   this -> max_items = 0;
 }
 
-inventory::inventory (int max_items) {
+Inventory::Inventory (int max_items) {
   this -> max_items = max_items;
 
   contents.reserve(max_items);
   emptyInv();
 }
 
-inventory::~inventory() {}
+Inventory::~Inventory() {}
 
 // Push item to contents (if it fits)
-bool inventory::addItem (item *newItem, int index) {
+bool Inventory::addItem (Item *newItem, int index) {
   if (index < getMaxSize() && newItem != NULL) {
     contents[index] = newItem;
     return true;
@@ -25,7 +25,7 @@ bool inventory::addItem (item *newItem, int index) {
 }
 
 // Remove item at index
-bool inventory::removeItem (int index) {
+bool Inventory::removeItem (int index) {
   if (getItem (index) != NULL) {
     contents[index] = NULL;
     return true;
@@ -34,29 +34,29 @@ bool inventory::removeItem (int index) {
 }
 
 // Gets item at index if exists
-item* inventory::getItem (int index) {
+Item* Inventory::getItem (int index) {
   if (index < getMaxSize())
     return contents[index];
   return NULL;
 }
 
 // Just returns first item
-item* inventory::getFirstItem() {
+Item* Inventory::getFirstItem() {
   return getItem(0);
 }
 
 // Current item count
-int inventory::getSize() {
+int Inventory::getSize() {
   return contents.size();
 }
 
 // Just returns max size
-int inventory::getMaxSize() {
+int Inventory::getMaxSize() {
   return max_items;
 }
 
 // Clear all contents
-void inventory::emptyInv() {
+void Inventory::emptyInv() {
   contents.clear();
 
   for (int i = 0; i < getMaxSize(); i++)

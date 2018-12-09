@@ -6,16 +6,15 @@
  * 16/05/2016
 **/
 
-#ifndef KEYLISTENER_H
-#define KEYLISTENER_H
+#ifndef KeyListener_H
+#define KeyListener_H
 
 #define KL_KEY_MAX 127
 
-class keyListener
-{
+class KeyListener {
   public:
-    keyListener() {};
-    virtual ~keyListener() {};
+    KeyListener() {};
+    virtual ~KeyListener() {};
 
     void update();
 
@@ -26,4 +25,4 @@ class keyListener
   private:
 };
 
-#endif // KEYLISTENER_H
+#endif // KeyListener_H

@@ -12,11 +12,11 @@
 
 #include "InteractBehaviour.h"
 
-class tile_type{
+class TileType {
   public:
-    tile_type (unsigned char newWidth = 1, unsigned char newHeight = 1, unsigned char newID = 0,
+    TileType (unsigned char newWidth = 1, unsigned char newHeight = 1, unsigned char newID = 0,
                std::string newName = "", int newAttribute = 0, unsigned char newValue = 0);
-    virtual ~tile_type();
+    virtual ~TileType();
 
     // Get type
     unsigned char getID() { return id; }

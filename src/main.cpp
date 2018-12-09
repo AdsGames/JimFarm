@@ -23,17 +23,17 @@ FSOUND_STREAM* music;
 bool close_button_pressed;
 
 // Listen to the keys
-keyListener keys;
-mouseListener mouses;
+KeyListener keys;
+MouseListener mouses;
 
 #define MENU 0
 #define GAME 1
 
-tile_map farm_map;
-character jim;
-menu main_menu;
+TileMap farm_map;
+Character jim;
+Menu main_menu;
 
-game_menu main_game_menu;
+GameMenu main_game_menu;
 
 // FPS System
 volatile int ticks = 0;

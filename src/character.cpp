@@ -11,22 +11,22 @@
 #include "item_defs.h"
 
 // Ctor for character
-character::character() {
+Character::Character() {
   moving = false;
   direction = 1;
-  character_inv = inventory(8);
+  character_inv = Inventory(8);
   selected_item = 0;
 
   money = 10;
 }
 
 // World object to point to (needs this!)
-void character::setWorld (tile_map *newTileMap) {
+void Character::setWorld (TileMap *newTileMap) {
   map_pointer = newTileMap;
 }
 
 // Set image
-void character::load_data() {
+void Character::load_data() {
   // Images
   image = load_bitmap_ex("images/character_1.png");
   inventory_gui = load_bitmap_ex("images/GUI_INVENTORY.png");
@@ -45,7 +45,7 @@ void character::load_data() {
 }
 
 // Draw character to screen
-void character::draw (BITMAP *tempBuffer) {
+void Character::draw (BITMAP *tempBuffer) {
   // Indicator
   indicator_x = roundf (x / 16.0f) * 16;
   indicator_y = roundf (y / 16.0f) * 16;
@@ -69,7 +69,7 @@ void character::draw (BITMAP *tempBuffer) {
 }
 
 // Draw character to screen
-void character::drawForeground (BITMAP *tempBuffer) {
+void Character::drawForeground (BITMAP *tempBuffer) {
   // Top of head
   masked_blit (image, tempBuffer, floor(ani_ticker/4) * 16, (direction - 1) * 20, x - map_pointer -> getX(), y - map_pointer -> getY() - 8, 16, 8);
 
@@ -90,7 +90,7 @@ void character::drawForeground (BITMAP *tempBuffer) {
 }
 
 // Update player
-void character::update() {
+void Character::update() {
   // Ask joystick for keys
   poll_joystick();
 
@@ -100,9 +100,9 @@ void character::update() {
     moving = false;
 
   // Selector
-  if (keyListener::keyPressed[KEY_Z] || mouseListener::mouse_z_change > 0)
+  if (KeyListener::keyPressed[KEY_Z] || MouseListener::mouse_z_change > 0)
     selected_item = (selected_item + (character_inv.getMaxSize() - 1)) % character_inv.getMaxSize();
-  if (keyListener::keyPressed[KEY_X] || mouseListener::mouse_z_change < 0)
+  if (KeyListener::keyPressed[KEY_X] || MouseListener::mouse_z_change < 0)
     selected_item = (selected_item + 1) % character_inv.getMaxSize();
 
   // Movement code
@@ -166,9 +166,9 @@ void character::update() {
   }
 
   // Pickup and drop
-  if (keyListener::keyPressed[KEY_LCONTROL] || mouseListener::mouse_pressed & 2 || joy[0].button[2].b ) {
-    item *itemAtPos  = map_pointer -> item_at (indicator_x, indicator_y);
-    item *itemInHand = character_inv.getItem(selected_item);
+  if (KeyListener::keyPressed[KEY_LCONTROL] || MouseListener::mouse_pressed & 2 || joy[0].button[2].b ) {
+    Item *itemAtPos  = map_pointer -> item_at (indicator_x, indicator_y);
+    Item *itemInHand = character_inv.getItem(selected_item);
 
     // Pickup
     if (itemInHand == NULL && itemAtPos != NULL) {
@@ -188,7 +188,7 @@ void character::update() {
   }
 
   // Interact with map
-  if (keyListener::keyPressed[KEY_SPACE] || mouseListener::mouse_pressed & 1 || joy[0].button[0].b) {
+  if (KeyListener::keyPressed[KEY_SPACE] || MouseListener::mouse_pressed & 1 || joy[0].button[0].b) {
     if (character_inv.getItem (selected_item)) {
       map_pointer -> interact (indicator_x, indicator_y, character_inv.getItem (selected_item));
     }

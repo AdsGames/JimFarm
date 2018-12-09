@@ -2,12 +2,12 @@
 
 #include <allegro.h>
 
-bool keyListener::keyPressed[KL_KEY_MAX] = { false};
-bool keyListener::keyReleased[KL_KEY_MAX] = { false};
-bool keyListener::lastTicksKey[KL_KEY_MAX] = { false};
+bool KeyListener::keyPressed[KL_KEY_MAX] = { false};
+bool KeyListener::keyReleased[KL_KEY_MAX] = { false};
+bool KeyListener::lastTicksKey[KL_KEY_MAX] = { false};
 
 // Check those keys!
-void keyListener::update() {
+void KeyListener::update() {
   // Check key just pressed
   for (int i = 0; i < KL_KEY_MAX; i++) {
     // Clear old values

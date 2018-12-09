@@ -1,19 +1,19 @@
 #include "MouseListener.h"
 
-unsigned char mouseListener::mouse_button = 0;
-unsigned char mouseListener::mouse_pressed = 0;
-unsigned char mouseListener::mouse_released = 0;
-unsigned char mouseListener::mouse_old = 0;
+unsigned char MouseListener::mouse_button = 0;
+unsigned char MouseListener::mouse_pressed = 0;
+unsigned char MouseListener::mouse_released = 0;
+unsigned char MouseListener::mouse_old = 0;
 
-int mouseListener::mouse_z_change = 0;
-int mouseListener::mouse_z_old = 0;
+int MouseListener::mouse_z_change = 0;
+int MouseListener::mouse_z_old = 0;
 
-mouseListener::mouseListener() { }
+MouseListener::MouseListener() { }
 
-mouseListener::~mouseListener() { }
+MouseListener::~MouseListener() { }
 
 // Check those buttons!
-void mouseListener::update() {
+void MouseListener::update() {
   // Check button just pressed
   for (int i = 0; i < MAX_MOUSE_BUTTONS; i ++) {
     // Clear old values

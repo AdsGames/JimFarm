@@ -12,10 +12,10 @@
 #include <string>
 #include <allegro.h>
 
-class messenger{
+class Messenger{
   public:
-    messenger (int listSize = 1, bool topDown = false, int padding = 5, int font_col = 0xFFFFFF, int bg_col = -1);
-    virtual ~messenger();
+    Messenger (int listSize = 1, bool topDown = false, int padding = 5, int font_col = 0xFFFFFF, int bg_col = -1);
+    virtual ~Messenger();
 
     unsigned int numberMessages();
     void draw (BITMAP *buffer, int x, int y);

@@ -11,11 +11,10 @@
 #include "fmod/fmod.h"
 #include "fmod/fmod_errors.h"
 
-class menu
-{
+class Menu {
     public:
-        menu();
-        virtual ~menu();
+        Menu();
+        virtual ~Menu();
 
         void draw (BITMAP *tempBitmap);
 

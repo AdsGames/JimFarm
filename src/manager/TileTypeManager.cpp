@@ -10,20 +10,20 @@
 #include "Tools.h"
 #include "Tile.h"
 
-std::vector<tile_type> tile_type_manager::tile_defs;
-std::vector<tile_type> tile_type_manager::item_defs;
+std::vector<TileType> TileTypeManager::tile_defs;
+std::vector<TileType> TileTypeManager::item_defs;
 
-BITMAP *tile_type_manager::sprite_sheet_tiles = NULL;
-BITMAP *tile_type_manager::sprite_sheet_items = NULL;
+BITMAP *TileTypeManager::sprite_sheet_tiles = NULL;
+BITMAP *TileTypeManager::sprite_sheet_items = NULL;
 
 // Destructor
-tile_type_manager::~tile_type_manager() {
+TileTypeManager::~TileTypeManager() {
   item_defs.clear();
   tile_defs.clear();
 }
 
 // Load tiles
-int tile_type_manager::load_tiles (std::string newFile) {
+int TileTypeManager::load_tiles (std::string newFile) {
   // Open file or abort if it does not exist
   std::ifstream file(newFile.c_str());
   if (!file)
@@ -75,7 +75,7 @@ int tile_type_manager::load_tiles (std::string newFile) {
       attrubite = SOLID;
 
     // Create tile, set variables and add it to the tile list
-    tile_type newTileType (width * 16, height * 16, id, name, attrubite);
+    TileType newTileType (width * 16, height * 16, id, name, attrubite);
     newTileType.setSpriteSheet (sprite_sheet_tiles);
     newTileType.setImageType (image_type, sheet_width, sheet_height, image_x, image_y, image_w, image_h);
     tile_defs.push_back (newTileType);
@@ -87,7 +87,7 @@ int tile_type_manager::load_tiles (std::string newFile) {
 }
 
 // Load tiles
-int tile_type_manager::load_items (std::string newFile) {
+int TileTypeManager::load_items (std::string newFile) {
   // Open file or abort if it does not exist
   std::ifstream file(newFile.c_str());
   if (!file)
@@ -120,7 +120,7 @@ int tile_type_manager::load_items (std::string newFile) {
     int value = atoi(cItem-> first_node("value") -> value());
 
     // Create item, set variables and add it to the item list
-    tile_type newTileType (1, 1, i, name, 0, (unsigned char)value);
+    TileType newTileType (1, 1, i, name, 0, (unsigned char)value);
     newTileType.setSpriteSheet (sprite_sheet_items);
     newTileType.setImageType ("", 1, 1, image_x, image_y, 1, 1);
     item_defs.push_back (newTileType);
@@ -132,7 +132,7 @@ int tile_type_manager::load_items (std::string newFile) {
 }
 
 // Returns tile at ID
-tile_type *tile_type_manager::getTileByID (int tileID) {
+TileType *TileTypeManager::getTileByID (int tileID) {
   for (unsigned int i = 0; i < tile_defs.size(); i++) {
     if (tile_defs.at (i).getID() == tileID) {
       return &tile_defs.at (i);
@@ -142,7 +142,7 @@ tile_type *tile_type_manager::getTileByID (int tileID) {
 }
 
 // Returns item at ID
-tile_type *tile_type_manager::getItemByID (int tileID) {
+TileType *TileTypeManager::getItemByID (int tileID) {
   for (unsigned int i = 0; i < item_defs.size(); i++) {
     if (item_defs.at (i).getID() == tileID) {
       return &item_defs.at (i);

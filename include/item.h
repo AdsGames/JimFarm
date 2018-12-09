@@ -8,12 +8,11 @@
 
 #define MAX_ITEM_META 255
 
-class item
-{
+class Item {
   public:
     // Ctor and Dtor
-    item (char newID, unsigned char meta = 0);
-    ~item();
+    Item (char newID, unsigned char meta = 0);
+    ~Item();
 
     // Draw to screen
     void draw (int newX, int newY, BITMAP *tempBuffer);
@@ -37,7 +36,7 @@ class item
     unsigned char meta;
 
     // Pointer to item type
-    tile_type *item_pointer;
+    TileType *item_pointer;
 };
 
 #endif // ITEM_H

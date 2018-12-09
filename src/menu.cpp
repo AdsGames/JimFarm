@@ -1,19 +1,19 @@
-#include "menu.h"
+#include "Menu.h"
 
 
-menu::menu()
+Menu::Menu()
 {
     state = MAIN_MENU;
     indicator_location = 4;
     music_volume = 100;
 }
 
-menu::~menu()
+Menu::~Menu()
 {
     //dtor
 }
 
-void menu::load_data() {
+void Menu::load_data() {
     if (!(menu_image = load_bitmap("images/title_screen.png", NULL)))
         abort_on_error("Cannot find image images/title_screen.png\nPlease check your files and try again");
 
@@ -60,7 +60,7 @@ void menu::load_data() {
 }
 
 
-void menu::draw (BITMAP *tempBitmap) {
+void Menu::draw (BITMAP *tempBitmap) {
 
     draw_sprite (tempBitmap, menu_image, 0, 0);
 
@@ -83,7 +83,7 @@ void menu::draw (BITMAP *tempBitmap) {
 
 
 }
-void menu::draw_slider(BITMAP *tempBitmap, int x, int y, int value, std::string title) {
+void Menu::draw_slider(BITMAP *tempBitmap, int x, int y, int value, std::string title) {
 
     std::string text = title + ": %i";
     textprintf_ex (tempBitmap, pixelart, x, y, makecol(0,0,0), -1, text.c_str(),value );
@@ -95,109 +95,103 @@ void menu::draw_slider(BITMAP *tempBitmap, int x, int y, int value, std::string 
 
 }
 
-int menu::update() {
-
-
-    tick++;
-    if(state==MAIN_MENU) {
-      if((key[KEY_SPACE] || key[KEY_LCONTROL]) && tick>10) {
-        tick=0;
-        if(indicator_location==4) {
-          play_sample(blip,255,125,1000,0);
-          return 2;
-        }
-        else if(indicator_location==3) {
-          play_sample(blip,255,125,1000,0);
-          state=OPTIONS;
-          indicator_location=1;
-        }
-        else if(indicator_location==2) {
-          state=HELP;
-          play_sample(blip,255,125,1000,0);
-        }
-        else if(indicator_location==1) {
-          state=STORY;
-          play_sample(blip,255,125,1000,0);
-        }
-        else if(indicator_location==0)
-          return 0;
-      }
-
-
-
-      if(key[KEY_DOWN] && tick>10) {
+int Menu::update() {
+  tick++;
+  if(state==MAIN_MENU) {
+    if((key[KEY_SPACE] || key[KEY_LCONTROL]) && tick>10) {
+      tick=0;
+      if(indicator_location==4) {
         play_sample(blip,255,125,1000,0);
-        tick=0;
-        indicator_location--;
+        return 2;
       }
-      if(key[KEY_UP] && tick>10) {
+      else if(indicator_location==3) {
         play_sample(blip,255,125,1000,0);
-        tick=0;
-        indicator_location++;
+        state=OPTIONS;
+        indicator_location=1;
       }
-      if(indicator_location>4) {
-        indicator_location=0;
-      }
-      if(indicator_location<0) {
-        indicator_location=4;
-      }
-    }
-    if(state==OPTIONS) {
-
-      if(key[KEY_DOWN] && tick>10) {
+      else if(indicator_location==2) {
+        state=HELP;
         play_sample(blip,255,125,1000,0);
-        tick=0;
-        indicator_location--;
       }
-      if(key[KEY_UP] && tick>10) {
+      else if(indicator_location==1) {
+        state=STORY;
         play_sample(blip,255,125,1000,0);
-        tick=0;
-        indicator_location++;
       }
-      if(key[KEY_RIGHT] && tick>1) {
-        if(indicator_location==1) {
-         // play_sample(blip,255,125,1000,0);
-          tick=0;
-          music_volume++;
-        }
-      }
-      if(key[KEY_LEFT] && tick>1) {
-        if(indicator_location==1) {
-          //play_sample(blip,255,125,1000,0);
-          tick=0;
-          music_volume--;
-        }
-      }
-      if(music_volume>100)
-        music_volume=100;
-      if(music_volume<0)
-        music_volume=0;
-
-      FSOUND_SetVolumeAbsolute (0, music_volume);
-
-
-    }
-      // Coin spin
-    if(!coin_direction)
-      coin_frame++;
-    if(coin_direction)
-      coin_frame--;
-    if(coin_frame>18)
-      coin_direction=true;
-    if(coin_frame<0) {
-      coin_frame=5;
-      coin_direction=false;
+      else if(indicator_location==0)
+        return 0;
     }
 
-    if((state==HELP || state==STORY) && (key[KEY_SPACE] || key[KEY_LCONTROL] || key[KEY_UP] || key[KEY_DOWN] || key[KEY_LEFT] || key[KEY_RIGHT])&& tick>10) {
+
+
+    if(key[KEY_DOWN] && tick>10) {
       play_sample(blip,255,125,1000,0);
       tick=0;
-      state=MAIN_MENU;
-
+      indicator_location--;
     }
+    if(key[KEY_UP] && tick>10) {
+      play_sample(blip,255,125,1000,0);
+      tick=0;
+      indicator_location++;
+    }
+    if(indicator_location>4) {
+      indicator_location=0;
+    }
+    if(indicator_location<0) {
+      indicator_location=4;
+    }
+  }
+  if(state==OPTIONS) {
+
+    if(key[KEY_DOWN] && tick>10) {
+      play_sample(blip,255,125,1000,0);
+      tick=0;
+      indicator_location--;
+    }
+    if(key[KEY_UP] && tick>10) {
+      play_sample(blip,255,125,1000,0);
+      tick=0;
+      indicator_location++;
+    }
+    if(key[KEY_RIGHT] && tick>1) {
+      if(indicator_location==1) {
+       // play_sample(blip,255,125,1000,0);
+        tick=0;
+        music_volume++;
+      }
+    }
+    if(key[KEY_LEFT] && tick>1) {
+      if(indicator_location==1) {
+        //play_sample(blip,255,125,1000,0);
+        tick=0;
+        music_volume--;
+      }
+    }
+    if(music_volume>100)
+      music_volume=100;
+    if(music_volume<0)
+      music_volume=0;
+
+    FSOUND_SetVolumeAbsolute (0, music_volume);
 
 
-    return 1;
+  }
+    // Coin spin
+  if(!coin_direction)
+    coin_frame++;
+  if(coin_direction)
+    coin_frame--;
+  if(coin_frame>18)
+    coin_direction=true;
+  if(coin_frame<0) {
+    coin_frame=5;
+    coin_direction=false;
+  }
 
+  if((state==HELP || state==STORY) && (key[KEY_SPACE] || key[KEY_LCONTROL] || key[KEY_UP] || key[KEY_DOWN] || key[KEY_LEFT] || key[KEY_RIGHT])&& tick>10) {
+    play_sample(blip,255,125,1000,0);
+    tick=0;
+    state=MAIN_MENU;
 
+  }
+  return 1;
 }
