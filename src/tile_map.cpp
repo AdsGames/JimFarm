@@ -193,6 +193,8 @@ void tile_map::remove_tile (tile* newTile, bool foreground) {
 
 // Check for solid tile
 bool tile_map::solid_at (int positionX, int positionY) {
+  if (tile_at (positionX, positionY, false) && tile_at (positionX, positionY, false) -> getID() == TILE_WATER)
+    return true;
   if (tile_at (positionX, positionY, true))
     return tile_at (positionX, positionY, true) -> isSolid();
   return false;
@@ -523,9 +525,51 @@ void tile_map::generate_map() {
   // Base map
   load_map ("data/map");
 
-  // Place grass
+  //MAP_WIDTH = 64;
+  //MAP_HEIGHT = 64;
+  const int PLACED_MULTIPLIER = MAP_WIDTH / 16 + MAP_HEIGHT / 16;
+
+  // Grass
+  for (int t = 0; t < MAP_HEIGHT; t++) {
+    for (int i = 0; i < MAP_WIDTH; i++) {
+      tile* newTile = new tile (TILE_GRASS, i * 16, t * 16);
+      map_tiles.push_back (newTile);
+    }
+  }
+
+  // Rivers
   int placed = 0;
-  while (placed < 10) {
+  while (placed < 1 * PLACED_MULTIPLIER) {
+    int river_x_1 = random(0, MAP_WIDTH - 1);
+    int river_y_1 = 0;
+    int river_x_2 = random(0, MAP_WIDTH - 1);
+    int river_y_2 = MAP_HEIGHT;
+    int river_width = random(2,5);
+
+    while (river_y_1 < river_y_2) {
+      for (int i = 0; i < river_width; i++) {
+        if (river_x_1 + i < MAP_WIDTH) {
+          tile *backgroundTile = tile_at((river_x_1 + i) * 16, river_y_1 * 16, BACKGROUND);
+          replace_tile(backgroundTile, TILE_WATER, BACKGROUND);
+        }
+      }
+
+      if (river_x_1 < MAP_WIDTH && river_x_1 > 0 && random(0, 5) == 0) {
+        river_x_1 += int(river_x_1 < river_x_2) - int(river_x_1 > river_x_2);
+        if (river_x_1 < MAP_WIDTH) {
+          tile *backgroundTile = tile_at(river_x_1 * 16, river_y_1 * 16, BACKGROUND);
+          replace_tile(backgroundTile, TILE_WATER, BACKGROUND);
+        }
+      }
+      if (river_y_1 < MAP_HEIGHT)
+        river_y_1 ++;
+    }
+    placed++;
+  }
+
+  // Place grass
+  placed = 0;
+  while (placed < 10 * PLACED_MULTIPLIER) {
     int random_x = random (0, MAP_WIDTH) * 16;
     int random_y = random (0, MAP_HEIGHT) * 16;
     tile *backgroundTile = tile_at (random_x, random_y, BACKGROUND);
@@ -534,7 +578,7 @@ void tile_map::generate_map() {
 
   // Grow Grass
   placed = 0;
-  while (placed < 100) {
+  while (placed < 100 * PLACED_MULTIPLIER) {
     for (unsigned int t = 0; t < map_tiles_foreground.size(); t++) {
       if (map_tiles_foreground.at(t) -> getID() == TILE_DENSE_GRASS && !random(0, 10)) {
         tile *current = map_tiles_foreground.at(t);
@@ -547,7 +591,7 @@ void tile_map::generate_map() {
 
   // Place trees
   placed = 0;
-  while (placed < 20) {
+  while (placed < 20 * PLACED_MULTIPLIER) {
     int random_x = random (0, MAP_WIDTH) * 16;
     int random_y = random (0, MAP_HEIGHT) * 16;
     tile *backgroundTile = tile_at (random_x, random_y, BACKGROUND);
@@ -556,14 +600,14 @@ void tile_map::generate_map() {
 
   // Grow trees
   placed = 0;
-  while (placed < 40)
+  while (placed < 40 * PLACED_MULTIPLIER)
     for (unsigned int t = 0; t < map_tiles_foreground.size(); t++)
       if (map_tiles_foreground.at(t) -> getID() == TILE_TREE && !random(0, 10))
         placed += place_tile_safe (new tile(TILE_TREE, map_tiles_foreground.at(t) -> getX() + random(-1, 1) * 16, map_tiles_foreground.at(t) -> getY() + random(-1, 1) * 16), FOREGROUND, TILE_GRASS);
 
   // Place chickens
   placed = 0;
-  while (placed < 3) {
+  while (placed < 3 * PLACED_MULTIPLIER) {
     int random_x = random (0, MAP_WIDTH) * 16;
     int random_y = random (0, MAP_HEIGHT) * 16;
     tile *foregroundTile = tile_at (random_x, random_y, FOREGROUND);
@@ -575,7 +619,7 @@ void tile_map::generate_map() {
 
   // Place sticks
   placed = 0;
-  while (placed < 10) {
+  while (placed < 10 * PLACED_MULTIPLIER) {
     int random_x = random (0, MAP_WIDTH) * 16;
     int random_y = random (0, MAP_HEIGHT) * 16;
     if(!solid_at (random_x, random_y)) {
@@ -626,7 +670,7 @@ void tile_map::load_map (std::string fileName) {
   }
 
   //Setup Map
-  if(fileName != "blank") {
+  if(fileName != "") {
     fileLoad = fileName + ".txt";
     std::ifstream read(fileLoad.c_str());
     std::cout << "Loading " << fileLoad << "\n";
