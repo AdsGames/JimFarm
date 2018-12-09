@@ -1,12 +1,12 @@
-#include "character.h"
+#include "Character.h"
 
 #include <iostream>
 #include <math.h>
 
-#include "math.h"
-#include "keyListener.h"
-#include "mouseListener.h"
-#include "tools.h"
+#include "KeyListener.h"
+#include "MouseListener.h"
+#include "Tools.h"
+
 #include "tile_defs.h"
 #include "item_defs.h"
 

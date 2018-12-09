@@ -13,7 +13,7 @@
 #include <vector>
 #include <string>
 
-#include "tile_type.h"
+#include "TileType.h"
 
 class tile_type_manager{
   public:

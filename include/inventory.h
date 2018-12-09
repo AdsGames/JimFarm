@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include "tile.h"
-#include "item.h"
+#include "Tile.h"
+#include "Item.h"
 
 class inventory
 {

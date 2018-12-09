@@ -1,6 +1,6 @@
-#include "item.h"
+#include "Item.h"
 
-#include "tile_type_manager.h"
+#include "TileTypeManager.h"
 
 // Ctor for item
 item::item (char newID, unsigned char meta) {

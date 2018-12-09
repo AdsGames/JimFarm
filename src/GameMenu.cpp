@@ -1,7 +1,7 @@
-#include "game_menu.h"
+#include "GameMenu.h"
 
-#include "tools.h"
-#include "keyListener.h"
+#include "Tools.h"
+#include "KeyListener.h"
 
 game_menu::game_menu() {
   open = false;

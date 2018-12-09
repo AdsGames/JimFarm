@@ -1,14 +1,14 @@
-#include<allegro.h>
-#include<alpng.h>
+#include <allegro.h>
+#include <alpng.h>
 
-#include "tile.h"
-#include "character.h"
-#include "tile_map.h"
-#include "tools.h"
-#include "menu.h"
-#include "keyListener.h"
-#include "mouseListener.h"
-#include "game_menu.h"
+#include "TileMap.h"
+#include "Tile.h"
+#include "Character.h"
+#include "Tools.h"
+#include "Menu.h"
+#include "KeyListener.h"
+#include "MouseListener.h"
+#include "GameMenu.h"
 
 #include "fmod/fmod.h"
 #include "fmod/fmod_errors.h"

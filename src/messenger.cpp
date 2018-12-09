@@ -1,4 +1,4 @@
-#include "messenger.h"
+#include "Messenger.h"
 
 messenger::messenger (int listSize, bool topDown, int padding, int font_col, int bg_col) {
   this -> max_size = listSize;

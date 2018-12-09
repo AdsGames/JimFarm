@@ -4,7 +4,7 @@
 #include <allegro.h>
 #include <string>
 
-#include "tile_type.h"
+#include "TileType.h"
 
 #define MAX_ITEM_META 255
 

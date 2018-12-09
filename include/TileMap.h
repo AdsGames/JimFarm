@@ -8,9 +8,9 @@
 #define LAYER_FOREGROUND 1
 #define LAYER_BACKGROUND 0
 
-#include "tile.h"
-#include "item.h"
-#include "messenger.h"
+#include "Tile.h"
+#include "Item.h"
+#include "Messenger.h"
 
 class map_item
 {

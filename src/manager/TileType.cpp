@@ -1,4 +1,5 @@
-#include "tile_type.h"
+#include "TileType.h"
+
 #include "item_defs.h"
 #include "tile_defs.h"
 

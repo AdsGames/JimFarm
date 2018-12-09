@@ -4,8 +4,8 @@
 #include <allegro.h>
 #include <string>
 
-#include "tile_map.h"
-#include "inventory.h"
+#include "TileMap.h"
+#include "Inventory.h"
 
 class character
 {

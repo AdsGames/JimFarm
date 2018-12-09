@@ -1,7 +1,7 @@
 #ifndef INTERACTBEHAVIOUR_H
 #define INTERACTBEHAVIOUR_H
 /*
-#include "item.h"
+#include "Item.h"
 
 
 class TileBehaviour {

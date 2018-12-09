@@ -1,17 +1,18 @@
-#include "tile_map.h"
+#include "TileMap.h"
 
 #include <iostream>
 #include <fstream>
 #include <algorithm>
 #include <math.h>
 
-#include "tools.h"
-#include "tile_type_manager.h"
+#include "Tools.h"
+#include "TileTypeManager.h"
+
 #include "tile_defs.h"
 #include "item_defs.h"
-
-#include "sound_manager.h"
 #include "sound_defs.h"
+
+#include "SoundManager.h"
 
 bool comparePtrToNode(tile *a, tile *b) {
   return (*a < *b);

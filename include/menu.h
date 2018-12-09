@@ -4,9 +4,10 @@
 #include <allegro.h>
 #include <vector>
 
-#include "tile.h"
-#include "tools.h"
-#include "character.h"
+#include "Tile.h"
+#include "Tools.h"
+#include "Character.h"
+
 #include "fmod/fmod.h"
 #include "fmod/fmod_errors.h"
 

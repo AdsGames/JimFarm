@@ -1,4 +1,4 @@
-#include "sound_manager.h"
+#include "SoundManager.h"
 
 #include <fstream>
 #include <sstream>
@@ -6,7 +6,8 @@
 
 #include "rapidxml.hpp"
 #include "rapidxml_print.hpp"
-#include "tools.h"
+
+#include "Tools.h"
 
 // CTOR for sample wrapper
 sample_wrapper::sample_wrapper (SAMPLE *sample_ptr, int vol, int pan, int freq, int freq_rand, bool loop) {

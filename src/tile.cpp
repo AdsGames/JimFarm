@@ -1,10 +1,11 @@
-#include "tile.h"
+#include "Tile.h"
 
 #include <iostream>
 #include <math.h>
 
-#include "tools.h"
-#include "tile_type_manager.h"
+#include "Tools.h"
+#include "TileTypeManager.h"
+
 #include "tile_defs.h"
 #include "item_defs.h"
 
