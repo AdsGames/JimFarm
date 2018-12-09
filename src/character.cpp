@@ -21,7 +21,7 @@ Character::Character() {
 }
 
 // World object to point to (needs this!)
-void Character::setWorld (TileMap *newTileMap) {
+void Character::setWorld (World *newTileMap) {
   map_pointer = newTileMap;
 }
 

@@ -4,7 +4,7 @@
 #include <allegro.h>
 #include <string>
 
-#include "TileMap.h"
+#include "World.h"
 #include "Inventory.h"
 
 class Character {
@@ -14,7 +14,7 @@ class Character {
     virtual ~Character() {};
 
     // Set world pointer
-    void setWorld (TileMap *newTileMap);
+    void setWorld (World *newTileMap);
 
     // Load images and samples
     void load_data();
@@ -36,7 +36,7 @@ class Character {
 
     // Fonts
     FONT *pixelart;
-    TileMap *map_pointer;
+    World *map_pointer;
 
     // Inventory
     Inventory character_inv;

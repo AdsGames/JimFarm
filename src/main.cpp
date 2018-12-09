@@ -1,7 +1,7 @@
 #include <allegro.h>
 #include <alpng.h>
 
-#include "TileMap.h"
+#include "World.h"
 #include "Tile.h"
 #include "Character.h"
 #include "Tools.h"
@@ -29,7 +29,7 @@ MouseListener mouses;
 #define MENU 0
 #define GAME 1
 
-TileMap farm_map;
+World farm_map;
 Character jim;
 Menu main_menu;
 
