@@ -32,41 +32,48 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="include/character.h" />
-		<Unit filename="include/game_menu.h" />
-		<Unit filename="include/inventory.h" />
-		<Unit filename="include/item.h" />
+		<Unit filename="include/Character.h" />
+		<Unit filename="include/GameMenu.h" />
+		<Unit filename="include/InteractBehaviour.h" />
+		<Unit filename="include/Inventory.h" />
+		<Unit filename="include/Item.h" />
+		<Unit filename="include/Menu.h" />
+		<Unit filename="include/Messenger.h" />
+		<Unit filename="include/Tile.h" />
+		<Unit filename="include/TileMap.h" />
+		<Unit filename="include/World.h" />
+		<Unit filename="include/manager/SoundManager.h" />
+		<Unit filename="include/manager/TileType.h" />
+		<Unit filename="include/manager/TileTypeManager.h" />
 		<Unit filename="include/manager/item_defs.h" />
 		<Unit filename="include/manager/sound_defs.h" />
-		<Unit filename="include/manager/sound_manager.h" />
-		<Unit filename="include/manager/tile_defs.h" />
-		<Unit filename="include/manager/tile_type.h" />
-		<Unit filename="include/manager/tile_type_manager.h" />
-		<Unit filename="include/menu.h" />
-		<Unit filename="include/messenger.h" />
-		<Unit filename="include/tile.h" />
-		<Unit filename="include/tile_map.h" />
-		<Unit filename="include/utility/keyListener.h" />
-		<Unit filename="include/utility/mouseListener.h" />
-		<Unit filename="include/utility/tools.h" />
+		<Unit filename="include/rapidxml/rapidxml.hpp" />
+		<Unit filename="include/rapidxml/rapidxml_iterators.hpp" />
+		<Unit filename="include/rapidxml/rapidxml_print.hpp" />
+		<Unit filename="include/rapidxml/rapidxml_utils.hpp" />
+		<Unit filename="include/utility/KeyListener.h" />
+		<Unit filename="include/utility/MouseListener.h" />
+		<Unit filename="include/utility/Tools.h" />
 		<Unit filename="res/resources.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
-		<Unit filename="src/character.cpp" />
-		<Unit filename="src/game_menu.cpp" />
-		<Unit filename="src/inventory.cpp" />
-		<Unit filename="src/item.cpp" />
+		<Unit filename="src/Character.cpp" />
+		<Unit filename="src/GameMenu.cpp" />
+		<Unit filename="src/InteractBehaviour.cpp" />
+		<Unit filename="src/Inventory.cpp" />
+		<Unit filename="src/Item.cpp" />
+		<Unit filename="src/Menu.cpp" />
+		<Unit filename="src/Messenger.cpp" />
+		<Unit filename="src/Tile.cpp" />
+		<Unit filename="src/TileMap.cpp" />
+		<Unit filename="src/World.cpp" />
 		<Unit filename="src/main.cpp" />
-		<Unit filename="src/manager/sound_manager.cpp" />
-		<Unit filename="src/manager/tile_type.cpp" />
-		<Unit filename="src/manager/tile_type_manager.cpp" />
-		<Unit filename="src/menu.cpp" />
-		<Unit filename="src/messenger.cpp" />
-		<Unit filename="src/tile.cpp" />
-		<Unit filename="src/tile_map.cpp" />
-		<Unit filename="src/utility/keyListener.cpp" />
-		<Unit filename="src/utility/mouseListener.cpp" />
-		<Unit filename="src/utility/tools.cpp" />
+		<Unit filename="src/manager/SoundManager.cpp" />
+		<Unit filename="src/manager/TileType.cpp" />
+		<Unit filename="src/manager/TileTypeManager.cpp" />
+		<Unit filename="src/utility/KeyListener.cpp" />
+		<Unit filename="src/utility/MouseListener.cpp" />
+		<Unit filename="src/utility/Tools.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
