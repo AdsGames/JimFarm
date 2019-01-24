@@ -11,7 +11,8 @@
 #include "item_defs.h"
 
 // Ctor for character
-Character::Character() {
+Character::Character() :
+  Sprite(0, 0, 1) {
   moving = false;
   direction = 1;
   character_inv = Inventory(8);
@@ -45,7 +46,7 @@ void Character::load_data() {
 }
 
 // Draw character to screen
-void Character::draw (BITMAP *tempBuffer) {
+void Character::draw (BITMAP *tempBuffer, float x_1, float y_1, float x_2, float y_2) {
   // Indicator
   indicator_x = roundf (x / 16.0f) * 16;
   indicator_y = roundf (y / 16.0f) * 16;

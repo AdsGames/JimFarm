@@ -120,15 +120,6 @@ void draw() {
     // Draw map
     farm_map.draw (buffer);
 
-    // Draw JIM
-    jim.draw (buffer);
-
-    // Draw map
-    farm_map.drawForeground (buffer);
-
-    // Draw JIM
-    jim.drawForeground (buffer);
-
     main_game_menu.draw (buffer);
 
     // Stretch screen
@@ -187,6 +178,9 @@ void setup() {
 
   jim.load_data();
   jim.setWorld (&farm_map);
+
+  // Add jim to drawing
+  farm_map.add_sprite(&jim);
 
   main_game_menu.load_data();
 }

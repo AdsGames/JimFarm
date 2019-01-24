@@ -6,8 +6,9 @@
 
 #include "World.h"
 #include "Inventory.h"
+#include "Sprite.h"
 
-class Character {
+class Character : public Sprite {
   public:
     // Ctor and dtor
     Character();
@@ -23,7 +24,7 @@ class Character {
     void setPosition (int newX, int newY) { x = newX; y = newY;}
 
     // Draw
-    void draw (BITMAP *tempBuffer);
+    virtual void draw (BITMAP *tempBuffer, float x_1, float y_1, float x_2, float y_2) override;
     void drawForeground (BITMAP *tempBuffer);
 
     // Update
@@ -46,9 +47,6 @@ class Character {
 
     // Money
     int money;
-
-    // Position
-    int x, y;
 
     // What tile you are over
     int indicator_x, indicator_y;

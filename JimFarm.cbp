@@ -14,6 +14,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-std=c++11" />
 					<Add directory="include" />
 					<Add directory="include/utility" />
 					<Add directory="include/manager" />
@@ -37,8 +38,10 @@
 		<Unit filename="include/InteractBehaviour.h" />
 		<Unit filename="include/Inventory.h" />
 		<Unit filename="include/Item.h" />
+		<Unit filename="include/MapItem.h" />
 		<Unit filename="include/Menu.h" />
 		<Unit filename="include/Messenger.h" />
+		<Unit filename="include/Sprite.h" />
 		<Unit filename="include/Tile.h" />
 		<Unit filename="include/TileMap.h" />
 		<Unit filename="include/World.h" />
@@ -62,8 +65,10 @@
 		<Unit filename="src/InteractBehaviour.cpp" />
 		<Unit filename="src/Inventory.cpp" />
 		<Unit filename="src/Item.cpp" />
+		<Unit filename="src/MapItem.cpp" />
 		<Unit filename="src/Menu.cpp" />
 		<Unit filename="src/Messenger.cpp" />
+		<Unit filename="src/Sprite.cpp" />
 		<Unit filename="src/Tile.cpp" />
 		<Unit filename="src/TileMap.cpp" />
 		<Unit filename="src/World.cpp" />

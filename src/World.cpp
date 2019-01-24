@@ -13,29 +13,15 @@
 #include "sound_defs.h"
 
 #include "SoundManager.h"
+#include "KeyListener.h"
 
 bool comparePtrToNode(Tile *a, Tile *b) {
   return (*a < *b);
 }
 
-/*************
- * MAP ITEMS *
- *************/
-MapItem::~MapItem() {
-  delete itemPtr;
+bool sortDrawableByZ(Sprite *A, Sprite *B) {
+  return (*A < *B);
 }
-
-MapItem::MapItem (int x, int y, Item *itemPtr) {
-  this -> x = x;
-  this -> y = y;
-  this -> itemPtr = itemPtr;
-}
-
-void MapItem::draw (BITMAP *tempBuffer) {
-  itemPtr -> draw (x, y, tempBuffer);
-}
-
-
 
 /************
  * TILE MAP *
@@ -48,12 +34,16 @@ World::World() {
   map_buffer = NULL;
 
   map_messages = new Messenger (1, false, -4);
+
+  VIEWPORT_ZOOM = 1.0f;
 }
 
 
 // Ticker
 World::~World() {}
+
 volatile int World::ticks = 0;
+
 void World::tick_counter() {
   ticks++;
 }
@@ -73,28 +63,33 @@ void World::init_ticker() {
 // Draw bottom tiles
 void World::draw (BITMAP *tempBuffer) {
   // Draw tiles
-  for (unsigned int i = 0; i < map_tiles.size(); i++)
-    map_tiles.at(i) -> draw (map_buffer);
+  /*for (unsigned int i = 0; i < map_tiles.size(); i++)
+    map_tiles.at(i) -> draw (map_buffer, x, y, x + VIEWPORT_WIDTH / VIEWPORT_ZOOM, y + VIEWPORT_HEIGHT / VIEWPORT_ZOOM);
 
-  blit (map_buffer, tempBuffer, x, y, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+  stretch_blit (map_buffer, tempBuffer, 0, 0, VIEWPORT_WIDTH / VIEWPORT_ZOOM, VIEWPORT_HEIGHT / VIEWPORT_ZOOM, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);*/
+
+  rectfill (map_buffer, 0, 0, map_buffer -> w, map_buffer -> h, makecol (255, 0, 0));
+
+  // Drawable
+  for (unsigned int i = 0; i < drawable.size(); i++) {
+    drawable.at(i) -> draw (map_buffer, x, y, x + VIEWPORT_WIDTH, y + VIEWPORT_HEIGHT);
+  }
+
+  stretch_blit (map_buffer, tempBuffer, 0, 0, VIEWPORT_WIDTH / VIEWPORT_ZOOM, VIEWPORT_HEIGHT / VIEWPORT_ZOOM, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+
+  // Draw foreground
+  /*for (unsigned int i = 0; i < map_tiles_foreground.size(); i++)
+    map_tiles_foreground.at(i) -> draw (map_buffer, x, y, x + VIEWPORT_WIDTH / VIEWPORT_ZOOM, y + VIEWPORT_HEIGHT / VIEWPORT_ZOOM);
+
+  masked_stretch_blit (map_buffer, tempBuffer, 0, 0, VIEWPORT_WIDTH / VIEWPORT_ZOOM, VIEWPORT_HEIGHT / VIEWPORT_ZOOM, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);*/
+
+  // Message system
+  map_messages -> draw (tempBuffer, 5, 145);
 }
 
 // Draw foreground tiles
 void World::drawForeground (BITMAP *tempBuffer) {
-  rectfill (map_buffer, 0, 0, map_buffer -> w, map_buffer -> h, makecol (255, 0, 255));
 
-  // Draw items on map
-  for (unsigned int i = 0; i < map_items.size(); i++)
-    map_items.at(i) -> draw (map_buffer);
-
-  // Draw foreground
-  for (unsigned int i = 0; i < map_tiles_foreground.size(); i++)
-    map_tiles_foreground.at(i) -> draw (map_buffer);
-
-  masked_blit (map_buffer, tempBuffer, x, y, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
-
-  // Message system
-  map_messages -> draw (tempBuffer, 5, 145);
 }
 
 // Load images
@@ -113,6 +108,20 @@ void World::load_images() {
   std::cout << "Loading data/sounds.xml \n";
   if (SoundManager::load ("data/sounds.xml"))
     abort_on_error ("Could not load data/sounds.xml");
+
+  // Create map buffer
+  map_buffer = create_bitmap (VIEWPORT_WIDTH * VIEWPORT_MAX_ZOOM, VIEWPORT_HEIGHT * VIEWPORT_MAX_ZOOM);
+}
+
+// Add drawable
+void World::add_sprite(Sprite* sprite) {
+  std::sort(drawable.begin(), drawable.end(), sortDrawableByZ);
+  drawable.push_back(sprite);
+}
+
+// Add drawable
+void World::remove_sprite(Sprite* sprite) {
+  drawable.erase(std::remove(drawable.begin(), drawable.end(), sprite), drawable.end());
 }
 
 
@@ -138,9 +147,10 @@ void World::place_tile (Tile* newTile, bool foreground) {
   if (newTile) {
     if (foreground)
       map_tiles_foreground.push_back (newTile);
-    else{
+    else
       map_tiles.push_back (newTile);
-    }
+
+    add_sprite(newTile);
   }
 }
 
@@ -155,6 +165,9 @@ bool World::place_tile_safe (Tile* newTile, bool foreground, int opposite_layer_
         map_tiles_foreground.push_back (newTile);
       else
         map_tiles.push_back (newTile);
+
+      add_sprite(newTile);
+
       return true;
     }
   }
@@ -166,7 +179,7 @@ bool World::place_tile_safe (Tile* newTile, bool foreground, int opposite_layer_
 void World::replace_tile (Tile *oldTile, int newID, bool foreground) {
   if (oldTile) {
     remove_tile (oldTile, foreground);
-    Tile *newTile = new Tile (newID, oldTile -> getX(), oldTile -> getY());
+    Tile *newTile = new Tile (newID, oldTile -> getX(), oldTile -> getY(), oldTile -> getZ());
     place_tile (newTile, foreground);
 
     // Update bitmasks
@@ -183,6 +196,7 @@ void World::remove_tile (Tile* newTile, bool foreground) {
 
     for (unsigned int i = 0; i < layer -> size(); i++) {
       if (layer -> at(i) == newTile) {
+        remove_sprite(layer -> at(i));
         Tile *tempPtr = layer -> at(i);
         layer -> erase (layer -> begin() + i);
         delete tempPtr;
@@ -217,6 +231,7 @@ void World::place_item (Item* newItem, int x, int y) {
   if (newItem) {
     MapItem *newMapItem = new MapItem (x, y, newItem);
     map_items.push_back (newMapItem);
+    add_sprite(newMapItem);
   }
 }
 
@@ -225,6 +240,7 @@ void World::remove_item (Item *newItem) {
   if (newItem != NULL) {
     for (unsigned int i = 0; i < map_items.size(); i++) {
       if (map_items.at(i) -> itemPtr == newItem) {
+        remove_sprite(map_items.at(i));
         map_items.erase (map_items.begin() + i);
         break;
       }
@@ -274,7 +290,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   // Berry
   else if (inHand -> getID() == ITEM_BERRY_SEED) {
     if (backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile) {
-      place_tile (new Tile (TILE_BERRY, inter_x, inter_y), LAYER_FOREGROUND);
+      place_tile (new Tile (TILE_BERRY, inter_x, inter_y, 1), LAYER_FOREGROUND);
     }
     else{
       map_messages -> push_message ("You must plant in ploughed soil");
@@ -284,7 +300,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   // Tomato
   else if (inHand -> getID() == ITEM_TOMATO_SEED) {
     if (backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile) {
-      place_tile (new Tile (TILE_TOMATO, inter_x, inter_y), LAYER_FOREGROUND);
+      place_tile (new Tile (TILE_TOMATO, inter_x, inter_y, 1), LAYER_FOREGROUND);
     }
     else{
       map_messages -> push_message ("You must plant in ploughed soil");
@@ -294,7 +310,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   // Carrot
   else if (inHand -> getID() == ITEM_CARROT_SEED) {
     if (backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile) {
-      place_tile (new Tile (TILE_CARROT, inter_x, inter_y), LAYER_FOREGROUND);
+      place_tile (new Tile (TILE_CARROT, inter_x, inter_y, 1), LAYER_FOREGROUND);
     }
     else{
       map_messages -> push_message ("You must plant in ploughed soil");
@@ -304,7 +320,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   // Lavender
   else if (inHand -> getID() == ITEM_LAVENDER_SEED) {
     if (backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile) {
-      place_tile (new Tile (TILE_LAVENDER, inter_x, inter_y), LAYER_FOREGROUND);
+      place_tile (new Tile (TILE_LAVENDER, inter_x, inter_y, 1), LAYER_FOREGROUND);
     }
     else{
       map_messages -> push_message ("You must plant in ploughed soil");
@@ -378,7 +394,7 @@ void World::update() {
       Item *current = map_items.at(i) -> itemPtr;
 
       // Tile near item
-      Tile *foregroundTile = tile_at (map_items.at(i) -> x, map_items.at(i) -> y, FOREGROUND);
+      //Tile *foregroundTile = tile_at (map_items.at(i) -> x, map_items.at(i) -> y, FOREGROUND);
       Tile *backgroundTile = tile_at (map_items.at(i) -> x, map_items.at(i) -> y, BACKGROUND);
 
       // Chicken eggs
@@ -473,6 +489,14 @@ void World::update() {
       }*/
     }
   }
+
+  // Zooming
+  if (KeyListener::keyPressed[KEY_PLUS_PAD] && VIEWPORT_ZOOM < VIEWPORT_MAX_ZOOM) {
+    VIEWPORT_ZOOM *= 2.0f;
+  }
+  if (KeyListener::keyPressed[KEY_MINUS_PAD] && VIEWPORT_ZOOM > VIEWPORT_MIN_ZOOM) {
+    VIEWPORT_ZOOM *= 0.5f;
+  }
 }
 
 // Scroll
@@ -533,8 +557,9 @@ void World::generate_map() {
   // Grass
   for (int t = 0; t < MAP_HEIGHT; t++) {
     for (int i = 0; i < MAP_WIDTH; i++) {
-      Tile* newTile = new Tile (TILE_GRASS, i * 16, t * 16);
+      Tile* newTile = new Tile (TILE_GRASS, i * 16, t * 16, LAYER_BACKGROUND);
       map_tiles.push_back (newTile);
+      add_sprite(newTile);
     }
   }
 
@@ -573,8 +598,8 @@ void World::generate_map() {
   while (placed < 10 * PLACED_MULTIPLIER) {
     int random_x = random (0, MAP_WIDTH) * 16;
     int random_y = random (0, MAP_HEIGHT) * 16;
-    Tile *backgroundTile = tile_at (random_x, random_y, BACKGROUND);
-    placed += place_tile_safe (new Tile (TILE_DENSE_GRASS, random_x, random_y, random(0, 5)), FOREGROUND, TILE_GRASS);
+    //Tile *backgroundTile = tile_at (random_x, random_y, BACKGROUND);
+    placed += place_tile_safe (new Tile (TILE_DENSE_GRASS, random_x, random_y, LAYER_FOREGROUND, random(0, 5)), FOREGROUND, TILE_GRASS);
   }
 
   // Grow Grass
@@ -584,7 +609,7 @@ void World::generate_map() {
       if (map_tiles_foreground.at(t) -> getID() == TILE_DENSE_GRASS && !random(0, 10)) {
         Tile *current = map_tiles_foreground.at(t);
         placed += place_tile_safe (new Tile(TILE_DENSE_GRASS, current -> getX() + random(-1, 1) * 16,
-                                            current -> getY() + random(-1, 1) * 16, current -> getMeta()),
+                                            current -> getY() + random(-1, 1) * 16, LAYER_FOREGROUND, current -> getMeta()),
                                   FOREGROUND, TILE_GRASS);
       }
     }
@@ -595,8 +620,8 @@ void World::generate_map() {
   while (placed < 20 * PLACED_MULTIPLIER) {
     int random_x = random (0, MAP_WIDTH) * 16;
     int random_y = random (0, MAP_HEIGHT) * 16;
-    Tile *backgroundTile = tile_at (random_x, random_y, BACKGROUND);
-    placed += place_tile_safe (new Tile (TILE_TREE, random_x, random_y), FOREGROUND, TILE_GRASS);
+    //Tile *backgroundTile = tile_at (random_x, random_y, FOREGROUND);
+    placed += place_tile_safe (new Tile (TILE_TREE, random_x, random_y, LAYER_FOREGROUND), FOREGROUND, TILE_GRASS);
   }
 
   // Grow trees
@@ -604,7 +629,11 @@ void World::generate_map() {
   while (placed < 40 * PLACED_MULTIPLIER)
     for (unsigned int t = 0; t < map_tiles_foreground.size(); t++)
       if (map_tiles_foreground.at(t) -> getID() == TILE_TREE && !random(0, 10))
-        placed += place_tile_safe (new Tile(TILE_TREE, map_tiles_foreground.at(t) -> getX() + random(-1, 1) * 16, map_tiles_foreground.at(t) -> getY() + random(-1, 1) * 16), FOREGROUND, TILE_GRASS);
+        placed += place_tile_safe (new Tile(TILE_TREE,
+                                            map_tiles_foreground.at(t) -> getX() + random(-1, 1) * 16,
+                                            map_tiles_foreground.at(t) -> getY() + random(-1, 1) * 16,
+                                            LAYER_FOREGROUND),
+                                            FOREGROUND, TILE_GRASS);
 
   // Place chickens
   placed = 0;
@@ -647,10 +676,6 @@ void World::generate_map() {
 
   // SORT IT OUT!
   std::sort (map_tiles_foreground.begin(), map_tiles_foreground.end(), comparePtrToNode);
-
-  // Create map buffer (and destroy the old one)
-  destroy_bitmap(map_buffer);
-  map_buffer = create_bitmap (MAP_WIDTH * 16, MAP_HEIGHT * 16);
 }
 
 // Manually load new file
@@ -659,10 +684,10 @@ void World::load_map (std::string fileName) {
   std::string fileLoad = fileName + ".txt";
   std::ifstream findSize(fileLoad.c_str());
 
-  MAP_WIDTH = 0;
-  MAP_HEIGHT = 0;
+  MAP_WIDTH = 64;
+  MAP_HEIGHT = 64;
 
-  int data;
+  /*int data;
   while (findSize >> data) {
     if(MAP_HEIGHT == 0)
       MAP_WIDTH++;
@@ -701,7 +726,7 @@ void World::load_map (std::string fileName) {
       }
     }
     read2.close();
-  }
+  }*/
 }
 
 // Clear map
@@ -716,4 +741,6 @@ void World::clear_map() {
   map_tiles.clear();
   map_tiles_foreground.clear();
   map_items.clear();
+
+  drawable.clear();
 }

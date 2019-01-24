@@ -10,16 +10,22 @@
 #include "item_defs.h"
 
 // Ctor for tile
-Tile::Tile (char newID, int newX, int newY, unsigned char meta) {
-  this -> x = newX;
-  this -> y = newY;
-  this -> tile_pointer = TileTypeManager::getTileByID (newID);
+Tile::Tile (char id, int x, int y, int z, unsigned char meta) :
+  Sprite(x, y, z) {
+  this -> x = x;
+  this -> y = y;
+  this -> tile_pointer = TileTypeManager::getTileByID (id);
   this -> meta = meta;
 }
 
 // Draw tile to screen
-void Tile::draw (BITMAP *tempBuffer) {
-  tile_pointer -> draw (x, y, tempBuffer, getMeta());
+void Tile::draw (BITMAP *tempBuffer, float x_1, float y_1, float x_2, float y_2) {
+  if (x >= x_1 - tile_pointer -> getWidth() &&
+      x <= x_2 + tile_pointer -> getWidth() &&
+      y >= y_1 - tile_pointer -> getHeight() &&
+      y <= y_2 + tile_pointer -> getHeight()) {
+    tile_pointer -> draw (x - x_1, y - y_1, tempBuffer, getMeta());
+  }
 }
 
 // Draw tile at specific position

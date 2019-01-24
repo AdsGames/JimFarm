@@ -5,24 +5,16 @@
 #include <vector>
 #include <string>
 
-#define LAYER_FOREGROUND 1
+#define LAYER_FOREGROUND 2
+#define LAYER_ITEMS 1
 #define LAYER_BACKGROUND 0
+
+#define M_PI 3.14159265
 
 #include "Tile.h"
 #include "Item.h"
+#include "MapItem.h"
 #include "Messenger.h"
-
-class MapItem {
-  public:
-    MapItem (int x = 0, int y = 0, Item *itemPtr = NULL);
-    ~MapItem();
-
-    void draw (BITMAP *tempBuffer);
-
-    int x;
-    int y;
-    Item *itemPtr;
-};
 
 class World {
   public:
@@ -38,13 +30,20 @@ class World {
     int timer;
 
     // Viewport
-    static const int VIEWPORT_WIDTH = 240;
-    static const int VIEWPORT_HEIGHT = 160;
+    static constexpr int VIEWPORT_WIDTH = 240;
+    static constexpr int VIEWPORT_HEIGHT = 160;
+    static constexpr float VIEWPORT_MAX_ZOOM = 2.0f;
+    static constexpr float VIEWPORT_MIN_ZOOM = 0.5f;
+
+    float VIEWPORT_ZOOM;
 
     // Drawing
     void draw (BITMAP *tempBuffer);
     void drawForeground (BITMAP *tempBuffer);
     void load_images();
+
+    void add_sprite(Sprite* sprite);
+    void remove_sprite(Sprite* sprite);
 
     // Tiles
     Tile *tile_at (int positionX, int positionY, bool foreground);
@@ -86,6 +85,9 @@ class World {
 
     // Items
     std::vector<MapItem*> map_items;
+
+    // Drawable
+    std::vector<Sprite*> drawable;
 
     // Scroll position
     int x, y;

@@ -1,17 +1,17 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include <allegro.h>
 #include <string>
 
 #include "TileType.h"
+#include "Sprite.h"
 
 #define MAX_TILE_META 255
 
-class Tile {
+class Tile : public Sprite {
   public:
     // Ctor and Dtor
-    Tile (char newID, int newX, int newY, unsigned char meta = 0);
+    Tile (char id, int x, int y, int z, unsigned char meta = 0);
     virtual ~Tile() {};
 
     // Define < operator for sorting
@@ -22,7 +22,7 @@ class Tile {
     int getHeight() { return tile_pointer -> getHeight();}
 
     // Drawing
-    virtual void draw (BITMAP *tempBuffer);
+    virtual void draw (BITMAP *tempBuffer, float x_1, float y_1, float x_2, float y_2);
     void draw_at (int newX, int newY, BITMAP *tempBuffer);
 
     // Is this type solid?
@@ -39,17 +39,10 @@ class Tile {
     unsigned char getMeta() { return this -> meta; }
     void changeMeta (unsigned char amt ) { this -> meta += amt; }
 
-    // Get position
-    int getX() { return this -> x; }
-    int getY() { return this -> y; }
-
     // Get image type
     bool needsBitmask() { return (this -> tile_pointer -> getImageType() == "dynamic"); }
   protected:
   private:
-    // Positioning
-    int x, y;
-
     // Metadata info
     unsigned char meta;
 
