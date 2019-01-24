@@ -17,9 +17,9 @@ CharacterForeground::CharacterForeground(Character *charPtr) :
 }
 
 void CharacterForeground::draw(BITMAP *tempBuffer, float x_1, float y_1, float x_2, float y_2) {
-  masked_blit (char_ptr -> image, tempBuffer, floor(char_ptr -> ani_ticker/4) * 16, (char_ptr -> direction - 1) * 20, x - char_ptr -> map_pointer -> getX(), y - char_ptr -> map_pointer -> getY() - 8, 16, 8);
   this -> x = char_ptr -> x;
   this -> y = char_ptr -> y;
+  masked_blit (char_ptr -> image, tempBuffer, floor(char_ptr -> ani_ticker/4) * 16, (char_ptr -> direction - 1) * 20, x - char_ptr -> map_pointer -> getX(), y - char_ptr -> map_pointer -> getY() - 8, 16, 8);
 }
 
 // Ctor for character
@@ -66,7 +66,7 @@ void Character::draw (BITMAP *tempBuffer, float x_1, float y_1, float x_2, float
   indicator_y = roundf (y / 16.0f) * 16;
   if (character_inv.getItem(selected_item) != NULL && (character_inv.getItem(selected_item) -> getID() == ITEM_AXE || character_inv.getItem(selected_item) -> getID() == ITEM_SHOVEL)) {
     if (direction == DIR_UP || direction == DIR_DOWN)
-      indicator_y -= - (16 * ((direction * 2) - 3));
+      indicator_y -= (16 * ((direction * 2) - 3));
     else if (direction == DIR_RIGHT || direction == DIR_LEFT)
       indicator_x -= (16 * ((direction * 2) - 7));
   }
@@ -170,9 +170,6 @@ void Character::update() {
     else if (direction == DIR_RIGHT && x < (map_pointer -> MAP_WIDTH * 16)  - 16)
       x += 2;
 
-    // Scroll map
-    map_pointer -> scroll (x, y);
-
     // Increase animation ticker
     ani_ticker = (ani_ticker + 1) % 16;
   }
@@ -205,4 +202,7 @@ void Character::update() {
       map_pointer -> interact (indicator_x, indicator_y, character_inv.getItem (selected_item));
     }
   }
+
+  // Scroll map
+  map_pointer -> scroll (x, y);
 }

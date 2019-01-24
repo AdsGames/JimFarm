@@ -494,15 +494,15 @@ void World::update() {
 // Scroll
 void World::scroll (int player_x, int player_y) {
   // Scroll x
-  if ((player_x + 64) - x > VIEWPORT_WIDTH && x + VIEWPORT_WIDTH < MAP_WIDTH * 16)
+  if ((player_x + 64 / VIEWPORT_ZOOM) - x > VIEWPORT_WIDTH / VIEWPORT_ZOOM && x + VIEWPORT_WIDTH / VIEWPORT_ZOOM < MAP_WIDTH * 16)
     x += 2;
-  else if ((player_x - 64) - x < 0 && x > 0)
+  else if ((player_x - 64 / VIEWPORT_ZOOM) - x < 0 && x > 0)
     x -= 2;
 
   // Scroll y
-  if ((player_y + 48) - y > VIEWPORT_HEIGHT && y + VIEWPORT_HEIGHT < MAP_HEIGHT * 16)
+  if ((player_y + 48 / VIEWPORT_ZOOM) - y > VIEWPORT_HEIGHT / VIEWPORT_ZOOM && y + VIEWPORT_HEIGHT / VIEWPORT_ZOOM < MAP_HEIGHT * 16)
     y += 2;
-  else if ((player_y - 48) - y < 0 && y > 0)
+  else if ((player_y - 48 / VIEWPORT_ZOOM) - y < 0 && y > 0)
     y -= 2;
 }
 
