@@ -8,6 +8,15 @@
 #include "Inventory.h"
 #include "Sprite.h"
 
+class Character;
+
+class CharacterForeground : public Sprite {
+  public:
+    CharacterForeground(Character *charPtr);
+    virtual void draw (BITMAP *tempBuffer, float x_1, float y_1, float x_2, float y_2) override;
+    Character *char_ptr;
+};
+
 class Character : public Sprite {
   public:
     // Ctor and dtor
@@ -25,13 +34,16 @@ class Character : public Sprite {
 
     // Draw
     virtual void draw (BITMAP *tempBuffer, float x_1, float y_1, float x_2, float y_2) override;
-    void drawForeground (BITMAP *tempBuffer);
+    void draw_inventory(BITMAP *tempBuffer);
 
     // Update
     void update();
-  protected:
 
+    // Character foreground
+    CharacterForeground *c_fore;
+  protected:
   private:
+
     // Directions
     enum directions{ DIR_DOWN = 1, DIR_UP = 2, DIR_RIGHT = 3, DIR_LEFT = 4 };
 
@@ -67,6 +79,8 @@ class Character : public Sprite {
     SAMPLE *pickup;
     SAMPLE *drop;
     SAMPLE *step[2];
+
+  friend class CharacterForeground;
 };
 
 #endif // CHARACTER_H

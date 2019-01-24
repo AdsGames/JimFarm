@@ -29,5 +29,4 @@ void Sprite::setZ(int z) {
 void Sprite::setId() {
   this -> id = Sprite::next_id;
   Sprite::next_id ++;
-  std::cout << next_id << std::endl;
 }

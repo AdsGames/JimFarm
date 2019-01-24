@@ -5,8 +5,9 @@
 #include <vector>
 #include <string>
 
-#define LAYER_FOREGROUND 2
-#define LAYER_ITEMS 1
+#define LAYER_FOREGROUND 3
+#define LAYER_ITEMS 2
+#define LAYER_CHARACTER 1
 #define LAYER_BACKGROUND 0
 
 #define M_PI 3.14159265
@@ -39,11 +40,12 @@ class World {
 
     // Drawing
     void draw (BITMAP *tempBuffer);
-    void drawForeground (BITMAP *tempBuffer);
+
     void load_images();
 
     void add_sprite(Sprite* sprite);
     void remove_sprite(Sprite* sprite);
+    void sort_drawables();
 
     // Tiles
     Tile *tile_at (int positionX, int positionY, bool foreground);

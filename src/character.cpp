@@ -10,6 +10,18 @@
 #include "tile_defs.h"
 #include "item_defs.h"
 
+// Top of head
+CharacterForeground::CharacterForeground(Character *charPtr) :
+  Sprite(0, 0, 4) {
+  char_ptr = charPtr;
+}
+
+void CharacterForeground::draw(BITMAP *tempBuffer, float x_1, float y_1, float x_2, float y_2) {
+  masked_blit (char_ptr -> image, tempBuffer, floor(char_ptr -> ani_ticker/4) * 16, (char_ptr -> direction - 1) * 20, x - char_ptr -> map_pointer -> getX(), y - char_ptr -> map_pointer -> getY() - 8, 16, 8);
+  this -> x = char_ptr -> x;
+  this -> y = char_ptr -> y;
+}
+
 // Ctor for character
 Character::Character() :
   Sprite(0, 0, 1) {
@@ -19,6 +31,8 @@ Character::Character() :
   selected_item = 0;
 
   money = 10;
+
+  c_fore = new CharacterForeground(this);
 }
 
 // World object to point to (needs this!)
@@ -69,11 +83,8 @@ void Character::draw (BITMAP *tempBuffer, float x_1, float y_1, float x_2, float
     character_inv.getItem(selected_item) -> draw (x - map_pointer -> getX(), y - map_pointer -> getY(), tempBuffer);
 }
 
-// Draw character to screen
-void Character::drawForeground (BITMAP *tempBuffer) {
-  // Top of head
-  masked_blit (image, tempBuffer, floor(ani_ticker/4) * 16, (direction - 1) * 20, x - map_pointer -> getX(), y - map_pointer -> getY() - 8, 16, 8);
-
+// Update player
+void Character::draw_inventory(BITMAP *tempBuffer) {
   // Draw items
   for (int i = 0; i < character_inv.getMaxSize(); i++) {
     draw_sprite (tempBuffer, inventory_gui, 18 * i + 1, 1);

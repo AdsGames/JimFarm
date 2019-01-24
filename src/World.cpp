@@ -63,33 +63,17 @@ void World::init_ticker() {
 // Draw bottom tiles
 void World::draw (BITMAP *tempBuffer) {
   // Draw tiles
-  /*for (unsigned int i = 0; i < map_tiles.size(); i++)
-    map_tiles.at(i) -> draw (map_buffer, x, y, x + VIEWPORT_WIDTH / VIEWPORT_ZOOM, y + VIEWPORT_HEIGHT / VIEWPORT_ZOOM);
-
-  stretch_blit (map_buffer, tempBuffer, 0, 0, VIEWPORT_WIDTH / VIEWPORT_ZOOM, VIEWPORT_HEIGHT / VIEWPORT_ZOOM, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);*/
-
   rectfill (map_buffer, 0, 0, map_buffer -> w, map_buffer -> h, makecol (255, 0, 0));
 
   // Drawable
   for (unsigned int i = 0; i < drawable.size(); i++) {
-    drawable.at(i) -> draw (map_buffer, x, y, x + VIEWPORT_WIDTH, y + VIEWPORT_HEIGHT);
+    drawable.at(i) -> draw (map_buffer, x, y, x + VIEWPORT_WIDTH / VIEWPORT_ZOOM, y + VIEWPORT_HEIGHT / VIEWPORT_ZOOM);
   }
 
   stretch_blit (map_buffer, tempBuffer, 0, 0, VIEWPORT_WIDTH / VIEWPORT_ZOOM, VIEWPORT_HEIGHT / VIEWPORT_ZOOM, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
-  // Draw foreground
-  /*for (unsigned int i = 0; i < map_tiles_foreground.size(); i++)
-    map_tiles_foreground.at(i) -> draw (map_buffer, x, y, x + VIEWPORT_WIDTH / VIEWPORT_ZOOM, y + VIEWPORT_HEIGHT / VIEWPORT_ZOOM);
-
-  masked_stretch_blit (map_buffer, tempBuffer, 0, 0, VIEWPORT_WIDTH / VIEWPORT_ZOOM, VIEWPORT_HEIGHT / VIEWPORT_ZOOM, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);*/
-
   // Message system
   map_messages -> draw (tempBuffer, 5, 145);
-}
-
-// Draw foreground tiles
-void World::drawForeground (BITMAP *tempBuffer) {
-
 }
 
 // Load images
@@ -115,13 +99,18 @@ void World::load_images() {
 
 // Add drawable
 void World::add_sprite(Sprite* sprite) {
-  std::sort(drawable.begin(), drawable.end(), sortDrawableByZ);
   drawable.push_back(sprite);
+  sort_drawables();
 }
 
 // Add drawable
 void World::remove_sprite(Sprite* sprite) {
   drawable.erase(std::remove(drawable.begin(), drawable.end(), sprite), drawable.end());
+}
+
+// Sort drawables
+void World::sort_drawables() {
+  std::sort(drawable.begin(), drawable.end(), sortDrawableByZ);
 }
 
 
@@ -741,6 +730,5 @@ void World::clear_map() {
   map_tiles.clear();
   map_tiles_foreground.clear();
   map_items.clear();
-
   drawable.clear();
 }

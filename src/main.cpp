@@ -29,7 +29,7 @@ MouseListener mouses;
 #define MENU 0
 #define GAME 1
 
-World farm_map;
+World farm_world;
 Character jim;
 Menu main_menu;
 
@@ -93,7 +93,7 @@ void update() {
     // If lil menu not open
     if (!main_game_menu.isOpen()) {
       // Update character
-      farm_map.update();
+      farm_world.update();
       jim.update();
     }
     main_game_menu.update();
@@ -118,7 +118,9 @@ void draw() {
     rectfill (buffer, 0, 0, 160, 240, makecol (0, 0, 0));
 
     // Draw map
-    farm_map.draw (buffer);
+    farm_world.draw (buffer);
+
+    jim.draw_inventory(buffer);
 
     main_game_menu.draw (buffer);
 
@@ -166,9 +168,9 @@ void setup() {
   set_close_button_callback(close_button_handler);
 
   // Nice Map
-  farm_map.init_ticker();
-  farm_map.load_images();
-  farm_map.generate_map();
+  farm_world.init_ticker();
+  farm_world.load_images();
+  farm_world.generate_map();
 
   // Main menu loading
   main_menu.load_data();
@@ -177,10 +179,11 @@ void setup() {
   jim.setPosition (15 * 16, 5 * 16);
 
   jim.load_data();
-  jim.setWorld (&farm_map);
+  jim.setWorld (&farm_world);
 
   // Add jim to drawing
-  farm_map.add_sprite(&jim);
+  farm_world.add_sprite(&jim);
+  farm_world.add_sprite(jim.c_fore);
 
   main_game_menu.load_data();
 }
