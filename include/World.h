@@ -38,6 +38,8 @@ class World {
 
     float VIEWPORT_ZOOM;
 
+    bool should_sort;
+
     // Drawing
     void draw (BITMAP *tempBuffer);
 

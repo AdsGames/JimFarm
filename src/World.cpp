@@ -36,6 +36,8 @@ World::World() {
   map_messages = new Messenger (1, false, -4);
 
   VIEWPORT_ZOOM = 1.0f;
+
+  should_sort = true;
 }
 
 
@@ -100,7 +102,8 @@ void World::load_images() {
 // Add drawable
 void World::add_sprite(Sprite* sprite) {
   drawable.push_back(sprite);
-  sort_drawables();
+  if (should_sort)
+    sort_drawables();
 }
 
 // Add drawable
@@ -539,6 +542,9 @@ void World::generate_map() {
   // Base map
   load_map ("data/map");
 
+  // Disable sorting
+  should_sort = false;
+
   //MAP_WIDTH = 64;
   //MAP_HEIGHT = 64;
   const int PLACED_MULTIPLIER = MAP_WIDTH / 16 + MAP_HEIGHT / 16;
@@ -663,8 +669,9 @@ void World::generate_map() {
   for (unsigned int i = 0; i < map_tiles_foreground.size(); i++)
     update_bitmask (map_tiles_foreground.at(i), LAYER_FOREGROUND);
 
-  // SORT IT OUT!
-  std::sort (map_tiles_foreground.begin(), map_tiles_foreground.end(), comparePtrToNode);
+  // Sort
+  should_sort = true;
+  sort_drawables();
 }
 
 // Manually load new file
