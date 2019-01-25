@@ -1,7 +1,7 @@
 #include "MapItem.h"
 
 MapItem::MapItem (int x, int y, Item *itemPtr) :
-  Sprite(x, y, 1) {
+  Sprite(x, y, 2) {
   this -> x = x;
   this -> y = y;
   this -> itemPtr = itemPtr;

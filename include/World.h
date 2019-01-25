@@ -5,10 +5,11 @@
 #include <vector>
 #include <string>
 
-#define LAYER_FOREGROUND 3
-#define LAYER_ITEMS 2
-#define LAYER_CHARACTER 1
 #define LAYER_BACKGROUND 0
+#define LAYER_CHARACTER 1
+#define LAYER_ITEMS 2
+#define LAYER_FOREGROUND 3
+
 
 #define M_PI 3.14159265
 
@@ -50,11 +51,11 @@ class World {
     void sort_drawables();
 
     // Tiles
-    Tile *tile_at (int positionX, int positionY, bool foreground);
-    void place_tile (Tile* newTile, bool foreground);
-    bool place_tile_safe (Tile* newTile, bool foreground, int opposite_layer_id = -1);
-    void replace_tile (Tile *oldTile, int newID, bool foreground);
-    void remove_tile (Tile *newTile, bool foreground);
+    Tile *tile_at (int positionX, int positionY, int layer);
+    void place_tile (Tile* newTile);
+    bool place_tile_safe (Tile* newTile, int opposite_layer_id = -1);
+    void replace_tile (Tile *oldTile, Tile *newTile);
+    void remove_tile (Tile *newTile);
     bool solid_at (int positionX, int positionY);
 
     // Items
@@ -85,7 +86,6 @@ class World {
   private:
     // Tiles
     std::vector<Tile*> map_tiles;
-    std::vector<Tile*> map_tiles_foreground;
 
     // Items
     std::vector<MapItem*> map_items;
