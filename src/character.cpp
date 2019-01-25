@@ -190,7 +190,7 @@ void Character::update() {
     // Drop
     else if (itemInHand != NULL && itemAtPos == NULL) {
       play_sample (drop, 255, 125, 1000, 0);
-      map_pointer -> place_item (character_inv.getItem(selected_item), indicator_x, indicator_y);
+      map_pointer -> place_item (character_inv.getItem(selected_item), roundf (x / 16.0f) * 16, roundf (y / 16.0f) * 16);
       if (character_inv.removeItem (selected_item))
         map_pointer -> getMessenger() -> push_message ("You drop your " + itemInHand -> getName());
     }

@@ -102,4 +102,16 @@
 		<image x="2" y="0"></image>
 		<value>1</value>
 	</item>
+  <!--stick-->
+	<item>
+		<name>wood</name>
+		<image x="4" y="0"></image>
+		<value>1</value>
+	</item>
+  <!--hay-->
+	<item>
+		<name>hay</name>
+		<image x="5" y="0"></image>
+		<value>1</value>
+	</item>
 </items>

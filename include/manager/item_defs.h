@@ -16,3 +16,5 @@
 #define ITEM_LAVENDER_SEED 14
 #define ITEM_LAVENDER 15
 #define ITEM_STICK 16
+#define ITEM_WOOD 17
+#define ITEM_HAY 18

@@ -254,6 +254,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   else if (inHand -> getID() == ITEM_SCYTHE) {
     if (foregroundTile && foregroundTile -> getID() == TILE_DENSE_GRASS) {
       remove_tile (foregroundTile);
+      place_item (new Item(ITEM_HAY, 0), backgroundTile -> getX(), backgroundTile -> getY());
       SoundManager::play (SOUND_SCYTHE);
     }
     else {
@@ -322,16 +323,14 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   else if (inHand -> getID() == ITEM_AXE) {
     if (foregroundTile && foregroundTile  -> getID() == TILE_TREE) {
       replace_tile (foregroundTile, new Tile(TILE_STUMP, backgroundTile -> getX(), backgroundTile -> getY(), backgroundTile -> getZ()));
+      place_item (new Item(ITEM_STICK, 0), backgroundTile -> getX(), backgroundTile -> getY());
+      place_item (new Item(ITEM_STICK, 0), backgroundTile -> getX(), backgroundTile -> getY());
+      place_item (new Item(ITEM_WOOD, 0), backgroundTile -> getX(), backgroundTile -> getY());
       SoundManager::play (SOUND_AXE);
     }
     else{
       map_messages -> push_message ("You can't chop that down");
       SoundManager::play (SOUND_ERROR);
-    }
-
-    if (backgroundTile && backgroundTile  -> getID() == TILE_GRASS) {
-      replace_tile (backgroundTile, new Tile(TILE_PATH, backgroundTile -> getX(), backgroundTile -> getY(), backgroundTile -> getZ()));
-      SoundManager::play (SOUND_AXE);
     }
   }
   // Shovel
@@ -340,8 +339,8 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
       remove_tile (foregroundTile);
       SoundManager::play (SOUND_SHOVEL);
     }
-    else if ( backgroundTile && backgroundTile -> getID() == TILE_GRASS && foregroundTile) {
-      replace_tile (backgroundTile, new Tile(TILE_SOIL, backgroundTile -> getX(), backgroundTile -> getY(), backgroundTile -> getZ()));
+    else if ( backgroundTile && backgroundTile -> getID() == TILE_GRASS && !foregroundTile) {
+      replace_tile (backgroundTile, new Tile(TILE_PATH, backgroundTile -> getX(), backgroundTile -> getY(), backgroundTile -> getZ()));
       SoundManager::play (SOUND_SHOVEL);
     }
     else{
@@ -374,7 +373,7 @@ void World::update() {
       // Chicken eggs
       if (current -> getID() == ITEM_CHICKEN) {
         if (backgroundTile && backgroundTile -> getID() == TILE_PATCHY_GRASS) {
-          if (!random(0,16)) {
+          if (!random(0,32)) {
             int rand_1 = 16 * random (-1, 1);
             int rand_2 = 16 * random (-1, 1);
             if (!item_at (map_items.at(i) -> x + rand_1, map_items.at(i) -> y + rand_2) &&
@@ -602,7 +601,7 @@ void World::generate_map() {
     int random_x = random (0, MAP_WIDTH) * 16;
     int random_y = random (0, MAP_HEIGHT) * 16;
     //Tile *backgroundTile = tile_at (random_x, random_y, FOREGROUND);
-    placed += place_tile_safe (new Tile (TILE_TREE, random_x, random_y, LAYER_FOREGROUND), TILE_GRASS);
+    placed += place_tile_safe (new Tile (TILE_TREE, random_x, random_y, LAYER_FOREGROUND, random(0,3)), TILE_GRASS);
   }
 
   // Grow trees
@@ -613,7 +612,7 @@ void World::generate_map() {
         placed += place_tile_safe (new Tile(TILE_TREE,
                                             map_tiles.at(t) -> getX() + random(-1, 1) * 16,
                                             map_tiles.at(t) -> getY() + random(-1, 1) * 16,
-                                            LAYER_FOREGROUND),
+                                            LAYER_FOREGROUND, random(0,3)),
                                             TILE_GRASS);
 
   // Place chickens
@@ -648,6 +647,7 @@ void World::generate_map() {
   place_item (new Item(ITEM_WATERING_CAN), 17 * 16, 6 * 16);
   place_item (new Item(ITEM_AXE), 18 * 16, 6 * 16);
   place_item (new Item(ITEM_SCYTHE), 19 * 16, 6 * 16);
+  place_item (new Item(ITEM_SHOVEL), 20 * 16, 6 * 16);
 
   // Update masks
   for (unsigned int i = 0; i < map_tiles.size(); i++)
