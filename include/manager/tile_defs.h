@@ -21,3 +21,4 @@
 #define TILE_STORE 60
 #define TILE_BARN 61
 #define TILE_GOAT 62
+#define TILE_UNDERWATER_SOIL 63

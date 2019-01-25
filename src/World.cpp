@@ -201,7 +201,7 @@ void World::remove_tile (Tile* newTile, bool foreground) {
 // Check for solid tile
 bool World::solid_at (int positionX, int positionY) {
   if (tile_at (positionX, positionY, false) && tile_at (positionX, positionY, false) -> getID() == TILE_WATER)
-    return true;
+    return false;
   if (tile_at (positionX, positionY, true))
     return tile_at (positionX, positionY, true) -> isSolid();
   return false;
@@ -544,9 +544,6 @@ void World::generate_map() {
 
   // Disable sorting
   should_sort = false;
-
-  //MAP_WIDTH = 64;
-  //MAP_HEIGHT = 64;
   const int PLACED_MULTIPLIER = MAP_WIDTH / 16 + MAP_HEIGHT / 16;
 
   // Grass
@@ -570,16 +567,36 @@ void World::generate_map() {
     while (river_y_1 < river_y_2) {
       for (int i = 0; i < river_width; i++) {
         if (river_x_1 + i < MAP_WIDTH) {
+          Tile *foregroundTile = tile_at((river_x_1 + i) * 16, river_y_1 * 16, FOREGROUND);
           Tile *backgroundTile = tile_at((river_x_1 + i) * 16, river_y_1 * 16, BACKGROUND);
-          replace_tile(backgroundTile, TILE_WATER, BACKGROUND);
+          if (!foregroundTile) {
+            place_tile(new Tile (TILE_WATER, (river_x_1 + i) * 16, river_y_1 * 16, LAYER_FOREGROUND), FOREGROUND);
+
+            remove_tile(backgroundTile, BACKGROUND);
+            int underwater_meta = random(0,100);
+            if (underwater_meta > 3)
+              underwater_meta = 0;
+
+            place_tile(new Tile (TILE_UNDERWATER_SOIL, (river_x_1 + i) * 16, river_y_1 * 16, LAYER_BACKGROUND, underwater_meta), BACKGROUND);
+          }
         }
       }
 
       if (river_x_1 < MAP_WIDTH && river_x_1 > 0 && random(0, 5) == 0) {
         river_x_1 += int(river_x_1 < river_x_2) - int(river_x_1 > river_x_2);
         if (river_x_1 < MAP_WIDTH) {
+          Tile *foregroundTile = tile_at(river_x_1 * 16, river_y_1 * 16, FOREGROUND);
           Tile *backgroundTile = tile_at(river_x_1 * 16, river_y_1 * 16, BACKGROUND);
-          replace_tile(backgroundTile, TILE_WATER, BACKGROUND);
+          if (!foregroundTile) {
+            place_tile(new Tile (TILE_WATER, river_x_1 * 16, river_y_1 * 16, LAYER_FOREGROUND), FOREGROUND);
+
+            remove_tile(backgroundTile, BACKGROUND);
+            int underwater_meta = random(0,100);
+            if (underwater_meta > 3)
+              underwater_meta = 0;
+
+            place_tile(new Tile (TILE_UNDERWATER_SOIL, river_x_1 * 16, river_y_1 * 16, LAYER_BACKGROUND, underwater_meta), BACKGROUND);
+          }
         }
       }
       if (river_y_1 < MAP_HEIGHT)
@@ -605,7 +622,7 @@ void World::generate_map() {
         Tile *current = map_tiles_foreground.at(t);
         placed += place_tile_safe (new Tile(TILE_DENSE_GRASS, current -> getX() + random(-1, 1) * 16,
                                             current -> getY() + random(-1, 1) * 16, LAYER_FOREGROUND, current -> getMeta()),
-                                  FOREGROUND, TILE_GRASS);
+                                            FOREGROUND, TILE_GRASS);
       }
     }
   }

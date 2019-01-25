@@ -186,6 +186,9 @@ void setup() {
   farm_world.add_sprite(jim.c_fore);
 
   main_game_menu.load_data();
+
+  // Alpha blender
+  set_alpha_blender();
 }
 
 

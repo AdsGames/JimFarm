@@ -50,6 +50,7 @@
 		<Unit filename="include/manager/TileTypeManager.h" />
 		<Unit filename="include/manager/item_defs.h" />
 		<Unit filename="include/manager/sound_defs.h" />
+		<Unit filename="include/manager/tile_defs.h" />
 		<Unit filename="include/rapidxml/rapidxml.hpp" />
 		<Unit filename="include/rapidxml/rapidxml_iterators.hpp" />
 		<Unit filename="include/rapidxml/rapidxml_print.hpp" />

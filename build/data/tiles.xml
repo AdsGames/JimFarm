@@ -13,7 +13,7 @@
     <name>Water</name>
     <width>1</width>
     <height>1</height>
-    <image type="animated" s_w="4" s_h="1" x="6" y="0" h="1" w="1" />
+    <image type="dynamic" s_w="4" s_h="4" x="8" y="8" h="1" w="1" />
     <attrubite>NON_SOLID</attrubite>
   </tile>
   <!--SOIL-->
@@ -175,5 +175,13 @@
     <height>1</height>
     <image type="" s_w="1" s_h="1" x="13" y="14" h="2" w="1" />
     <attrubite>SOLID</attrubite>
+  </tile>
+  <!--UNDERWATER SOIL-->
+  <tile id="63">
+    <name>Underwater Soil</name>
+    <width>1</width>
+    <height>1</height>
+    <image type="meta_map_2" s_w="4" s_h="1" x="4" y="9" h="1" w="1" />
+    <attrubite>NON_SOLID</attrubite>
   </tile>
 </tiles>
