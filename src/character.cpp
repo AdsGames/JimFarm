@@ -10,10 +10,13 @@
 #include "tile_defs.h"
 #include "item_defs.h"
 
+#include "Graphics.h"
+
 // Top of head
 CharacterForeground::CharacterForeground(Character *charPtr) :
   Sprite(0, 0, 4) {
   char_ptr = charPtr;
+  Graphics::Instance() -> add(this);
 }
 
 void CharacterForeground::draw(BITMAP *tempBuffer, float x_1, float y_1, float x_2, float y_2) {
@@ -33,6 +36,7 @@ Character::Character() :
   money = 10;
 
   c_fore = new CharacterForeground(this);
+  Graphics::Instance() -> add(this);
 }
 
 // World object to point to (needs this!)
@@ -123,7 +127,7 @@ void Character::update() {
     // Up
     if (key[KEY_UP] || key[KEY_W] || joy[0].stick[0].axis[1].d1) {
       direction = DIR_UP;
-      if (!map_pointer -> solid_at (x, y - 16)) {
+      if (!map_pointer -> world_map -> solid_at (x, y - 16)) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -131,7 +135,7 @@ void Character::update() {
     // Down
     else if (key[KEY_DOWN] || key[KEY_S] || joy[0].stick[0].axis[1].d2) {
       direction = DIR_DOWN;
-      if (!map_pointer -> solid_at (x, y + 16)) {
+      if (!map_pointer -> world_map -> solid_at (x, y + 16)) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -139,7 +143,7 @@ void Character::update() {
     // Left
     else if (key[KEY_LEFT] || key[KEY_A] || joy[0].stick[0].axis[0].d1) {
       direction = DIR_LEFT;
-      if (!map_pointer -> solid_at (x - 16, y)) {
+      if (!map_pointer -> world_map -> solid_at (x - 16, y)) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -147,7 +151,7 @@ void Character::update() {
     // Right
     else if (key[KEY_RIGHT] || key[KEY_D] || joy[0].stick[0].axis[0].d2) {
       direction = DIR_RIGHT;
-      if (!map_pointer -> solid_at (x + 16, y)) {
+      if (!map_pointer -> world_map -> solid_at (x + 16, y)) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -163,11 +167,11 @@ void Character::update() {
     // Smooth move
     if (direction == DIR_UP && y > 0)
       y -= 2;
-    else if (direction == DIR_DOWN && y < (map_pointer -> MAP_HEIGHT * 16) - 16)
+    else if (direction == DIR_DOWN && y < (map_pointer -> world_map -> getHeight() * 16) - 16)
       y += 2;
     else if (direction == DIR_LEFT && x > 0)
       x -= 2;
-    else if (direction == DIR_RIGHT && x < (map_pointer -> MAP_WIDTH * 16)  - 16)
+    else if (direction == DIR_RIGHT && x < (map_pointer -> world_map -> getWidth() * 16)  - 16)
       x += 2;
 
     // Increase animation ticker

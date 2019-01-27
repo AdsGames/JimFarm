@@ -8,6 +8,9 @@
 
 #define MAX_TILE_META 255
 
+#define TILE_WIDTH 16
+#define TILE_HEIGHT 16
+
 class Tile : public Sprite {
   public:
     // Ctor and Dtor

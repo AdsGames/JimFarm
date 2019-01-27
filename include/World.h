@@ -2,21 +2,12 @@
 #define TILE_MAP_H
 
 #include <allegro.h>
-#include <vector>
-#include <string>
 
-#define LAYER_BACKGROUND 0
-#define LAYER_CHARACTER 1
-#define LAYER_ITEMS 2
-#define LAYER_FOREGROUND 3
-
-
-#define M_PI 3.14159265
-
-#include "Tile.h"
 #include "Item.h"
 #include "MapItem.h"
 #include "Messenger.h"
+
+#include "TileMap.h"
 
 class World {
   public:
@@ -27,8 +18,6 @@ class World {
     void init_ticker();
 
     // Constant
-    int MAP_WIDTH;
-    int MAP_HEIGHT;
     int timer;
 
     // Viewport
@@ -39,24 +28,10 @@ class World {
 
     float VIEWPORT_ZOOM;
 
-    bool should_sort;
-
     // Drawing
     void draw (BITMAP *tempBuffer);
 
     void load_images();
-
-    void add_sprite(Sprite* sprite);
-    void remove_sprite(Sprite* sprite);
-    void sort_drawables();
-
-    // Tiles
-    Tile *tile_at (int positionX, int positionY, int layer);
-    void place_tile (Tile* newTile);
-    bool place_tile_safe (Tile* newTile, int opposite_layer_id = -1);
-    void replace_tile (Tile *oldTile, Tile *newTile);
-    void remove_tile (Tile *newTile);
-    bool solid_at (int positionX, int positionY);
 
     // Items
     Item *item_at (int positionX, int positionY);
@@ -69,11 +44,6 @@ class World {
     // Map
     void update();
     void scroll (int player_x, int player_y);
-    void load_map (std::string fileName);
-    void generate_map();
-    void clear_map();
-    void update_bitmask (Tile *newTile, bool layer = LAYER_BACKGROUND);
-    void update_bitmask_surround (Tile *newTile, bool layer = LAYER_BACKGROUND);
 
     // Get x and y
     int getX() { return this -> x; }
@@ -81,17 +51,14 @@ class World {
 
     // Get messenger
     Messenger *getMessenger() { return this -> map_messages; }
+
+    // Tile map
+    TileMap *world_map;
   protected:
 
   private:
-    // Tiles
-    std::vector<Tile*> map_tiles;
-
     // Items
     std::vector<MapItem*> map_items;
-
-    // Drawable
-    std::vector<Sprite*> drawable;
 
     // Scroll position
     int x, y;

@@ -138,7 +138,7 @@ TileType *TileTypeManager::getTileByID (int tileID) {
       return &tile_defs.at (i);
     }
   }
-  return &tile_defs.at (0);
+  return nullptr;
 }
 
 // Returns item at ID
@@ -148,5 +148,5 @@ TileType *TileTypeManager::getItemByID (int tileID) {
       return &item_defs.at (i);
     }
   }
-  return &item_defs.at (0);
+  return nullptr;
 }

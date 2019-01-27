@@ -10,6 +10,8 @@
 #include "MouseListener.h"
 #include "GameMenu.h"
 
+#include "Graphics.h"
+
 #include "fmod/fmod.h"
 #include "fmod/fmod_errors.h"
 
@@ -124,6 +126,9 @@ void draw() {
 
     main_game_menu.draw (buffer);
 
+    // FPS
+    textprintf_ex(buffer, font, 0, 145, makecol(255, 255, 255), makecol(0,0,0), "FPS:%d", fps);
+
     // Stretch screen
     stretch_sprite (screen, buffer, 0, 0, SCREEN_W, SCREEN_H);
   }
@@ -170,7 +175,6 @@ void setup() {
   // Nice Map
   farm_world.init_ticker();
   farm_world.load_images();
-  farm_world.generate_map();
 
   // Main menu loading
   main_menu.load_data();
@@ -180,10 +184,6 @@ void setup() {
 
   jim.load_data();
   jim.setWorld (&farm_world);
-
-  // Add jim to drawing
-  farm_world.add_sprite(&jim);
-  farm_world.add_sprite(jim.c_fore);
 
   main_game_menu.load_data();
 
@@ -230,7 +230,7 @@ int main() {
 
       ticks--;
       if(old_ticks <= ticks) {
-          break;
+        break;
       }
     }
     if(game_time - old_time >= 10) {
@@ -239,6 +239,7 @@ int main() {
       old_time = game_time;
     }
     draw();
+    frames_done++;
   }
 
 
