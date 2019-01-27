@@ -378,14 +378,14 @@ void World::update() {
 // Scroll
 void World::scroll (int player_x, int player_y) {
   // Scroll x
-  if ((player_x + 64 / VIEWPORT_ZOOM) - x > VIEWPORT_WIDTH / VIEWPORT_ZOOM && x + VIEWPORT_WIDTH / VIEWPORT_ZOOM < world_map -> getWidth() * 16)
+  if ((player_x + (128 + 32) / VIEWPORT_ZOOM) - x > VIEWPORT_WIDTH / VIEWPORT_ZOOM && x + VIEWPORT_WIDTH / VIEWPORT_ZOOM < world_map -> getWidth() * 16)
     x += 2;
-  else if ((player_x - 64 / VIEWPORT_ZOOM) - x < 0 && x > 0)
+  else if ((player_x - 128 / VIEWPORT_ZOOM) - x < 0 && x > 0)
     x -= 2;
 
   // Scroll y
-  if ((player_y + 48 / VIEWPORT_ZOOM) - y > VIEWPORT_HEIGHT / VIEWPORT_ZOOM && y + VIEWPORT_HEIGHT / VIEWPORT_ZOOM < world_map -> getHeight() * 16)
+  if ((player_y + (96 + 32) / VIEWPORT_ZOOM) - y > VIEWPORT_HEIGHT / VIEWPORT_ZOOM && y + VIEWPORT_HEIGHT / VIEWPORT_ZOOM < world_map -> getHeight() * 16)
     y += 2;
-  else if ((player_y - 48 / VIEWPORT_ZOOM) - y < 0 && y > 0)
+  else if ((player_y - 96 / VIEWPORT_ZOOM) - y < 0 && y > 0)
     y -= 2;
 }
