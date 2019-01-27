@@ -4,6 +4,8 @@
 
 #include "Graphics.h"
 
+#include "SimplexNoise.h"
+
 Chunk::Chunk(int x, int y) {
   this -> x = x;
   this -> y = y;
@@ -100,9 +102,35 @@ void Chunk::update(int x_1, int y_1, int x_2, int y_2) {
 }
 
 void Chunk::generate() {
+  // Noise
+  SimplexNoise *ns = new SimplexNoise(1.0f, 1.0f, 2.0f, 0.5f);
+
   for (int i = 0; i < CHUNK_WIDTH; i++) {
     for (int t = 0; t < CHUNK_HEIGHT; t++) {
-      tiles[i][t][0] = new Tile(TILE_GRASS, i * TILE_WIDTH + x * CHUNK_WIDTH * TILE_WIDTH, t * TILE_HEIGHT + y * CHUNK_WIDTH * TILE_WIDTH, 0);
+      float level = ns -> fractal(10, (float)(i + x * CHUNK_WIDTH) / 100.0f, (float)(t + y * CHUNK_HEIGHT) / 100.0f);
+
+      int t_x = (i + x * CHUNK_WIDTH) * TILE_WIDTH;
+      int t_y = (t + y * CHUNK_HEIGHT) * TILE_HEIGHT;
+
+      if (level < -0.33f){
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND);
+        tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND);
+      }
+      else if (level < -0.3f){
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 1);
+        tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND);
+      }
+      else if (level < -0.25f){
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_GRASS, t_x, t_y, LAYER_BACKGROUND);
+        tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND);
+      }
+      else if (level > 0.2f) {
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_GRASS, t_x, t_y, LAYER_BACKGROUND);
+        tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND);
+      }
+      else {
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_GRASS, t_x, t_y, LAYER_BACKGROUND);
+      }
     }
   }
 }

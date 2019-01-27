@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <math.h>
+#include <iostream>
 
 #include "Graphics.h"
 #include "Item.h"
@@ -89,17 +90,15 @@ void TileMap::replace_tile (Tile *oldTile, Tile *newTile) {
 
 // Remove tile from map
 void TileMap::remove_tile (Tile* newTile) {
-  /*if (newTile) {
-    for (unsigned int i = 0; i < map_tiles.size(); i++) {
-      if (map_tiles.at(i) == newTile) {
-        Graphics::Instance() -> remove(map_tiles.at(i));
-        Tile *tempPtr = map_tiles.at(i);
-        map_tiles.erase (map_tiles.begin() + i);
-        delete tempPtr;
-        break;
-      }
-    }
-  }*/
+  if (!newTile)
+    return;
+
+  Chunk* chunk = chunk_at(newTile -> getX(), newTile -> getY());
+
+  if (!chunk)
+    return;
+
+  return chunk -> set_tile_at(newTile -> getX(), newTile -> getY(), newTile -> getZ(), nullptr);
 }
 
 // Check for solid tile
@@ -119,8 +118,8 @@ void TileMap::update(int x_1, int y_1, int x_2, int y_2) {
 // Generate map
 void TileMap::generate_map() {
   // Base map
-  width = 10;
-  height = 10;
+  width = 4;
+  height = 4;
 
   // Create some chunks
   for (int i = 0; i < width; i++) {
@@ -128,134 +127,6 @@ void TileMap::generate_map() {
       chunks.push_back(new Chunk(i, t));
     }
   }
-
-  // Disable sorting
-  Graphics::Instance() -> disableSort();
-  const int PLACED_MULTIPLIER = getWidth() / 16 + getHeight() / 16;
-
-  // Rivers
-  int placed = 0;
-  while (placed < (int)(0.25f * (float)PLACED_MULTIPLIER)) {
-    int river_x_1 = random(0, getWidth() - 1);
-    int river_y_1 = 0;
-    int river_x_2 = random(0, getWidth() - 1);
-    int river_y_2 = getHeight();
-    int river_width = random(4,8);
-
-    while (river_y_1 < river_y_2) {
-      for (int i = 0; i < river_width; i++) {
-        if (river_x_1 + i < getWidth()) {
-          Tile *foregroundTile = tile_at((river_x_1 + i) * 16, river_y_1 * 16, LAYER_FOREGROUND);
-          Tile *backgroundTile = tile_at((river_x_1 + i) * 16, river_y_1 * 16, LAYER_BACKGROUND);
-          if (!foregroundTile) {
-            place_tile(new Tile (TILE_WATER, (river_x_1 + i) * 16, river_y_1 * 16, LAYER_FOREGROUND));
-
-            int underwater_meta = random(0,100);
-            if (underwater_meta > 3)
-              underwater_meta = 0;
-
-            replace_tile(backgroundTile, new Tile (TILE_UNDERWATER_SOIL, (river_x_1 + i) * 16, river_y_1 * 16, LAYER_BACKGROUND, underwater_meta));
-          }
-        }
-      }
-
-      if (river_x_1 < getWidth() && river_x_1 > 0 && random(0, 2) == 0) {
-        river_x_1 += int(river_x_1 < river_x_2) - int(river_x_1 > river_x_2);
-        if (river_x_1 < getWidth()) {
-          Tile *foregroundTile = tile_at(river_x_1 * 16, river_y_1 * 16, LAYER_FOREGROUND);
-          Tile *backgroundTile = tile_at(river_x_1 * 16, river_y_1 * 16, LAYER_BACKGROUND);
-          if (!foregroundTile) {
-            place_tile(new Tile (TILE_WATER, river_x_1 * 16, river_y_1 * 16, LAYER_FOREGROUND));
-
-            int underwater_meta = random(0,100);
-            if (underwater_meta > 3)
-              underwater_meta = 0;
-
-            replace_tile(backgroundTile, new Tile (TILE_UNDERWATER_SOIL, river_x_1 * 16, river_y_1 * 16, LAYER_BACKGROUND, underwater_meta));
-          }
-        }
-      }
-      if (river_y_1 < getHeight())
-        river_y_1 ++;
-    }
-    placed++;
-  }
-
-  // Place grass
-  placed = 0;
-  while (placed < 10 * PLACED_MULTIPLIER) {
-    int random_x = random (0, getWidth()) * 16;
-    int random_y = random (0, getHeight()) * 16;
-    //Tile *backgroundTile = tile_at (random_x, random_y, BACKGROUND);
-    placed += place_tile_safe (new Tile (TILE_DENSE_GRASS, random_x, random_y, LAYER_FOREGROUND, random(0, 5)), TILE_GRASS);
-  }
-
-  // Grow Grass
-  placed = 0;
-  /*while (placed < 100 * PLACED_MULTIPLIER) {
-    for (unsigned int t = 0; t < map_tiles.size(); t++) {
-      if (map_tiles.at(t) -> getID() == TILE_DENSE_GRASS && !random(0, 10)) {
-        Tile *current = map_tiles.at(t);
-        placed += place_tile_safe (new Tile(TILE_DENSE_GRASS, current -> getX() + random(-1, 1) * 16,
-                                            current -> getY() + random(-1, 1) * 16, LAYER_FOREGROUND, current -> getMeta()),
-                                            TILE_GRASS);
-      }
-    }
-  }*/
-
-  // Place trees
-  placed = 0;
-  while (placed < 20 * PLACED_MULTIPLIER) {
-    int random_x = random (0, getWidth()) * 16;
-    int random_y = random (0, getHeight()) * 16;
-    //Tile *backgroundTile = tile_at (random_x, random_y, FOREGROUND);
-    placed += place_tile_safe (new Tile (TILE_TREE, random_x, random_y, LAYER_FOREGROUND, random(0,3)), TILE_GRASS);
-  }
-
-  // Grow trees
-  placed = 0;
-  /*while (placed < 90 * PLACED_MULTIPLIER)
-    for (unsigned int t = 0; t < map_tiles.size(); t++)
-      if (map_tiles.at(t) -> getID() == TILE_TREE && !random(0, 10))
-        placed += place_tile_safe (new Tile(TILE_TREE,
-                                            map_tiles.at(t) -> getX() + random(-1, 1) * 16,
-                                            map_tiles.at(t) -> getY() + random(-1, 1) * 16,
-                                            LAYER_FOREGROUND, random(0,3)),
-                                            TILE_GRASS);*/
-
-  // Place chickens
-  /*placed = 0;
-  while (placed < 3 * PLACED_MULTIPLIER) {
-    int random_x = random (0, getWidth()) * 16;
-    int random_y = random (0, getHeight()) * 16;
-    Tile *foregroundTile = tile_at (random_x, random_y, LAYER_FOREGROUND);
-    if (foregroundTile && foregroundTile -> getID() == TILE_DENSE_GRASS) {
-      place_item (new Item (ITEM_CHICKEN), random_x, random_y);
-      placed ++;
-    }
-  }
-
-  // Place sticks
-  placed = 0;
-  while (placed < 10 * PLACED_MULTIPLIER) {
-    int random_x = random (0, getWidth()) * 16;
-    int random_y = random (0, getHeight()) * 16;
-    if(!solid_at (random_x, random_y)) {
-      place_item (new Item (ITEM_STICK), random_x, random_y );
-      placed ++;
-    }
-  }
-
-  // Place items
-  place_item (new Item(ITEM_HOE), 17 * 16, 5 * 16);
-  place_item (new Item(ITEM_CARROT_SEED), 18 * 16, 5 * 16);
-  place_item (new Item(ITEM_LAVENDER_SEED), 19 * 16, 5 * 16);
-  place_item (new Item(ITEM_BERRY_SEED), 20 * 16, 5 * 16);
-  place_item (new Item(ITEM_TOMATO_SEED), 21 * 16, 5 * 16);
-  place_item (new Item(ITEM_WATERING_CAN), 17 * 16, 6 * 16);
-  place_item (new Item(ITEM_AXE), 18 * 16, 6 * 16);
-  place_item (new Item(ITEM_SCYTHE), 19 * 16, 6 * 16);
-  place_item (new Item(ITEM_SHOVEL), 20 * 16, 6 * 16);*/
 
   // Update masks
   for (int x = 0; x < width * CHUNK_WIDTH; x++) {
@@ -265,71 +136,17 @@ void TileMap::generate_map() {
       }
     }
   }
-
-  // Sort
-  Graphics::Instance() -> enableSort();
 }
 
 // Manually load new file
 void TileMap::load_map (std::string fileName) {
-  //Change size
-  //std::string fileLoad = fileName + ".txt";
-  //std::ifstream findSize(fileLoad.c_str());
 
-  //width = 64;
-  //height = 64;
-
-  /*int data;
-  while (findSize >> data) {
-    if(height == 0)
-      width++;
-    if(findSize.peek() == '\n')
-      height++;
-  }
-
-  //Setup Map
-  if(fileName != "") {
-    fileLoad = fileName + ".txt";
-    std::ifstream read(fileLoad.c_str());
-    std::cout << "Loading " << fileLoad << "\n";
-
-    for (int t = 0; t < height; t++) {
-      for (int i = 0; i < width; i++) {
-        int newTileType;
-        read >> newTileType;
-        Tile* newTile = new Tile (newTileType, i * 16, t * 16);
-        map_tiles.push_back (newTile);
-      }
-    }
-    read.close();
-
-    fileLoad = fileName + "_back.txt";
-    std::ifstream read2(fileLoad.c_str());
-    std::cout << "Loading " << fileLoad << "\n";
-
-    for (int t = 0; t < height; t++) {
-      for (int i = 0; i < width; i++) {
-        int newTileType;
-        read2 >> newTileType;
-        if (newTileType != TILE_NULL) {
-          Tile* newTile = new Tile (newTileType, i * 16, t * 16);
-          map_tiles_foreground.push_back (newTile);
-        }
-      }
-    }
-    read2.close();
-  }*/
 }
 
 // Clear map
 void TileMap::clear_map() {
-  /*for (std::vector<Tile*>::iterator i = map_tiles.begin(); i != map_tiles.end(); ++i) {
-    delete *i;
-  }*/
 
-  //map_tiles.clear();
 }
-
 
 // Update bitmask
 void TileMap::update_bitmask (Tile *newTile, bool layer) {

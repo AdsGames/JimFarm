@@ -180,7 +180,7 @@ void setup() {
   main_menu.load_data();
 
   // Setup jim
-  jim.setPosition (15 * 16, 5 * 16);
+  jim.setPosition (15 * 16, 15 * 16);
 
   jim.load_data();
   jim.setWorld (&farm_world);

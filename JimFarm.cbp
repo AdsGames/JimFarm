@@ -13,14 +13,13 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O2" />
 					<Add option="-std=c++11" />
+					<Add option="-g" />
 					<Add directory="include" />
 					<Add directory="include/utility" />
 					<Add directory="include/manager" />
 				</Compiler>
 				<Linker>
-					<Add option="-s" />
 					<Add option="-lalpng" />
 					<Add option="-lalleg" />
 					<Add option="-lfmod" />
@@ -34,13 +33,16 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="include/Character.h" />
+		<Unit filename="include/Chunk.h" />
 		<Unit filename="include/GameMenu.h" />
+		<Unit filename="include/Graphics.h" />
 		<Unit filename="include/InteractBehaviour.h" />
 		<Unit filename="include/Inventory.h" />
 		<Unit filename="include/Item.h" />
 		<Unit filename="include/MapItem.h" />
 		<Unit filename="include/Menu.h" />
 		<Unit filename="include/Messenger.h" />
+		<Unit filename="include/SimplexNoise.h" />
 		<Unit filename="include/Sprite.h" />
 		<Unit filename="include/Tile.h" />
 		<Unit filename="include/TileMap.h" />
@@ -62,13 +64,16 @@
 			<Option compilerVar="WINDRES" />
 		</Unit>
 		<Unit filename="src/Character.cpp" />
+		<Unit filename="src/Chunk.cpp" />
 		<Unit filename="src/GameMenu.cpp" />
+		<Unit filename="src/Graphics.cpp" />
 		<Unit filename="src/InteractBehaviour.cpp" />
 		<Unit filename="src/Inventory.cpp" />
 		<Unit filename="src/Item.cpp" />
 		<Unit filename="src/MapItem.cpp" />
 		<Unit filename="src/Menu.cpp" />
 		<Unit filename="src/Messenger.cpp" />
+		<Unit filename="src/SimplexNoise.cpp" />
 		<Unit filename="src/Sprite.cpp" />
 		<Unit filename="src/Tile.cpp" />
 		<Unit filename="src/TileMap.cpp" />

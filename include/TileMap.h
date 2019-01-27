@@ -1,11 +1,6 @@
 #ifndef TILEMAP_H
 #define TILEMAP_H
 
-#define LAYER_BACKGROUND 0
-#define LAYER_CHARACTER 1
-#define LAYER_ITEMS 2
-#define LAYER_FOREGROUND 3
-
 #define M_PI 3.14159265
 
 #include <vector>
