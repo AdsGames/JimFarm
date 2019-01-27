@@ -33,6 +33,34 @@ int Chunk::getY() {
   return y;
 }
 
+Tile* Chunk::get_tile_at(int x, int y, int z) {
+  int offset_x = x / TILE_WIDTH  - this -> x * CHUNK_WIDTH ;
+  int offset_y = y / TILE_HEIGHT - this -> y * CHUNK_HEIGHT;
+
+  if (offset_x < 0 || offset_x > CHUNK_WIDTH || offset_y < 0 || offset_y > CHUNK_HEIGHT || z < 0 || z > CHUNK_LAYERS) {
+    return nullptr;
+  }
+
+  return tiles[offset_x][offset_y][z];
+}
+
+void Chunk::set_tile_at(int x, int y, int z, Tile* tile) {
+  int offset_x = x / TILE_WIDTH  - this -> x * CHUNK_WIDTH;
+  int offset_y = y / TILE_HEIGHT - this -> y * CHUNK_HEIGHT;
+
+  if (offset_x < 0 || offset_x > CHUNK_WIDTH || offset_y < 0 || offset_y > CHUNK_HEIGHT || z < 0 || z > CHUNK_LAYERS) {
+    return;
+  }
+
+  if (tiles[offset_x][offset_y][z]) {
+    delete tiles[offset_x][offset_y][z];
+    tiles[offset_x][offset_y][z] = tile;
+    return;
+  }
+
+  tiles[offset_x][offset_y][z] = tile;
+}
+
 void Chunk::update(int x_1, int y_1, int x_2, int y_2) {
   if (x_2 >= (this -> x)     * CHUNK_WIDTH  * TILE_WIDTH  &&
       x_1 <= (this -> x + 1) * CHUNK_WIDTH  * TILE_WIDTH  &&

@@ -21,8 +21,8 @@ class World {
     int timer;
 
     // Viewport
-    static constexpr int VIEWPORT_WIDTH = 240;
-    static constexpr int VIEWPORT_HEIGHT = 160;
+    static constexpr int VIEWPORT_WIDTH = 240*2;
+    static constexpr int VIEWPORT_HEIGHT = 160*2;
     static constexpr float VIEWPORT_MAX_ZOOM = 2.0f;
     static constexpr float VIEWPORT_MIN_ZOOM = 0.5f;
 

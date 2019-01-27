@@ -117,7 +117,7 @@ void draw() {
   }
   else if (game_state == GAME) {
     // Draw background
-    rectfill (buffer, 0, 0, 160, 240, makecol (0, 0, 0));
+    rectfill (buffer, 0, 0, SCREEN_W, SCREEN_H, makecol (0, 0, 0));
 
     // Draw map
     farm_world.draw (buffer);
@@ -140,7 +140,7 @@ void draw() {
  *********************/
 void setup() {
   // Create buffer
-  buffer = create_bitmap (240, 160);
+  buffer = create_bitmap (World::VIEWPORT_WIDTH, World::VIEWPORT_HEIGHT);
 
   srand(time(NULL));
 
@@ -210,10 +210,16 @@ int main() {
   int w, h;
   get_desktop_resolution(&w, &h);
 
-  //set_gfx_mode(GFX_AUTODETECT, w,h, 0, 0);
-  //set_gfx_mode(GFX_AUTODETECT_WINDOWED, 1280,960, 0, 0);
+  if (set_gfx_mode(GFX_AUTODETECT_WINDOWED, World::VIEWPORT_WIDTH * 4, World::VIEWPORT_HEIGHT * 4, 0, 0)) {
+    if (set_gfx_mode(GFX_AUTODETECT_WINDOWED, World::VIEWPORT_WIDTH * 3, World::VIEWPORT_HEIGHT * 3, 0, 0)) {
+      if (set_gfx_mode(GFX_AUTODETECT_WINDOWED, World::VIEWPORT_WIDTH * 2, World::VIEWPORT_HEIGHT * 2, 0, 0)) {
+        if (set_gfx_mode(GFX_AUTODETECT_WINDOWED, World::VIEWPORT_WIDTH * 1, World::VIEWPORT_HEIGHT * 1, 0, 0)) {
 
-  set_gfx_mode(GFX_AUTODETECT_WINDOWED, 240*4,160*4, 0, 0);
+        }
+      }
+    }
+  }
+
   install_sound(DIGI_AUTODETECT,MIDI_AUTODETECT,".");
 
   set_window_title("Jim Farm");

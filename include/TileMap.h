@@ -23,6 +23,9 @@ class TileMap {
     int getWidth();
     int getHeight();
 
+    // Chunk management
+    Chunk *chunk_at(int x, int y);
+
     // Tiles
     Tile *tile_at (int positionX, int positionY, int layer);
     void place_tile (Tile* newTile);

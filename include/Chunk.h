@@ -5,7 +5,7 @@
 
 #define CHUNK_WIDTH 16
 #define CHUNK_HEIGHT 16
-#define CHUNK_LAYERS 2
+#define CHUNK_LAYERS 4
 
 class Chunk {
   public:
@@ -17,6 +17,9 @@ class Chunk {
     int getX();
     int getY();
 
+    Tile* get_tile_at(int x, int y, int z);
+    void set_tile_at(int x, int y, int z, Tile* tile);
+
     void update(int x_1, int y_1, int x_2, int y_2);
 
   protected:
@@ -24,6 +27,9 @@ class Chunk {
   private:
     // Tiles
     Tile* tiles[CHUNK_WIDTH][CHUNK_HEIGHT][CHUNK_LAYERS];
+
+    // Near tiles
+    Chunk *neighbours[8];
 
     // Generate
     void generate();
