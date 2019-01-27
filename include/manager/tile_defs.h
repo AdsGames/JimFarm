@@ -22,3 +22,5 @@
 #define TILE_BARN 61
 #define TILE_GOAT 62
 #define TILE_UNDERWATER_SOIL 63
+#define TILE_SNOW 64
+#define TILE_SAND 65

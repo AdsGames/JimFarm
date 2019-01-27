@@ -22,12 +22,11 @@ class TileMap {
     Chunk *chunk_at(int x, int y);
 
     // Tiles
-    Tile *tile_at (int positionX, int positionY, int layer);
+    Tile *tile_at (int x, int y, int layer);
     void place_tile (Tile* newTile);
-    bool place_tile_safe (Tile* newTile, int opposite_layer_id = -1);
     void replace_tile (Tile *oldTile, Tile *newTile);
     void remove_tile (Tile *newTile);
-    bool solid_at (int positionX, int positionY);
+    bool solid_at (int x, int y);
 
     // Update
     void update(int x_1, int y_1, int x_2, int y_2) ;
@@ -38,8 +37,8 @@ class TileMap {
     void clear_map();
 
     // Bitmasks
-    void update_bitmask (Tile *newTile, bool layer = LAYER_BACKGROUND);
-    void update_bitmask_surround (Tile *newTile, bool layer = LAYER_BACKGROUND);
+    void update_bitmask (Tile *newTile);
+    void update_bitmask_surround (Tile *newTile);
 
     // Tiles
     //std::vector<Tile*> map_tiles;

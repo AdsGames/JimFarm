@@ -134,17 +134,17 @@ void World::remove_item (Item *newItem) {
 // Interact with
 void World::interact (int inter_x, int inter_y, Item *inHand) {
   Tile *foregroundTile = world_map -> tile_at (inter_x, inter_y, LAYER_FOREGROUND);
-  Tile *backgroundTile = world_map -> tile_at (inter_x, inter_y, LAYER_BACKGROUND);
+  Tile *midgroundTile = world_map -> tile_at (inter_x, inter_y, LAYER_MIDGROUND);
 
   // Hoe
   if (inHand -> getID() == ITEM_HOE) {
-    if (backgroundTile && !foregroundTile) {
-      if (backgroundTile -> getID() == TILE_GRASS) {
-        world_map -> replace_tile (backgroundTile, new Tile(TILE_PLOWED_SOIL, backgroundTile -> getX(), backgroundTile -> getY(), backgroundTile -> getZ()));
+    if (midgroundTile && !foregroundTile) {
+      if (midgroundTile -> getID() == TILE_GRASS) {
+        world_map -> replace_tile (midgroundTile, new Tile(TILE_PLOWED_SOIL, midgroundTile -> getX(), midgroundTile -> getY(), midgroundTile -> getZ()));
         SoundManager::play (SOUND_HOE);
       }
-      else if (backgroundTile -> getID() == TILE_SOIL) {
-        world_map -> replace_tile (backgroundTile, new Tile(TILE_PLOWED_SOIL, backgroundTile -> getX(), backgroundTile -> getY(), backgroundTile -> getZ()));
+      else if (midgroundTile -> getID() == TILE_SOIL) {
+        world_map -> replace_tile (midgroundTile, new Tile(TILE_PLOWED_SOIL, midgroundTile -> getX(), midgroundTile -> getY(), midgroundTile -> getZ()));
         SoundManager::play (SOUND_HOE);
       }
       else {
@@ -160,7 +160,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   else if (inHand -> getID() == ITEM_SCYTHE) {
     if (foregroundTile && foregroundTile -> getID() == TILE_DENSE_GRASS) {
       world_map -> remove_tile (foregroundTile);
-      place_item (new Item(ITEM_HAY, 0), backgroundTile -> getX(), backgroundTile -> getY());
+      place_item (new Item(ITEM_HAY, 0), midgroundTile -> getX(), midgroundTile -> getY());
       SoundManager::play (SOUND_SCYTHE);
     }
     else {
@@ -170,7 +170,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   }
   // Berry
   else if (inHand -> getID() == ITEM_BERRY_SEED) {
-    if (backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile) {
+    if (midgroundTile && midgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile) {
       world_map -> place_tile (new Tile (TILE_BERRY, inter_x, inter_y, 1));
     }
     else{
@@ -180,7 +180,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   }
   // Tomato
   else if (inHand -> getID() == ITEM_TOMATO_SEED) {
-    if (backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile) {
+    if (midgroundTile && midgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile) {
       world_map -> place_tile (new Tile (TILE_TOMATO, inter_x, inter_y, 1));
     }
     else{
@@ -190,7 +190,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   }
   // Carrot
   else if (inHand -> getID() == ITEM_CARROT_SEED) {
-    if (backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile) {
+    if (midgroundTile && midgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile) {
       world_map -> place_tile (new Tile (TILE_CARROT, inter_x, inter_y, 1));
     }
     else{
@@ -200,7 +200,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   }
   // Lavender
   else if (inHand -> getID() == ITEM_LAVENDER_SEED) {
-    if (backgroundTile && backgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile) {
+    if (midgroundTile && midgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile) {
       world_map -> place_tile (new Tile (TILE_LAVENDER, inter_x, inter_y, 1));
     }
     else{
@@ -210,7 +210,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   }
   // Watering can
   else if (inHand -> getID() == ITEM_WATERING_CAN) {
-    if (backgroundTile && backgroundTile -> getID() == TILE_WELL_PATH) {
+    if (midgroundTile && midgroundTile -> getID() == TILE_WELL_PATH) {
       map_messages -> push_message ("Watering can filled");
       inHand -> setMeta(8);
       SoundManager::play (SOUND_WATER_FILL);
@@ -228,10 +228,10 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   // Axe
   else if (inHand -> getID() == ITEM_AXE) {
     if (foregroundTile && foregroundTile  -> getID() == TILE_TREE) {
-      world_map -> replace_tile (foregroundTile, new Tile(TILE_STUMP, backgroundTile -> getX(), backgroundTile -> getY(), backgroundTile -> getZ()));
-      place_item (new Item(ITEM_STICK, 0), backgroundTile -> getX(), backgroundTile -> getY());
-      place_item (new Item(ITEM_STICK, 0), backgroundTile -> getX(), backgroundTile -> getY());
-      place_item (new Item(ITEM_WOOD, 0), backgroundTile -> getX(), backgroundTile -> getY());
+      world_map -> replace_tile (foregroundTile, new Tile(TILE_STUMP, foregroundTile -> getX(), foregroundTile -> getY(), foregroundTile -> getZ()));
+      place_item (new Item(ITEM_STICK, 0), foregroundTile -> getX(), foregroundTile -> getY());
+      place_item (new Item(ITEM_STICK, 0), foregroundTile -> getX(), foregroundTile -> getY());
+      place_item (new Item(ITEM_WOOD, 0), foregroundTile -> getX(), foregroundTile -> getY());
       SoundManager::play (SOUND_AXE);
     }
     else{
@@ -245,8 +245,8 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
       world_map -> remove_tile (foregroundTile);
       SoundManager::play (SOUND_SHOVEL);
     }
-    else if ( backgroundTile && backgroundTile -> getID() == TILE_GRASS && !foregroundTile) {
-      world_map -> replace_tile (backgroundTile, new Tile(TILE_PATH, backgroundTile -> getX(), backgroundTile -> getY(), backgroundTile -> getZ()));
+    else if ( midgroundTile && midgroundTile -> getID() == TILE_GRASS && !foregroundTile) {
+      world_map -> replace_tile (midgroundTile, new Tile(TILE_PATH, midgroundTile -> getX(), midgroundTile -> getY(), midgroundTile -> getZ()));
       SoundManager::play (SOUND_SHOVEL);
     }
     else{

@@ -86,7 +86,7 @@
     <width>1</width>
     <height>1</height>
     <image type="" s_w="1" s_h="1" x="5" y="13" h="1" w="1" />
-    <attrubite>SOLID</attrubite>
+    <attrubite>NON_SOLID</attrubite>
   </tile>
   <!--PLOWED SOIL-->
   <tile id="18">
@@ -181,7 +181,23 @@
     <name>Underwater Soil</name>
     <width>1</width>
     <height>1</height>
-    <image type="meta_map_2" s_w="4" s_h="1" x="4" y="9" h="1" w="1" />
+    <image type="meta_map_2" s_w="4" s_h="1" x="5" y="0" h="1" w="1" />
+    <attrubite>NON_SOLID</attrubite>
+  </tile>
+  <!--SNOW-->
+  <tile id="64">
+    <name>Snow</name>
+    <width>1</width>
+    <height>1</height>
+    <image type="dynamic" s_w="4" s_h="4" x="4" y="4" h="1" w="1" />
+    <attrubite>NON_SOLID</attrubite>
+  </tile>
+  <!--SAND-->
+  <tile id="65">
+    <name>Sand</name>
+    <width>1</width>
+    <height>1</height>
+    <image type="dynamic" s_w="4" s_h="4" x="4" y="8" h="1" w="1" />
     <attrubite>NON_SOLID</attrubite>
   </tile>
 </tiles>
