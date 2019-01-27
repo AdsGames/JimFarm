@@ -5,13 +5,14 @@
 
 #define CHUNK_WIDTH 16
 #define CHUNK_HEIGHT 16
-#define CHUNK_LAYERS 4
+#define CHUNK_LAYERS 5
 
 
 #define LAYER_BACKGROUND 0
-#define LAYER_CHARACTER 1
-#define LAYER_ITEMS 2
-#define LAYER_FOREGROUND 3
+#define LAYER_MIDGROUND 1
+#define LAYER_CHARACTER 2
+#define LAYER_ITEMS 3
+#define LAYER_FOREGROUND 4
 
 class Chunk {
   public:

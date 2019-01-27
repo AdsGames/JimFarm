@@ -14,7 +14,7 @@
 
 // Top of head
 CharacterForeground::CharacterForeground(Character *charPtr) :
-  Sprite(0, 0, 4) {
+  Sprite(0, 0, 5) {
   char_ptr = charPtr;
   Graphics::Instance() -> add(this);
 }
@@ -27,7 +27,7 @@ void CharacterForeground::draw(BITMAP *tempBuffer, float x_1, float y_1, float x
 
 // Ctor for character
 Character::Character() :
-  Sprite(0, 0, 1) {
+  Sprite(0, 0, 2) {
   moving = false;
   direction = 1;
   character_inv = Inventory(8);
