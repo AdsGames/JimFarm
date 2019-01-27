@@ -264,6 +264,7 @@ void World::update() {
   // Regen map
   if (key[KEY_R]) {
     for (std::vector<MapItem*>::iterator i = map_items.begin(); i != map_items.end(); ++i) {
+      Graphics::Instance() -> remove(*i);
       delete *i;
     }
     map_items.clear();
