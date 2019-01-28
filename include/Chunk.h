@@ -5,6 +5,7 @@
 #include "MapItem.h"
 
 #include <vector>
+#include <string>
 
 #define CHUNK_WIDTH 16
 #define CHUNK_HEIGHT 16
@@ -31,6 +32,7 @@ class Chunk {
     void place_item_at(Item* item, int x, int y);
     void remove_item(MapItem* item);
 
+    std::string get_biome_at(int x, int y);
 
     void set_draw_enabled(bool enabled);
 
@@ -41,6 +43,11 @@ class Chunk {
   private:
     // Tiles
     Tile* tiles[CHUNK_WIDTH][CHUNK_HEIGHT][CHUNK_LAYERS];
+
+    // Biome
+    char temperature[CHUNK_WIDTH][CHUNK_HEIGHT];
+    char rainfall   [CHUNK_WIDTH][CHUNK_HEIGHT];
+    char height     [CHUNK_WIDTH][CHUNK_HEIGHT];
 
     // Items
     std::vector<MapItem*> items;

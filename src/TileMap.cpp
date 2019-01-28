@@ -40,6 +40,13 @@ Chunk* TileMap::chunk_at(int x, int y) {
   return nullptr;
 }
 
+std::string TileMap::get_biome_at(int x, int y) {
+ Chunk* chunk = chunk_at(x, y);
+  if (!chunk)
+    return nullptr;
+  return chunk -> get_biome_at(x, y);
+}
+
 // Get tile at position
 Tile* TileMap::tile_at(int x, int y, int layer) {
   Chunk* chunk = chunk_at(x, y);

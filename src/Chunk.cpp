@@ -1,5 +1,7 @@
 #include "Chunk.h"
 
+#include <sstream>
+
 #include "tile_defs.h"
 #include "item_defs.h"
 
@@ -53,6 +55,20 @@ int Chunk::getX() {
 
 int Chunk::getY() {
   return y;
+}
+
+std::string Chunk::get_biome_at(int x, int y) {
+  int offset_x = x / TILE_WIDTH  - this -> x * CHUNK_WIDTH ;
+  int offset_y = y / TILE_HEIGHT - this -> y * CHUNK_HEIGHT;
+
+  if (offset_x < 0 || offset_x > CHUNK_WIDTH || offset_y < 0 || offset_y > CHUNK_HEIGHT) {
+    return "unknown";
+  }
+
+  std::stringstream stream;
+	stream << "temp:" << (int)temperature[offset_x][offset_y] << " rain:" << (int)rainfall[offset_x][offset_y] << " height:" << (int)height[offset_x][offset_y];
+
+  return stream.str();
 }
 
 Tile* Chunk::get_tile_at(int x, int y, int z) {
@@ -167,75 +183,117 @@ void Chunk::update(int x_1, int y_1, int x_2, int y_2) {
 }
 
 void Chunk::generate() {
-  // Noise
+  // Height
   SimplexNoise *sn_h = new SimplexNoise(1.0f, 1.0f, 2.0f, 0.47f);
-  SimplexNoise *sn_b = new SimplexNoise(1.0f, 1.0f, 1.0f, 0.47f);
+
+  // Rainfall
+  SimplexNoise *sn_r = new SimplexNoise(0.3f, 0.3f, 1.0f, 2.0f);
+
+  // Temperature
+  SimplexNoise *sn_t = new SimplexNoise(0.3f, 0.3f, 1.0f, 2.0f);
 
   for (int i = 0; i < CHUNK_WIDTH; i++) {
     for (int t = 0; t < CHUNK_HEIGHT; t++) {
-      float height = sn_h -> fractal(10, Chunk::seed + (float)(i + x * CHUNK_WIDTH) / 100.0f, Chunk::seed + (float)(t + y * CHUNK_HEIGHT) / 100.0f);
-      float biome  = sn_b -> fractal(10, Chunk::seed % 1000 + (float)(i + x * CHUNK_WIDTH) / 100.0f, Chunk::seed % 1000 + (float)(t + y * CHUNK_HEIGHT) / 100.0f);
 
-      int t_x = (i + x * CHUNK_WIDTH) * TILE_WIDTH;
-      int t_y = (t + y * CHUNK_HEIGHT) * TILE_HEIGHT;
+      const int t_x = (i + x * CHUNK_WIDTH) * TILE_WIDTH;
+      const int t_y = (t + y * CHUNK_HEIGHT) * TILE_HEIGHT;
+
+      this -> temperature[i][t] = sn_t -> fractal(10, Chunk::seed % 897 + (float)(i + x * CHUNK_WIDTH) / 100.0f, Chunk::seed % 897 + (float)(t + y * CHUNK_HEIGHT) / 100.0f) * 64;
+      this -> rainfall   [i][t] = sn_r -> fractal(10, Chunk::seed % 477 + (float)(i + x * CHUNK_WIDTH) / 100.0f, Chunk::seed % 477 + (float)(t + y * CHUNK_HEIGHT) / 100.0f) * 64;
+      this -> height     [i][t] = sn_h -> fractal(10, Chunk::seed + (float)(i + x * CHUNK_WIDTH) / 100.0f, Chunk::seed + (float)(t + y * CHUNK_HEIGHT) / 100.0f) * 64;
+
+      // High rainfall
+      // Tundra
+      if (temperature[i][t] < -32 && rainfall[i][t] >= 0) {
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+        tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_SNOW, t_x, t_y, LAYER_MIDGROUND);
+        if (random(0, 8) == 0)
+          tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, 2);
+      }
+      // Forested tundra
+      else if (temperature[i][t] < 0 && rainfall[i][t] >= 0) {
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+        tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_SNOW, t_x, t_y, LAYER_MIDGROUND);
+        if (random(0, 3) == 0)
+          tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(1, 2));
+      }
+      // Forest
+      else if (temperature[i][t] < 32 && rainfall[i][t] >= 0) {
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+        tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+        if (random(0, 2) == 0)
+          tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(0, 2));
+      }
+      // Dense forest
+      else if (temperature[i][t] <= 64 && rainfall[i][t] >= 0) {
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+        tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+        if (random(0, 4) != 0)
+          tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(0, 1));
+      }
+
+      // Low rainfall
+      // Wasteland
+      else if (temperature[i][t] < -32 && rainfall[i][t] < 0) {
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+      }
+      // Grassy wasteland
+      else if (temperature[i][t] < 0 && rainfall[i][t] < 0) {
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+        if (tiles[i][t][LAYER_FOREGROUND] == nullptr) {
+          tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+          if (random(0, 10) == 0) {
+            tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, 0);
+          }
+        }
+      }
+      // Plains
+      else if (temperature[i][t] < 32 && rainfall[i][t] < 0) {
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+        if (tiles[i][t][LAYER_FOREGROUND] == nullptr) {
+          tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+          if (random(0, 1) == 0) {
+            tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, random(0, 3));
+            if (random(0, 100) == 0) {
+              place_item_at(new Item(ITEM_CHICKEN), t_x, t_y);
+            }
+          }
+        }
+      }
+      // Savana
+      else if (temperature[i][t] <= 64 && rainfall[i][t] < 0) {
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+        if (tiles[i][t][LAYER_FOREGROUND] == nullptr) {
+          tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+          if (random(0, 5) == 0) {
+            tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, 1);
+          }
+        }
+      }
+
 
       // Water deep
-      if (height < -0.5f){
+      if (height[i][t] < -32){
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 3);
         tiles[i][t][LAYER_MIDGROUND] = nullptr;
         tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND);
       }
       // Water
-      else if (height < -0.35f){
+      else if (height[i][t] < -22){
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 0);
         tiles[i][t][LAYER_MIDGROUND] = nullptr;
         tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND);
       }
       // Water seaweed
-      else if (height < -0.3f){
+      else if (height[i][t] < -19){
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 1);
         tiles[i][t][LAYER_MIDGROUND] = nullptr;
         tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND);
       }
       // Shore
-      else if (height < -0.25f){
+      else if (height[i][t] < -16){
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
-        tiles[i][t][LAYER_MIDGROUND] = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
         tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND);
-      }
-      else {
-        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
-      }
-
-      // Plains
-      if (biome < 0.0f) {
-        if (tiles[i][t][LAYER_FOREGROUND] == nullptr) {
-          tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
-          if (random(0, 10) == 0) {
-            tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, random(0, 3));
-            if (random(0, 10) == 0) {
-              place_item_at(new Item(ITEM_CHICKEN), t_x, t_y);
-            }
-          }
-          else if (random(0, 40) == 0) {
-            tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(0, 2));
-          }
-        }
-      }
-      // Forest
-      else if (biome < 0.3f) {
-        if (tiles[i][t][LAYER_FOREGROUND] == nullptr) {
-          tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
-          if (random(0, 4) != 0) {
-            tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(0, 2));
-          }
-        }
-      }
-      // Tundra
-      else {
-        if (tiles[i][t][LAYER_FOREGROUND] == nullptr) {
-          tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_SNOW, t_x, t_y, LAYER_MIDGROUND);
-        }
       }
     }
   }

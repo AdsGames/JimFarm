@@ -42,6 +42,8 @@ class Tile : public Sprite {
     unsigned char getMeta();
     void changeMeta (unsigned char amt);
 
+    // Temperature and moisture
+
     // Get image type
     bool needsBitmask();
 

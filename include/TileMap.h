@@ -22,6 +22,8 @@ class TileMap {
     // Chunk management
     Chunk *chunk_at(int x, int y);
 
+    std::string get_biome_at(int x, int y);
+
     // Tiles
     Tile *tile_at (int x, int y, int layer);
     void place_tile (Tile* newTile);

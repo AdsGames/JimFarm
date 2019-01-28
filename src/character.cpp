@@ -106,6 +106,8 @@ void Character::draw_inventory(BITMAP *tempBuffer) {
     }
   }
 
+  textprintf_ex (tempBuffer, pixelart, 60, 22, makecol(255,255,255), -1, map_pointer -> world_map -> get_biome_at(x, y).c_str());
+
   // Money
   draw_sprite (tempBuffer, coin, 190, 10);
 }
