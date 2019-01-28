@@ -66,7 +66,7 @@ std::string Chunk::get_biome_at(int x, int y) {
   }
 
   std::stringstream stream;
-	stream << "temp:" << (int)temperature[offset_x][offset_y] << " rain:" << (int)rainfall[offset_x][offset_y] << " height:" << (int)height[offset_x][offset_y];
+	stream << "temp:" << (int)temperature[offset_x][offset_y] << " rain:" << (int)(rainfall[offset_x][offset_y] + 64) << " height:" << (int)height[offset_x][offset_y];
 
   return stream.str();
 }
@@ -237,38 +237,45 @@ void Chunk::generate() {
       else if (temperature[i][t] < -32 && rainfall[i][t] < 0) {
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
       }
+      // Wasteland
+      else if (temperature[i][t] < -8 && rainfall[i][t] < 0) {
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+        tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+      }
       // Grassy wasteland
       else if (temperature[i][t] < 0 && rainfall[i][t] < 0) {
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
-        if (tiles[i][t][LAYER_FOREGROUND] == nullptr) {
-          tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
-          if (random(0, 10) == 0) {
-            tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, 0);
-          }
+        tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+        if (random(0, 8) == 0) {
+          tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, random(0, 3));
         }
       }
-      // Plains
-      else if (temperature[i][t] < 32 && rainfall[i][t] < 0) {
+      // Grassy wasteland
+      else if (temperature[i][t] < 24 && rainfall[i][t] < 0) {
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
-        if (tiles[i][t][LAYER_FOREGROUND] == nullptr) {
-          tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
-          if (random(0, 1) == 0) {
-            tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, random(0, 3));
-            if (random(0, 100) == 0) {
-              place_item_at(new Item(ITEM_CHICKEN), t_x, t_y);
-            }
+        tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+        if (random(0, 1) == 0) {
+          tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, random(0, 3));
+          if (random(0, 100) == 0) {
+            place_item_at(new Item(ITEM_CHICKEN), t_x, t_y);
           }
         }
       }
       // Savana
+      else if (temperature[i][t] < 32 && rainfall[i][t] < 0) {
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+        tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+        if (random(0, 5) == 0) {
+          tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, 1);
+        }
+        else if (random(0, 10) == 0) {
+          tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_BUSH, t_x, t_y, LAYER_FOREGROUND, 1);
+        }
+      }
+      // Desert
       else if (temperature[i][t] <= 64 && rainfall[i][t] < 0) {
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
-        if (tiles[i][t][LAYER_FOREGROUND] == nullptr) {
-          tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
-          if (random(0, 5) == 0) {
-            tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, 1);
-          }
-        }
+        tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_SAND, t_x, t_y, LAYER_MIDGROUND);
       }
 
 
