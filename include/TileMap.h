@@ -7,6 +7,7 @@
 #include <string>
 
 #include "Tile.h"
+#include "Item.h"
 #include "Chunk.h"
 
 class TileMap {
@@ -27,6 +28,11 @@ class TileMap {
     void replace_tile (Tile *oldTile, Tile *newTile);
     void remove_tile (Tile *newTile);
     bool solid_at (int x, int y);
+
+    // Items
+    MapItem *item_at(int x, int y);
+    void place_item(Item* item, int x, int y);
+    void remove_item(MapItem *item);
 
     // Update
     void update(int x_1, int y_1, int x_2, int y_2) ;

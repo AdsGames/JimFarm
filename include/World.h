@@ -33,11 +33,6 @@ class World {
 
     void load_images();
 
-    // Items
-    Item *item_at (int positionX, int positionY);
-    void place_item (Item* newItem, int x, int y);
-    void remove_item (Item *newItem);
-
     // Interact with
     void interact (int inter_x, int inter_y, Item *inHand);
 
@@ -54,12 +49,8 @@ class World {
 
     // Tile map
     TileMap *world_map;
-  protected:
 
   private:
-    // Items
-    std::vector<MapItem*> map_items;
-
     // Scroll position
     int x, y;
 

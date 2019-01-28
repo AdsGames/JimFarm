@@ -10,8 +10,6 @@
 #include <allegro.h>
 #include <string>
 
-#include "InteractBehaviour.h"
-
 class TileType {
   public:
     TileType (unsigned char newWidth = 1, unsigned char newHeight = 1, unsigned char newID = 0,

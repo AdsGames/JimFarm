@@ -96,39 +96,6 @@ void World::load_images() {
 }
 
 /*
- * ITEMS
- */
-// Get item at position
-Item *World::item_at (int positionX, int positionY) {
-  for (unsigned int i = 0; i < map_items.size(); i++)
-    if (map_items.at(i) -> x == positionX && map_items.at(i) -> y == positionY)
-      return map_items.at(i) -> itemPtr;
-  return NULL;
-}
-
-// Place item on map
-void World::place_item (Item* newItem, int x, int y) {
-  if (newItem) {
-    MapItem *newMapItem = new MapItem (x, y, newItem);
-    map_items.push_back (newMapItem);
-    Graphics::Instance() -> add(newMapItem);
-  }
-}
-
-// Remove item from map
-void World::remove_item (Item *newItem) {
-  if (newItem != NULL) {
-    for (unsigned int i = 0; i < map_items.size(); i++) {
-      if (map_items.at(i) -> itemPtr == newItem) {
-        Graphics::Instance() -> remove(map_items.at(i));
-        map_items.erase (map_items.begin() + i);
-        break;
-      }
-    }
-  }
-}
-
-/*
  * MAP
  */
 // Interact with
@@ -160,7 +127,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   else if (inHand -> getID() == ITEM_SCYTHE) {
     if (foregroundTile && foregroundTile -> getID() == TILE_DENSE_GRASS) {
       world_map -> remove_tile (foregroundTile);
-      place_item (new Item(ITEM_HAY, 0), midgroundTile -> getX(), midgroundTile -> getY());
+      world_map -> place_item (new Item(ITEM_HAY, 0), midgroundTile -> getX(), midgroundTile -> getY());
       SoundManager::play (SOUND_SCYTHE);
     }
     else {
@@ -229,9 +196,9 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   else if (inHand -> getID() == ITEM_AXE) {
     if (foregroundTile && foregroundTile  -> getID() == TILE_TREE) {
       world_map -> replace_tile (foregroundTile, new Tile(TILE_STUMP, foregroundTile -> getX(), foregroundTile -> getY(), foregroundTile -> getZ()));
-      place_item (new Item(ITEM_STICK, 0), foregroundTile -> getX(), foregroundTile -> getY());
-      place_item (new Item(ITEM_STICK, 0), foregroundTile -> getX(), foregroundTile -> getY());
-      place_item (new Item(ITEM_WOOD, 0), foregroundTile -> getX(), foregroundTile -> getY());
+      world_map -> place_item (new Item(ITEM_STICK, 0), foregroundTile -> getX(), foregroundTile -> getY());
+      world_map -> place_item (new Item(ITEM_STICK, 0), foregroundTile -> getX(), foregroundTile -> getY());
+      world_map -> place_item (new Item(ITEM_WOOD, 0), foregroundTile -> getX(), foregroundTile -> getY());
       SoundManager::play (SOUND_AXE);
     }
     else{
@@ -263,12 +230,6 @@ void World::update() {
 
   // Regen map
   if (key[KEY_R]) {
-    for (std::vector<MapItem*>::iterator i = map_items.begin(); i != map_items.end(); ++i) {
-      Graphics::Instance() -> remove(*i);
-      delete *i;
-    }
-    map_items.clear();
-
     world_map -> clear_map();
     world_map -> generate_map();
   }

@@ -1,6 +1,8 @@
 #include "Chunk.h"
 
 #include "tile_defs.h"
+#include "item_defs.h"
+
 #include "Tools.h"
 
 #include "Graphics.h"
@@ -38,6 +40,11 @@ Chunk::~Chunk() {
       }
     }
   }
+
+  for (std::vector<MapItem*>::iterator i = items.begin(); i != items.end(); ++i) {
+    delete *i;
+  }
+  items.clear();
 }
 
 int Chunk::getX() {
@@ -74,8 +81,40 @@ void Chunk::set_tile_at(int x, int y, int z, Tile* tile) {
 
   tiles[offset_x][offset_y][z] = tile;
 
-  if (tile) {
+  if (tile && is_drawing) {
     Graphics::Instance() -> add(tiles[offset_x][offset_y][z]);
+  }
+}
+
+// Get item at position
+MapItem *Chunk::get_item_at(int x, int y) {
+  for (unsigned int i = 0; i < items.size(); i++)
+    if (items.at(i) -> x == x && items.at(i) -> y == y)
+      return items.at(i);
+  return nullptr;
+}
+
+// Place item on map
+void Chunk::place_item_at(Item* item, int x, int y) {
+  if (item) {
+    MapItem *newMapItem = new MapItem (x, y, item);
+    items.push_back (newMapItem);
+
+    if (is_drawing)
+      Graphics::Instance() -> add(newMapItem);
+  }
+}
+
+// Remove item from map
+void Chunk::remove_item(MapItem *item) {
+  if (item != nullptr) {
+    for (unsigned int i = 0; i < items.size(); i++) {
+      if (items.at(i) == item) {
+        Graphics::Instance() -> remove(items.at(i));
+        items.erase (items.begin() + i);
+        break;
+      }
+    }
   }
 }
 
@@ -94,7 +133,17 @@ void Chunk::set_draw_enabled(bool enabled) {
         }
       }
     }
+
+    for (std::vector<MapItem*>::iterator i = items.begin(); i != items.end(); ++i) {
+      if (enabled) {
+        Graphics::Instance() -> add(*i);
+      }
+      else {
+        Graphics::Instance() -> remove(*i);
+      }
+    }
   }
+
   Graphics::Instance() -> enableSort();
   is_drawing = enabled;
 }
@@ -130,30 +179,6 @@ void Chunk::generate() {
       int t_x = (i + x * CHUNK_WIDTH) * TILE_WIDTH;
       int t_y = (t + y * CHUNK_HEIGHT) * TILE_HEIGHT;
 
-      // Plains
-      if (biome < 0.0f) {
-        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
-        tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
-        if (random(0, 10) == 0) {
-          tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, random(0, 3));
-        }
-        else if (random(0, 40) == 0) {
-          tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(0, 2));
-        }
-      }
-      // Forest
-      else if (biome < 0.3f) {
-        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
-        tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
-        if (random(0, 4) != 0)
-          tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(0, 2));
-      }
-      // Tundra
-      else {
-        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
-        tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_SNOW, t_x, t_y, LAYER_MIDGROUND);
-      }
-
       // Water deep
       if (height < -0.5f){
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 3);
@@ -175,7 +200,42 @@ void Chunk::generate() {
       // Shore
       else if (height < -0.25f){
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+        tiles[i][t][LAYER_MIDGROUND] = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
         tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND);
+      }
+      else {
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+      }
+
+      // Plains
+      if (biome < 0.0f) {
+        if (tiles[i][t][LAYER_FOREGROUND] == nullptr) {
+          tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+          if (random(0, 10) == 0) {
+            tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, random(0, 3));
+            if (random(0, 10) == 0) {
+              place_item_at(new Item(ITEM_CHICKEN), t_x, t_y);
+            }
+          }
+          else if (random(0, 40) == 0) {
+            tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(0, 2));
+          }
+        }
+      }
+      // Forest
+      else if (biome < 0.3f) {
+        if (tiles[i][t][LAYER_FOREGROUND] == nullptr) {
+          tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+          if (random(0, 4) != 0) {
+            tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(0, 2));
+          }
+        }
+      }
+      // Tundra
+      else {
+        if (tiles[i][t][LAYER_FOREGROUND] == nullptr) {
+          tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_SNOW, t_x, t_y, LAYER_MIDGROUND);
+        }
       }
     }
   }

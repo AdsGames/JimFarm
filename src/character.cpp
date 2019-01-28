@@ -185,21 +185,21 @@ void Character::update() {
 
   // Pickup and drop
   if (KeyListener::keyPressed[KEY_LCONTROL] || MouseListener::mouse_pressed & 2 || joy[0].button[2].b ) {
-    Item *itemAtPos  = map_pointer -> item_at (indicator_x, indicator_y);
+    MapItem *itemAtPos  = map_pointer -> world_map -> item_at (indicator_x, indicator_y);
     Item *itemInHand = character_inv.getItem(selected_item);
 
     // Pickup
-    if (itemInHand == NULL && itemAtPos != NULL) {
+    if (itemInHand == NULL && itemAtPos != nullptr && itemAtPos -> itemPtr != nullptr) {
       play_sample (pickup, 255, 125, 1000, 0);
-      if (character_inv.addItem (itemAtPos, selected_item)) {
-        map_pointer -> remove_item (itemAtPos);
+      if (character_inv.addItem (itemAtPos -> itemPtr, selected_item)) {
+        map_pointer -> world_map -> remove_item (itemAtPos);
         map_pointer -> getMessenger() -> push_message ("You pick up a " + character_inv.getItem(selected_item) -> getName());
       }
     }
     // Drop
-    else if (itemInHand != NULL && itemAtPos == NULL) {
+    else if (itemInHand != nullptr && itemAtPos == nullptr) {
       play_sample (drop, 255, 125, 1000, 0);
-      map_pointer -> place_item (character_inv.getItem(selected_item), roundf (x / 16.0f) * 16, roundf (y / 16.0f) * 16);
+      map_pointer -> world_map -> place_item (character_inv.getItem(selected_item), roundf (x / 16.0f) * 16, roundf (y / 16.0f) * 16);
       if (character_inv.removeItem (selected_item))
         map_pointer -> getMessenger() -> push_message ("You drop your " + itemInHand -> getName());
     }

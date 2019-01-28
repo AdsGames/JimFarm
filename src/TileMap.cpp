@@ -90,6 +90,46 @@ bool TileMap::solid_at(int x, int y) {
   return false;
 }
 
+
+// Get item at position
+MapItem *TileMap::item_at(int x, int y) {
+  Chunk* chunk = chunk_at(x, y);
+
+  if (!chunk)
+    return nullptr;
+
+  return chunk -> get_item_at(x, y);
+}
+
+// Place item on map
+void TileMap::place_item(Item* item, int x, int y) {
+  if (!item)
+    return;
+
+  Chunk* chunk = chunk_at(x, y);
+
+  if (!chunk)
+    return;
+
+  chunk -> place_item_at(item, x, y);
+}
+
+// Remove item from map
+void TileMap::remove_item(MapItem *item) {
+  if (!item)
+    return;
+
+  Chunk* chunk = chunk_at(item -> getX(), item -> getY());
+
+  if (!chunk)
+    return;
+
+  chunk -> remove_item(item);
+}
+
+
+
+
 // Update chunks
 void TileMap::update(int x_1, int y_1, int x_2, int y_2) {
   for (unsigned int i = 0; i < chunks.size(); i++) {
