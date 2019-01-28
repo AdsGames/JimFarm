@@ -68,6 +68,20 @@ void World::draw (BITMAP *tempBuffer) {
   // Draw buffer
   stretch_blit (map_buffer, tempBuffer, 0, 0, VIEWPORT_WIDTH / VIEWPORT_ZOOM, VIEWPORT_HEIGHT / VIEWPORT_ZOOM, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
+  // Draw temperature indicator
+  const char temp = world_map -> get_temperature_at(x + (VIEWPORT_WIDTH / VIEWPORT_ZOOM) / 2, y + (VIEWPORT_HEIGHT / VIEWPORT_ZOOM) / 2);
+  const char r_val = (temp > 0) ? (temp / 2     ) : 0;
+  const char b_val = (temp < 0) ? (temp / 2 * -1) : 0;
+
+  if (r_val > 0)
+    rectfill (overlay_buffer, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, makeacol (255, 0, 0, r_val));
+  if (b_val > 0)
+    rectfill (overlay_buffer, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, makeacol (0, 0, 255, b_val));
+
+  draw_trans_sprite(tempBuffer, overlay_buffer, 0, 0);
+
+  // Day night indicator
+
   // Message system
   map_messages -> draw (tempBuffer, 5, 145);
 }
@@ -91,6 +105,8 @@ void World::load_images() {
 
   // Create map buffer
   map_buffer = create_bitmap (VIEWPORT_WIDTH * VIEWPORT_MAX_ZOOM, VIEWPORT_HEIGHT * VIEWPORT_MAX_ZOOM);
+
+  overlay_buffer = create_bitmap (VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
   world_map -> generate_map();
 }
@@ -218,6 +234,28 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
     }
     else{
       map_messages -> push_message ("You can't dig that up");
+      SoundManager::play (SOUND_ERROR);
+    }
+  }
+  // Wood Wall
+  else if (inHand -> getID() == ITEM_WOOD) {
+    if (!foregroundTile && midgroundTile) {
+      world_map -> place_tile (new Tile(TILE_WOOD_WALL, midgroundTile -> getX(), midgroundTile -> getY(), LAYER_FOREGROUND));
+      SoundManager::play (SOUND_SHOVEL);
+    }
+    else{
+      map_messages -> push_message ("You can't place that there");
+      SoundManager::play (SOUND_ERROR);
+    }
+  }
+  // Wood Wall
+  else if (inHand -> getID() == ITEM_STICK) {
+    if (!foregroundTile && midgroundTile) {
+      world_map -> place_tile (new Tile(TILE_FENCE, midgroundTile -> getX(), midgroundTile -> getY(), LAYER_FOREGROUND));
+      SoundManager::play (SOUND_SHOVEL);
+    }
+    else{
+      map_messages -> push_message ("You can't place that there");
       SoundManager::play (SOUND_ERROR);
     }
   }

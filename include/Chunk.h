@@ -33,6 +33,7 @@ class Chunk {
     void remove_item(MapItem* item);
 
     std::string get_biome_at(int x, int y);
+    char get_temperature_at(int x, int y);
 
     void set_draw_enabled(bool enabled);
 

@@ -200,4 +200,28 @@
     <image type="dynamic" s_w="4" s_h="4" x="4" y="8" h="1" w="1" />
     <attrubite>NON_SOLID</attrubite>
   </tile>
+  <!--WOOD WALL-->
+  <tile id="66">
+    <name>Wood Wall</name>
+    <width>1</width>
+    <height>1</height>
+    <image type="" s_w="1" s_h="1" x="0" y="11" h="2" w="1" />
+    <attrubite>SOLID</attrubite>
+  </tile>
+  <!--STONE WALL-->
+  <tile id="67">
+    <name>Stone Wall</name>
+    <width>1</width>
+    <height>1</height>
+    <image type="" s_w="1" s_h="1" x="3" y="1" h="2" w="1" />
+    <attrubite>SOLID</attrubite>
+  </tile>
+  <!--STONE-->
+  <tile id="68">
+    <name>Stone</name>
+    <width>1</width>
+    <height>1</height>
+    <image type="" s_w="1" s_h="1" x="3" y="0" h="1" w="1" />
+    <attrubite>SOLID</attrubite>
+  </tile>
 </tiles>

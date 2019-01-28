@@ -55,7 +55,7 @@ class World {
     int x, y;
 
     // Buffer that holds whole map image
-    BITMAP *map_buffer;
+    BITMAP *map_buffer, *overlay_buffer;
 
     // Ticker for world
     static volatile int ticks;

@@ -29,7 +29,7 @@ Character::Character() :
   Sprite(0, 0, 2) {
   moving = false;
   direction = 1;
-  character_inv = Inventory(8);
+  character_inv = Inventory(10);
   selected_item = 0;
 
   money = 10;
@@ -94,22 +94,25 @@ void Character::draw (BITMAP *tempBuffer, float x_1, float y_1, float x_2, float
 
 // Update player
 void Character::draw_inventory(BITMAP *tempBuffer) {
+  const int draw_x = (tempBuffer -> w - character_inv.getMaxSize() * 18) / 2;
+  const int draw_y = tempBuffer -> h - 20;
+
   // Draw items
   for (int i = 0; i < character_inv.getMaxSize(); i++) {
-    draw_sprite (tempBuffer, inventory_gui, 18 * i + 1, 1);
+    draw_sprite (tempBuffer, inventory_gui, 18 * i + draw_x, draw_y);
     if (i == selected_item)
-      draw_sprite (tempBuffer, indicator, 18 * i + 2, 2);
+      draw_sprite (tempBuffer, indicator, 18 * i + 1 + draw_x, 1 + draw_y);
     if (character_inv.getItem(i) != NULL) {
-      character_inv.getItem(i) -> draw (18 * i + 2, 2, tempBuffer);
+      character_inv.getItem(i) -> draw (18 * i + 1 + draw_x, 1 + draw_y, tempBuffer);
       if (i == selected_item)
-        textprintf_ex (tempBuffer, pixelart, 2, 22, makecol(255,255,255), -1, character_inv.getItem(i) -> getName().c_str());
+        textprintf_ex (tempBuffer, pixelart, 1 + draw_x, 21 + draw_y, makecol(255,255,255), -1, character_inv.getItem(i) -> getName().c_str());
     }
   }
 
   textprintf_ex (tempBuffer, pixelart, 60, 22, makecol(255,255,255), -1, map_pointer -> world_map -> get_biome_at(x, y).c_str());
 
   // Money
-  draw_sprite (tempBuffer, coin, 190, 10);
+  //draw_sprite (tempBuffer, coin, 190, 10);
 }
 
 // Update player

@@ -71,6 +71,17 @@ std::string Chunk::get_biome_at(int x, int y) {
   return stream.str();
 }
 
+char Chunk::get_temperature_at(int x, int y) {
+  int offset_x = x / TILE_WIDTH  - this -> x * CHUNK_WIDTH ;
+  int offset_y = y / TILE_HEIGHT - this -> y * CHUNK_HEIGHT;
+
+  if (offset_x < 0 || offset_x > CHUNK_WIDTH || offset_y < 0 || offset_y > CHUNK_HEIGHT) {
+    return 0;
+  }
+
+  return temperature[offset_x][offset_y];
+}
+
 Tile* Chunk::get_tile_at(int x, int y, int z) {
   int offset_x = x / TILE_WIDTH  - this -> x * CHUNK_WIDTH ;
   int offset_y = y / TILE_HEIGHT - this -> y * CHUNK_HEIGHT;
@@ -207,7 +218,7 @@ void Chunk::generate() {
       if (temperature[i][t] < -32 && rainfall[i][t] >= 0) {
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
         tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_SNOW, t_x, t_y, LAYER_MIDGROUND);
-        if (random(0, 8) == 0)
+        if (random(0, 30) == 0)
           tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, 2);
       }
       // Forested tundra
@@ -222,7 +233,7 @@ void Chunk::generate() {
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
         tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
         if (random(0, 2) == 0)
-          tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(0, 2));
+          tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(0, 1));
       }
       // Dense forest
       else if (temperature[i][t] <= 64 && rainfall[i][t] >= 0) {
@@ -271,6 +282,9 @@ void Chunk::generate() {
         else if (random(0, 10) == 0) {
           tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_BUSH, t_x, t_y, LAYER_FOREGROUND, 1);
         }
+        else if (random(0, 50) == 0) {
+          tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_BARN, t_x, t_y, LAYER_FOREGROUND, 1);
+        }
       }
       // Desert
       else if (temperature[i][t] <= 64 && rainfall[i][t] < 0) {
@@ -280,27 +294,32 @@ void Chunk::generate() {
 
 
       // Water deep
-      if (height[i][t] < -32){
+      if (height[i][t] < -32) {
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 3);
         tiles[i][t][LAYER_MIDGROUND] = nullptr;
         tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND);
       }
       // Water
-      else if (height[i][t] < -22){
+      else if (height[i][t] < -19) {
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 0);
         tiles[i][t][LAYER_MIDGROUND] = nullptr;
         tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND);
       }
       // Water seaweed
-      else if (height[i][t] < -19){
+      else if (height[i][t] < -17) {
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 1);
         tiles[i][t][LAYER_MIDGROUND] = nullptr;
         tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND);
       }
       // Shore
-      else if (height[i][t] < -16){
+      else if (height[i][t] < -14) {
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
         tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND);
+      }
+      else if (height[i][t] > 32) {
+        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_STONE, t_x, t_y, LAYER_BACKGROUND);
+        tiles[i][t][LAYER_MIDGROUND] = new Tile(TILE_STONE, t_x, t_y, LAYER_MIDGROUND);
+        tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_STONE_WALL, t_x, t_y, LAYER_FOREGROUND);
       }
     }
   }

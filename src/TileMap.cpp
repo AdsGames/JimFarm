@@ -47,6 +47,13 @@ std::string TileMap::get_biome_at(int x, int y) {
   return chunk -> get_biome_at(x, y);
 }
 
+char TileMap::get_temperature_at(int x, int y) {
+ Chunk* chunk = chunk_at(x, y);
+  if (!chunk)
+    return 0;
+  return chunk -> get_temperature_at(x, y);
+}
+
 // Get tile at position
 Tile* TileMap::tile_at(int x, int y, int layer) {
   Chunk* chunk = chunk_at(x, y);
@@ -65,7 +72,9 @@ void TileMap::place_tile(Tile* newTile) {
   if (!chunk)
     return;
 
-  return chunk -> set_tile_at(newTile -> getX(), newTile -> getY(), newTile -> getZ(), newTile);
+  chunk -> set_tile_at(newTile -> getX(), newTile -> getY(), newTile -> getZ(), newTile);
+
+  update_bitmask_surround(newTile);
 }
 
 // Remove tile from map

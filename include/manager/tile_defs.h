@@ -24,3 +24,6 @@
 #define TILE_UNDERWATER_SOIL 63
 #define TILE_SNOW 64
 #define TILE_SAND 65
+#define TILE_WOOD_WALL 66
+#define TILE_STONE_WALL 67
+#define TILE_STONE 68
