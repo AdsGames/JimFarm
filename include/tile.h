@@ -21,30 +21,30 @@ class Tile : public Sprite {
     virtual bool operator < (const Tile &other) const { return (y < other.y); }
 
     // Gets size
-    int getWidth() { return tile_pointer -> getWidth();}
-    int getHeight() { return tile_pointer -> getHeight();}
+    int getWidth();
+    int getHeight();
 
     // Drawing
     virtual void draw (BITMAP *tempBuffer, float x_1, float y_1, float x_2, float y_2);
     void draw_at (int newX, int newY, BITMAP *tempBuffer);
 
     // Is this type solid?
-    bool isSolid() { return tile_pointer -> getAttribute(); }
+    bool isSolid();
 
     // Modify ID
-    unsigned char getID() { return tile_pointer -> getID();}
+    unsigned char getID();
 
     // Get name of tile
-    std::string getName() { return tile_pointer -> getName();}
+    std::string getName();
 
     // Access and set meta data byte
-    void setMeta (unsigned char meta ) { this -> meta = meta; }
-    unsigned char getMeta() { return this -> meta; }
-    void changeMeta (unsigned char amt ) { this -> meta += amt; }
+    void setMeta (unsigned char meta);
+    unsigned char getMeta();
+    void changeMeta (unsigned char amt);
 
     // Get image type
-    bool needsBitmask() { return (this -> tile_pointer -> getImageType() == "dynamic"); }
-  protected:
+    bool needsBitmask();
+
   private:
     // Metadata info
     unsigned char meta;

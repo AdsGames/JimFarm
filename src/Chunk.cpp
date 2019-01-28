@@ -27,19 +27,17 @@ Chunk::Chunk(int x, int y) {
 }
 
 Chunk::~Chunk() {
-  Graphics::Instance() -> disableSort();
+  set_draw_enabled(false);
+
   for (int i = 0; i < CHUNK_WIDTH; i++) {
     for (int t = 0; t < CHUNK_HEIGHT; t++) {
       for (int j = 0; j < CHUNK_LAYERS; j++) {
         if (tiles[i][t][j]) {
-          Graphics::Instance() -> remove(tiles[i][t][j]);
           delete tiles[i][t][j];
         }
       }
     }
   }
-  Graphics::Instance() -> enableSort();
-  is_drawing = false;
 }
 
 int Chunk::getX() {
@@ -81,6 +79,26 @@ void Chunk::set_tile_at(int x, int y, int z, Tile* tile) {
   }
 }
 
+void Chunk::set_draw_enabled(bool enabled) {
+  if (is_drawing != enabled) {
+    Graphics::Instance() -> disableSort();
+    for (int i = 0; i < CHUNK_WIDTH; i++) {
+      for (int t = 0; t < CHUNK_HEIGHT; t++) {
+        for (int j = 0; j < CHUNK_LAYERS; j++) {
+          if (tiles[i][t][j] && enabled) {
+            Graphics::Instance() -> add(tiles[i][t][j]);
+          }
+          else if(tiles[i][t][j] && !enabled) {
+            Graphics::Instance() -> remove(tiles[i][t][j]);
+          }
+        }
+      }
+    }
+  }
+  Graphics::Instance() -> enableSort();
+  is_drawing = enabled;
+}
+
 void Chunk::update(int x_1, int y_1, int x_2, int y_2) {
   if (x_2 >= (this -> x)     * CHUNK_WIDTH  * TILE_WIDTH  &&
       x_1 <= (this -> x + 1) * CHUNK_WIDTH  * TILE_WIDTH  &&
@@ -88,33 +106,13 @@ void Chunk::update(int x_1, int y_1, int x_2, int y_2) {
       y_1 <= (this -> y + 1) * CHUNK_HEIGHT * TILE_HEIGHT) {
     // Add to draw pool
     if (!is_drawing) {
-      Graphics::Instance() -> disableSort();
-      for (int i = 0; i < CHUNK_WIDTH; i++) {
-        for (int t = 0; t < CHUNK_HEIGHT; t++) {
-          for (int j = 0; j < CHUNK_LAYERS; j++) {
-            if (tiles[i][t][j])
-              Graphics::Instance() -> add(tiles[i][t][j]);
-          }
-        }
-      }
-      Graphics::Instance() -> enableSort();
-      is_drawing = true;
+      set_draw_enabled(true);
     }
   }
   else {
     // Remove from draw pool
     if (is_drawing) {
-      Graphics::Instance() -> disableSort();
-      for (int i = 0; i < CHUNK_WIDTH; i++) {
-        for (int t = 0; t < CHUNK_HEIGHT; t++) {
-          for (int j = 0; j < CHUNK_LAYERS; j++) {
-            if (tiles[i][t][j])
-              Graphics::Instance() -> remove(tiles[i][t][j]);
-          }
-        }
-      }
-      Graphics::Instance() -> enableSort();
-      is_drawing = false;
+      set_draw_enabled(false);
     }
   }
 }
@@ -122,12 +120,12 @@ void Chunk::update(int x_1, int y_1, int x_2, int y_2) {
 void Chunk::generate() {
   // Noise
   SimplexNoise *sn_h = new SimplexNoise(1.0f, 1.0f, 2.0f, 0.47f);
-  SimplexNoise *sn_b = new SimplexNoise(2.0f, 2.0f, 2.0f, 0.47f);
+  SimplexNoise *sn_b = new SimplexNoise(1.0f, 1.0f, 1.0f, 0.47f);
 
   for (int i = 0; i < CHUNK_WIDTH; i++) {
     for (int t = 0; t < CHUNK_HEIGHT; t++) {
       float height = sn_h -> fractal(10, Chunk::seed + (float)(i + x * CHUNK_WIDTH) / 100.0f, Chunk::seed + (float)(t + y * CHUNK_HEIGHT) / 100.0f);
-      float biome  = sn_b -> fractal(2, Chunk::seed % 1000 + (float)(i + x * CHUNK_WIDTH) / 100.0f, Chunk::seed % 1000 + (float)(t + y * CHUNK_HEIGHT) / 100.0f);
+      float biome  = sn_b -> fractal(10, Chunk::seed % 1000 + (float)(i + x * CHUNK_WIDTH) / 100.0f, Chunk::seed % 1000 + (float)(t + y * CHUNK_HEIGHT) / 100.0f);
 
       int t_x = (i + x * CHUNK_WIDTH) * TILE_WIDTH;
       int t_y = (t + y * CHUNK_HEIGHT) * TILE_HEIGHT;
@@ -181,8 +179,4 @@ void Chunk::generate() {
       }
     }
   }
-}
-
-Tile* Chunk::getTiles() {
-  return ***tiles;
 }

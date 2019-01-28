@@ -7,7 +7,6 @@
 #define CHUNK_HEIGHT 16
 #define CHUNK_LAYERS 5
 
-
 #define LAYER_BACKGROUND 0
 #define LAYER_MIDGROUND 1
 #define LAYER_CHARACTER 2
@@ -19,19 +18,17 @@ class Chunk {
     Chunk(int x, int y);
     virtual ~Chunk();
 
-    Tile* getTiles();
-
     int getX();
     int getY();
 
     Tile* get_tile_at(int x, int y, int z);
     void set_tile_at(int x, int y, int z, Tile* tile);
 
+    void set_draw_enabled(bool enabled);
+
     void update(int x_1, int y_1, int x_2, int y_2);
 
     static int seed;
-
-  protected:
 
   private:
     // Tiles

@@ -36,7 +36,6 @@
 		<Unit filename="include/Chunk.h" />
 		<Unit filename="include/GameMenu.h" />
 		<Unit filename="include/Graphics.h" />
-		<Unit filename="include/InteractBehaviour.h" />
 		<Unit filename="include/Inventory.h" />
 		<Unit filename="include/Item.h" />
 		<Unit filename="include/MapItem.h" />
@@ -67,7 +66,6 @@
 		<Unit filename="src/Chunk.cpp" />
 		<Unit filename="src/GameMenu.cpp" />
 		<Unit filename="src/Graphics.cpp" />
-		<Unit filename="src/InteractBehaviour.cpp" />
 		<Unit filename="src/Inventory.cpp" />
 		<Unit filename="src/Item.cpp" />
 		<Unit filename="src/MapItem.cpp" />

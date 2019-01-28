@@ -1,6 +1,5 @@
 #include "Character.h"
 
-#include <iostream>
 #include <math.h>
 
 #include "KeyListener.h"

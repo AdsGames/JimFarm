@@ -1,7 +1,6 @@
 #ifndef ITEM_H
 #define ITEM_H
 
-#include <allegro.h>
 #include <string>
 
 #include "TileType.h"
@@ -30,7 +29,7 @@ class Item {
     void setMeta (unsigned char meta ) { this -> meta = meta; }
     void changeMeta (unsigned char amt ) { this -> meta += amt; }
     unsigned char getMeta() { return this -> meta; }
-  protected:
+
   private:
     // Metadata info
     unsigned char meta;

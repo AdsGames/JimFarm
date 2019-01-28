@@ -84,7 +84,7 @@ void TileMap::replace_tile(Tile *oldTile, Tile *newTile) {
 }
 
 // Check for solid tile
-bool TileMap::solid_at (int x, int y) {
+bool TileMap::solid_at(int x, int y) {
   if (tile_at (x, y, LAYER_FOREGROUND))
     return tile_at (x, y, LAYER_FOREGROUND) -> isSolid();
   return false;

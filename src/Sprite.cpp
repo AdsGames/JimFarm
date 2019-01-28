@@ -1,7 +1,5 @@
 #include "Sprite.h"
 
-#include <iostream>
-
 int Sprite::next_id = 0;
 
 Sprite::Sprite() :

@@ -20,6 +20,7 @@ class Graphics {
 
     // Draw managed sprites
     void draw(BITMAP *buffer, int x_1, int y_1, int x_2, int y_2);
+
   private:
     // Prevent instantiation
     Graphics();

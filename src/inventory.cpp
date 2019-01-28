@@ -1,7 +1,5 @@
 #include "Inventory.h"
 
-#include <iostream>
-
 Inventory::Inventory() {
   this -> max_items = 0;
 }

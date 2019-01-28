@@ -24,8 +24,6 @@ class Inventory {
 
     void emptyInv();
 
-  protected:
-
   private:
     std::vector<Item*> contents;
     int max_items;
