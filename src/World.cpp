@@ -232,6 +232,11 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
       world_map -> replace_tile (midgroundTile, new Tile(TILE_PATH, midgroundTile -> getX(), midgroundTile -> getY(), midgroundTile -> getZ()));
       SoundManager::play (SOUND_SHOVEL);
     }
+    else if(foregroundTile && (foregroundTile  -> getID() == TILE_STONE_WALL)) {
+      world_map -> remove_tile (foregroundTile);
+      world_map -> place_item (new Item(ITEM_STONE, 0), foregroundTile -> getX(), foregroundTile -> getY());
+      SoundManager::play (SOUND_SHOVEL);
+    }
     else{
       map_messages -> push_message ("You can't dig that up");
       SoundManager::play (SOUND_ERROR);

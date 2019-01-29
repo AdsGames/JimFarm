@@ -69,7 +69,7 @@ class Character : public Sprite {
     // Images for ui and character
     BITMAP *image;
     BITMAP *inventory_gui;
-    BITMAP *indicator;
+    BITMAP *indicator, *indicator_2;
     BITMAP *coin;
 
     // Sounds

@@ -18,3 +18,4 @@
 #define ITEM_STICK 16
 #define ITEM_WOOD 17
 #define ITEM_HAY 18
+#define ITEM_STONE 19

@@ -114,4 +114,10 @@
 		<image x="5" y="0"></image>
 		<value>1</value>
 	</item>
+  <!--stone-->
+	<item>
+		<name>stone</name>
+		<image x="6" y="0"></image>
+		<value>1</value>
+	</item>
 </items>

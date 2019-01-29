@@ -1,6 +1,7 @@
 #include "Chunk.h"
 
 #include <sstream>
+#include <iostream>
 
 #include "tile_defs.h"
 #include "item_defs.h"
@@ -258,6 +259,9 @@ void Chunk::tick() {
 }
 
 void Chunk::generate() {
+  // Generating chunk
+  std::cout << "generating chunk (" << x << "," << y << ") ";
+
   // Height
   SimplexNoise *sn_h = new SimplexNoise(1.0f, 1.0f, 2.0f, 0.47f);
 
@@ -380,11 +384,14 @@ void Chunk::generate() {
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
         tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND);
       }
+      // Stone
       else if (height[i][t] > 32) {
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_STONE, t_x, t_y, LAYER_BACKGROUND);
         tiles[i][t][LAYER_MIDGROUND] = new Tile(TILE_STONE, t_x, t_y, LAYER_MIDGROUND);
-        tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_STONE_WALL, t_x, t_y, LAYER_FOREGROUND);
+        tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_STONE_WALL, t_x, t_y, LAYER_FOREGROUND, (height[i][t] - 32) / 6);
       }
     }
   }
+
+  std::cout << "done." << std::endl;
 }

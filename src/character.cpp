@@ -47,6 +47,7 @@ void Character::load_data() {
   image = load_bitmap_ex("images/character_1.png");
   inventory_gui = load_bitmap_ex("images/GUI_INVENTORY.png");
   indicator = load_bitmap_ex("images/indicator.png");
+  indicator_2 = load_bitmap_ex("images/indicator_2.png");
   coin = load_bitmap_ex("images/coin.png");
 
   // Sounds
@@ -102,6 +103,9 @@ void Character::draw_inventory(BITMAP *tempBuffer) {
         textprintf_ex (tempBuffer, pixelart, 1 + draw_x, 21 + draw_y, makecol(255,255,255), -1, character_inv.getItem(i) -> getName().c_str());
     }
   }
+
+  // Only item if hands arent empty
+  draw_trans_sprite (tempBuffer, indicator_2, indicator_x - map_pointer -> getX(), indicator_y - map_pointer -> getY());
 
 
   textprintf_ex (tempBuffer, pixelart, 60, 22, makecol(255,255,255), -1, map_pointer -> world_map -> get_biome_at(x, y).c_str());
