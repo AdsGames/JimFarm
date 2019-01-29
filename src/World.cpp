@@ -143,7 +143,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   else if (inHand -> getID() == ITEM_SCYTHE) {
     if (foregroundTile && foregroundTile -> getID() == TILE_DENSE_GRASS) {
       world_map -> remove_tile (foregroundTile);
-      world_map -> place_item (new Item(ITEM_HAY, 0), midgroundTile -> getX(), midgroundTile -> getY());
+      world_map -> place_item (new Item(ITEM_HAY, 0), foregroundTile -> getX(), foregroundTile -> getY());
       SoundManager::play (SOUND_SCYTHE);
     }
     else {

@@ -71,25 +71,19 @@ void Character::load_data() {
 // Draw character to screen
 void Character::draw (BITMAP *tempBuffer, float x_1, float y_1, float x_2, float y_2) {
   // Indicator
-  indicator_x = roundf (x / 16.0f) * 16;
-  indicator_y = roundf (y / 16.0f) * 16;
-  if (character_inv.getItem(selected_item) != NULL && (character_inv.getItem(selected_item) -> getID() == ITEM_AXE || character_inv.getItem(selected_item) -> getID() == ITEM_SHOVEL)) {
-    if (direction == DIR_UP || direction == DIR_DOWN)
-      indicator_y -= (16 * ((direction * 2) - 3));
-    else if (direction == DIR_RIGHT || direction == DIR_LEFT)
-      indicator_x -= (16 * ((direction * 2) - 7));
-  }
+  indicator_x = roundf ((mouse_x * ((map_pointer -> VIEWPORT_WIDTH  * map_pointer -> VIEWPORT_ZOOM) / SCREEN_W) + map_pointer -> getX()) / 16.0f) * 16;
+  indicator_y = roundf ((mouse_y * ((map_pointer -> VIEWPORT_HEIGHT * map_pointer -> VIEWPORT_ZOOM) / SCREEN_H) + map_pointer -> getY()) / 16.0f) * 16;
 
   // Only item if hands arent empty
-  if (character_inv.getItem(selected_item) != NULL)
-    draw_sprite (tempBuffer, indicator, indicator_x - map_pointer -> getX(), indicator_y - map_pointer -> getY());
+  draw_sprite (tempBuffer, indicator, indicator_x - map_pointer -> getX(), indicator_y - map_pointer -> getY());
 
   // Draw frame
   masked_blit (image, tempBuffer, floor(ani_ticker/4) * 16, (direction - 1) * 20, x - map_pointer -> getX(), y - map_pointer -> getY() - 8, 16, 20);
 
   // Selected item
-  if (character_inv.getItem(selected_item) != NULL)
+  if (character_inv.getItem(selected_item) != NULL) {
     character_inv.getItem(selected_item) -> draw (x - map_pointer -> getX(), y - map_pointer -> getY(), tempBuffer);
+  }
 }
 
 // Update player
@@ -107,6 +101,13 @@ void Character::draw_inventory(BITMAP *tempBuffer) {
       if (i == selected_item)
         textprintf_ex (tempBuffer, pixelart, 1 + draw_x, 21 + draw_y, makecol(255,255,255), -1, character_inv.getItem(i) -> getName().c_str());
     }
+  }
+
+  // Selected item
+  if (character_inv.getItem(selected_item) != NULL) {
+    character_inv.getItem(selected_item) -> draw (mouse_x * (int)(map_pointer -> VIEWPORT_WIDTH  * map_pointer -> VIEWPORT_ZOOM) / SCREEN_W,
+                                                  mouse_y * (int)(map_pointer -> VIEWPORT_HEIGHT * map_pointer -> VIEWPORT_ZOOM) / SCREEN_H,
+                                                  tempBuffer);
   }
 
   textprintf_ex (tempBuffer, pixelart, 60, 22, makecol(255,255,255), -1, map_pointer -> world_map -> get_biome_at(x, y).c_str());
@@ -189,8 +190,8 @@ void Character::update() {
   }
 
   // Pickup and drop
-  if (KeyListener::keyPressed[KEY_LCONTROL] || MouseListener::mouse_pressed & 2 || joy[0].button[2].b ) {
-    MapItem *itemAtPos  = map_pointer -> world_map -> item_at (indicator_x, indicator_y);
+  if (KeyListener::keyPressed[KEY_LCONTROL] || KeyListener::keyPressed[KEY_E] || MouseListener::mouse_pressed & 2 || joy[0].button[2].b ) {
+    MapItem *itemAtPos  = map_pointer -> world_map -> item_at (roundf (x / 16.0f) * 16, roundf (y / 16.0f) * 16);
     Item *itemInHand = character_inv.getItem(selected_item);
 
     // Pickup
