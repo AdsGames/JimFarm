@@ -71,8 +71,10 @@ void Character::load_data() {
 // Draw character to screen
 void Character::draw (BITMAP *tempBuffer, float x_1, float y_1, float x_2, float y_2) {
   // Indicator
-  indicator_x = roundf ((mouse_x * ((map_pointer -> VIEWPORT_WIDTH  * map_pointer -> VIEWPORT_ZOOM) / SCREEN_W) + map_pointer -> getX()) / 16.0f) * 16;
-  indicator_y = roundf ((mouse_y * ((map_pointer -> VIEWPORT_HEIGHT * map_pointer -> VIEWPORT_ZOOM) / SCREEN_H) + map_pointer -> getY()) / 16.0f) * 16;
+  indicator_x = mouse_x * ((map_pointer -> VIEWPORT_WIDTH  * map_pointer -> VIEWPORT_ZOOM) / SCREEN_W) + map_pointer -> getX();
+  indicator_y = mouse_y * ((map_pointer -> VIEWPORT_HEIGHT * map_pointer -> VIEWPORT_ZOOM) / SCREEN_H) + map_pointer -> getY();
+  indicator_x -= indicator_x % 16;
+  indicator_y -= indicator_y % 16;
 
   // Only item if hands arent empty
   draw_sprite (tempBuffer, indicator, indicator_x - map_pointer -> getX(), indicator_y - map_pointer -> getY());
@@ -105,9 +107,12 @@ void Character::draw_inventory(BITMAP *tempBuffer) {
 
   // Selected item
   if (character_inv.getItem(selected_item) != NULL) {
-    character_inv.getItem(selected_item) -> draw (mouse_x * (int)(map_pointer -> VIEWPORT_WIDTH  * map_pointer -> VIEWPORT_ZOOM) / SCREEN_W,
-                                                  mouse_y * (int)(map_pointer -> VIEWPORT_HEIGHT * map_pointer -> VIEWPORT_ZOOM) / SCREEN_H,
-                                                  tempBuffer);
+    rectfill (tempBuffer,
+              mouse_x * (int)(map_pointer -> VIEWPORT_WIDTH  * map_pointer -> VIEWPORT_ZOOM) / SCREEN_W,
+              mouse_y * (int)(map_pointer -> VIEWPORT_HEIGHT * map_pointer -> VIEWPORT_ZOOM) / SCREEN_H,
+              mouse_x * (int)(map_pointer -> VIEWPORT_WIDTH  * map_pointer -> VIEWPORT_ZOOM) / SCREEN_W + 2,
+              mouse_y * (int)(map_pointer -> VIEWPORT_HEIGHT * map_pointer -> VIEWPORT_ZOOM) / SCREEN_H + 2,
+              makecol(255,255,255));
   }
 
   textprintf_ex (tempBuffer, pixelart, 60, 22, makecol(255,255,255), -1, map_pointer -> world_map -> get_biome_at(x, y).c_str());
