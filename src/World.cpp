@@ -154,7 +154,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   // Berry
   else if (inHand -> getID() == ITEM_BERRY_SEED) {
     if (midgroundTile && midgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile) {
-      world_map -> place_tile (new Tile (TILE_BERRY, inter_x, inter_y, 1));
+      world_map -> place_tile (new Tile (TILE_BERRY, inter_x, inter_y, LAYER_FOREGROUND));
     }
     else{
       map_messages -> push_message ("You must plant in ploughed soil");
@@ -164,7 +164,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   // Tomato
   else if (inHand -> getID() == ITEM_TOMATO_SEED) {
     if (midgroundTile && midgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile) {
-      world_map -> place_tile (new Tile (TILE_TOMATO, inter_x, inter_y, 1));
+      world_map -> place_tile (new Tile (TILE_TOMATO, inter_x, inter_y, LAYER_FOREGROUND));
     }
     else{
       map_messages -> push_message ("You must plant in ploughed soil");
@@ -174,7 +174,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   // Carrot
   else if (inHand -> getID() == ITEM_CARROT_SEED) {
     if (midgroundTile && midgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile) {
-      world_map -> place_tile (new Tile (TILE_CARROT, inter_x, inter_y, 1));
+      world_map -> place_tile (new Tile (TILE_CARROT, inter_x, inter_y, LAYER_FOREGROUND));
     }
     else{
       map_messages -> push_message ("You must plant in ploughed soil");
@@ -184,7 +184,7 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
   // Lavender
   else if (inHand -> getID() == ITEM_LAVENDER_SEED) {
     if (midgroundTile && midgroundTile -> getID() == TILE_PLOWED_SOIL && !foregroundTile) {
-      world_map -> place_tile (new Tile (TILE_LAVENDER, inter_x, inter_y, 1));
+      world_map -> place_tile (new Tile (TILE_LAVENDER, inter_x, inter_y, LAYER_FOREGROUND));
     }
     else{
       map_messages -> push_message ("You must plant in ploughed soil");
@@ -263,107 +263,18 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
 
 // Update tile map
 void World::update() {
-  // Update tile map
-  world_map -> update(x, y, x + VIEWPORT_WIDTH / VIEWPORT_ZOOM, y + VIEWPORT_HEIGHT / VIEWPORT_ZOOM);
-
   // Regen map
   if (key[KEY_R]) {
     world_map -> clear_map();
     world_map -> generate_map();
   }
 
-  if (ticks >= 10) {
+  // One game tick (20x second)
+  if (ticks >= 1) {
     ticks = 0;
 
-    // Run tickers for itens
-    /*for (unsigned int i = 0; i < map_items.size(); i++) {
-      // Current item
-      Item *current = map_items.at(i) -> itemPtr;
-
-      // Tile near item
-      //Tile *foregroundTile = tile_at (map_items.at(i) -> x, map_items.at(i) -> y, FOREGROUND);
-      Tile *backgroundTile = world_map -> tile_at (map_items.at(i) -> x, map_items.at(i) -> y, LAYER_BACKGROUND);
-
-      // Chicken eggs
-      if (current -> getID() == ITEM_CHICKEN) {
-        if (backgroundTile && backgroundTile -> getID() == TILE_PATCHY_GRASS) {
-          if (!random(0,32)) {
-            int rand_1 = 16 * random (-1, 1);
-            int rand_2 = 16 * random (-1, 1);
-            if (!item_at (map_items.at(i) -> x + rand_1, map_items.at(i) -> y + rand_2) &&
-                !world_map -> solid_at (map_items.at(i) -> x + rand_1, map_items.at(i) -> y + rand_2)) {
-              place_item (new Item (ITEM_EGG), map_items.at(i) -> x + rand_1, map_items.at(i) -> y + rand_2);
-              SoundManager::play (SOUND_EGG);
-            }
-          }
-        }
-      }
-    }*/
-
-    // Foreground tiles
-    //for (unsigned int i = 0; i < world_map -> map_tiles.size(); i++) {
-      // Current tile
-      //Tile *current = world_map -> map_tiles.at(i);
-      //Tile *backgroundTile = world_map -> tile_at (current -> getX(), current -> getY(), LAYER_BACKGROUND);
-
-      // Berries
-      /*if (current -> getID() == TILE_BERRY) {
-        // Grow a bit
-        if (true)
-          current -> changeMeta(1);
-        // Done Growing
-        if (current -> getMeta() >= MAX_TILE_META) {
-          place_item (new Item(ITEM_BERRY), current -> getX(), current -> getY());
-          world_map -> remove_tile (current);
-          if (backgroundTile)
-            world_map -> replace_tile (backgroundTile, new Tile(TILE_GRASS, backgroundTile -> getX(), backgroundTile -> getY(), backgroundTile -> getZ()));
-        }
-      }
-      // Tomatos
-      else if (current -> getID() == TILE_TOMATO) {
-        // Grow a bit
-        if (!random (0, 2))
-          current -> changeMeta(1);
-        // Done Growing
-        if (current -> getMeta() >= MAX_TILE_META) {
-          place_item (new Item(ITEM_TOMATO), current -> getX(), current -> getY());
-          world_map -> remove_tile (current);
-          if (backgroundTile)
-            world_map -> replace_tile (backgroundTile, new Tile(TILE_GRASS, backgroundTile -> getX(), backgroundTile -> getY(), backgroundTile -> getZ()));
-        }
-      }
-      // Carrots
-      else if (current -> getID() == TILE_CARROT) {
-        // Grow a bit
-        if (!random (0, 5))
-          current -> changeMeta(1);
-        // Done Growing
-        if (current -> getMeta() >= MAX_TILE_META) {
-          place_item (new Item(ITEM_CARROT), current -> getX(), current -> getY());
-          world_map -> remove_tile (current);
-          if (backgroundTile)
-            world_map -> replace_tile (backgroundTile, new Tile(TILE_GRASS, backgroundTile -> getX(), backgroundTile -> getY(), backgroundTile -> getZ()));
-        }
-      }
-      // Lavender
-      else if (current -> getID() == TILE_LAVENDER) {
-        // Grow a bit
-        if (!random (0, 10))
-          current -> changeMeta(1);
-        // Done Growing
-        if (current -> getMeta() >= MAX_TILE_META) {
-          place_item (new Item(ITEM_LAVENDER), current -> getX(), current -> getY());
-          world_map -> remove_tile (current);
-          if (backgroundTile)
-            world_map -> replace_tile (backgroundTile, new Tile(TILE_GRASS, backgroundTile -> getX(), backgroundTile -> getY(), backgroundTile -> getZ()));
-        }
-      }*/
-      // Plowed soil to grass
-      /*else if (current -> getID() == TILE_PLOWED_SOIL) {
-        if (!random (0, 1000))
-          world_map -> replace_tile (current, new Tile(TILE_GRASS, backgroundTile -> getX(), backgroundTile -> getY(), backgroundTile -> getZ()), LAYER_BACKGROUND);
-      }*/
-    //}
+    // Update tile map
+    world_map -> tick(x, y, x + VIEWPORT_WIDTH / VIEWPORT_ZOOM, y + VIEWPORT_HEIGHT / VIEWPORT_ZOOM);
   }
 
   // Zooming

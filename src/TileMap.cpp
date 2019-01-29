@@ -147,9 +147,11 @@ void TileMap::remove_item(MapItem *item) {
 
 
 // Update chunks
-void TileMap::update(int x_1, int y_1, int x_2, int y_2) {
+void TileMap::tick(int x_1, int y_1, int x_2, int y_2) {
   for (unsigned int i = 0; i < chunks.size(); i++) {
-    chunks.at(i) -> update(x_1, y_1, x_2, y_2);
+    if(chunks.at(i) -> should_exist(x_1, y_1, x_2, y_2)) {
+      chunks.at(i) -> tick();
+    }
   }
 }
 

@@ -175,7 +175,7 @@ void Chunk::set_draw_enabled(bool enabled) {
   is_drawing = enabled;
 }
 
-void Chunk::update(int x_1, int y_1, int x_2, int y_2) {
+bool Chunk::should_exist(int x_1, int y_1, int x_2, int y_2) {
   if (x_2 >= (this -> x)     * CHUNK_WIDTH  * TILE_WIDTH  &&
       x_1 <= (this -> x + 1) * CHUNK_WIDTH  * TILE_WIDTH  &&
       y_2 >= (this -> y)     * CHUNK_HEIGHT * TILE_HEIGHT &&
@@ -184,11 +184,99 @@ void Chunk::update(int x_1, int y_1, int x_2, int y_2) {
     if (!is_drawing) {
       set_draw_enabled(true);
     }
+    return true;
   }
-  else {
-    // Remove from draw pool
-    if (is_drawing) {
-      set_draw_enabled(false);
+  // Remove from draw pool
+  else if (is_drawing){
+    set_draw_enabled(false);
+  }
+
+  return false;
+}
+
+void Chunk::tick() {
+  // Run tickers for items
+  /*for (unsigned int i = 0; i < map_items.size(); i++) {
+    // Current item
+    Item *current = map_items.at(i) -> itemPtr;
+
+    // Tile near item
+    //Tile *foregroundTile = tile_at (map_items.at(i) -> x, map_items.at(i) -> y, FOREGROUND);
+    Tile *backgroundTile = world_map -> tile_at (map_items.at(i) -> x, map_items.at(i) -> y, LAYER_BACKGROUND);
+
+    // Chicken eggs
+    if (current -> getID() == ITEM_CHICKEN) {
+      if (backgroundTile && backgroundTile -> getID() == TILE_PATCHY_GRASS) {
+        if (!random(0,32)) {
+          int rand_1 = 16 * random (-1, 1);
+          int rand_2 = 16 * random (-1, 1);
+          if (!item_at (map_items.at(i) -> x + rand_1, map_items.at(i) -> y + rand_2) &&
+              !world_map -> solid_at (map_items.at(i) -> x + rand_1, map_items.at(i) -> y + rand_2)) {
+            place_item (new Item (ITEM_EGG), map_items.at(i) -> x + rand_1, map_items.at(i) -> y + rand_2);
+            SoundManager::play (SOUND_EGG);
+          }
+        }
+      }
+    }
+  }*/
+
+  // Tiles
+  for (int i = 0; i < CHUNK_WIDTH; i++) {
+    for (int t = 0; t < CHUNK_HEIGHT; t++) {
+      // Current tile
+      Tile *current = tiles[i][t][LAYER_FOREGROUND];
+
+      if (!current)
+        continue;
+
+      // Berries
+      if (current -> getID() == TILE_BERRY) {
+        // Grow a bit
+        if (true)
+          current -> changeMeta(1);
+
+        // Done Growing
+        if (current -> getMeta() >= MAX_TILE_META) {
+          place_item_at (new Item(ITEM_BERRY), current -> getX(), current -> getY());
+          set_tile_at (current -> getX(), current -> getY(), current -> getZ(), nullptr);
+        }
+      }
+      // Tomatos
+      else if (current -> getID() == TILE_TOMATO) {
+        // Grow a bit
+        if (!random (0, 2))
+          current -> changeMeta(1);
+
+        // Done Growing
+        if (current -> getMeta() >= MAX_TILE_META) {
+          place_item_at (new Item(ITEM_TOMATO), current -> getX(), current -> getY());
+          set_tile_at (current -> getX(), current -> getY(), current -> getZ(), nullptr);
+        }
+      }
+      // Carrots
+      else if (current -> getID() == TILE_CARROT) {
+        // Grow a bit
+        if (!random (0, 5))
+          current -> changeMeta(1);
+
+        // Done Growing
+        if (current -> getMeta() >= MAX_TILE_META) {
+          place_item_at (new Item(ITEM_CARROT), current -> getX(), current -> getY());
+          set_tile_at (current -> getX(), current -> getY(), current -> getZ(), nullptr);
+        }
+      }
+      // Lavender
+      else if (current -> getID() == TILE_LAVENDER) {
+        // Grow a bit
+        if (!random (0, 10))
+          current -> changeMeta(1);
+
+        // Done Growing
+        if (current -> getMeta() >= MAX_TILE_META) {
+          place_item_at (new Item(ITEM_LAVENDER), current -> getX(), current -> getY());
+          set_tile_at (current -> getX(), current -> getY(), current -> getZ(), nullptr);
+        }
+      }
     }
   }
 }

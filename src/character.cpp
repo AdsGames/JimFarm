@@ -65,7 +65,7 @@ void Character::load_data() {
   character_inv.addItem(new Item(ITEM_SCYTHE), 1);
   character_inv.addItem(new Item(ITEM_SHOVEL), 2);
   character_inv.addItem(new Item(ITEM_HOE), 3);
-  character_inv.addItem(new Item(ITEM_HAND), 4);
+  character_inv.addItem(new Item(ITEM_BERRY_SEED), 4);
 }
 
 // Draw character to screen

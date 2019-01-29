@@ -37,7 +37,9 @@ class Chunk {
 
     void set_draw_enabled(bool enabled);
 
-    void update(int x_1, int y_1, int x_2, int y_2);
+    bool should_exist(int x_1, int y_1, int x_2, int y_2);
+
+    void tick();
 
     static int seed;
 

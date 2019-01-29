@@ -38,7 +38,7 @@ class TileMap {
     void remove_item(MapItem *item);
 
     // Update
-    void update(int x_1, int y_1, int x_2, int y_2) ;
+    void tick(int x_1, int y_1, int x_2, int y_2) ;
 
     // Loading
     void load_map (std::string fileName);
