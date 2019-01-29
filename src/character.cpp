@@ -32,8 +32,6 @@ Character::Character() :
   character_inv = Inventory(10);
   selected_item = 0;
 
-  money = 10;
-
   c_fore = new CharacterForeground(this);
   Graphics::Instance() -> add(this);
 }
@@ -77,7 +75,7 @@ void Character::draw (BITMAP *tempBuffer, float x_1, float y_1, float x_2, float
   indicator_y -= indicator_y % 16;
 
   // Only item if hands arent empty
-  draw_sprite (tempBuffer, indicator, indicator_x - map_pointer -> getX(), indicator_y - map_pointer -> getY());
+  draw_trans_sprite (tempBuffer, indicator, indicator_x - map_pointer -> getX(), indicator_y - map_pointer -> getY());
 
   // Draw frame
   masked_blit (image, tempBuffer, floor(ani_ticker/4) * 16, (direction - 1) * 20, x - map_pointer -> getX(), y - map_pointer -> getY() - 8, 16, 20);
@@ -105,20 +103,8 @@ void Character::draw_inventory(BITMAP *tempBuffer) {
     }
   }
 
-  // Selected item
-  if (character_inv.getItem(selected_item) != NULL) {
-    rectfill (tempBuffer,
-              mouse_x * (int)(map_pointer -> VIEWPORT_WIDTH  * map_pointer -> VIEWPORT_ZOOM) / SCREEN_W,
-              mouse_y * (int)(map_pointer -> VIEWPORT_HEIGHT * map_pointer -> VIEWPORT_ZOOM) / SCREEN_H,
-              mouse_x * (int)(map_pointer -> VIEWPORT_WIDTH  * map_pointer -> VIEWPORT_ZOOM) / SCREEN_W + 2,
-              mouse_y * (int)(map_pointer -> VIEWPORT_HEIGHT * map_pointer -> VIEWPORT_ZOOM) / SCREEN_H + 2,
-              makecol(255,255,255));
-  }
 
   textprintf_ex (tempBuffer, pixelart, 60, 22, makecol(255,255,255), -1, map_pointer -> world_map -> get_biome_at(x, y).c_str());
-
-  // Money
-  //draw_sprite (tempBuffer, coin, 190, 10);
 }
 
 // Update player

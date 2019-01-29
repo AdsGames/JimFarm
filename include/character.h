@@ -57,9 +57,6 @@ class Character : public Sprite {
     // Item in hand
     int selected_item;
 
-    // Money
-    int money;
-
     // What tile you are over
     int indicator_x, indicator_y;
 
