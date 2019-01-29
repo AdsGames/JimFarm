@@ -293,7 +293,7 @@ void Chunk::generate() {
           tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(1, 2));
       }
       // Forest
-      else if (temperature[i][t] < 32 && rainfall[i][t] >= 0) {
+      else if (temperature[i][t] < 24 && rainfall[i][t] >= 0) {
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
         tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
         if (random(0, 2) == 0)
@@ -304,7 +304,7 @@ void Chunk::generate() {
         tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
         tiles[i][t][LAYER_MIDGROUND]  = new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
         if (random(0, 4) != 0)
-          tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(0, 1));
+          tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, 3);
       }
 
       // Low rainfall

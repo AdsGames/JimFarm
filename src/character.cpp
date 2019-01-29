@@ -69,8 +69,8 @@ void Character::load_data() {
 // Draw character to screen
 void Character::draw (BITMAP *tempBuffer, float x_1, float y_1, float x_2, float y_2) {
   // Indicator
-  indicator_x = mouse_x * ((map_pointer -> VIEWPORT_WIDTH  * map_pointer -> VIEWPORT_ZOOM) / SCREEN_W) + map_pointer -> getX();
-  indicator_y = mouse_y * ((map_pointer -> VIEWPORT_HEIGHT * map_pointer -> VIEWPORT_ZOOM) / SCREEN_H) + map_pointer -> getY();
+  indicator_x = mouse_x * ((map_pointer -> VIEWPORT_WIDTH  / map_pointer -> VIEWPORT_ZOOM) / SCREEN_W) + map_pointer -> getX();
+  indicator_y = mouse_y * ((map_pointer -> VIEWPORT_HEIGHT / map_pointer -> VIEWPORT_ZOOM) / SCREEN_H) + map_pointer -> getY();
   indicator_x -= indicator_x % 16;
   indicator_y -= indicator_y % 16;
 
