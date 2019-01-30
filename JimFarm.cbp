@@ -51,6 +51,10 @@
 		<Unit filename="include/manager/item_defs.h" />
 		<Unit filename="include/manager/sound_defs.h" />
 		<Unit filename="include/manager/tile_defs.h" />
+		<Unit filename="include/rapidxml/rapidxml.hpp" />
+		<Unit filename="include/rapidxml/rapidxml_iterators.hpp" />
+		<Unit filename="include/rapidxml/rapidxml_print.hpp" />
+		<Unit filename="include/rapidxml/rapidxml_utils.hpp" />
 		<Unit filename="include/utility/KeyListener.h" />
 		<Unit filename="include/utility/MouseListener.h" />
 		<Unit filename="include/utility/Tools.h" />
