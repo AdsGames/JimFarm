@@ -12,9 +12,6 @@
 
 #include "Graphics.h"
 
-#include "fmod/fmod.h"
-#include "fmod/fmod_errors.h"
-
 
 // Images
 BITMAP *buffer;
@@ -147,12 +144,7 @@ void setup() {
   // START IN GAME
   game_state = GAME;
 
-  // Music
-  music = FSOUND_Stream_Open ("sfx/farmy.mp3", 2, 0, 0);
-  FSOUND_Stream_Play (0, music);
-  FSOUND_SetVolumeAbsolute (0, 0);
-
-   // Setup for FPS system
+  // Setup for FPS system
   LOCK_VARIABLE(ticks);
   LOCK_FUNCTION(ticker);
   install_int_ex(ticker, BPS_TO_TIMER(updates_per_second));
@@ -203,7 +195,6 @@ int main() {
   install_keyboard();
   install_mouse();
   install_joystick(JOY_TYPE_AUTODETECT);
-  FSOUND_Init (44100, 32, 0);
 
   set_color_depth(32);
 

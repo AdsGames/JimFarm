@@ -170,10 +170,6 @@ int Menu::update() {
       music_volume=100;
     if(music_volume<0)
       music_volume=0;
-
-    FSOUND_SetVolumeAbsolute (0, music_volume);
-
-
   }
     // Coin spin
   if(!coin_direction)
