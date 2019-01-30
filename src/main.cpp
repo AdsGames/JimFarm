@@ -16,9 +16,6 @@
 // Images
 BITMAP *buffer;
 
-// Music
-FSOUND_STREAM* music;
-
 bool close_button_pressed;
 
 // Listen to the keys

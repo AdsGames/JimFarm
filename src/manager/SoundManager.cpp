@@ -4,8 +4,8 @@
 #include <sstream>
 #include <iostream>
 
-#include "rapidxml.hpp"
-#include "rapidxml_print.hpp"
+#include "rapidxml/rapidxml.hpp"
+#include "rapidxml/rapidxml_print.hpp"
 
 #include "Tools.h"
 

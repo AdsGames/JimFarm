@@ -5,13 +5,9 @@
 int game_state = 0;
 
 // Random number generator. Use int random(highest,lowest);
-int random(int newLowest, int newHighest) {
-  int lowest = newLowest, highest = newHighest;
-  int range = (highest - lowest) + 1;
-  int randomNumber = lowest+int(range*rand()/(RAND_MAX + 1.0));
-  return randomNumber;
+int random( int min, int max){
+    return (rand() % (max + 1 - min)) + min;
 }
-
 // ERROR REPORTING
 void abort_on_error(const char *message) {
 	 if (screen != NULL) {

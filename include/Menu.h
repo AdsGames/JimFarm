@@ -8,8 +8,6 @@
 #include "Tools.h"
 #include "Character.h"
 
-#include "fmod/fmod.h"
-#include "fmod/fmod_errors.h"
 
 class Menu {
     public:
