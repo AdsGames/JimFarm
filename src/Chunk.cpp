@@ -360,32 +360,32 @@ void Chunk::generate() {
 
       // Water deep
       if (height[i][t] < -32) {
-        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 3);
-        tiles[i][t][LAYER_MIDGROUND] = nullptr;
-        tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND);
+        set_tile_at(t_x, t_y, LAYER_BACKGROUND, new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 3));
+        set_tile_at(t_x, t_y, LAYER_MIDGROUND, nullptr);
+        set_tile_at(t_x, t_y, LAYER_FOREGROUND,new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
       }
       // Water
       else if (height[i][t] < -19) {
-        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 0);
-        tiles[i][t][LAYER_MIDGROUND] = nullptr;
-        tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND);
+        set_tile_at(t_x, t_y, LAYER_BACKGROUND,new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 0));
+        set_tile_at(t_x, t_y, LAYER_MIDGROUND, nullptr);
+        set_tile_at(t_x, t_y, LAYER_FOREGROUND, new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
       }
       // Water seaweed
       else if (height[i][t] < -17) {
-        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 1);
-        tiles[i][t][LAYER_MIDGROUND] = nullptr;
-        tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND);
+        set_tile_at(t_x, t_y, LAYER_BACKGROUND, new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 1));
+        set_tile_at(t_x, t_y, LAYER_MIDGROUND, nullptr);
+        set_tile_at(t_x, t_y, LAYER_FOREGROUND, new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
       }
       // Shore
       else if (height[i][t] < -14) {
-        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
-        tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND);
+        set_tile_at(t_x, t_y, LAYER_BACKGROUND, new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND));
+        set_tile_at(t_x, t_y, LAYER_FOREGROUND, new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND));
       }
       // Stone
       else if (height[i][t] > 32) {
-        tiles[i][t][LAYER_BACKGROUND] = new Tile(TILE_STONE, t_x, t_y, LAYER_BACKGROUND);
-        tiles[i][t][LAYER_MIDGROUND] = new Tile(TILE_STONE, t_x, t_y, LAYER_MIDGROUND);
-        tiles[i][t][LAYER_FOREGROUND] = new Tile(TILE_STONE_WALL, t_x, t_y, LAYER_FOREGROUND, (height[i][t] - 32) / 6);
+        set_tile_at(t_x, t_y, LAYER_BACKGROUND, new Tile(TILE_STONE, t_x, t_y, LAYER_BACKGROUND));
+        set_tile_at(t_x, t_y, LAYER_MIDGROUND, new Tile(TILE_STONE, t_x, t_y, LAYER_MIDGROUND));
+        set_tile_at(t_x, t_y, LAYER_FOREGROUND, new Tile(TILE_STONE_WALL, t_x, t_y, LAYER_FOREGROUND, (height[i][t] - 32) / 6));
       }
     }
   }
