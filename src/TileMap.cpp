@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <time.h>
+#include <iostream>
 
 #include "Graphics.h"
 #include "Item.h"
@@ -29,15 +30,18 @@ int TileMap::getHeight() {
 
 // Chunk lookup
 Chunk* TileMap::chunk_at(int x, int y) {
-  for (unsigned int i = 0; i < chunks.size(); i++) {
-    if (x >= (chunks.at(i) -> getX())     * CHUNK_WIDTH * TILE_WIDTH &&
-        x <  (chunks.at(i) -> getX() + 1) * CHUNK_WIDTH * TILE_WIDTH &&
-        y >= (chunks.at(i) -> getY())     * CHUNK_HEIGHT * TILE_HEIGHT &&
-        y <  (chunks.at(i) -> getY() + 1) * CHUNK_HEIGHT * TILE_HEIGHT) {
-      return chunks.at(i);
-    }
+  int pos_x = x / (CHUNK_WIDTH  * TILE_WIDTH);
+  int pos_y = y / (CHUNK_HEIGHT * TILE_HEIGHT);
+
+  if (pos_y < 0 || pos_y >= chunks.size()) {
+    return nullptr;
   }
-  return nullptr;
+
+  if (pos_x < 0 || pos_x >= chunks[pos_y].size()) {
+    return nullptr;
+  }
+
+  return chunks.at(pos_y).at(pos_x);
 }
 
 std::string TileMap::get_biome_at(int x, int y) {
@@ -149,8 +153,10 @@ void TileMap::remove_item(MapItem *item) {
 // Update chunks
 void TileMap::tick(int x_1, int y_1, int x_2, int y_2) {
   for (unsigned int i = 0; i < chunks.size(); i++) {
-    if(chunks.at(i) -> should_exist(x_1, y_1, x_2, y_2)) {
-      chunks.at(i) -> tick();
+    for (unsigned int t = 0; t < chunks.at(i).size(); t++) {
+      if(chunks[i][t] -> should_exist(x_1, y_1, x_2, y_2)) {
+        chunks[i][t] -> tick();
+      }
     }
   }
 }
@@ -161,14 +167,26 @@ void TileMap::generate_map() {
   width = 100;
   height = 100;
 
+  // Generating chunk
+  std::cout << "Generating World (" << width << "," << height << ")...  ";
+
   // Create some chunks
   srand(time(NULL));
   Chunk::seed = random(-10000, 10000);
-  for (int i = 0; i < width; i++) {
-    for (int t = 0; t < height; t++) {
-      chunks.push_back(new Chunk(i, t));
+  for (int t = 0; t < height; t++) {
+    if (chunks.size() <= t) {
+      std::vector<Chunk*> newVec;
+      chunks.push_back(newVec);
+    }
+
+    for (unsigned int i = 0; i < width; i++) {
+      chunks[t].push_back(new Chunk(i, t));
     }
   }
+
+  // Generating chunk
+  std::cout << "done." << std::endl;
+  std::cout << "Updating bitmasks...  ";
 
   // Update masks
   for (int x = 0; x < width * CHUNK_WIDTH; x++) {
@@ -178,6 +196,8 @@ void TileMap::generate_map() {
       }
     }
   }
+
+  std::cout << "done." << std::endl;
 }
 
 // Manually load new file
@@ -187,8 +207,10 @@ void TileMap::load_map (std::string fileName) {
 
 // Clear map
 void TileMap::clear_map() {
-  for (std::vector<Chunk*>::iterator i = chunks.begin(); i != chunks.end(); ++i) {
-    delete *i;
+  for (unsigned int i = 0; i < chunks.size(); i ++) {
+    for (std::vector<Chunk*>::iterator t = chunks[i].begin(); t != chunks[i].end(); ++t) {
+      delete *t;
+    }
   }
   chunks.clear();
 }

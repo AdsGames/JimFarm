@@ -50,7 +50,7 @@ class TileMap {
     void update_bitmask_surround (Tile *newTile);
 
     // Chunks
-    std::vector<Chunk*> chunks;
+    std::vector<std::vector<Chunk*>> chunks;
 
   private:
     // Size

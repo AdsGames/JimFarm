@@ -259,9 +259,6 @@ void Chunk::tick() {
 }
 
 void Chunk::generate() {
-  // Generating chunk
-  std::cout << "generating chunk (" << x << "," << y << ") ";
-
   // Height
   SimplexNoise *sn_h = new SimplexNoise(1.0f, 1.0f, 2.0f, 0.47f);
 
@@ -392,6 +389,4 @@ void Chunk::generate() {
       }
     }
   }
-
-  std::cout << "done." << std::endl;
 }
