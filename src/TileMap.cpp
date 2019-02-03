@@ -164,8 +164,8 @@ void TileMap::tick(int x_1, int y_1, int x_2, int y_2) {
 // Generate map
 void TileMap::generate_map() {
   // Base map
-  width = 10;
-  height = 10;
+  width = 5;
+  height = 5;
 
   // Generating chunk
   std::cout << "Generating World (" << width << "," << height << ")...  ";
