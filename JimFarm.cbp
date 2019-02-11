@@ -44,6 +44,7 @@
 		<Unit filename="include/Sprite.h" />
 		<Unit filename="include/Tile.h" />
 		<Unit filename="include/TileMap.h" />
+		<Unit filename="include/Tile_UI.h" />
 		<Unit filename="include/World.h" />
 		<Unit filename="include/manager/SoundManager.h" />
 		<Unit filename="include/manager/TileType.h" />
@@ -74,6 +75,7 @@
 		<Unit filename="src/Sprite.cpp" />
 		<Unit filename="src/Tile.cpp" />
 		<Unit filename="src/TileMap.cpp" />
+		<Unit filename="src/Tile_UI.cpp" />
 		<Unit filename="src/World.cpp" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/manager/SoundManager.cpp" />
