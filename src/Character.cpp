@@ -183,6 +183,9 @@ void Character::update() {
     // Increase animation ticker
     ani_ticker = (ani_ticker + 1) % 16;
   }
+  else {
+    ani_ticker = 0;
+  }
 
   // Pickup and drop
   if (KeyListener::keyPressed[KEY_LCONTROL] || KeyListener::keyPressed[KEY_E] || MouseListener::mouse_pressed & 2 || joy[0].button[2].b ) {
