@@ -4,54 +4,52 @@
 #include <allegro.h>
 #include <vector>
 
+#include "State.h"
+
 #include "Tile.h"
 #include "Tools.h"
 #include "Character.h"
 
 
-class Menu {
-    public:
-        Menu();
-        virtual ~Menu();
+class Menu : public State {
+  public:
+    Menu();
+    virtual ~Menu();
 
-        void draw (BITMAP *tempBitmap);
+    virtual void draw (BITMAP *tempBitmap) override;
 
-        void load_data();
+    virtual void update(StateEngine *engine) override;
 
-        int update();
+  private:
 
-    protected:
+    void draw_slider(BITMAP *tempBitmap, int x, int y, int value, std::string title);
 
-    private:
+    int tick;
+    int coin_frame;
+    bool coin_direction;
+    int indicator_location;
+    int music_volume;
 
-        void draw_slider(BITMAP *tempBitmap, int x, int y, int value, std::string title);
+    // Fonts
+    FONT* f1;
+    FONT* f2;
+    FONT* f3;
+    FONT* f4;
+    FONT* f5;
+    FONT* pixelart;
 
-        int tick;
-        int coin_frame;
-        bool coin_direction;
-        int indicator_location;
-        int music_volume;
+    BITMAP *menu_image;
+    BITMAP *story_image;
+    BITMAP *help_image;
+    BITMAP *options_image;
+    BITMAP *coin_flip;
+    BITMAP *options_slider;
+    BITMAP *options_slidee;
+    BITMAP *options_indicator;
 
-        // Fonts
-        FONT* f1;
-        FONT* f2;
-        FONT* f3;
-        FONT* f4;
-        FONT* f5;
-        FONT* pixelart;
+    SAMPLE *blip;
 
-        BITMAP *menu_image;
-        BITMAP *story_image;
-        BITMAP *help_image;
-        BITMAP *options_image;
-        BITMAP *coin_flip;
-        BITMAP *options_slider;
-        BITMAP *options_slidee;
-        BITMAP *options_indicator;
-
-        SAMPLE *blip;
-
-        int state;
+    int state;
 
 };
 

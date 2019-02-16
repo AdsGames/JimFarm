@@ -2,19 +2,18 @@
 
 #include <time.h>
 
-int game_state = 0;
-
 // Random number generator. Use int random(highest,lowest);
 int random( int min, int max){
-    return (rand() % (max + 1 - min)) + min;
+  return (rand() % (max + 1 - min)) + min;
 }
+
 // ERROR REPORTING
 void abort_on_error(const char *message) {
-	 if (screen != NULL) {
-	    set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
-	 }
-	 allegro_message("%s.\n %s\n", message, allegro_error);
-	 exit(-1);
+  if (screen != NULL) {
+    set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
+  }
+  allegro_message("%s.\n %s\n", message, allegro_error);
+  exit(-1);
 }
 
 

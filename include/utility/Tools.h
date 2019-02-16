@@ -8,8 +8,6 @@
 #include <allegro.h>
 #include <string>
 
-extern int game_state;
-
 // Random number generator. Use int random(highest,lowest);
 extern int random(int newLowest, int newHighest);
 

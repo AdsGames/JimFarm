@@ -1,23 +1,20 @@
 #ifndef GAME_MENU_H
 #define GAME_MENU_H
 
-#include <allegro.h>
+#include "State.h"
 
-class GameMenu {
+class GameMenu : public State {
   public:
     GameMenu();
     virtual ~GameMenu();
 
     void load_data();
     void trigger();
-    void update();
-    void draw (BITMAP *tempImage);
-    bool isOpen();
-  protected:
+    virtual void update(StateEngine *engine) override;
+    virtual void draw (BITMAP *tempImage) override;
+
   private:
     BITMAP *image_menu;
-
-    bool open;
 
     int indicator_position;
 };
