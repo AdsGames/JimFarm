@@ -1,6 +1,4 @@
 #include <allegro.h>
-#include <alpng.h>
-
 
 #include "KeyListener.h"
 #include "MouseListener.h"
@@ -92,7 +90,6 @@ void draw() {
  *********************/
 void setup() {
   allegro_init();
-  alpng_init();
   install_timer();
   install_keyboard();
   install_mouse();
@@ -157,7 +154,7 @@ int main() {
   setup();
 
   //Set the current state ID
-  game_state.setNextState(StateEngine::STATE_MENU, false);
+  game_state.setNextState(StateEngine::STATE_GAME, false);
 
   while(!close_button_pressed) {
     while(ticks == 0) {

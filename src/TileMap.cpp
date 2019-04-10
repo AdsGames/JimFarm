@@ -33,7 +33,7 @@ Chunk* TileMap::chunk_at(int x, int y) {
   int pos_x = x / (CHUNK_WIDTH  * TILE_WIDTH);
   int pos_y = y / (CHUNK_HEIGHT * TILE_HEIGHT);
 
-  if (pos_y < 0 || pos_y >= chunks.size()) {
+  if (pos_y < 0 || pos_y >= (signed)chunks.size()) {
     return nullptr;
   }
 

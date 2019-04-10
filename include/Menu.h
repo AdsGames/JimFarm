@@ -7,7 +7,6 @@
 #include "State.h"
 
 #include "Tile.h"
-#include "Tools.h"
 #include "Character.h"
 
 

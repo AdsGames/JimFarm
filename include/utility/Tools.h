@@ -1,11 +1,15 @@
 #ifndef TOOLS_H
 #define TOOLS_H
+
 #define MAIN_MENU 0
 #define HELP 1
 #define OPTIONS 2
 #define STORY 3
 
 #include <allegro.h>
+#include <png.h>
+#include <loadpng.h>
+
 #include <string>
 
 // Random number generator. Use int random(highest,lowest);

@@ -20,8 +20,10 @@
 					<Add directory="include/manager" />
 				</Compiler>
 				<Linker>
-					<Add option="-lalpng" />
-					<Add option="-lalleg" />
+					<Add option="-lalleg44" />
+					<Add option="-lloadpng" />
+					<Add option="-lpng" />
+					<Add option="-lzlib" />
 				</Linker>
 				<ExtraCommands>
 					<Add before="python updateDefs.py" />
@@ -33,6 +35,7 @@
 		</Compiler>
 		<Unit filename="include/Character.h" />
 		<Unit filename="include/Chunk.h" />
+		<Unit filename="include/Game.h" />
 		<Unit filename="include/GameMenu.h" />
 		<Unit filename="include/Graphics.h" />
 		<Unit filename="include/Inventory.h" />
@@ -42,6 +45,8 @@
 		<Unit filename="include/Messenger.h" />
 		<Unit filename="include/SimplexNoise.h" />
 		<Unit filename="include/Sprite.h" />
+		<Unit filename="include/State.h" />
+		<Unit filename="include/StateManager.h" />
 		<Unit filename="include/Tile.h" />
 		<Unit filename="include/TileMap.h" />
 		<Unit filename="include/Tile_UI.h" />
@@ -59,11 +64,9 @@
 		<Unit filename="include/utility/KeyListener.h" />
 		<Unit filename="include/utility/MouseListener.h" />
 		<Unit filename="include/utility/Tools.h" />
-		<Unit filename="res/resources.rc">
-			<Option compilerVar="WINDRES" />
-		</Unit>
 		<Unit filename="src/Character.cpp" />
 		<Unit filename="src/Chunk.cpp" />
+		<Unit filename="src/Game.cpp" />
 		<Unit filename="src/GameMenu.cpp" />
 		<Unit filename="src/Graphics.cpp" />
 		<Unit filename="src/Inventory.cpp" />
@@ -73,6 +76,8 @@
 		<Unit filename="src/Messenger.cpp" />
 		<Unit filename="src/SimplexNoise.cpp" />
 		<Unit filename="src/Sprite.cpp" />
+		<Unit filename="src/State.cpp" />
+		<Unit filename="src/StateManager.cpp" />
 		<Unit filename="src/Tile.cpp" />
 		<Unit filename="src/TileMap.cpp" />
 		<Unit filename="src/Tile_UI.cpp" />

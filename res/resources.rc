@@ -13,7 +13,7 @@ FILETYPE VFT_APP
 	{
 		BLOCK "040904E4"
 		{
-			VALUE "CompanyName", "ADS Games"
+			VALUE "CompanyName", "A.D.S. Games"
 			VALUE "FileDescription", "A casual retro farming game."
 			VALUE "ProductVersion", "1.0.5"
 		}

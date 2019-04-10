@@ -1,5 +1,6 @@
 #include "Menu.h"
 
+#include "Tools.h"
 
 Menu::Menu() {
   indicator_location = 4;
@@ -11,32 +12,16 @@ Menu::Menu() {
 
   state = MAIN_MENU;
 
-  if (!(menu_image = load_bitmap("images/title_screen.png", NULL)))
-    abort_on_error("Cannot find image images/title_screen.png\nPlease check your files and try again");
+  menu_image = load_bitmap_ex("images/title_screen.png");
+  help_image = load_bitmap_ex("images/help.png");
+  story_image = load_bitmap_ex("images/story.png");
+  options_image = load_bitmap_ex("images/options.png");
+  coin_flip = load_bitmap_ex("images/coin_flip.png");
+  options_slider = load_bitmap_ex("images/options_slider.png");
+  options_slidee = load_bitmap_ex("images/options_slidee.png");
+  options_indicator = load_bitmap_ex("images/options_indicator.png");
 
-  if (!(help_image = load_bitmap("images/help.png", NULL)))
-    abort_on_error("Cannot find image images/help.png\nPlease check your files and try again");
-
-  if (!(story_image = load_bitmap("images/story.png", NULL)))
-    abort_on_error("Cannot find image images/story.png\nPlease check your files and try again");
-
-  if (!(options_image = load_bitmap("images/options.png", NULL)))
-    abort_on_error("Cannot find image images/options.png\nPlease check your files and try again");
-
-  if (!(coin_flip = load_bitmap("images/coin_flip.png", NULL)))
-    abort_on_error("Cannot find image coin_flip.png\nPlease check your files and try again");
-
-  if (!(options_slider = load_bitmap("images/options_slider.png", NULL)))
-    abort_on_error("Cannot find image options_slider.png\nPlease check your files and try again");
-
-  if (!(options_slidee = load_bitmap("images/options_slidee.png", NULL)))
-    abort_on_error("Cannot find image options_slidee.png\nPlease check your files and try again");
-
-  if (!(options_indicator = load_bitmap("images/options_indicator.png", NULL)))
-    abort_on_error("Cannot find image options_indicator.png\nPlease check your files and try again");
-
-  if (!(blip = load_sample("sfx/blip.wav")))
-    abort_on_error ("Cannot find file sfx/blip.wav \n Please check your files and try again");
+  blip = load_sample_ex("sfx/blip.wav");
 
      // Load fonts
   f1 = load_font("fonts/pixelart_condensed.pcx", NULL, NULL);
