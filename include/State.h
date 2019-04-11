@@ -22,6 +22,9 @@ class State;
  *****************/
 class StateEngine {
   public:
+    // Init
+    StateEngine();
+
     // Update
     void update();
 
@@ -29,7 +32,7 @@ class StateEngine {
     void draw(BITMAP* buffer);
 
     // Set next state
-    void setNextState(int newState, bool deletePrev);
+    void setNextState(int newState);
 
     // Get state id
     int getStateId();
@@ -37,7 +40,6 @@ class StateEngine {
     // Game states
     enum programStates {
       STATE_NULL,
-      STATE_LAST,
       STATE_EXIT,
       STATE_MENU,
       STATE_GAME,
@@ -45,28 +47,18 @@ class StateEngine {
       STATE_OPTIONS
     };
 
-    // Game states
-    enum stateStatus {
-      STATUS_DELETE,
-      STATUS_DRAW_ONLY,
-      STATUS_UPDATE_ONLY,
-      STATUS_FULL
-    };
   private:
     // Change state
     void changeState();
 
     // Stores states
-    std::vector<State*> states;
+    State* state;
 
     // Next state
     int nextState = STATE_NULL;
 
     // State id
     int currentState = STATE_NULL;
-
-    // Suspend previous
-    bool delete_previous;
 
 };
 
@@ -85,7 +77,7 @@ class State {
     virtual void update(StateEngine* engine) = 0;
 
     // Change state
-    void setNextState(StateEngine* engine, int state, bool delete_state = true);
+    void setNextState(StateEngine* engine, int state);
 
     // Get status
     int getStatus();

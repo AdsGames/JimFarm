@@ -39,7 +39,7 @@ void GameMenu::update(StateEngine *engine) {
     }
     // Exit
     else {
-      setNextState(engine, StateEngine::STATE_LAST);
+      setNextState(engine, StateEngine::STATE_GAME);
     }
   }
 }

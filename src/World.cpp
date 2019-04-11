@@ -26,7 +26,7 @@ World::World() {
   y = 0;
 
   ticks = 0;
-  map_buffer = NULL;
+  map_buffer = nullptr;
 
   map_messages = new Messenger(1, false, -4);
 
@@ -58,7 +58,11 @@ void World::init_ticker() {
  * IMAGES
  */
 // Draw bottom tiles
-void World::draw (BITMAP *tempBuffer) {
+void World::draw(BITMAP *tempBuffer) {
+  // Error check
+  if (!tempBuffer || !map_buffer)
+    return;
+
   // Clear buffer
   rectfill (map_buffer, 0, 0, map_buffer -> w, map_buffer -> h, makecol (255, 0, 0));
 
@@ -104,9 +108,9 @@ void World::load_images() {
     abort_on_error ("Could not load data/sounds.xml");
 
   // Create map buffer
-  map_buffer = create_bitmap (VIEWPORT_WIDTH * VIEWPORT_MAX_ZOOM, VIEWPORT_HEIGHT * VIEWPORT_MAX_ZOOM);
+  map_buffer = create_bitmap(VIEWPORT_WIDTH * VIEWPORT_MAX_ZOOM, VIEWPORT_HEIGHT * VIEWPORT_MAX_ZOOM);
 
-  overlay_buffer = create_bitmap (VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+  overlay_buffer = create_bitmap(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
   world_map -> generate_map();
 }

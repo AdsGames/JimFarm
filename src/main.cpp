@@ -154,7 +154,7 @@ int main() {
   setup();
 
   //Set the current state ID
-  game_state.setNextState(StateEngine::STATE_GAME, false);
+  game_state.setNextState(StateEngine::STATE_MENU);
 
   while(!close_button_pressed) {
     while(ticks == 0) {

@@ -37,7 +37,7 @@ Chunk* TileMap::chunk_at(int x, int y) {
     return nullptr;
   }
 
-  if (pos_x < 0 || pos_x >= chunks[pos_y].size()) {
+  if (pos_x < 0 || pos_x >= (signed)chunks[pos_y].size()) {
     return nullptr;
   }
 
@@ -173,13 +173,13 @@ void TileMap::generate_map() {
   // Create some chunks
   srand(time(NULL));
   Chunk::seed = random(-10000, 10000);
-  for (int t = 0; t < height; t++) {
+  for (unsigned int t = 0; t < height; t++) {
     if (chunks.size() <= t) {
       std::vector<Chunk*> newVec;
       chunks.push_back(newVec);
     }
 
-    for (unsigned int i = 0; i < width; i++) {
+    for (int i = 0; i < width; i++) {
       chunks[t].push_back(new Chunk(i, t));
     }
   }

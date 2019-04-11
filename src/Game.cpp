@@ -35,7 +35,7 @@ void Game::update(StateEngine *engine) {
 
   // Go to menu
   if (KeyListener::keyPressed[KEY_ESC])
-    setNextState(engine, StateEngine::STATE_GAME_MENU, false);
+    setNextState(engine, StateEngine::STATE_GAME_MENU);
 }
 
 

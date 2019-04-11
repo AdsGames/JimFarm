@@ -46,7 +46,6 @@
 		<Unit filename="include/SimplexNoise.h" />
 		<Unit filename="include/Sprite.h" />
 		<Unit filename="include/State.h" />
-		<Unit filename="include/StateManager.h" />
 		<Unit filename="include/Tile.h" />
 		<Unit filename="include/TileMap.h" />
 		<Unit filename="include/Tile_UI.h" />
@@ -77,7 +76,6 @@
 		<Unit filename="src/SimplexNoise.cpp" />
 		<Unit filename="src/Sprite.cpp" />
 		<Unit filename="src/State.cpp" />
-		<Unit filename="src/StateManager.cpp" />
 		<Unit filename="src/Tile.cpp" />
 		<Unit filename="src/TileMap.cpp" />
 		<Unit filename="src/Tile_UI.cpp" />

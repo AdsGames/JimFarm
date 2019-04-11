@@ -35,16 +35,19 @@ TileType::~TileType() {}
 void TileType::draw (int x, int y, BITMAP *tempBuffer, unsigned char meta, char offset) {
   if (image_type == "meta_map" || image_type == "animated") {
     int imageNum = floor((float(num_images) / 256.0f) * (float)meta);
-    draw_trans_sprite (tempBuffer, images[imageNum], x, y - ((image_h * 16) - 16));
+    if (images[imageNum])
+      draw_trans_sprite (tempBuffer, images[imageNum], x, y - ((image_h * 16) - 16));
     //textprintf_ex (tempBuffer, font, x, y, 0xFFFFFF, -1, "%d", meta);
   }
   else if (image_type == "meta_map_2" || image_type == "dynamic") {
     int imageNum = meta % num_images;
-    draw_trans_sprite (tempBuffer, images[imageNum], x, y - ((image_h * 16) - 16));
+    if (images[imageNum])
+      draw_trans_sprite (tempBuffer, images[imageNum], x, y - ((image_h * 16) - 16));
     //textprintf_ex (tempBuffer, font, x, y, 0xFFFFFF, -1, "%d", meta);
   }
   else{
-    draw_trans_sprite (tempBuffer, images[0], x, y - ((image_h * 16) - 16));
+    if (images[0])
+      draw_trans_sprite (tempBuffer, images[0], x, y - ((image_h * 16) - 16));
   }
 }
 

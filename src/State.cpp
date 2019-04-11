@@ -10,25 +10,31 @@
  * STATE ENGINE
  *****************/
 
+// Init
+StateEngine::StateEngine() {
+  nextState = STATE_NULL;
+  currentState = STATE_NULL;
+  state = nullptr;
+}
+
 // Draw
 void StateEngine::draw(BITMAP* buffer) {
-  for (unsigned int i = 0; i < states.size(); i++) {
-    states.at(i) -> draw(buffer);
+  if (state) {
+    state -> draw(buffer);
   }
 }
 
 // Update
 void StateEngine::update() {
-  if (states.size() > 0) {
-    states.at(states.size() - 1) -> update(this);
+  if (state) {
+    state -> update(this);
   }
   changeState();
 }
 
 // Set next state
-void StateEngine::setNextState(int newState, bool deletePrev) {
+void StateEngine::setNextState(int newState) {
   nextState = newState;
-  delete_previous = deletePrev;
 }
 
 // Get state id
@@ -44,21 +50,19 @@ void StateEngine::changeState() {
   }
 
   // Delete the current state
-  if (states.size() > 0 && delete_previous) {
-    states.pop_back();
+  if (state) {
+    delete state;
+    state = nullptr;
   }
 
   // Change the state
   switch(nextState) {
-    case STATE_LAST:
-      std::cout << ("Switched back.\n");
-      break;
     case STATE_GAME:
-      states.push_back(new Game());
+      state = new Game();
       std::cout << ("Switched state to game.\n");
       break;
     case STATE_MENU:
-      states.push_back(new Menu());
+      state = new Menu();
       std::cout << ("Switched state to main menu.\n");
       break;
     case STATE_OPTIONS:
@@ -66,12 +70,12 @@ void StateEngine::changeState() {
       std::cout << ("Switched state to options.\n");
       break;
     case STATE_GAME_MENU:
-      states.push_back(new GameMenu());
+      state = new GameMenu();
       std::cout << ("Switched state to game menu.\n");
       break;
     default:
-      states.clear();
       std::cout << ("Exiting program.");
+      break;
   }
 
   // Change the current state ID
@@ -87,6 +91,6 @@ void StateEngine::changeState() {
  *********/
 
 // Change state
-void State::setNextState(StateEngine* engine, int state, bool delete_state) {
-  engine -> setNextState(state, delete_state);
+void State::setNextState(StateEngine* engine, int state) {
+  engine -> setNextState(state);
 }
