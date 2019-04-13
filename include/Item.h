@@ -14,20 +14,20 @@ class Item {
     ~Item();
 
     // Draw to screen
-    void draw (int newX, int newY, BITMAP *tempBuffer);
+    void draw (int x, int y, BITMAP *buffer);
 
     // Get value of item
-    unsigned char getValue() { return item_pointer -> getValue();}
+    unsigned char getValue();
 
     // Modify ID
-    unsigned char getID() { return item_pointer -> getID();}
+    unsigned char getID();
 
     // Get the name of item
-    std::string getName() { return item_pointer -> getName();}
+    std::string getName();
 
     // Access and set meta data byte
-    void setMeta (unsigned char meta ) { this -> meta = meta; }
-    void changeMeta (unsigned char amt ) { this -> meta += amt; }
+    void setMeta (unsigned char meta) { this -> meta = meta; }
+    void changeMeta (unsigned char amt) { this -> meta += amt; }
     unsigned char getMeta() { return this -> meta; }
 
   private:

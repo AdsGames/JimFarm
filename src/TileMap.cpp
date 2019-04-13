@@ -173,7 +173,7 @@ void TileMap::generate_map() {
   // Create some chunks
   srand(time(NULL));
   Chunk::seed = random(-10000, 10000);
-  for (unsigned int t = 0; t < height; t++) {
+  for (unsigned int t = 0; t < (unsigned)height; t++) {
     if (chunks.size() <= t) {
       std::vector<Chunk*> newVec;
       chunks.push_back(newVec);

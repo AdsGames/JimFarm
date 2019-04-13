@@ -48,7 +48,10 @@
 		<Unit filename="include/State.h" />
 		<Unit filename="include/Tile.h" />
 		<Unit filename="include/TileMap.h" />
-		<Unit filename="include/Tile_UI.h" />
+		<Unit filename="include/UI_Controller.h" />
+		<Unit filename="include/UI_Element.h" />
+		<Unit filename="include/UI_Label.h" />
+		<Unit filename="include/UI_Slot.h" />
 		<Unit filename="include/World.h" />
 		<Unit filename="include/manager/SoundManager.h" />
 		<Unit filename="include/manager/TileType.h" />
@@ -78,7 +81,10 @@
 		<Unit filename="src/State.cpp" />
 		<Unit filename="src/Tile.cpp" />
 		<Unit filename="src/TileMap.cpp" />
-		<Unit filename="src/Tile_UI.cpp" />
+		<Unit filename="src/UI_Controller.cpp" />
+		<Unit filename="src/UI_Element.cpp" />
+		<Unit filename="src/UI_Label.cpp" />
+		<Unit filename="src/UI_Slot.cpp" />
 		<Unit filename="src/World.cpp" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/manager/SoundManager.cpp" />

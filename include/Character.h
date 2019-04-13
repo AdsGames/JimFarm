@@ -8,6 +8,8 @@
 #include "Inventory.h"
 #include "Sprite.h"
 
+#include "UI_Controller.h"
+
 class Character;
 
 class CharacterForeground : public Sprite {
@@ -43,6 +45,16 @@ class Character : public Sprite {
     CharacterForeground *c_fore;
   protected:
   private:
+
+    // Attatched UI
+    UI_Controller *attatched_ui;
+
+    // Inventory UI
+    UI_Controller *inventory_ui;
+    UI_Controller *hotbar_ui;
+
+    // UI open
+    bool ui_open;
 
     // Directions
     enum directions{ DIR_DOWN = 1, DIR_UP = 2, DIR_RIGHT = 3, DIR_LEFT = 4 };

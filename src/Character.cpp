@@ -35,6 +35,12 @@ Character::Character() :
   sound_step = false;
   ani_ticker = 0;
 
+  // UI
+  inventory_ui = nullptr;
+  attatched_ui = nullptr;
+  ui_open = false;
+
+  // Character foreground
   c_fore = new CharacterForeground(this);
   Graphics::Instance() -> add(this);
 }
@@ -62,6 +68,8 @@ void Character::load_data() {
   // Load fonts
   pixelart = load_font_ex("fonts/pixelart_condensed.pcx");
   font = pixelart;
+
+  inventory_ui = new UI_Controller(32, 180, 35);
 
   character_inv.addItem(new Item(ITEM_AXE), 0);
   character_inv.addItem(new Item(ITEM_SCYTHE), 1);
@@ -110,6 +118,11 @@ void Character::draw_inventory(BITMAP *tempBuffer) {
   // Only item if hands arent empty
   draw_trans_sprite (tempBuffer, indicator_2, indicator_x - map_pointer -> getX(), indicator_y - map_pointer -> getY());
 
+  // Draw UI
+  if (ui_open && attatched_ui != nullptr) {
+    attatched_ui -> Draw(tempBuffer);
+  }
+
 
   textprintf_ex (tempBuffer, pixelart, 60, 22, makecol(255,255,255), -1, map_pointer -> world_map -> get_biome_at(x, y).c_str());
 }
@@ -118,6 +131,27 @@ void Character::draw_inventory(BITMAP *tempBuffer) {
 void Character::update() {
   // Ask joystick for keys
   poll_joystick();
+
+
+
+  // UI Open
+  if (ui_open && attatched_ui != nullptr) {
+    // Update UI
+    attatched_ui -> Update();
+  }
+
+  // Open UI
+  if (KeyListener::keyPressed[KEY_F]) {
+    if (ui_open) {
+      ui_open = false;
+      attatched_ui = nullptr;
+    }
+    else {
+      ui_open = true;
+      attatched_ui = inventory_ui;
+    }
+  }
+
 
   // Oh
   // Snap

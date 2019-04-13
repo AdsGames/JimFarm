@@ -13,7 +13,7 @@ class Inventory {
 
     virtual ~Inventory();
 
-    bool addItem (Item *newItem, int index);
+    bool addItem (Item *item, int index);
     bool removeItem (int index);
 
     Item *getItem (int index);

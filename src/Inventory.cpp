@@ -1,9 +1,12 @@
 #include "Inventory.h"
 
-Inventory::Inventory() {
-  this -> max_items = 0;
+// Default constructor
+Inventory::Inventory() :
+  Inventory(0) {
+
 }
 
+// Constructor
 Inventory::Inventory (int max_items) {
   this -> max_items = max_items;
 
@@ -14,9 +17,18 @@ Inventory::Inventory (int max_items) {
 Inventory::~Inventory() {}
 
 // Push item to contents (if it fits)
-bool Inventory::addItem (Item *newItem, int index) {
-  if (index < getMaxSize() && newItem != NULL) {
-    contents[index] = newItem;
+bool Inventory::addItem (Item *item, int index) {
+  // Null item
+  if (item == nullptr)
+    return false;
+
+  // Out of bounds
+  if (index >= getMaxSize() || index < 0)
+    return false;
+
+  // Ensure space not taken
+  if (contents[index] == nullptr) {
+    contents[index] = item;
     return true;
   }
   return false;
@@ -24,8 +36,8 @@ bool Inventory::addItem (Item *newItem, int index) {
 
 // Remove item at index
 bool Inventory::removeItem (int index) {
-  if (getItem (index) != NULL) {
-    contents[index] = NULL;
+  if (getItem(index) != nullptr) {
+    contents[index] = nullptr;
     return true;
   }
   return false;
@@ -33,9 +45,9 @@ bool Inventory::removeItem (int index) {
 
 // Gets item at index if exists
 Item* Inventory::getItem (int index) {
-  if (index < getMaxSize())
+  if (index < getMaxSize() && index >= 0)
     return contents[index];
-  return NULL;
+  return nullptr;
 }
 
 // Just returns first item
@@ -58,5 +70,5 @@ void Inventory::emptyInv() {
   contents.clear();
 
   for (int i = 0; i < getMaxSize(); i++)
-    contents.push_back (NULL);
+    contents.push_back (nullptr);
 }
