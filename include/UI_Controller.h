@@ -3,6 +3,7 @@
 
 #include "Inventory.h"
 #include "UI_Element.h"
+#include "World.h"
 
 class UI_Controller {
   public:
@@ -11,13 +12,15 @@ class UI_Controller {
 
     void Draw(BITMAP *buffer);
 
-    void Update();
+    void Update(World *wrld);
 
     void AddElement(UI_Element *element);
 
   protected:
 
   private:
+    UI_Element *ElementAt(int x, int y);
+
     bool is_open;
     Inventory inv;
     int width, height;
@@ -27,6 +30,8 @@ class UI_Controller {
     std::vector<UI_Element*> elements;
 
     FONT *ui_font;
+
+    static Item* mouse_item;
 
 };
 

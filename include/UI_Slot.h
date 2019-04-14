@@ -16,6 +16,8 @@ class UI_Slot : public UI_Element {
 
     void BindItem(Item *item);
 
+    Item *GetItem();
+
     virtual void Draw(BITMAP *buffer, int parent_x, int parent_y) override;
 
   protected:

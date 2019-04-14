@@ -137,7 +137,7 @@ void Character::update() {
   // UI Open
   if (ui_open && attatched_ui != nullptr) {
     // Update UI
-    attatched_ui -> Update();
+    attatched_ui -> Update(map_pointer);
   }
 
   // Open UI

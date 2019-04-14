@@ -6,6 +6,7 @@
 class UI_Element {
   public:
     UI_Element(int x, int y);
+    UI_Element(int x, int y, int width, int height);
     virtual ~UI_Element();
 
     virtual void Draw(BITMAP *buffer, int parent_x, int parent_y) = 0;
@@ -13,10 +14,14 @@ class UI_Element {
     int GetX();
     int GetY();
 
+    int GetWidth();
+    int GetHeight();
+
   protected:
 
   private:
     int x, y;
+    int width, height;
 };
 
 #endif // UI_ELEMENT_H

@@ -1,7 +1,7 @@
 #include "UI_Slot.h"
 
 UI_Slot::UI_Slot(int x, int y) :
-  UI_Element(x, y) {
+  UI_Element(x, y, SLOT_SIZE, SLOT_SIZE) {
   item = nullptr;
 }
 
@@ -12,6 +12,10 @@ UI_Slot::UI_Slot(int x, int y, Item *item) :
 
 void UI_Slot::BindItem(Item *item) {
   this -> item = item;
+}
+
+Item* UI_Slot::GetItem() {
+  return this -> item;
 }
 
 void UI_Slot::Draw(BITMAP *buffer, int parent_x, int parent_y) {
