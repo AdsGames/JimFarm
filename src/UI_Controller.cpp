@@ -6,6 +6,8 @@
 #include "utility/tools.h"
 #include "utility/MouseListener.h"
 
+#include <math.h>
+
 #include <iostream>
 
 ItemStack* UI_Controller::mouse_item = nullptr;
@@ -74,7 +76,7 @@ void UI_Controller::Draw(BITMAP *buffer) {
 
   // Item, if holding
   if (mouse_item && mouse_item -> GetItem()) {
-    mouse_item -> GetItem() -> draw(mouse_x * ((float)buffer -> w/SCREEN_W), mouse_y * ((float)buffer -> h/SCREEN_H), buffer);
+    mouse_item -> Draw(mouse_x * ((float)buffer -> w/SCREEN_W), mouse_y * ((float)buffer -> h/SCREEN_H), buffer);
   }
 }
 
@@ -110,7 +112,7 @@ void UI_Controller::Update(World *wrld) {
         }
         else if (MouseListener::mouse_pressed & 2) {
           if (!(mouse_item -> GetItem()) && slt -> GetStack() -> GetItem()) {
-            int mouse_qty = slt -> GetStack() -> GetQuantity() / 2;
+            int mouse_qty = ceil((float)slt -> GetStack() -> GetQuantity() / 2.0f);
             mouse_item -> SetItem(slt -> GetStack() -> GetItem(), mouse_qty);
             slt -> GetStack() -> Remove(mouse_qty);
           }

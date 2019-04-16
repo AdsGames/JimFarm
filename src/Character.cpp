@@ -143,7 +143,18 @@ void Character::update() {
   poll_joystick();
 
   // Open UI
-  if (KeyListener::keyPressed[KEY_F]) {
+  if (KeyListener::keyPressed[KEY_E]) {
+    if (ui_open) {
+      ui_open = false;
+      attatched_ui = nullptr;
+    }
+    else {
+      ui_open = true;
+      attatched_ui = inventory_ui;
+    }
+  }
+
+  if (KeyListener::keyPressed[KEY_G]) {
     if (ui_open) {
       ui_open = false;
       attatched_ui = nullptr;
@@ -245,7 +256,7 @@ void Character::update() {
 
 
   // Drop
-  if (KeyListener::keyPressed[KEY_E] || MouseListener::mouse_pressed & 2 || joy[0].button[2].b ) {
+  if (KeyListener::keyPressed[KEY_F] || MouseListener::mouse_pressed & 2 || joy[0].button[2].b ) {
     Item *itemInHand = nullptr;
     if (character_inv -> getStack(selected_item) -> GetItem()) {
       itemInHand = character_inv -> getStack(selected_item) -> GetItem();
