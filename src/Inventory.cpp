@@ -1,58 +1,81 @@
 #include "Inventory.h"
 
-// Default constructor
-Inventory::Inventory() :
-  Inventory(0) {
-
-}
-
 // Constructor
-Inventory::Inventory (int max_items) {
-  this -> max_items = max_items;
+Inventory::Inventory () {
 
-  contents.reserve(max_items);
-  emptyInv();
 }
 
 Inventory::~Inventory() {}
 
 // Push item to contents (if it fits)
-bool Inventory::addItem (Item *item, int index) {
+bool Inventory::addItem(Item *item, int quantity) {
   // Null item
   if (item == nullptr)
     return false;
 
-  // Out of bounds
-  if (index >= getMaxSize() || index < 0)
-    return false;
-
-  // Ensure space not taken
-  if (contents[index] == nullptr) {
-    contents[index] = item;
+  // Stack
+  ItemStack *stk = findStack(item);
+  if (stk != nullptr) {
+    stk -> Add(quantity);
     return true;
   }
+
+  // Find a new spot
+  int emptyStk = findFirstEmpty();
+  if (emptyStk != -1) {
+    contents[emptyStk] -> SetItem(item, quantity);
+    return true;
+  }
+
   return false;
 }
 
 // Remove item at index
 bool Inventory::removeItem (int index) {
-  if (getItem(index) != nullptr) {
-    contents[index] = nullptr;
+  if (getStack(index) != nullptr) {
+    contents[index] -> Clear();
     return true;
   }
   return false;
 }
 
+// Add a space
+void Inventory::addSpace() {
+  contents.push_back (new ItemStack());
+}
+
 // Gets item at index if exists
-Item* Inventory::getItem (int index) {
-  if (index < getMaxSize() && index >= 0)
+ItemStack* Inventory::getStack (int index) {
+  if (index < getSize() && index >= 0)
     return contents[index];
   return nullptr;
 }
 
 // Just returns first item
-Item* Inventory::getFirstItem() {
-  return getItem(0);
+ItemStack* Inventory::getFirstItem() {
+  return getStack(0);
+}
+
+// FInd stack
+ItemStack* Inventory::findStack(Item *item) {
+  for (unsigned int i = 0; i < contents.size(); i++) {
+    if (contents.at(i) && contents.at(i) -> GetItem()) {
+      if (contents.at(i) -> GetItem() -> getID() == item -> getID()) {
+        return contents.at(i);
+      }
+    }
+  }
+  return nullptr;
+}
+
+// Get first empty
+int Inventory::findFirstEmpty() {
+  for (unsigned int i = 0; i < contents.size(); i++) {
+    if (contents.at(i) && !(contents.at(i) -> GetItem())) {
+      return i;
+    }
+  }
+  return -1;
 }
 
 // Current item count
@@ -60,15 +83,10 @@ int Inventory::getSize() {
   return contents.size();
 }
 
-// Just returns max size
-int Inventory::getMaxSize() {
-  return max_items;
-}
-
 // Clear all contents
-void Inventory::emptyInv() {
+void Inventory::empty() {
   contents.clear();
 
-  for (int i = 0; i < getMaxSize(); i++)
-    contents.push_back (nullptr);
+  for (int i = 0; i < getSize(); i++)
+    contents.push_back (new ItemStack());
 }

@@ -40,6 +40,7 @@
 		<Unit filename="include/Graphics.h" />
 		<Unit filename="include/Inventory.h" />
 		<Unit filename="include/Item.h" />
+		<Unit filename="include/ItemStack.h" />
 		<Unit filename="include/MapItem.h" />
 		<Unit filename="include/Menu.h" />
 		<Unit filename="include/Messenger.h" />
@@ -56,6 +57,7 @@
 		<Unit filename="include/manager/SoundManager.h" />
 		<Unit filename="include/manager/TileType.h" />
 		<Unit filename="include/manager/TileTypeManager.h" />
+		<Unit filename="include/manager/interface_defs.h" />
 		<Unit filename="include/manager/item_defs.h" />
 		<Unit filename="include/manager/sound_defs.h" />
 		<Unit filename="include/manager/tile_defs.h" />
@@ -73,6 +75,7 @@
 		<Unit filename="src/Graphics.cpp" />
 		<Unit filename="src/Inventory.cpp" />
 		<Unit filename="src/Item.cpp" />
+		<Unit filename="src/ItemStack.cpp" />
 		<Unit filename="src/MapItem.cpp" />
 		<Unit filename="src/Menu.cpp" />
 		<Unit filename="src/Messenger.cpp" />

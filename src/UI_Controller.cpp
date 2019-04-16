@@ -8,11 +8,11 @@
 
 #include <iostream>
 
-Item* UI_Controller::mouse_item = nullptr;
+ItemStack* UI_Controller::mouse_item = nullptr;
 
-UI_Controller::UI_Controller(int size, int width, int height) {
+UI_Controller::UI_Controller(int width, int height) {
   // Create inventory
-  this -> inv = Inventory(size);
+  this -> inv = new Inventory();
 
   // Set dimensions
   this -> width = width;
@@ -22,21 +22,11 @@ UI_Controller::UI_Controller(int size, int width, int height) {
   this -> x = 0;
   this -> y = 0;
 
-  // Load font
-  ui_font = load_font_ex("fonts/pixelart_condensed.pcx");
+  this -> currently_bound = 0;
 
-  // Add labels
-  AddElement(new UI_Label(5, 0, "Inventory", ui_font));
-
-  // Add slots
-  AddElement(new UI_Slot(5, 15, new Item(ITEM_HOE)));
-  AddElement(new UI_Slot(25, 15, new Item(ITEM_SHOVEL)));
-  AddElement(new UI_Slot(45, 15, new Item(ITEM_HAND)));
-  AddElement(new UI_Slot(65, 15, new Item(ITEM_HAY)));
-  AddElement(new UI_Slot(85, 15));
-  AddElement(new UI_Slot(105, 15));
-  AddElement(new UI_Slot(125, 15));
-  AddElement(new UI_Slot(145, 15));
+  // Make default mouse stack
+  if (!mouse_item)
+    mouse_item = new ItemStack();
 }
 
 UI_Controller::~UI_Controller() {
@@ -46,7 +36,19 @@ UI_Controller::~UI_Controller() {
 void UI_Controller::AddElement(UI_Element *element) {
   if (element) {
     elements.push_back(element);
+
+    // Is it a slot?
+    UI_Slot *s = dynamic_cast<UI_Slot*>(element);
+    if (s) {
+      inv -> addSpace();
+      s -> BindStack(inv -> getStack(currently_bound));
+      currently_bound++;
+    }
   }
+}
+
+Inventory* UI_Controller::GetInventory() {
+  return inv;
 }
 
 void UI_Controller::Draw(BITMAP *buffer) {
@@ -71,14 +73,14 @@ void UI_Controller::Draw(BITMAP *buffer) {
                    makecol(255, 255, 255));
 
   // Item, if holding
-  if (mouse_item) {
-    mouse_item -> draw(mouse_x * ((float)buffer -> w/SCREEN_W), mouse_y * ((float)buffer -> h/SCREEN_H), buffer);
+  if (mouse_item && mouse_item -> GetItem()) {
+    mouse_item -> GetItem() -> draw(mouse_x * ((float)buffer -> w/SCREEN_W), mouse_y * ((float)buffer -> h/SCREEN_H), buffer);
   }
 }
 
 void UI_Controller::Update(World *wrld) {
   // Select item
-  if (MouseListener::mouse_pressed & 1) {
+  if (MouseListener::mouse_pressed & 1 || MouseListener::mouse_pressed & 2) {
     int trans_x = mouse_x * ((wrld -> VIEWPORT_WIDTH  / wrld -> VIEWPORT_ZOOM) / SCREEN_W);
     int trans_y = mouse_y * ((wrld -> VIEWPORT_HEIGHT / wrld -> VIEWPORT_ZOOM) / SCREEN_H);
 
@@ -92,13 +94,34 @@ void UI_Controller::Update(World *wrld) {
 
       // Ensure that it is slot
       if (slt != nullptr) {
-        if (mouse_item == nullptr && slt -> GetItem() != nullptr) {
-          mouse_item = slt -> GetItem();
-          slt -> BindItem(nullptr);
+        if (MouseListener::mouse_pressed & 1) {
+          if (!(mouse_item -> GetItem()) && slt -> GetStack() -> GetItem()) {
+            mouse_item -> SetItem(slt -> GetStack() -> GetItem(), slt -> GetStack() -> GetQuantity());
+            slt -> GetStack() -> Clear();
+          }
+          else if(mouse_item -> GetItem() && !(slt -> GetStack() -> GetItem())) {
+            slt -> GetStack() -> SetItem(mouse_item -> GetItem(), mouse_item -> GetQuantity());
+            mouse_item -> Clear();
+          }
+          else if(mouse_item -> GetItem() && slt -> GetStack() -> GetItem() -> getID() == mouse_item -> GetItem() -> getID()) {
+            slt -> GetStack() -> Add(mouse_item -> GetQuantity());
+            mouse_item -> Clear();
+          }
         }
-        else {
-          slt -> BindItem(mouse_item);
-          mouse_item = nullptr;
+        else if (MouseListener::mouse_pressed & 2) {
+          if (!(mouse_item -> GetItem()) && slt -> GetStack() -> GetItem()) {
+            int mouse_qty = slt -> GetStack() -> GetQuantity() / 2;
+            mouse_item -> SetItem(slt -> GetStack() -> GetItem(), mouse_qty);
+            slt -> GetStack() -> Remove(mouse_qty);
+          }
+          else if(mouse_item -> GetItem() && !(slt -> GetStack() -> GetItem())) {
+            slt -> GetStack() -> SetItem(mouse_item -> GetItem(), 1);
+            mouse_item -> Remove(1);
+          }
+          else if(mouse_item -> GetItem() && slt -> GetStack() -> GetItem() -> getID() == mouse_item -> GetItem() -> getID()) {
+            slt -> GetStack() -> Add(1);
+            mouse_item -> Remove(1);
+          }
         }
       }
     }

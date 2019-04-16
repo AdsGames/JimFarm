@@ -7,7 +7,7 @@
 
 class UI_Controller {
   public:
-    UI_Controller(int size, int width, int height);
+    UI_Controller(int width, int height);
     virtual ~UI_Controller();
 
     void Draw(BITMAP *buffer);
@@ -16,22 +16,24 @@ class UI_Controller {
 
     void AddElement(UI_Element *element);
 
+    Inventory *GetInventory();
+
   protected:
 
   private:
     UI_Element *ElementAt(int x, int y);
 
     bool is_open;
-    Inventory inv;
+    Inventory *inv;
     int width, height;
 
     int x, y;
 
     std::vector<UI_Element*> elements;
 
-    FONT *ui_font;
+    static ItemStack* mouse_item;
 
-    static Item* mouse_item;
+    int currently_bound;
 
 };
 

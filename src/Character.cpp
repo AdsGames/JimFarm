@@ -1,6 +1,7 @@
 #include "Character.h"
 
 #include <math.h>
+#include <iostream>
 
 #include "KeyListener.h"
 #include "MouseListener.h"
@@ -8,6 +9,9 @@
 
 #include "tile_defs.h"
 #include "item_defs.h"
+#include "interface_defs.h"
+
+#include "TileTypeManager.h"
 
 #include "Graphics.h"
 
@@ -29,7 +33,6 @@ Character::Character() :
   Sprite(0, 0, 2) {
   moving = false;
   direction = 1;
-  character_inv = Inventory(10);
   selected_item = 0;
 
   sound_step = false;
@@ -69,13 +72,15 @@ void Character::load_data() {
   pixelart = load_font_ex("fonts/pixelart_condensed.pcx");
   font = pixelart;
 
-  inventory_ui = new UI_Controller(32, 180, 35);
+  inventory_ui = TileTypeManager::getInterfaceByID(0);
 
-  character_inv.addItem(new Item(ITEM_AXE), 0);
-  character_inv.addItem(new Item(ITEM_SCYTHE), 1);
-  character_inv.addItem(new Item(ITEM_SHOVEL), 2);
-  character_inv.addItem(new Item(ITEM_HOE), 3);
-  character_inv.addItem(new Item(ITEM_BERRY_SEED), 4);
+  character_inv = inventory_ui -> GetInventory();
+
+  character_inv -> addItem(new Item(ITEM_AXE), 1);
+  character_inv -> addItem(new Item(ITEM_SCYTHE), 1);
+  character_inv -> addItem(new Item(ITEM_SHOVEL), 1);
+  character_inv -> addItem(new Item(ITEM_HOE), 1);
+  character_inv -> addItem(new Item(ITEM_BERRY_SEED), 4);
 }
 
 // Draw character to screen
@@ -83,6 +88,14 @@ void Character::draw(BITMAP *tempBuffer, float x_1, float y_1, float x_2, float 
   // Indicator
   indicator_x = mouse_x * ((map_pointer -> VIEWPORT_WIDTH  / map_pointer -> VIEWPORT_ZOOM) / SCREEN_W) + map_pointer -> getX();
   indicator_y = mouse_y * ((map_pointer -> VIEWPORT_HEIGHT / map_pointer -> VIEWPORT_ZOOM) / SCREEN_H) + map_pointer -> getY();
+
+  // Cursor
+  rectfill(tempBuffer,
+           indicator_x - map_pointer -> getX(),
+           indicator_y - map_pointer -> getY(),
+           indicator_x + 2 - map_pointer -> getX(),
+           indicator_y + 2 - map_pointer -> getY(), makecol(255, 255, 255));
+
   indicator_x -= indicator_x % 16;
   indicator_y -= indicator_y % 16;
 
@@ -93,25 +106,25 @@ void Character::draw(BITMAP *tempBuffer, float x_1, float y_1, float x_2, float 
   masked_blit (image, tempBuffer, floor(ani_ticker/4) * 16, (direction - 1) * 20, x - map_pointer -> getX(), y - map_pointer -> getY() - 8, 16, 20);
 
   // Selected item
-  if (character_inv.getItem(selected_item) != NULL) {
-    character_inv.getItem(selected_item) -> draw (x - map_pointer -> getX(), y - map_pointer -> getY(), tempBuffer);
+  if (character_inv -> getStack(selected_item) -> GetItem()) {
+    character_inv -> getStack(selected_item) -> GetItem() -> draw (x - map_pointer -> getX(), y - map_pointer -> getY(), tempBuffer);
   }
 }
 
 // Update player
 void Character::draw_inventory(BITMAP *tempBuffer) {
-  const int draw_x = (tempBuffer -> w - character_inv.getMaxSize() * 18) / 2;
+  const int draw_x = (tempBuffer -> w - HOTBAR_SIZE * 18) / 2;
   const int draw_y = tempBuffer -> h - 20;
 
   // Draw items
-  for (int i = 0; i < character_inv.getMaxSize(); i++) {
+  for (int i = 0; i < HOTBAR_SIZE; i++) {
     draw_sprite (tempBuffer, inventory_gui, 18 * i + draw_x, draw_y);
     if (i == selected_item)
       draw_sprite (tempBuffer, indicator, 18 * i + 1 + draw_x, 1 + draw_y);
-    if (character_inv.getItem(i) != NULL) {
-      character_inv.getItem(i) -> draw (18 * i + 1 + draw_x, 1 + draw_y, tempBuffer);
-      if (i == selected_item)
-        textprintf_ex (tempBuffer, pixelart, 1 + draw_x, 21 + draw_y, makecol(255,255,255), -1, character_inv.getItem(i) -> getName().c_str());
+    if (character_inv -> getStack(i)) {
+      character_inv -> getStack(i) -> Draw (18 * i + 1 + draw_x, 1 + draw_y, tempBuffer);
+      if (i == selected_item && character_inv -> getStack(i) -> GetItem())
+        textprintf_ex (tempBuffer, pixelart, 1 + draw_x, 21 + draw_y, makecol(255,255,255), -1, character_inv -> getStack(i) -> GetItem() -> getName().c_str());
     }
   }
 
@@ -119,26 +132,15 @@ void Character::draw_inventory(BITMAP *tempBuffer) {
   draw_trans_sprite (tempBuffer, indicator_2, indicator_x - map_pointer -> getX(), indicator_y - map_pointer -> getY());
 
   // Draw UI
-  if (ui_open && attatched_ui != nullptr) {
+  if (ui_open && attatched_ui) {
     attatched_ui -> Draw(tempBuffer);
   }
-
-
-  textprintf_ex (tempBuffer, pixelart, 60, 22, makecol(255,255,255), -1, map_pointer -> world_map -> get_biome_at(x, y).c_str());
 }
 
 // Update player
 void Character::update() {
   // Ask joystick for keys
   poll_joystick();
-
-
-
-  // UI Open
-  if (ui_open && attatched_ui != nullptr) {
-    // Update UI
-    attatched_ui -> Update(map_pointer);
-  }
 
   // Open UI
   if (KeyListener::keyPressed[KEY_F]) {
@@ -152,6 +154,12 @@ void Character::update() {
     }
   }
 
+  // UI Open
+  if (ui_open && attatched_ui != nullptr) {
+    // Update UI
+    attatched_ui -> Update(map_pointer);
+    return;
+  }
 
   // Oh
   // Snap
@@ -160,9 +168,9 @@ void Character::update() {
 
   // Selector
   if (KeyListener::keyPressed[KEY_Z] || MouseListener::mouse_z_change > 0)
-    selected_item = (selected_item + (character_inv.getMaxSize() - 1)) % character_inv.getMaxSize();
+    selected_item = (selected_item + (HOTBAR_SIZE - 1)) % HOTBAR_SIZE;
   if (KeyListener::keyPressed[KEY_X] || MouseListener::mouse_z_change < 0)
-    selected_item = (selected_item + 1) % character_inv.getMaxSize();
+    selected_item = (selected_item + 1) % HOTBAR_SIZE;
 
   // Movement code
   // Move
@@ -224,32 +232,37 @@ void Character::update() {
     ani_ticker = 0;
   }
 
-  // Pickup and drop
-  if (KeyListener::keyPressed[KEY_LCONTROL] || KeyListener::keyPressed[KEY_E] || MouseListener::mouse_pressed & 2 || joy[0].button[2].b ) {
-    MapItem *itemAtPos  = map_pointer -> world_map -> item_at (roundf (x / 16.0f) * 16, roundf (y / 16.0f) * 16);
-    Item *itemInHand = character_inv.getItem(selected_item);
+  // Pickup
+  MapItem *itemAtPos  = map_pointer -> world_map -> item_at (roundf (x / 16.0f) * 16, roundf (y / 16.0f) * 16);
 
-    // Pickup
-    if (itemInHand == NULL && itemAtPos != nullptr && itemAtPos -> itemPtr != nullptr) {
-      play_sample (pickup, 255, 125, 1000, 0);
-      if (character_inv.addItem (itemAtPos -> itemPtr, selected_item)) {
-        map_pointer -> world_map -> remove_item (itemAtPos);
-        map_pointer -> getMessenger() -> push_message ("You pick up a " + character_inv.getItem(selected_item) -> getName());
-      }
+  // Pickup
+  if (itemAtPos != nullptr && itemAtPos -> itemPtr != nullptr) {
+    play_sample (pickup, 255, 125, 1000, 0);
+    if (character_inv -> addItem (itemAtPos -> itemPtr, 1)) {
+      map_pointer -> world_map -> remove_item (itemAtPos);
     }
+  }
+
+
+  // Drop
+  if (KeyListener::keyPressed[KEY_E] || MouseListener::mouse_pressed & 2 || joy[0].button[2].b ) {
+    Item *itemInHand = nullptr;
+    if (character_inv -> getStack(selected_item) -> GetItem()) {
+      itemInHand = character_inv -> getStack(selected_item) -> GetItem();
+    }
+
     // Drop
-    else if (itemInHand != nullptr && itemAtPos == nullptr) {
+    if (itemInHand != nullptr) {
       play_sample (drop, 255, 125, 1000, 0);
-      map_pointer -> world_map -> place_item (character_inv.getItem(selected_item), roundf (x / 16.0f) * 16, roundf (y / 16.0f) * 16);
-      if (character_inv.removeItem (selected_item))
-        map_pointer -> getMessenger() -> push_message ("You drop your " + itemInHand -> getName());
+      map_pointer -> world_map -> place_item (itemInHand, indicator_x, indicator_y);
+      character_inv -> getStack(selected_item) -> Remove(1);
     }
   }
 
   // Interact with map
   if (KeyListener::keyPressed[KEY_SPACE] || MouseListener::mouse_pressed & 1 || joy[0].button[0].b) {
-    if (character_inv.getItem (selected_item)) {
-      map_pointer -> interact (indicator_x, indicator_y, character_inv.getItem (selected_item));
+    if (character_inv -> getStack(selected_item) -> GetItem()) {
+      map_pointer -> interact (indicator_x, indicator_y, character_inv -> getStack(selected_item) -> GetItem());
     }
   }
 

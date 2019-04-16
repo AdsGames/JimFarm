@@ -103,6 +103,10 @@ void World::load_images() {
   if (TileTypeManager::load_items ("data/items.xml"))
     abort_on_error ("Could not load data/items.xml");
 
+  std::cout << "Loading data/interfaces.xml \n";
+  if (TileTypeManager::load_interfaces ("data/interfaces.xml"))
+    abort_on_error ("Could not load data/interfaces.xml");
+
   std::cout << "Loading data/sounds.xml \n";
   if (SoundManager::load ("data/sounds.xml"))
     abort_on_error ("Could not load data/sounds.xml");
@@ -135,11 +139,10 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
         SoundManager::play (SOUND_HOE);
       }
       else {
-        map_messages -> push_message ("You can't hoe that");
+        SoundManager::play (SOUND_ERROR);
       }
     }
     else {
-      map_messages -> push_message ("You can't hoe there");
       SoundManager::play (SOUND_ERROR);
     }
   }
@@ -151,7 +154,6 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
       SoundManager::play (SOUND_SCYTHE);
     }
     else {
-      map_messages -> push_message ("You can't cut there");
       SoundManager::play (SOUND_ERROR);
     }
   }
@@ -161,7 +163,6 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
       world_map -> place_tile (new Tile (TILE_BERRY, inter_x, inter_y, LAYER_FOREGROUND));
     }
     else{
-      map_messages -> push_message ("You must plant in ploughed soil");
       SoundManager::play (SOUND_ERROR);
     }
   }
@@ -171,7 +172,6 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
       world_map -> place_tile (new Tile (TILE_TOMATO, inter_x, inter_y, LAYER_FOREGROUND));
     }
     else{
-      map_messages -> push_message ("You must plant in ploughed soil");
       SoundManager::play (SOUND_ERROR);
     }
   }
@@ -181,7 +181,6 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
       world_map -> place_tile (new Tile (TILE_CARROT, inter_x, inter_y, LAYER_FOREGROUND));
     }
     else{
-      map_messages -> push_message ("You must plant in ploughed soil");
       SoundManager::play (SOUND_ERROR);
     }
   }
@@ -191,7 +190,6 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
       world_map -> place_tile (new Tile (TILE_LAVENDER, inter_x, inter_y, LAYER_FOREGROUND));
     }
     else{
-      map_messages -> push_message ("You must plant in ploughed soil");
       SoundManager::play (SOUND_ERROR);
     }
   }
@@ -222,7 +220,6 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
       SoundManager::play (SOUND_AXE);
     }
     else{
-      map_messages -> push_message ("You can't chop that down");
       SoundManager::play (SOUND_ERROR);
     }
   }
@@ -242,7 +239,6 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
       SoundManager::play (SOUND_SHOVEL);
     }
     else{
-      map_messages -> push_message ("You can't dig that up");
       SoundManager::play (SOUND_ERROR);
     }
   }
@@ -253,7 +249,6 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
       SoundManager::play (SOUND_SHOVEL);
     }
     else{
-      map_messages -> push_message ("You can't place that there");
       SoundManager::play (SOUND_ERROR);
     }
   }
@@ -264,7 +259,6 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
       SoundManager::play (SOUND_SHOVEL);
     }
     else{
-      map_messages -> push_message ("You can't place that there");
       SoundManager::play (SOUND_ERROR);
     }
   }

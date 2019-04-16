@@ -73,3 +73,25 @@ for sound in root.findall('sound'):
   id += 1;
 
 out_file.close()
+
+# INTERFACES
+out_file = open("include/manager/interface_defs.h","w"); #.H OUTPUT FILE NAME
+
+tree = ET.parse('build/data/interfaces.xml')
+root = tree.getroot()
+ 
+out_file.write( "#define INTERFACE_NULL -1\n")
+id = 0
+for interface in root.findall('interface'):
+  name = ""
+  if( interface.find('name').text != None):
+    name = interface.find('name').text
+  
+  name = name.upper()
+  name = "_".join(name.split())
+  
+  # print( name, id)
+  out_file.write( "#define INTERFACE_%s %s\n" % (name, id))
+  id += 1;
+
+out_file.close()

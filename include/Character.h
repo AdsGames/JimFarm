@@ -1,6 +1,8 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
+#define HOTBAR_SIZE 8
+
 #include <allegro.h>
 #include <string>
 
@@ -64,7 +66,7 @@ class Character : public Sprite {
     World *map_pointer;
 
     // Inventory
-    Inventory character_inv;
+    Inventory* character_inv;
 
     // Item in hand
     int selected_item;

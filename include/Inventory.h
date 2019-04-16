@@ -4,29 +4,30 @@
 #include <vector>
 
 #include "Tile.h"
-#include "Item.h"
+#include "ItemStack.h"
 
 class Inventory {
   public:
     Inventory();
-    Inventory (int max_items);
 
     virtual ~Inventory();
 
-    bool addItem (Item *item, int index);
+    bool addItem (Item *item, int quantity);
     bool removeItem (int index);
+    void addSpace();
 
-    Item *getItem (int index);
-    Item *getFirstItem();
+    ItemStack *getStack (int index);
+    ItemStack *getFirstItem();
+
+    ItemStack *findStack(Item *item);
+    int findFirstEmpty();
 
     int getSize();
-    int getMaxSize();
 
-    void emptyInv();
+    void empty();
 
   private:
-    std::vector<Item*> contents;
-    int max_items;
+    std::vector<ItemStack*> contents;
 };
 
 #endif // INVENTORY_H

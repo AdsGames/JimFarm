@@ -5,8 +5,8 @@
 
 class UI_Element {
   public:
-    UI_Element(int x, int y);
-    UI_Element(int x, int y, int width, int height);
+    explicit UI_Element(int x, int y);
+    explicit UI_Element(int x, int y, int width, int height);
     virtual ~UI_Element();
 
     virtual void Draw(BITMAP *buffer, int parent_x, int parent_y) = 0;

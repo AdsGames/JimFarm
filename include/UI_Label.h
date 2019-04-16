@@ -8,15 +8,13 @@
 
 class UI_Label : public UI_Element {
   public:
-    UI_Label(int x, int y, std::string text, FONT *font);
+    UI_Label(int x, int y, std::string text);
     virtual ~UI_Label();
 
-    virtual void Draw(BITMAP *buffer, int parent_x, int parent_y);
-  protected:
-
-  private:
+    virtual void Draw(BITMAP *buffer, int parent_x, int parent_y) override;
     std::string text;
-    FONT *font;
+  private:
+
 };
 
 #endif // UI_LABEL_H

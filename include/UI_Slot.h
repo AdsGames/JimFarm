@@ -6,24 +6,24 @@
 #include <allegro.h>
 
 #include "UI_Element.h"
-#include "Item.h"
+#include "ItemStack.h"
 
 class UI_Slot : public UI_Element {
   public:
     UI_Slot(int x, int y);
-    UI_Slot(int x, int y, Item *item);
+    UI_Slot(int x, int y, ItemStack *stk);
     virtual ~UI_Slot() {};
 
-    void BindItem(Item *item);
+    void BindStack(ItemStack *stk);
 
-    Item *GetItem();
+    ItemStack *GetStack();
 
     virtual void Draw(BITMAP *buffer, int parent_x, int parent_y) override;
 
   protected:
 
   private:
-    Item *item;
+    ItemStack *stkptr;
 };
 
 #endif // UI_SLOT_H
