@@ -6,7 +6,7 @@
 
 class MapItem : public Sprite {
   public:
-    MapItem (int x = 0, int y = 0, Item *itemPtr = NULL);
+    MapItem (int x, int y, Item *itemPtr);
     ~MapItem();
 
     virtual void draw (BITMAP *tempBuffer, float x_1, float y_1, float x_2, float y_2) override;

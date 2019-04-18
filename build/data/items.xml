@@ -132,4 +132,16 @@
 		<image x="5" y="1"></image>
 		<value>1</value>
 	</item>
+  <!--grass-->
+	<item id="22">
+		<name>grass</name>
+		<image x="6" y="1"></image>
+		<value>1</value>
+	</item>
+  <!--sand-->
+	<item id="23">
+		<name>sand</name>
+		<image x="7" y="1"></image>
+		<value>1</value>
+	</item>
 </items>

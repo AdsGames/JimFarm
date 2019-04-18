@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "Tile.h"
 #include "ItemStack.h"
 
 class Inventory {

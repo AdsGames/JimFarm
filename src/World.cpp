@@ -128,6 +128,7 @@ void World::load_images() {
 void World::interact (int inter_x, int inter_y, Item *inHand) {
   Tile *foregroundTile = world_map -> tile_at (inter_x, inter_y, LAYER_FOREGROUND);
   Tile *midgroundTile = world_map -> tile_at (inter_x, inter_y, LAYER_MIDGROUND);
+  Tile *backgroundTile = world_map -> tile_at (inter_x, inter_y, LAYER_BACKGROUND);
 
   // Hoe
   if (inHand -> getID() == ITEM_HOE) {
@@ -231,8 +232,14 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
       world_map -> remove_tile (foregroundTile);
       SoundManager::play (SOUND_SHOVEL);
     }
-    else if ( midgroundTile && midgroundTile -> getID() == TILE_GRASS && !foregroundTile) {
-      world_map -> replace_tile (midgroundTile, new Tile(TILE_PATH, midgroundTile -> getX(), midgroundTile -> getY(), midgroundTile -> getZ()));
+    else if (midgroundTile && midgroundTile -> getID() == TILE_GRASS && !foregroundTile) {
+      world_map -> remove_tile (midgroundTile);
+      world_map -> place_item (new Item(ITEM_GRASS, 0), midgroundTile -> getX(), midgroundTile -> getY());
+      SoundManager::play (SOUND_SHOVEL);
+    }
+    else if (midgroundTile && midgroundTile -> getID() == TILE_SAND && !foregroundTile) {
+      world_map -> remove_tile (midgroundTile);
+      world_map -> place_item (new Item(ITEM_SAND, 0), midgroundTile -> getX(), midgroundTile -> getY());
       SoundManager::play (SOUND_SHOVEL);
     }
     else if(foregroundTile && (foregroundTile  -> getID() == TILE_STONE_WALL)) {
@@ -254,13 +261,33 @@ void World::interact (int inter_x, int inter_y, Item *inHand) {
       SoundManager::play (SOUND_ERROR);
     }
   }
-  // Wood Wall
+  // Fence
   else if (inHand -> getID() == ITEM_STICK) {
     if (!foregroundTile && midgroundTile) {
       world_map -> place_tile (new Tile(TILE_FENCE, midgroundTile -> getX(), midgroundTile -> getY(), LAYER_FOREGROUND));
       SoundManager::play (SOUND_SHOVEL);
     }
     else{
+      SoundManager::play (SOUND_ERROR);
+    }
+  }
+  // Place dirt
+  else if (inHand -> getID() == ITEM_GRASS) {
+    if (backgroundTile && !midgroundTile) {
+      world_map -> place_tile (new Tile(TILE_GRASS, backgroundTile -> getX(), backgroundTile -> getY(), LAYER_MIDGROUND));
+      SoundManager::play (SOUND_SHOVEL);
+    }
+    else{
+      SoundManager::play (SOUND_ERROR);
+    }
+  }
+  // Place dirt
+  else if (inHand -> getID() == ITEM_SAND) {
+    if (backgroundTile && !midgroundTile) {
+      world_map -> place_tile (new Tile(TILE_SAND, backgroundTile -> getX(), backgroundTile -> getY(), LAYER_MIDGROUND));
+      SoundManager::play (SOUND_SHOVEL);
+    }
+    else {
       SoundManager::play (SOUND_ERROR);
     }
   }

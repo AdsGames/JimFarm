@@ -21,3 +21,5 @@
 #define ITEM_STONE 19
 #define ITEM_SAPLING 20
 #define ITEM_PLANK 21
+#define ITEM_GRASS 22
+#define ITEM_SAND 23

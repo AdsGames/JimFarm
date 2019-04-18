@@ -248,7 +248,7 @@ void Character::update() {
   MapItem *itemAtPos  = map_pointer -> world_map -> item_at (roundf (x / 16.0f) * 16, roundf (y / 16.0f) * 16);
 
   // Pickup
-  if (itemAtPos != nullptr && itemAtPos -> itemPtr != nullptr) {
+  if (itemAtPos != nullptr) {
     play_sample (pickup, 255, 125, 1000, 0);
     if (character_inv -> addItem (itemAtPos -> itemPtr, 1)) {
       map_pointer -> world_map -> remove_item (itemAtPos);
