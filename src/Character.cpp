@@ -12,6 +12,7 @@
 #include "interface_defs.h"
 
 #include "TileTypeManager.h"
+#include "InterfaceTypeManager.h"
 
 #include "Graphics.h"
 
@@ -72,7 +73,7 @@ void Character::load_data() {
   pixelart = load_font_ex("fonts/pixelart_condensed.pcx");
   font = pixelart;
 
-  inventory_ui = TileTypeManager::getInterfaceByID(0);
+  inventory_ui = InterfaceTypeManager::getInterfaceByID(0);
 
   character_inv = inventory_ui -> GetInventory();
 
@@ -161,7 +162,7 @@ void Character::update() {
     }
     else {
       ui_open = true;
-      attatched_ui = TileTypeManager::getInterfaceByID(1);
+      attatched_ui = InterfaceTypeManager::getInterfaceByID(1);
     }
   }
 

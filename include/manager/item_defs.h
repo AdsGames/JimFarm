@@ -19,3 +19,5 @@
 #define ITEM_WOOD 17
 #define ITEM_HAY 18
 #define ITEM_STONE 19
+#define ITEM_SAPLING 20
+#define ITEM_PLANK 21

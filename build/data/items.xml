@@ -1,129 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
 <items>
 	<!--hand-->
-	<item>
+	<item id="0">
 		<name>hand</name>
 		<image x="0" y="0"></image>
 		<value>0</value>
 	</item>
 	<!--hoe-->
-	<item>
+	<item id="1">
 		<name>hoe</name>
 		<image x="3" y="1"></image>
 		<value>10</value>
 	</item>
 	<!--scythe-->
-	<item>
+	<item id="2">
 		<name>scythe</name>
 		<image x="0" y="1"></image>
 		<value>20</value>
 	</item>
 	<!--watering can-->
-	<item>
+	<item id="3">
 		<name>watering can</name>
 		<image x="2" y="1"></image>
 		<value>20</value>
 	</item>
 	<!--axe-->
-	<item>
+	<item id="4">
 		<name>axe</name>
 		<image x="4" y="1"></image>
 		<value>20</value>
 	</item>
 	<!--shovel-->
-	<item>
+	<item id="5">
 		<name>shovel</name>
 		<image x="1" y="1"></image>
 		<value>20</value>
 	</item>
 	<!--chicken-->
-	<item>
+	<item id="6">
 		<name>chicken</name>
 		<image x="3" y="0"></image>
 		<value>30</value>
 	</item>
 	<!--egg-->
-	<item>
+	<item id="7">
 		<name>egg</name>
 		<image x="1" y="0"></image>
 		<value>2</value>
 	</item>
 	<!--berry seed-->
-	<item>
+	<item id="8">
 		<name>berry seed</name>
 		<image x="0" y="2"></image>
 		<value>1</value>
 	</item>
 	<!--berry-->
-	<item>
+	<item id="9">
 		<name>berry</name>
 		<image x="0" y="3"></image>
 		<value>2</value>
 	</item>
 	<!--tomato seed-->
-	<item>
+	<item id="10">
 		<name>tomato seed</name>
 		<image x="1" y="2"></image>
 		<value>2</value>
 	</item>
 	<!--tomato-->
-	<item>
+	<item id="11">
 		<name>tomato</name>
 		<image x="1" y="3"></image>
 		<value>5</value>
 	</item>
 	<!--carrot seed-->
-	<item>
+	<item id="12">
 		<name>carrot seed</name>
 		<image x="2" y="2"></image>
 		<value>5</value>
 	</item>
 	<!--carrot-->
-	<item>
+	<item id="13">
 		<name>carrot</name>
 		<image x="2" y="3"></image>
 		<value>15</value>
 	</item>
 	<!--lavender seed-->
-	<item>
+	<item id="14">
 		<name>lavender seed</name>
 		<image x="3" y="2"></image>
 		<value>15</value>
 	</item>
 	<!--lavender-->
-	<item>
+	<item id="15">
 		<name>lavender</name>
 		<image x="3" y="3"></image>
 		<value>25</value>
 	</item>
 	<!--stick-->
-	<item>
+	<item id="16">
 		<name>stick</name>
 		<image x="2" y="0"></image>
 		<value>1</value>
 	</item>
   <!--stick-->
-	<item>
+	<item id="17">
 		<name>wood</name>
 		<image x="4" y="0"></image>
 		<value>1</value>
 	</item>
   <!--hay-->
-	<item>
+	<item id="18">
 		<name>hay</name>
 		<image x="5" y="0"></image>
 		<value>1</value>
 	</item>
   <!--stone-->
-	<item>
+	<item id="19">
 		<name>stone</name>
 		<image x="6" y="0"></image>
 		<value>1</value>
 	</item>
-  <!--stone-->
-	<item>
+  <!--sapling-->
+	<item id="20">
 		<name>sapling</name>
 		<image x="7" y="0"></image>
+		<value>1</value>
+	</item>
+  <!--plank-->
+	<item id="21">
+		<name>plank</name>
+		<image x="5" y="1"></image>
 		<value>1</value>
 	</item>
 </items>

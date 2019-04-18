@@ -23,7 +23,6 @@
 					<Add option="-lalleg44" />
 					<Add option="-lloadpng" />
 					<Add option="-lpng" />
-					<Add option="-lzlib" />
 				</Linker>
 				<ExtraCommands>
 					<Add before="python updateDefs.py" />
@@ -54,6 +53,8 @@
 		<Unit filename="include/UI_Label.h" />
 		<Unit filename="include/UI_Slot.h" />
 		<Unit filename="include/World.h" />
+		<Unit filename="include/manager/InterfaceTypeManager.h" />
+		<Unit filename="include/manager/ItemTypeManager.h" />
 		<Unit filename="include/manager/SoundManager.h" />
 		<Unit filename="include/manager/TileType.h" />
 		<Unit filename="include/manager/TileTypeManager.h" />
@@ -90,6 +91,8 @@
 		<Unit filename="src/UI_Slot.cpp" />
 		<Unit filename="src/World.cpp" />
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/manager/InterfaceTypeManager.cpp" />
+		<Unit filename="src/manager/ItemTypeManager.cpp" />
 		<Unit filename="src/manager/SoundManager.cpp" />
 		<Unit filename="src/manager/TileType.cpp" />
 		<Unit filename="src/manager/TileTypeManager.cpp" />
@@ -100,6 +103,15 @@
 			<code_completion />
 			<envvars />
 			<debugger />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

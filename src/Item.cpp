@@ -1,10 +1,10 @@
 #include "Item.h"
 
-#include "TileTypeManager.h"
+#include "ItemTypeManager.h"
 
 // Ctor for item
 Item::Item (char newID, unsigned char meta) {
-  this -> item_pointer = TileTypeManager::getItemByID(newID);
+  this -> item_pointer = ItemTypeManager::getItemByID(newID);
   this -> meta = meta;
 }
 

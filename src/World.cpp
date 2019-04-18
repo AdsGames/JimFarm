@@ -4,6 +4,8 @@
 
 #include "Tools.h"
 #include "TileTypeManager.h"
+#include "ItemTypeManager.h"
+#include "InterfaceTypeManager.h"
 
 #include "tile_defs.h"
 #include "item_defs.h"
@@ -93,18 +95,18 @@ void World::draw(BITMAP *tempBuffer) {
 // Load images
 void World::load_images() {
   TileTypeManager::sprite_sheet_tiles = load_bitmap_ex ("images/tiles.png");
-  TileTypeManager::sprite_sheet_items = load_bitmap_ex ("images/items.png");
+  ItemTypeManager::sprite_sheet_items = load_bitmap_ex ("images/items.png");
 
   std::cout << "Loading data/tiles.xml \n";
   if (TileTypeManager::load_tiles ("data/tiles.xml"))
     abort_on_error ("Could not load data/tiles.xml");
 
   std::cout << "Loading data/items.xml \n";
-  if (TileTypeManager::load_items ("data/items.xml"))
+  if (ItemTypeManager::load_items ("data/items.xml"))
     abort_on_error ("Could not load data/items.xml");
 
   std::cout << "Loading data/interfaces.xml \n";
-  if (TileTypeManager::load_interfaces ("data/interfaces.xml"))
+  if (InterfaceTypeManager::load_interfaces ("data/interfaces.xml"))
     abort_on_error ("Could not load data/interfaces.xml");
 
   std::cout << "Loading data/sounds.xml \n";
