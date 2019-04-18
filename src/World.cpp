@@ -2,17 +2,17 @@
 
 #include <iostream>
 
-#include "Tools.h"
-#include "TileTypeManager.h"
-#include "ItemTypeManager.h"
-#include "InterfaceTypeManager.h"
+#include "utility/Tools.h"
+#include "manager/TileTypeManager.h"
+#include "manager/ItemTypeManager.h"
+#include "manager/InterfaceTypeManager.h"
 
-#include "tile_defs.h"
-#include "item_defs.h"
-#include "sound_defs.h"
+#include "manager/tile_defs.h"
+#include "manager/item_defs.h"
+#include "manager/sound_defs.h"
 
-#include "SoundManager.h"
-#include "KeyListener.h"
+#include "manager/SoundManager.h"
+#include "utility/KeyListener.h"
 
 #include "Graphics.h"
 

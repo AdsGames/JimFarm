@@ -3,16 +3,16 @@
 #include <math.h>
 #include <iostream>
 
-#include "KeyListener.h"
-#include "MouseListener.h"
-#include "Tools.h"
+#include "utility/KeyListener.h"
+#include "utility/MouseListener.h"
+#include "utility/Tools.h"
 
-#include "tile_defs.h"
-#include "item_defs.h"
-#include "interface_defs.h"
+#include "manager/tile_defs.h"
+#include "manager/item_defs.h"
+#include "manager/interface_defs.h"
 
-#include "TileTypeManager.h"
-#include "InterfaceTypeManager.h"
+#include "manager/TileTypeManager.h"
+#include "manager/InterfaceTypeManager.h"
 
 #include "Graphics.h"
 

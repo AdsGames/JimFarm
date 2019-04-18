@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "TileType.h"
+#include "manager/TileType.h"
 #include "Sprite.h"
 
 #define MAX_TILE_META 255

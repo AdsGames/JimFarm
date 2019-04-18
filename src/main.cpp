@@ -1,7 +1,7 @@
 #include <allegro.h>
 
-#include "KeyListener.h"
-#include "MouseListener.h"
+#include "utility/KeyListener.h"
+#include "utility/MouseListener.h"
 
 #include "World.h"
 

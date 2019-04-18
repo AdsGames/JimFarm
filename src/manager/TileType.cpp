@@ -1,7 +1,7 @@
-#include "TileType.h"
+#include "manager/TileType.h"
 
-#include "item_defs.h"
-#include "tile_defs.h"
+#include "manager/item_defs.h"
+#include "manager/tile_defs.h"
 
 #include <math.h>
 

@@ -16,8 +16,6 @@
 					<Add option="-std=c++11" />
 					<Add option="-g" />
 					<Add directory="include" />
-					<Add directory="include/utility" />
-					<Add directory="include/manager" />
 				</Compiler>
 				<Linker>
 					<Add option="-lalleg44" />

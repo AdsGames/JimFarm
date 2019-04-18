@@ -1,4 +1,4 @@
-#include "ItemTypeManager.h"
+#include "manager/ItemTypeManager.h"
 
 #include <fstream>
 #include <sstream>
@@ -7,7 +7,7 @@
 #include "rapidxml/rapidxml.hpp"
 #include "rapidxml/rapidxml_print.hpp"
 
-#include "Tools.h"
+#include "utility/Tools.h"
 #include "Tile.h"
 
 std::vector<TileType> ItemTypeManager::item_defs;

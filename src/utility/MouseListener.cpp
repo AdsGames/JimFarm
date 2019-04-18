@@ -1,4 +1,4 @@
-#include "MouseListener.h"
+#include "utility/MouseListener.h"
 
 unsigned char MouseListener::mouse_button = 0;
 unsigned char MouseListener::mouse_pressed = 0;

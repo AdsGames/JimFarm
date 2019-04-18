@@ -1,6 +1,6 @@
 #include "Item.h"
 
-#include "ItemTypeManager.h"
+#include "manager/ItemTypeManager.h"
 
 // Ctor for item
 Item::Item (char newID, unsigned char meta) {

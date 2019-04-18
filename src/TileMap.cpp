@@ -7,8 +7,8 @@
 #include "Graphics.h"
 #include "Item.h"
 
-#include "tile_defs.h"
-#include "Tools.h"
+#include "manager/tile_defs.h"
+#include "utility/Tools.h"
 
 TileMap::TileMap() {
   width = 1;

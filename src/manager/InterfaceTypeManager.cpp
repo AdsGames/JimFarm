@@ -1,4 +1,4 @@
-#include "InterfaceTypeManager.h"
+#include "manager/InterfaceTypeManager.h"
 
 #include <fstream>
 #include <sstream>
@@ -7,7 +7,7 @@
 #include "rapidxml/rapidxml.hpp"
 #include "rapidxml/rapidxml_print.hpp"
 
-#include "Tools.h"
+#include "utility/Tools.h"
 
 #include "UI_Label.h"
 #include "UI_Slot.h"

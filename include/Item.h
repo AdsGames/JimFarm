@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "TileType.h"
+#include "manager/TileType.h"
 
 #define MAX_ITEM_META 255
 

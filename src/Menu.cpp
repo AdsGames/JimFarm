@@ -1,6 +1,6 @@
 #include "Menu.h"
 
-#include "Tools.h"
+#include "utility/Tools.h"
 
 Menu::Menu() {
   indicator_location = 4;

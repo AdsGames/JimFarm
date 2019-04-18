@@ -1,7 +1,7 @@
 #include "Tile.h"
 
-#include "Tools.h"
-#include "TileTypeManager.h"
+#include "utility/Tools.h"
+#include "manager/TileTypeManager.h"
 
 // Ctor for tile
 Tile::Tile (char id, int x, int y, int z, unsigned char meta) :

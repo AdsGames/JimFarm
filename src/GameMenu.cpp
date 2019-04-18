@@ -1,7 +1,7 @@
 #include "GameMenu.h"
 
-#include "Tools.h"
-#include "KeyListener.h"
+#include "utility/Tools.h"
+#include "utility/KeyListener.h"
 
 GameMenu::GameMenu() {
   image_menu = load_bitmap_ex("images/game_menu.png");

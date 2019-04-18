@@ -2,10 +2,10 @@
 
 
 #include "Tile.h"
-#include "Tools.h"
+#include "utility/Tools.h"
 #include "Menu.h"
-#include "KeyListener.h"
-#include "MouseListener.h"
+#include "utility/KeyListener.h"
+#include "utility/MouseListener.h"
 #include "GameMenu.h"
 
 #include "Graphics.h"

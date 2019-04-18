@@ -3,10 +3,10 @@
 #include <sstream>
 #include <iostream>
 
-#include "tile_defs.h"
-#include "item_defs.h"
+#include "manager/tile_defs.h"
+#include "manager/item_defs.h"
 
-#include "Tools.h"
+#include "utility/Tools.h"
 
 #include "Graphics.h"
 
