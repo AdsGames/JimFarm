@@ -161,7 +161,7 @@ void Character::update() {
     }
     else {
       ui_open = true;
-      attatched_ui = inventory_ui;
+      attatched_ui = TileTypeManager::getInterfaceByID(1);
     }
   }
 
