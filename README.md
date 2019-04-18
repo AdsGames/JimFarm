@@ -11,7 +11,6 @@ They should be linked in this order
 ```
 -lalleg44
 -lpng
--lzlib
 -lloadpng
 ```
 

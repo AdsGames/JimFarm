@@ -120,4 +120,10 @@
 		<image x="6" y="0"></image>
 		<value>1</value>
 	</item>
+  <!--stone-->
+	<item>
+		<name>sapling</name>
+		<image x="7" y="0"></image>
+		<value>1</value>
+	</item>
 </items>
