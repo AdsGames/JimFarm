@@ -1,12 +1,11 @@
 #include "Game.h"
 
-
-#include "Tile.h"
-#include "utility/Tools.h"
+#include "GameMenu.h"
 #include "Menu.h"
+#include "Tile.h"
 #include "utility/KeyListener.h"
 #include "utility/MouseListener.h"
-#include "GameMenu.h"
+#include "utility/Tools.h"
 
 #include "Graphics.h"
 
@@ -16,17 +15,15 @@ Game::Game() {
   farm_world.load_images();
 
   // Setup jim
-  jim.setPosition (15 * 16, 15 * 16);
+  jim.setPosition(15 * 16, 15 * 16);
 
   jim.load_data();
-  jim.setWorld (&farm_world);
+  jim.setWorld(&farm_world);
 }
 
-Game::~Game() {
+Game::~Game() {}
 
-}
-
-void Game::update(StateEngine *engine) {
+void Game::update(StateEngine* engine) {
   // Update world
   farm_world.update();
 
@@ -38,10 +35,9 @@ void Game::update(StateEngine *engine) {
     setNextState(engine, StateEngine::STATE_GAME_MENU);
 }
 
-
-void Game::draw(BITMAP *buffer) {
+void Game::draw(BITMAP* buffer) {
   // Draw background
-  rectfill (buffer, 0, 0, SCREEN_W, SCREEN_H, makecol (0, 0, 0));
+  rectfill(buffer, 0, 0, SCREEN_W, SCREEN_H, makecol(0, 0, 0));
 
   // Draw map
   farm_world.draw(buffer);

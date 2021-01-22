@@ -1,29 +1,27 @@
 #include "Inventory.h"
 
 // Constructor
-Inventory::Inventory () {
-
-}
+Inventory::Inventory() {}
 
 Inventory::~Inventory() {}
 
 // Push item to contents (if it fits)
-bool Inventory::addItem(Item *item, int quantity) {
+bool Inventory::addItem(Item* item, int quantity) {
   // Null item
   if (item == nullptr)
     return false;
 
   // Stack
-  ItemStack *stk = findStack(item);
+  ItemStack* stk = findStack(item);
   if (stk != nullptr) {
-    stk -> Add(quantity);
+    stk->Add(quantity);
     return true;
   }
 
   // Find a new spot
   int emptyStk = findFirstEmpty();
   if (emptyStk != -1) {
-    contents[emptyStk] -> SetItem(item, quantity);
+    contents[emptyStk]->SetItem(item, quantity);
     return true;
   }
 
@@ -31,9 +29,9 @@ bool Inventory::addItem(Item *item, int quantity) {
 }
 
 // Remove item at index
-bool Inventory::removeItem (int index) {
+bool Inventory::removeItem(int index) {
   if (getStack(index) != nullptr) {
-    contents[index] -> Clear();
+    contents[index]->Clear();
     return true;
   }
   return false;
@@ -41,11 +39,11 @@ bool Inventory::removeItem (int index) {
 
 // Add a space
 void Inventory::addSpace() {
-  contents.push_back (new ItemStack());
+  contents.push_back(new ItemStack());
 }
 
 // Gets item at index if exists
-ItemStack* Inventory::getStack (int index) {
+ItemStack* Inventory::getStack(int index) {
   if (index < getSize() && index >= 0)
     return contents[index];
   return nullptr;
@@ -57,10 +55,10 @@ ItemStack* Inventory::getFirstItem() {
 }
 
 // FInd stack
-ItemStack* Inventory::findStack(Item *item) {
+ItemStack* Inventory::findStack(Item* item) {
   for (unsigned int i = 0; i < contents.size(); i++) {
-    if (contents.at(i) && contents.at(i) -> GetItem()) {
-      if (contents.at(i) -> GetItem() -> getID() == item -> getID()) {
+    if (contents.at(i) && contents.at(i)->GetItem()) {
+      if (contents.at(i)->GetItem()->getID() == item->getID()) {
         return contents.at(i);
       }
     }
@@ -71,7 +69,7 @@ ItemStack* Inventory::findStack(Item *item) {
 // Get first empty
 int Inventory::findFirstEmpty() {
   for (unsigned int i = 0; i < contents.size(); i++) {
-    if (contents.at(i) && !(contents.at(i) -> GetItem())) {
+    if (contents.at(i) && !(contents.at(i)->GetItem())) {
       return i;
     }
   }
@@ -88,5 +86,5 @@ void Inventory::empty() {
   contents.clear();
 
   for (int i = 0; i < getSize(); i++)
-    contents.push_back (new ItemStack());
+    contents.push_back(new ItemStack());
 }

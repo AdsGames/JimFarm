@@ -8,7 +8,7 @@
 #include "State.h"
 
 // Images
-BITMAP *buffer;
+BITMAP* buffer;
 
 bool close_button_pressed;
 
@@ -53,7 +53,6 @@ void animationTicker() {
 }
 END_OF_FUNCTION(ticker)
 
-
 /*********************
  *   Update logic
  *********************/
@@ -78,12 +77,12 @@ void draw() {
   game_state.draw(buffer);
 
   // FPS
-  textprintf_ex(buffer, font, 0, 145, makecol(255, 255, 255), makecol(0,0,0), "FPS:%d", fps);
+  textprintf_ex(buffer, font, 0, 145, makecol(255, 255, 255), makecol(0, 0, 0),
+                "FPS:%d", fps);
 
   // Draw to screen
-  stretch_sprite (screen, buffer, 0, 0, SCREEN_W, SCREEN_H);
+  stretch_sprite(screen, buffer, 0, 0, SCREEN_W, SCREEN_H);
 }
-
 
 /*********************
  *   Setup game
@@ -100,22 +99,25 @@ void setup() {
   int w, h;
   get_desktop_resolution(&w, &h);
 
-  if (set_gfx_mode(GFX_AUTODETECT_WINDOWED, World::VIEWPORT_WIDTH * 4, World::VIEWPORT_HEIGHT * 4, 0, 0)) {
-    if (set_gfx_mode(GFX_AUTODETECT_WINDOWED, World::VIEWPORT_WIDTH * 3, World::VIEWPORT_HEIGHT * 3, 0, 0)) {
-      if (set_gfx_mode(GFX_AUTODETECT_WINDOWED, World::VIEWPORT_WIDTH * 2, World::VIEWPORT_HEIGHT * 2, 0, 0)) {
-        if (set_gfx_mode(GFX_AUTODETECT_WINDOWED, World::VIEWPORT_WIDTH * 1, World::VIEWPORT_HEIGHT * 1, 0, 0)) {
-
+  if (set_gfx_mode(GFX_AUTODETECT_WINDOWED, World::VIEWPORT_WIDTH * 4,
+                   World::VIEWPORT_HEIGHT * 4, 0, 0)) {
+    if (set_gfx_mode(GFX_AUTODETECT_WINDOWED, World::VIEWPORT_WIDTH * 3,
+                     World::VIEWPORT_HEIGHT * 3, 0, 0)) {
+      if (set_gfx_mode(GFX_AUTODETECT_WINDOWED, World::VIEWPORT_WIDTH * 2,
+                       World::VIEWPORT_HEIGHT * 2, 0, 0)) {
+        if (set_gfx_mode(GFX_AUTODETECT_WINDOWED, World::VIEWPORT_WIDTH * 1,
+                         World::VIEWPORT_HEIGHT * 1, 0, 0)) {
         }
       }
     }
   }
 
-  install_sound(DIGI_AUTODETECT,MIDI_AUTODETECT,".");
+  install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, ".");
 
   set_window_title("Jim Farm");
 
   // Create buffer
-  buffer = create_bitmap (World::VIEWPORT_WIDTH, World::VIEWPORT_HEIGHT);
+  buffer = create_bitmap(World::VIEWPORT_WIDTH, World::VIEWPORT_HEIGHT);
 
   srand(time(NULL));
 
@@ -131,20 +133,18 @@ void setup() {
   // Animation ticks
   LOCK_VARIABLE(animationFrame);
   LOCK_FUNCTION(animationTicker);
-  install_int (animationTicker,10);
-  install_int_ex (animationTicker, BPS_TO_TIMER(100));
-
+  install_int(animationTicker, 10);
+  install_int_ex(animationTicker, BPS_TO_TIMER(100));
 
   // Close button
   LOCK_FUNCTION(close_button_handler);
   set_close_button_callback(close_button_handler);
 
-  //main_game_menu.load_data();
+  // main_game_menu.load_data();
 
   // Alpha blender
   set_alpha_blender();
 }
-
 
 /*********************
  *   Start here
@@ -153,24 +153,24 @@ int main() {
   // Basic init
   setup();
 
-  //Set the current state ID
+  // Set the current state ID
   game_state.setNextState(StateEngine::STATE_GAME);
 
-  while(!close_button_pressed) {
-    while(ticks == 0) {
+  while (!close_button_pressed) {
+    while (ticks == 0) {
       rest(1);
     }
-    while(ticks > 0) {
+    while (ticks > 0) {
       int old_ticks = ticks;
 
       update();
 
       ticks--;
-      if(old_ticks <= ticks) {
+      if (old_ticks <= ticks) {
         break;
       }
     }
-    if(game_time - old_time >= 10) {
+    if (game_time - old_time >= 10) {
       fps = frames_done;
       frames_done = 0;
       old_time = game_time;
@@ -179,7 +179,6 @@ int main() {
     frames_done++;
   }
 
-
-	return 0;
+  return 0;
 }
 END_OF_MAIN()

@@ -1,4 +1,4 @@
-#include "utility/MouseListener.h"
+#include "MouseListener.h"
 
 unsigned char MouseListener::mouse_button = 0;
 unsigned char MouseListener::mouse_pressed = 0;
@@ -8,14 +8,14 @@ unsigned char MouseListener::mouse_old = 0;
 int MouseListener::mouse_z_change = 0;
 int MouseListener::mouse_z_old = 0;
 
-MouseListener::MouseListener() { }
+MouseListener::MouseListener() {}
 
-MouseListener::~MouseListener() { }
+MouseListener::~MouseListener() {}
 
 // Check those buttons!
 void MouseListener::update() {
   // Check button just pressed
-  for (int i = 0; i < MAX_MOUSE_BUTTONS; i ++) {
+  for (int i = 0; i < MAX_MOUSE_BUTTONS; i++) {
     // Clear old values
     mouse_pressed &= ~(1 << i);
     mouse_released &= ~(1 << i);
@@ -27,19 +27,20 @@ void MouseListener::update() {
     // Pressed since last tick?
     if (((mouse_button >> i) & 1) != 0 && ((mouse_old >> i) & 1) == 0) {
       mouse_pressed |= 1 << i;
-      //std::cout << "Button: " << i << " pressed. \n";
+      // std::cout << "Button: " << i << " pressed. \n";
     }
 
     // Released since last tick?
     if (((mouse_button >> i) & 1) == 0 && ((mouse_old >> i) & 1) != 0) {
       mouse_released |= 1 << i;
-      //std::cout << "Button: " << i << " released. \n";
+      // std::cout << "Button: " << i << " released. \n";
     }
 
     // Button changed
     if (((mouse_button >> i) & 1) != ((mouse_old >> i) & 1)) {
-        //std::cout << "Button: " << i << " was " << ((mouse_old >> i) & 1) << " and became " << ((mouse_button >> i) & 1) << "\n";
-        mouse_old ^= 1 << i;
+      // std::cout << "Button: " << i << " was " << ((mouse_old >> i) & 1) << "
+      // and became " << ((mouse_button >> i) & 1) << "\n";
+      mouse_old ^= 1 << i;
     }
   }
 
@@ -49,6 +50,6 @@ void MouseListener::update() {
     mouse_z_change = mouse_z - mouse_z_old;
     mouse_z_old = mouse_z;
 
-    //std::cout << "Z: changed by " << mouse_z_change << ". \n";
+    // std::cout << "Z: changed by " << mouse_z_change << ". \n";
   }
 }

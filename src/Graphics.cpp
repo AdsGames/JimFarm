@@ -4,7 +4,7 @@
 
 Graphics* Graphics::instance = nullptr;
 
-bool sortDrawableByZ(Sprite *A, Sprite *B) {
+bool sortDrawableByZ(Sprite* A, Sprite* B) {
   return (*A < *B);
 }
 
@@ -35,7 +35,8 @@ void Graphics::remove(Sprite* sprite) {
   if (!sprite) {
     return;
   }
-  sprites.erase(std::remove(sprites.begin(), sprites.end(), sprite), sprites.end());
+  sprites.erase(std::remove(sprites.begin(), sprites.end(), sprite),
+                sprites.end());
 }
 
 // Sort sprites
@@ -52,9 +53,9 @@ void Graphics::enableSort() {
   sort();
 }
 
-void Graphics::draw(BITMAP *buffer, int x_1, int y_1, int x_2, int y_2) {
+void Graphics::draw(BITMAP* buffer, int x_1, int y_1, int x_2, int y_2) {
   for (unsigned int i = 0; i < sprites.size(); i++) {
     if (sprites.at(i) != nullptr)
-      sprites.at(i) -> draw (buffer, x_1, y_1, x_2, y_2);
+      sprites.at(i)->draw(buffer, x_1, y_1, x_2, y_2);
   }
 }
