@@ -5,7 +5,7 @@
 
 #include <allegro.h>
 
-#include "ItemStack.h"
+#include "../ItemStack.h"
 #include "UI_Element.h"
 
 class UI_Slot : public UI_Element {

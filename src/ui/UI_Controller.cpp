@@ -2,9 +2,9 @@
 #include "UI_Label.h"
 #include "UI_Slot.h"
 
-#include "manager/item_defs.h"
-#include "utility/MouseListener.h"
-#include "utility/tools.h"
+#include "../manager/item_defs.h"
+#include "../utility/MouseListener.h"
+#include "../utility/tools.h"
 
 #include <math.h>
 

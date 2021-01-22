@@ -1,9 +1,9 @@
 #ifndef UI_CONTROLLER_H
 #define UI_CONTROLLER_H
 
-#include "Inventory.h"
+#include "../Inventory.h"
+#include "../World.h"
 #include "UI_Element.h"
-#include "World.h"
 
 class UI_Controller {
  public:

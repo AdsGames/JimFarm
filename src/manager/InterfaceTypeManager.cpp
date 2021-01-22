@@ -8,8 +8,8 @@
 
 #include "../utility/Tools.h"
 
-#include "../UI_Label.h"
-#include "../UI_Slot.h"
+#include "../ui/UI_Label.h"
+#include "../ui/UI_Slot.h"
 
 std::vector<UI_Controller*> InterfaceTypeManager::ui_defs;
 

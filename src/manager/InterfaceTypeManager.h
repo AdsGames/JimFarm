@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-#include "../UI_Controller.h"
+#include "../ui/UI_Controller.h"
 
 class InterfaceTypeManager {
  public:

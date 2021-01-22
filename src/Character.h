@@ -10,7 +10,7 @@
 #include "Sprite.h"
 #include "World.h"
 
-#include "UI_Controller.h"
+#include "ui/UI_Controller.h"
 
 class Character;
 
