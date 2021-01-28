@@ -1,97 +1,49 @@
-#! python
-import sys;
-import re;
-import string;
-import xml.etree.ElementTree as ET
+import sys
+import re
+import string
+import json
 
-# TILES
-out_file = open("src/manager/tile_defs.h","w"); #.H OUTPUT FILE NAME
+tile_file_in = "build/data/tiles.json"
+tile_file_out = "src/manager/tile_defs.h"
 
-tree = ET.parse('build/data/tiles.xml')
-root = tree.getroot()
+item_file_in = "build/data/items.json"
+item_file_out = "src/manager/item_defs.h"
 
-out_file.write( "#define TILE_NULL -1\n")
-for tile in root.findall('tile'):
-  name = ""
-  if( tile.find('name').text != None):
-    name = tile.find('name').text
-  
-  name = name.upper()
-  name = "_".join(name.split())
-  
-  id = ""
-  if( tile.get('id') != None):
-    id = tile.get('id')
-  
-  # print( name, id)
-  out_file.write( "#define TILE_%s %s\n" % (name, id))
+sound_file_in = "build/data/sounds.json"
+sound_file_out = "src/manager/sound_defs.h"
 
-out_file.close()
+interface_file_in = "build/data/interfaces.json"
+interface_file_out = "src/manager/interface_defs.h"
 
+def parse_file(file_in, file_out, prefix):
+  with open(file_in) as f:
+    data = json.load(f)
 
-# ITEMS
-out_file = open("src/manager/item_defs.h","w"); #.H OUTPUT FILE NAME
+    out_file = open(file_out,"w") #.H OUTPUT FILE NAME
 
-tree = ET.parse('build/data/items.xml')
-root = tree.getroot()
- 
-out_file.write( "#define ITEM_NULL -1\n")
-id = 0
-for item in root.findall('item'):
-  name = ""
-  if( item.find('name').text != None):
-    name = item.find('name').text
-  
-  name = name.upper()
-  name = "_".join(name.split())
-  
-  # print( name, id)
-  out_file.write( "#define ITEM_%s %d\n" % (name, id))
-  id += 1;
+    out_file.write("#define %s_NULL -1\n" % (prefix))
+    for item in data:
+      name = item["name"]
+      name = name.upper()
+      name = "_".join(name.split())
+      
+      id = ""
+      id = item["id"]
+      
+      print(name, id)
+      out_file.write("#define %s_%s %s\n" % (prefix, name, id))
 
-out_file.close()
+    out_file.close()
 
 
-# SOUNDS
-out_file = open("src/manager/sound_defs.h","w"); #.H OUTPUT FILE NAME
+print("Loading tiles from " + tile_file_in)
+parse_file(tile_file_in, tile_file_out, "TILE")
 
-tree = ET.parse('build/data/sounds.xml')
-root = tree.getroot()
- 
-out_file.write( "#define SOUND_NULL -1\n")
-id = 0
-for sound in root.findall('sound'):
-  name = ""
-  if( sound.find('name').text != None):
-    name = sound.find('name').text
-  
-  name = name.upper()
-  name = "_".join(name.split())
-  
-  # print( name, id)
-  out_file.write( "#define SOUND_%s %s\n" % (name, id))
-  id += 1;
+print("Loading items from " + item_file_in)
+parse_file(item_file_in, item_file_out, "ITEM")
 
-out_file.close()
+print("Loading sounds from " + sound_file_in)
+parse_file(sound_file_in, sound_file_out, "SOUND")
 
-# INTERFACES
-out_file = open("src/manager/interface_defs.h","w"); #.H OUTPUT FILE NAME
-
-tree = ET.parse('build/data/interfaces.xml')
-root = tree.getroot()
- 
-out_file.write( "#define INTERFACE_NULL -1\n")
-id = 0
-for interface in root.findall('interface'):
-  name = ""
-  if( interface.find('name').text != None):
-    name = interface.find('name').text
-  
-  name = name.upper()
-  name = "_".join(name.split())
-  
-  # print( name, id)
-  out_file.write( "#define INTERFACE_%s %s\n" % (name, id))
-  id += 1;
-
-out_file.close()
+print("Loading interfaces from " + interface_file_in)
+parse_file(interface_file_in, interface_file_out, "INTERFACE")

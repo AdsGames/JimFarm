@@ -2,9 +2,8 @@
 
 #include <fstream>
 #include <iostream>
+#include <nlohmann/json.hpp>
 #include <sstream>
-
-#include "../rapidxml/rapidxml.hpp"
 
 #include "../utility/Tools.h"
 
@@ -16,55 +15,43 @@ std::vector<UI_Controller*> InterfaceTypeManager::ui_defs;
 // Destructor
 InterfaceTypeManager::~InterfaceTypeManager() {
   ui_defs.clear();
-  ;
 }
 
 // Load interfaces
 int InterfaceTypeManager::load_interfaces(std::string path) {
   // Open file or abort if it does not exist
-  std::ifstream file(path.c_str());
-  if (!file)
+  std::ifstream file(path);
+  if (!file.is_open()) {
     return 1;
+  }
 
   // Create buffer
-  std::stringstream buffer;
-  buffer << file.rdbuf();
-  std::string content(buffer.str());
-
-  // Get first node
-  rapidxml::xml_document<> doc;
-  doc.parse<0>(&content[0]);
-  rapidxml::xml_node<>* allInterfaces = doc.first_node();
+  nlohmann::json doc = nlohmann::json::parse(file);
 
   // Parse data
-  for (rapidxml::xml_node<>* cInterface =
-           allInterfaces->first_node("interface");
-       cInterface != nullptr;
-       cInterface = cInterface->next_sibling("interface")) {
+  for (unsigned int i = 0; i < doc.size(); i++) {
     // Name of interface
-    std::string name = cInterface->first_node("name")->value();
+    std::string name = doc[i]["name"];
 
     // Width and Height
-    int width = atoi(cInterface->first_attribute("width")->value());
-    int height = atoi(cInterface->first_attribute("height")->value());
+    int width = doc[i]["width"];
+    int height = doc[i]["height"];
 
     // Create ui controller
     UI_Controller* controller = new UI_Controller(width, height);
 
     // Labels
-    for (rapidxml::xml_node<>* cLabel = cInterface->first_node("label");
-         cLabel != nullptr; cLabel = cLabel->next_sibling("label")) {
-      std::string text = cLabel->first_attribute("text")->value();
-      int x = atoi(cLabel->first_attribute("x")->value());
-      int y = atoi(cLabel->first_attribute("y")->value());
+    for (unsigned int t = 0; t < doc[i]["labels"].size(); t++) {
+      std::string text = doc[i]["labels"][t]["text"];
+      int x = doc[i]["labels"][t]["x"];
+      int y = doc[i]["labels"][t]["y"];
       controller->AddElement(new UI_Label(x, y, text));
     }
 
     // Slots
-    for (rapidxml::xml_node<>* cSlot = cInterface->first_node("slot");
-         cSlot != nullptr; cSlot = cSlot->next_sibling("slot")) {
-      int x = atoi(cSlot->first_attribute("x")->value());
-      int y = atoi(cSlot->first_attribute("y")->value());
+    for (unsigned int t = 0; t < doc[i]["slots"].size(); t++) {
+      int x = doc[i]["slots"][t]["x"];
+      int y = doc[i]["slots"][t]["y"];
       controller->AddElement(new UI_Slot(x, y));
     }
 

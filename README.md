@@ -8,10 +8,14 @@ A massive procedurally generated world in which you can set up a farm and collec
 
 ### Windows (MSYS2)
 
-#### Install Libraries
+#### Install Libraries (MSYS 2)
 
 ```bash
 https://www.allegro.cc/files/?v=4.4
+```
+
+```bash
+pacman -S mingw-w64-i686-nlohmann-json
 ```
 
 #### Build
@@ -24,12 +28,17 @@ cmake -G "MSYS Makefiles" .
 make
 ```
 
-### Mac OS
+### Mac OS (Brew)
 
 #### Install Libraries
 
 ```bash
 https://github.com/msikma/liballeg.4.4.2-osx
+```
+
+```bash
+brew tap nlohmann/json
+brew install nlohmann-json
 ```
 
 #### Build

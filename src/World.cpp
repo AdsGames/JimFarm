@@ -104,21 +104,21 @@ void World::load_images() {
   TileTypeManager::sprite_sheet_tiles = load_bitmap_ex("images/tiles.png");
   ItemTypeManager::sprite_sheet_items = load_bitmap_ex("images/items.png");
 
-  std::cout << "Loading data/tiles.xml \n";
-  if (TileTypeManager::load_tiles("data/tiles.xml"))
-    abort_on_error("Could not load data/tiles.xml");
+  std::cout << "Loading data/tiles.json \n";
+  if (TileTypeManager::load_tiles("data/tiles.json"))
+    abort_on_error("Could not load data/tiles.json");
 
-  std::cout << "Loading data/items.xml \n";
-  if (ItemTypeManager::load_items("data/items.xml"))
-    abort_on_error("Could not load data/items.xml");
+  std::cout << "Loading data/items.json \n";
+  if (ItemTypeManager::load_items("data/items.json"))
+    abort_on_error("Could not load data/items.json");
 
-  std::cout << "Loading data/interfaces.xml \n";
-  if (InterfaceTypeManager::load_interfaces("data/interfaces.xml"))
-    abort_on_error("Could not load data/interfaces.xml");
+  std::cout << "Loading data/interfaces.json \n";
+  if (InterfaceTypeManager::load_interfaces("data/interfaces.json"))
+    abort_on_error("Could not load data/interfaces.json");
 
-  std::cout << "Loading data/sounds.xml \n";
-  if (SoundManager::load("data/sounds.xml"))
-    abort_on_error("Could not load data/sounds.xml");
+  std::cout << "Loading data/sounds.json \n";
+  if (SoundManager::load("data/sounds.json"))
+    abort_on_error("Could not load data/sounds.json");
 
   // Create map buffer
   map_buffer = create_bitmap(VIEWPORT_WIDTH * VIEWPORT_MAX_ZOOM,

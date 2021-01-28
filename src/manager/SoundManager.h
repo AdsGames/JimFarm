@@ -44,7 +44,7 @@ class SoundManager {
   ~SoundManager();
 
   // Load tile types
-  static int load(std::string newFile);
+  static int load(std::string path);
 
   // Play sample
   static void play(unsigned int sound_id);

@@ -2,10 +2,8 @@
 
 #include <fstream>
 #include <iostream>
+#include <nlohmann/json.hpp>
 #include <sstream>
-
-#include "../rapidxml/rapidxml.hpp"
-#include "../rapidxml/rapidxml_print.hpp"
 
 #include "../utility/Tools.h"
 
@@ -41,35 +39,25 @@ SoundManager::~SoundManager() {
  * Load sounds from file
  * Errors: 1 File Not Found,
  */
-int SoundManager::load(std::string newFile) {
+int SoundManager::load(std::string path) {
   // Open file or abort if it does not exist
-  std::ifstream file(newFile.c_str());
-  if (!file)
+  std::ifstream file(path);
+  if (!file.is_open()) {
     return 1;
+  }
 
   // Create buffer
-  std::stringstream buffer;
-  buffer << file.rdbuf();
-  std::string content(buffer.str());
+  nlohmann::json doc = nlohmann::json::parse(file);
 
-  // Get first node
-  rapidxml::xml_document<> doc;
-  doc.parse<0>(&content[0]);
-  rapidxml::xml_node<>* allSounds = doc.first_node();
-
-  // Define iterator
-  rapidxml::xml_node<>* cSound;
-  cSound = allSounds->first_node("sound");
-
-  // Parse sounds
-  for (; cSound != NULL; cSound = cSound->next_sibling()) {
+  // Parse data
+  for (unsigned int i = 0; i < doc.size(); i++) {
     std::string file = "sfx/";
-    file += cSound->first_node("file")->value();
+    file += doc[i]["file"];
 
-    int volume = atoi(cSound->first_node("volume")->value());
-    int panning = atoi(cSound->first_node("panning")->value());
-    int frequency = atoi(cSound->first_node("frequency")->value());
-    int frequency_rand = atoi(cSound->first_node("frequency_rand")->value());
+    int volume = doc[i]["volume"];
+    int panning = doc[i]["panning"];
+    int frequency = doc[i]["frequency"];
+    int frequency_rand = doc[i]["frequency_rand"];
 
     SAMPLE* tempSample = load_sample_ex(file.c_str());
     SampleWrapper* tempWrapper = new SampleWrapper(

@@ -18,9 +18,10 @@ target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
 find_library(ALLEGRO_LIBRARY NAMES alleg44 alleg REQUIRED)
 find_library(ALLEGRO_PNG_LIBRARY NAMES loadpng REQUIRED)
 find_library(ALLEGRO_OGG_LIBRARY NAMES logg REQUIRED)
-
+find_package(nlohmann_json 3.2.0 REQUIRED)
 
 # Link Libs
 target_link_libraries(${PROJECT_NAME} ${ALLEGRO_LIBRARY})
 target_link_libraries(${PROJECT_NAME} ${ALLEGRO_PNG_LIBRARY})
 target_link_libraries(${PROJECT_NAME} ${ALLEGRO_OGG_LIBRARY})
+target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
