@@ -44,10 +44,10 @@ Chunk::~Chunk() {
     }
   }
 
-  for (std::vector<MapItem*>::iterator i = items.begin(); i != items.end();
-       ++i) {
-    delete *i;
+  for (auto const& i : items) {
+    delete i;
   }
+
   items.clear();
 }
 
@@ -123,9 +123,11 @@ void Chunk::set_tile_at(int x, int y, int z, Tile* tile) {
 
 // Get item at position
 MapItem* Chunk::get_item_at(int x, int y) {
-  for (unsigned int i = 0; i < items.size(); i++)
-    if (items.at(i)->x == x && items.at(i)->y == y)
-      return items.at(i);
+  for (auto const& i : items) {
+    if (i->x == x && i->y == y) {
+      return i;
+    }
+  }
   return nullptr;
 }
 
@@ -169,12 +171,11 @@ void Chunk::set_draw_enabled(bool enabled) {
       }
     }
 
-    for (std::vector<MapItem*>::iterator i = items.begin(); i != items.end();
-         ++i) {
+    for (auto const& i : items) {
       if (enabled) {
-        Graphics::Instance()->add(*i);
+        Graphics::Instance()->add(i);
       } else {
-        Graphics::Instance()->remove(*i);
+        Graphics::Instance()->remove(i);
       }
     }
 

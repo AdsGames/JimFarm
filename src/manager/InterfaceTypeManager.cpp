@@ -29,29 +29,29 @@ int InterfaceTypeManager::load_interfaces(std::string path) {
   nlohmann::json doc = nlohmann::json::parse(file);
 
   // Parse data
-  for (unsigned int i = 0; i < doc.size(); i++) {
+  for (auto const& interface : doc) {
     // Name of interface
-    std::string name = doc[i]["name"];
+    std::string name = interface["name"];
 
     // Width and Height
-    int width = doc[i]["width"];
-    int height = doc[i]["height"];
+    int width = interface["width"];
+    int height = interface["height"];
 
     // Create ui controller
     UI_Controller* controller = new UI_Controller(width, height);
 
     // Labels
-    for (unsigned int t = 0; t < doc[i]["labels"].size(); t++) {
-      std::string text = doc[i]["labels"][t]["text"];
-      int x = doc[i]["labels"][t]["x"];
-      int y = doc[i]["labels"][t]["y"];
+    for (auto const& label : interface["labels"]) {
+      std::string text = label["text"];
+      int x = label["x"];
+      int y = label["y"];
       controller->AddElement(new UI_Label(x, y, text));
     }
 
     // Slots
-    for (unsigned int t = 0; t < doc[i]["slots"].size(); t++) {
-      int x = doc[i]["slots"][t]["x"];
-      int y = doc[i]["slots"][t]["y"];
+    for (auto const& slot : interface["slots"]) {
+      int x = slot["x"];
+      int y = slot["y"];
       controller->AddElement(new UI_Slot(x, y));
     }
 

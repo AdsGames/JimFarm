@@ -29,31 +29,31 @@ int TileTypeManager::load_tiles(std::string path) {
   nlohmann::json doc = nlohmann::json::parse(file);
 
   // Parse data
-  for (unsigned int i = 0; i < doc.size(); i++) {
+  for (auto const& tile : doc) {
     // Name
-    std::string name = doc[i]["name"];
+    std::string name = tile["name"];
 
     // ID value
-    int id = doc[i]["id"];
+    int id = tile["id"];
 
     // Spritesheet coordinates
-    int image_x = doc[i]["image"]["x"];
-    int image_y = doc[i]["image"]["y"];
-    int image_h = doc[i]["image"]["height"];
-    int image_w = doc[i]["image"]["width"];
+    int image_x = tile["image"]["x"];
+    int image_y = tile["image"]["y"];
+    int image_h = tile["image"]["height"];
+    int image_w = tile["image"]["width"];
 
     // Size
-    int width = doc[i]["width"];
-    int height = doc[i]["height"];
+    int width = tile["width"];
+    int height = tile["height"];
 
     // Special tile types
-    int sheet_width = doc[i]["image"]["spritesheet_width"];
-    int sheet_height = doc[i]["image"]["spritesheet_height"];
-    std::string image_type = doc[i]["image"]["type"];
+    int sheet_width = tile["image"]["spritesheet_width"];
+    int sheet_height = tile["image"]["spritesheet_height"];
+    std::string image_type = tile["image"]["type"];
 
     // Get attrubite
     int attrubite = NON_SOLID;
-    if (doc[i]["attribute"] == "SOLID")
+    if (tile["attribute"] == "SOLID")
       attrubite = SOLID;
 
     // Create tile, set variables and add it to the tile list
@@ -71,9 +71,9 @@ int TileTypeManager::load_tiles(std::string path) {
 
 // Returns tile at ID
 TileType* TileTypeManager::getTileByID(int tileID) {
-  for (unsigned int i = 0; i < tile_defs.size(); i++) {
-    if (tile_defs.at(i).getID() == tileID) {
-      return &tile_defs.at(i);
+  for (auto& tile : tile_defs) {
+    if (tile.getID() == tileID) {
+      return &tile;
     }
   }
   return nullptr;

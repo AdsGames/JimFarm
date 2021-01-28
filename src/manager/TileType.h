@@ -21,20 +21,20 @@ class TileType {
   virtual ~TileType();
 
   // Get type
-  unsigned char getID() { return id; }
+  unsigned char getID() const { return id; }
 
   // Get name
-  std::string getName() { return name; }
+  std::string getName() const { return name; }
 
   // Get type
-  unsigned char getAttribute() { return attribute; }
+  unsigned char getAttribute() const { return attribute; }
 
   // Tex
-  unsigned char getImageX() { return image_cord_x; }
-  unsigned char getImageY() { return image_cord_y; }
-  unsigned char getWidth() { return width; }
-  unsigned char getHeight() { return height; }
-  unsigned char getValue() { return value; }
+  unsigned char getImageX() const { return image_cord_x; }
+  unsigned char getImageY() const { return image_cord_y; }
+  unsigned char getWidth() const { return width; }
+  unsigned char getHeight() const { return height; }
+  unsigned char getValue() const { return value; }
 
   // Draw
   void draw(int x,

@@ -1,25 +1,28 @@
 #include "Tools.h"
 
+#include <loadpng.h>
+#include <png.h>
 #include <time.h>
+
 // Random number generator. Use int random(highest,lowest);
 int random(int min, int max) {
   return (rand() % (max + 1 - min)) + min;
 }
 
 // ERROR REPORTING
-void abort_on_error(const char* message) {
-  if (screen != NULL) {
+void abort_on_error(const std::string& message) {
+  if (screen != nullptr) {
     set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
   }
-  allegro_message("%s.\n %s\n", message, allegro_error);
+  allegro_message("%s.\n %s\n", message.c_str(), allegro_error);
   exit(-1);
 }
 
 // Load bitmap with error checked_array_iterator
-BITMAP* load_bitmap_ex(const char* path) {
+BITMAP* load_bitmap_ex(const std::string& path) {
   BITMAP* temp_loader;
-  if (!(temp_loader = load_png(path, NULL)))
-    abort_on_error(("Cannot find image " + std::string(path) +
+  if (!(temp_loader = load_png(path.c_str(), nullptr)))
+    abort_on_error(("Cannot find image " + path +
                     "\nPlease check your files and try again")
                        .c_str());
 
@@ -27,10 +30,10 @@ BITMAP* load_bitmap_ex(const char* path) {
 }
 
 // Load and error check sounds
-SAMPLE* load_sample_ex(const char* path) {
+SAMPLE* load_sample_ex(const std::string& path) {
   SAMPLE* temp_loader;
-  if (!(temp_loader = load_sample(path)))
-    abort_on_error(("Cannot find sound " + std::string(path) +
+  if (!(temp_loader = load_sample(path.c_str())))
+    abort_on_error(("Cannot find sound " + path +
                     "\nPlease check your files and try again")
                        .c_str());
 
@@ -38,12 +41,12 @@ SAMPLE* load_sample_ex(const char* path) {
 }
 
 // Load and error check fonts
-FONT* load_font_ex(const char* path) {
+FONT* load_font_ex(const std::string& path) {
   FONT* temp_loader;
-  if (!(temp_loader = load_font(path, NULL, NULL)))
-    abort_on_error(("Cannot find font " + std::string(path) +
-                    "\nPlease check your files and try again")
-                       .c_str());
+  if (!(temp_loader = load_font(path.c_str(), nullptr, nullptr)))
+    abort_on_error(
+        ("Cannot find font " + path + "\nPlease check your files and try again")
+            .c_str());
 
   return extract_font_range(temp_loader, ' ', 'z');
 }
@@ -61,9 +64,4 @@ bool collision(int xMin1,
     return true;
   }
   return false;
-}
-
-// Convert string to int
-int stoi(std::string text) {
-  return atoi(text.c_str());
 }

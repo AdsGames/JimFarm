@@ -61,8 +61,8 @@ void UI_Controller::Draw(BITMAP* buffer) {
   rect(buffer, x, y, x + width, y + height, makecol(64, 64, 64));
 
   // Draw elements
-  for (unsigned int i = 0; i < elements.size(); i++) {
-    elements.at(i)->Draw(buffer, x, y);
+  for (auto const& element : elements) {
+    element->Draw(buffer, x, y);
   }
 
   // Cursor
@@ -135,11 +135,12 @@ UI_Element* UI_Controller::ElementAt(int x, int y) {
   int trans_x = x - this->x;
   int trans_y = y - this->y;
 
-  for (unsigned int i = 0; i < elements.size(); i++) {
-    UI_Element* elem = elements.at(i);
-    if (elem->GetX() < trans_x && elem->GetX() + elem->GetWidth() > trans_x &&
-        elem->GetY() < trans_y && elem->GetY() + elem->GetHeight() > trans_y) {
-      return elem;
+  for (auto const& element : elements) {
+    if (element->GetX() < trans_x &&
+        element->GetX() + element->GetWidth() > trans_x &&
+        element->GetY() < trans_y &&
+        element->GetY() + element->GetHeight() > trans_y) {
+      return element;
     }
   }
 

@@ -29,8 +29,9 @@ std::vector<SampleWrapper*> SoundManager::sound_defs;
  * Delete samples from memory on destroy
  */
 SoundManager::~SoundManager() {
-  for (unsigned int i = 0; i < sound_defs.size(); i++)
-    destroy_sample(sound_defs.at(i)->sample_ptr);
+  for (auto const& sound : sound_defs) {
+    destroy_sample(sound->sample_ptr);
+  }
 
   sound_defs.clear();
 }
@@ -50,16 +51,16 @@ int SoundManager::load(std::string path) {
   nlohmann::json doc = nlohmann::json::parse(file);
 
   // Parse data
-  for (unsigned int i = 0; i < doc.size(); i++) {
+  for (auto const& sound : doc) {
     std::string file = "sfx/";
-    file += doc[i]["file"];
+    file += sound["file"];
 
-    int volume = doc[i]["volume"];
-    int panning = doc[i]["panning"];
-    int frequency = doc[i]["frequency"];
-    int frequency_rand = doc[i]["frequency_rand"];
+    int volume = sound["volume"];
+    int panning = sound["panning"];
+    int frequency = sound["frequency"];
+    int frequency_rand = sound["frequency_rand"];
 
-    SAMPLE* tempSample = load_sample_ex(file.c_str());
+    SAMPLE* tempSample = load_sample_ex(file);
     SampleWrapper* tempWrapper = new SampleWrapper(
         tempSample, volume, panning, frequency, frequency_rand, false);
     sound_defs.push_back(tempWrapper);
