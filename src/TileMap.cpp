@@ -150,10 +150,10 @@ void TileMap::remove_item(MapItem* item) {
 
 // Update chunks
 void TileMap::tick(int x_1, int y_1, int x_2, int y_2) {
-  for (unsigned int i = 0; i < chunks.size(); i++) {
-    for (unsigned int t = 0; t < chunks.at(i).size(); t++) {
-      if (chunks[i][t]->should_exist(x_1, y_1, x_2, y_2)) {
-        chunks[i][t]->tick();
+  for (auto const& chunk : chunks) {
+    for (auto const& chunk2 : chunk) {
+      if (chunk2->should_exist(x_1, y_1, x_2, y_2)) {
+        chunk2->tick();
       }
     }
   }
@@ -203,10 +203,9 @@ void TileMap::load_map(std::string fileName) {}
 
 // Clear map
 void TileMap::clear_map() {
-  for (unsigned int i = 0; i < chunks.size(); i++) {
-    for (std::vector<Chunk*>::iterator t = chunks[i].begin();
-         t != chunks[i].end(); ++t) {
-      delete *t;
+  for (auto const& chunk : chunks) {
+    for (auto chunk2 : chunk) {
+      delete chunk2;
     }
   }
   chunks.clear();

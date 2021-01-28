@@ -29,20 +29,22 @@ int ItemTypeManager::load_items(std::string path) {
   nlohmann::json doc = nlohmann::json::parse(file);
 
   // Parse data
-  for (unsigned int i = 0; i < doc.size(); i++) {
+  for (auto const& item : doc) {
     // Name of item
-    std::string name = doc[i]["name"];
+    std::string name = item["name"];
 
     // Spritesheet info
-    int image_x = doc[i]["image_x"];
+    int image_x = item["image_x"];
 
-    int image_y = doc[i]["image_y"];
+    int image_y = item["image_y"];
 
     // Cost if sold
-    int value = doc[i]["value"];
+    int value = item["value"];
+
+    int id = item["id"];
 
     // Create item, set variables and add it to the item list
-    TileType newTileType(1, 1, i, name, 0, (unsigned char)value);
+    TileType newTileType(1, 1, id, name, 0, (unsigned char)value);
     newTileType.setSpriteSheet(sprite_sheet_items);
     newTileType.setImageType("", 1, 1, image_x, image_y, 1, 1);
     item_defs.push_back(newTileType);
@@ -55,9 +57,9 @@ int ItemTypeManager::load_items(std::string path) {
 
 // Returns item at ID
 TileType* ItemTypeManager::getItemByID(int tileID) {
-  for (unsigned int i = 0; i < item_defs.size(); i++) {
-    if (item_defs.at(i).getID() == tileID) {
-      return &item_defs.at(i);
+  for (auto& item : item_defs) {
+    if (item.getID() == tileID) {
+      return &item;
     }
   }
   return nullptr;

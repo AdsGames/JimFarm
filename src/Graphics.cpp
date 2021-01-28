@@ -54,8 +54,9 @@ void Graphics::enableSort() {
 }
 
 void Graphics::draw(BITMAP* buffer, int x_1, int y_1, int x_2, int y_2) {
-  for (unsigned int i = 0; i < sprites.size(); i++) {
-    if (sprites.at(i) != nullptr)
-      sprites.at(i)->draw(buffer, x_1, y_1, x_2, y_2);
+  for (auto const& sprite : sprites) {
+    if (sprite != nullptr) {
+      sprite->draw(buffer, x_1, y_1, x_2, y_2);
+    }
   }
 }

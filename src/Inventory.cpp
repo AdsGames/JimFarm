@@ -54,12 +54,12 @@ ItemStack* Inventory::getFirstItem() {
   return getStack(0);
 }
 
-// FInd stack
+// Find stack
 ItemStack* Inventory::findStack(Item* item) {
-  for (unsigned int i = 0; i < contents.size(); i++) {
-    if (contents.at(i) && contents.at(i)->GetItem()) {
-      if (contents.at(i)->GetItem()->getID() == item->getID()) {
-        return contents.at(i);
+  for (auto const& content : contents) {
+    if (content && content->GetItem()) {
+      if (content->GetItem()->getID() == item->getID()) {
+        return content;
       }
     }
   }
