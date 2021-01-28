@@ -2,9 +2,8 @@
 
 #include <fstream>
 #include <iostream>
+#include <nlohmann/json.hpp>
 #include <sstream>
-
-#include "../rapidxml/rapidxml.hpp"
 
 #include "../Tile.h"
 #include "../utility/Tools.h"
@@ -21,60 +20,40 @@ TileTypeManager::~TileTypeManager() {
 // Load tiles
 int TileTypeManager::load_tiles(std::string path) {
   // Open file or abort if it does not exist
-  std::ifstream file(path.c_str());
-  if (!file)
+  std::ifstream file(path);
+  if (!file.is_open()) {
     return 1;
+  }
 
   // Create buffer
-  std::stringstream buffer;
-  buffer << file.rdbuf();
-  std::string content(buffer.str());
-
-  // Get first node
-  rapidxml::xml_document<> doc;
-  doc.parse<0>(&content[0]);
-  rapidxml::xml_node<>* allTiles = doc.first_node();
-
-  // Define iterator
-  rapidxml::xml_node<>* cTile;
-  cTile = allTiles->first_node("tile");
+  nlohmann::json doc = nlohmann::json::parse(file);
 
   // Parse data
-  for (; cTile != NULL; cTile = cTile->next_sibling()) {
+  for (unsigned int i = 0; i < doc.size(); i++) {
     // Name
-    std::string name = cTile->first_node("name")->value();
+    std::string name = doc[i]["name"];
 
     // ID value
-    int id = atoi(cTile->first_attribute("id")->value());
+    int id = doc[i]["id"];
 
     // Spritesheet coordinates
-    int image_x =
-        atoi(cTile->first_node("image")->first_attribute("x")->value());
-    int image_y =
-        atoi(cTile->first_node("image")->first_attribute("y")->value());
-    int image_h =
-        atoi(cTile->first_node("image")->first_attribute("h")->value());
-    int image_w =
-        atoi(cTile->first_node("image")->first_attribute("w")->value());
+    int image_x = doc[i]["image"]["x"];
+    int image_y = doc[i]["image"]["y"];
+    int image_h = doc[i]["image"]["height"];
+    int image_w = doc[i]["image"]["width"];
 
     // Size
-    int width = atoi(cTile->first_node("width")->value());
-    int height = atoi(cTile->first_node("height")->value());
+    int width = doc[i]["width"];
+    int height = doc[i]["height"];
 
     // Special tile types
-    int sheet_width =
-        atoi(cTile->first_node("image")->first_attribute("s_w")->value());
-    int sheet_height =
-        atoi(cTile->first_node("image")->first_attribute("s_h")->value());
-    std::string image_type =
-        cTile->first_node("image")->first_attribute("type")->value();
+    int sheet_width = doc[i]["image"]["spritesheet_width"];
+    int sheet_height = doc[i]["image"]["spritesheet_height"];
+    std::string image_type = doc[i]["image"]["type"];
 
     // Get attrubite
-    std::string attrubite_string = cTile->first_node("attrubite")->value();
     int attrubite = NON_SOLID;
-    if (attrubite_string == "NON_SOLID")
-      attrubite = NON_SOLID;
-    else if (attrubite_string == "SOLID")
+    if (doc[i]["attribute"] == "SOLID")
       attrubite = SOLID;
 
     // Create tile, set variables and add it to the tile list

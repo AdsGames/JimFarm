@@ -2,10 +2,8 @@
 
 #include <fstream>
 #include <iostream>
+#include <nlohmann/json.hpp>
 #include <sstream>
-
-#include "../rapidxml/rapidxml.hpp"
-#include "../rapidxml/rapidxml_print.hpp"
 
 #include "../Tile.h"
 #include "../utility/Tools.h"
@@ -22,37 +20,26 @@ ItemTypeManager::~ItemTypeManager() {
 // Load tiles
 int ItemTypeManager::load_items(std::string path) {
   // Open file or abort if it does not exist
-  std::ifstream file(path.c_str());
-  if (!file)
+  std::ifstream file(path);
+  if (!file.is_open()) {
     return 1;
+  }
 
   // Create buffer
-  std::stringstream buffer;
-  buffer << file.rdbuf();
-  std::string content(buffer.str());
-
-  // Get first node
-  rapidxml::xml_document<> doc;
-  doc.parse<0>(&content[0]);
-  rapidxml::xml_node<>* allItems = doc.first_node();
-
-  // Define iterator
-  rapidxml::xml_node<>* cItem;
-  cItem = allItems->first_node("item");
+  nlohmann::json doc = nlohmann::json::parse(file);
 
   // Parse data
-  for (int i = 0; cItem != NULL; cItem = cItem->next_sibling(), i++) {
+  for (unsigned int i = 0; i < doc.size(); i++) {
     // Name of item
-    std::string name = cItem->first_node("name")->value();
+    std::string name = doc[i]["name"];
 
     // Spritesheet info
-    int image_x =
-        atoi(cItem->first_node("image")->first_attribute("x")->value());
-    int image_y =
-        atoi(cItem->first_node("image")->first_attribute("y")->value());
+    int image_x = doc[i]["image_x"];
+
+    int image_y = doc[i]["image_y"];
 
     // Cost if sold
-    int value = atoi(cItem->first_node("value")->value());
+    int value = doc[i]["value"];
 
     // Create item, set variables and add it to the item list
     TileType newTileType(1, 1, i, name, 0, (unsigned char)value);
