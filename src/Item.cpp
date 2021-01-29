@@ -4,7 +4,7 @@
 
 // Ctor for item
 Item::Item(char newID, unsigned char meta) {
-  this->item_pointer = ItemTypeManager::getItemByID(newID);
+  this->item_pointer = ItemTypeManager::getItemById(newID);
   this->meta = meta;
 }
 

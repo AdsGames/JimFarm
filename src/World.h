@@ -15,7 +15,7 @@ class World {
   virtual ~World();
 
   // Init ticker
-  void init_ticker();
+  void initTicker();
 
   // Constant
   int timer;
@@ -31,7 +31,7 @@ class World {
   // Drawing
   void draw(BITMAP* tempBuffer);
 
-  void load_images();
+  void loadImages();
 
   // Interact with
   void interact(int inter_x, int inter_y, Item* inHand);
@@ -59,7 +59,7 @@ class World {
 
   // Ticker for world
   static volatile int ticks;
-  static void tick_counter();
+  static void tickCounter();
 
   // Messager
   Messenger* map_messages;

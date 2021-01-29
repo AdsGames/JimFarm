@@ -4,7 +4,7 @@
 #include "utility/Tools.h"
 
 GameMenu::GameMenu() {
-  image_menu = load_bitmap_ex("images/game_menu.png");
+  image_menu = loadBitmap("images/game_menu.png");
   indicator_position = 0;
 }
 

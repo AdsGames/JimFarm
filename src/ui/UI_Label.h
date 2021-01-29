@@ -11,7 +11,7 @@ class UI_Label : public UI_Element {
   UI_Label(int x, int y, std::string text);
   virtual ~UI_Label();
 
-  virtual void Draw(BITMAP* buffer, int parent_x, int parent_y) override;
+  virtual void draw(BITMAP* buffer, int parent_x, int parent_y) override;
   std::string text;
 
  private:

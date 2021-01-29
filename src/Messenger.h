@@ -21,11 +21,11 @@ class Messenger {
             int bg_col = -1);
   virtual ~Messenger();
 
-  unsigned int numberMessages();
+  unsigned int messageCount();
   void draw(BITMAP* buffer, int x, int y);
   void setColors(int font_col, int bg_col);
 
-  void push_message(std::string new_message);
+  void pushMessage(std::string new_message);
 
  protected:
  private:

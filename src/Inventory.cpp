@@ -14,14 +14,14 @@ bool Inventory::addItem(Item* item, int quantity) {
   // Stack
   ItemStack* stk = findStack(item);
   if (stk != nullptr) {
-    stk->Add(quantity);
+    stk->add(quantity);
     return true;
   }
 
   // Find a new spot
   int emptyStk = findFirstEmpty();
   if (emptyStk != -1) {
-    contents[emptyStk]->SetItem(item, quantity);
+    contents[emptyStk]->setItem(item, quantity);
     return true;
   }
 
@@ -31,7 +31,7 @@ bool Inventory::addItem(Item* item, int quantity) {
 // Remove item at index
 bool Inventory::removeItem(int index) {
   if (getStack(index) != nullptr) {
-    contents[index]->Clear();
+    contents[index]->clear();
     return true;
   }
   return false;
@@ -57,8 +57,8 @@ ItemStack* Inventory::getFirstItem() {
 // Find stack
 ItemStack* Inventory::findStack(Item* item) {
   for (auto const& content : contents) {
-    if (content && content->GetItem()) {
-      if (content->GetItem()->getID() == item->getID()) {
+    if (content && content->getItem()) {
+      if (content->getItem()->getID() == item->getID()) {
         return content;
       }
     }
@@ -69,7 +69,7 @@ ItemStack* Inventory::findStack(Item* item) {
 // Get first empty
 int Inventory::findFirstEmpty() {
   for (unsigned int i = 0; i < contents.size(); i++) {
-    if (contents.at(i) && !(contents.at(i)->GetItem())) {
+    if (contents.at(i) && !(contents.at(i)->getItem())) {
       return i;
     }
   }

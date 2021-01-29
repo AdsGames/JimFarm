@@ -59,27 +59,27 @@ void Character::setWorld(World* newTileMap) {
 }
 
 // Set image
-void Character::load_data() {
+void Character::loadData() {
   // Images
-  image = load_bitmap_ex("images/character_1.png");
-  inventory_gui = load_bitmap_ex("images/GUI_INVENTORY.png");
-  indicator = load_bitmap_ex("images/indicator.png");
-  indicator_2 = load_bitmap_ex("images/indicator_2.png");
-  coin = load_bitmap_ex("images/coin.png");
+  image = loadBitmap("images/character_1.png");
+  inventory_gui = loadBitmap("images/GUI_INVENTORY.png");
+  indicator = loadBitmap("images/indicator.png");
+  indicator_2 = loadBitmap("images/indicator_2.png");
+  coin = loadBitmap("images/coin.png");
 
   // Sounds
-  pickup = load_sample_ex("sfx/pickup.wav");
-  drop = load_sample_ex("sfx/drop.wav");
-  step[0] = load_sample_ex("sfx/step_1.wav");
-  step[1] = load_sample_ex("sfx/step_2.wav");
+  pickup = loadSample("sfx/pickup.wav");
+  drop = loadSample("sfx/drop.wav");
+  step[0] = loadSample("sfx/step_1.wav");
+  step[1] = loadSample("sfx/step_2.wav");
 
   // Load fonts
-  pixelart = load_font_ex("fonts/pixelart_condensed.pcx");
+  pixelart = loadFont("fonts/pixelart_condensed.pcx");
   font = pixelart;
 
-  inventory_ui = InterfaceTypeManager::getInterfaceByID(0);
+  inventory_ui = InterfaceTypeManager::getInterfaceById(0);
 
-  character_inv = inventory_ui->GetInventory();
+  character_inv = inventory_ui->getInventory();
 
   character_inv->addItem(new Item(ITEM_AXE), 1);
   character_inv->addItem(new Item(ITEM_SCYTHE), 1);
@@ -123,15 +123,15 @@ void Character::draw(BITMAP* tempBuffer,
               y - map_pointer->getY() - 8, 16, 20);
 
   // Selected item
-  if (character_inv->getStack(selected_item)->GetItem()) {
+  if (character_inv->getStack(selected_item)->getItem()) {
     character_inv->getStack(selected_item)
-        ->GetItem()
+        ->getItem()
         ->draw(x - map_pointer->getX(), y - map_pointer->getY(), tempBuffer);
   }
 }
 
 // Update player
-void Character::draw_inventory(BITMAP* tempBuffer) {
+void Character::drawInventory(BITMAP* tempBuffer) {
   const int draw_x = (tempBuffer->w - HOTBAR_SIZE * 18) / 2;
   const int draw_y = tempBuffer->h - 20;
 
@@ -141,12 +141,12 @@ void Character::draw_inventory(BITMAP* tempBuffer) {
     if (i == selected_item)
       draw_sprite(tempBuffer, indicator, 18 * i + 1 + draw_x, 1 + draw_y);
     if (character_inv->getStack(i)) {
-      character_inv->getStack(i)->Draw(18 * i + 1 + draw_x, 1 + draw_y,
+      character_inv->getStack(i)->draw(18 * i + 1 + draw_x, 1 + draw_y,
                                        tempBuffer);
-      if (i == selected_item && character_inv->getStack(i)->GetItem())
+      if (i == selected_item && character_inv->getStack(i)->getItem())
         textprintf_ex(tempBuffer, pixelart, 1 + draw_x, 21 + draw_y,
                       makecol(255, 255, 255), -1,
-                      character_inv->getStack(i)->GetItem()->getName().c_str());
+                      character_inv->getStack(i)->getItem()->getName().c_str());
     }
   }
 
@@ -156,7 +156,7 @@ void Character::draw_inventory(BITMAP* tempBuffer) {
 
   // Draw UI
   if (ui_open && attatched_ui) {
-    attatched_ui->Draw(tempBuffer);
+    attatched_ui->draw(tempBuffer);
   }
 }
 
@@ -182,14 +182,14 @@ void Character::update() {
       attatched_ui = nullptr;
     } else {
       ui_open = true;
-      attatched_ui = InterfaceTypeManager::getInterfaceByID(1);
+      attatched_ui = InterfaceTypeManager::getInterfaceById(1);
     }
   }
 
   // UI Open
   if (ui_open && attatched_ui != nullptr) {
     // Update UI
-    attatched_ui->Update(map_pointer);
+    attatched_ui->update(map_pointer);
     return;
   }
 
@@ -210,7 +210,7 @@ void Character::update() {
     // Up
     if (key[KEY_UP] || key[KEY_W] || joy[0].stick[0].axis[1].d1) {
       direction = DIR_UP;
-      if (!map_pointer->world_map->solid_at(x, y - 16)) {
+      if (!map_pointer->world_map->isSolidAt(x, y - 16)) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -218,7 +218,7 @@ void Character::update() {
     // Down
     else if (key[KEY_DOWN] || key[KEY_S] || joy[0].stick[0].axis[1].d2) {
       direction = DIR_DOWN;
-      if (!map_pointer->world_map->solid_at(x, y + 16)) {
+      if (!map_pointer->world_map->isSolidAt(x, y + 16)) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -226,7 +226,7 @@ void Character::update() {
     // Left
     else if (key[KEY_LEFT] || key[KEY_A] || joy[0].stick[0].axis[0].d1) {
       direction = DIR_LEFT;
-      if (!map_pointer->world_map->solid_at(x - 16, y)) {
+      if (!map_pointer->world_map->isSolidAt(x - 16, y)) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -234,7 +234,7 @@ void Character::update() {
     // Right
     else if (key[KEY_RIGHT] || key[KEY_D] || joy[0].stick[0].axis[0].d2) {
       direction = DIR_RIGHT;
-      if (!map_pointer->world_map->solid_at(x + 16, y)) {
+      if (!map_pointer->world_map->isSolidAt(x + 16, y)) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -266,14 +266,14 @@ void Character::update() {
   }
 
   // Pickup
-  MapItem* itemAtPos = map_pointer->world_map->item_at(roundf(x / 16.0f) * 16,
-                                                       roundf(y / 16.0f) * 16);
+  MapItem* itemAtPos = map_pointer->world_map->getItemAt(
+      roundf(x / 16.0f) * 16, roundf(y / 16.0f) * 16);
 
   // Pickup
   if (itemAtPos != nullptr) {
     play_sample(pickup, 255, 125, 1000, 0);
     if (character_inv->addItem(itemAtPos->itemPtr, 1)) {
-      map_pointer->world_map->remove_item(itemAtPos);
+      map_pointer->world_map->removeItem(itemAtPos);
     }
   }
 
@@ -281,24 +281,24 @@ void Character::update() {
   if (KeyListener::keyPressed[KEY_F] || MouseListener::mouse_pressed & 2 ||
       joy[0].button[2].b) {
     Item* itemInHand = nullptr;
-    if (character_inv->getStack(selected_item)->GetItem()) {
-      itemInHand = character_inv->getStack(selected_item)->GetItem();
+    if (character_inv->getStack(selected_item)->getItem()) {
+      itemInHand = character_inv->getStack(selected_item)->getItem();
     }
 
     // Drop
     if (itemInHand != nullptr) {
       play_sample(drop, 255, 125, 1000, 0);
-      map_pointer->world_map->place_item(itemInHand, indicator_x, indicator_y);
-      character_inv->getStack(selected_item)->Remove(1);
+      map_pointer->world_map->placeItemAt(itemInHand, indicator_x, indicator_y);
+      character_inv->getStack(selected_item)->remove(1);
     }
   }
 
   // Interact with map
   if (KeyListener::keyPressed[KEY_SPACE] || MouseListener::mouse_pressed & 1 ||
       joy[0].button[0].b) {
-    if (character_inv->getStack(selected_item)->GetItem()) {
+    if (character_inv->getStack(selected_item)->getItem()) {
       map_pointer->interact(indicator_x, indicator_y,
-                            character_inv->getStack(selected_item)->GetItem());
+                            character_inv->getStack(selected_item)->getItem());
     }
   }
 

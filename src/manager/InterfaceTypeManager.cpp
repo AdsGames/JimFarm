@@ -18,7 +18,7 @@ InterfaceTypeManager::~InterfaceTypeManager() {
 }
 
 // Load interfaces
-int InterfaceTypeManager::load_interfaces(std::string path) {
+int InterfaceTypeManager::loadInterfaces(std::string path) {
   // Open file or abort if it does not exist
   std::ifstream file(path);
   if (!file.is_open()) {
@@ -45,14 +45,14 @@ int InterfaceTypeManager::load_interfaces(std::string path) {
       std::string text = label["text"];
       int x = label["x"];
       int y = label["y"];
-      controller->AddElement(new UI_Label(x, y, text));
+      controller->addElement(new UI_Label(x, y, text));
     }
 
     // Slots
     for (auto const& slot : interface["slots"]) {
       int x = slot["x"];
       int y = slot["y"];
-      controller->AddElement(new UI_Slot(x, y));
+      controller->addElement(new UI_Slot(x, y));
     }
 
     // Push to controllers
@@ -65,7 +65,7 @@ int InterfaceTypeManager::load_interfaces(std::string path) {
 }
 
 // Get interfaces by ID
-UI_Controller* InterfaceTypeManager::getInterfaceByID(int id) {
+UI_Controller* InterfaceTypeManager::getInterfaceById(int id) {
   if (id >= 0 && id < (signed)ui_defs.size())
     return ui_defs.at(id);
   return nullptr;

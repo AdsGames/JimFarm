@@ -19,7 +19,7 @@ void abort_on_error(const std::string& message) {
 }
 
 // Load bitmap with error checked_array_iterator
-BITMAP* load_bitmap_ex(const std::string& path) {
+BITMAP* loadBitmap(const std::string& path) {
   BITMAP* temp_loader;
   if (!(temp_loader = load_png(path.c_str(), nullptr)))
     abort_on_error(("Cannot find image " + path +
@@ -30,7 +30,7 @@ BITMAP* load_bitmap_ex(const std::string& path) {
 }
 
 // Load and error check sounds
-SAMPLE* load_sample_ex(const std::string& path) {
+SAMPLE* loadSample(const std::string& path) {
   SAMPLE* temp_loader;
   if (!(temp_loader = load_sample(path.c_str())))
     abort_on_error(("Cannot find sound " + path +
@@ -41,7 +41,7 @@ SAMPLE* load_sample_ex(const std::string& path) {
 }
 
 // Load and error check fonts
-FONT* load_font_ex(const std::string& path) {
+FONT* loadFont(const std::string& path) {
   FONT* temp_loader;
   if (!(temp_loader = load_font(path.c_str(), nullptr, nullptr)))
     abort_on_error(

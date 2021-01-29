@@ -32,7 +32,7 @@ Chunk::Chunk(int x, int y) {
 }
 
 Chunk::~Chunk() {
-  set_draw_enabled(false);
+  setDrawEnabled(false);
 
   for (int i = 0; i < CHUNK_WIDTH; i++) {
     for (int t = 0; t < CHUNK_HEIGHT; t++) {
@@ -59,7 +59,7 @@ int Chunk::getY() {
   return y;
 }
 
-std::string Chunk::get_biome_at(int x, int y) {
+std::string Chunk::getBiomeAt(int x, int y) {
   int offset_x = x / TILE_WIDTH - this->x * CHUNK_WIDTH;
   int offset_y = y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
 
@@ -76,7 +76,7 @@ std::string Chunk::get_biome_at(int x, int y) {
   return stream.str();
 }
 
-char Chunk::get_temperature_at(int x, int y) {
+char Chunk::getTemperatureAt(int x, int y) {
   int offset_x = x / TILE_WIDTH - this->x * CHUNK_WIDTH;
   int offset_y = y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
 
@@ -88,7 +88,7 @@ char Chunk::get_temperature_at(int x, int y) {
   return temperature[offset_x][offset_y];
 }
 
-Tile* Chunk::get_tile_at(int x, int y, int z) {
+Tile* Chunk::getTileAt(int x, int y, int z) {
   int offset_x = x / TILE_WIDTH - this->x * CHUNK_WIDTH;
   int offset_y = y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
 
@@ -100,7 +100,7 @@ Tile* Chunk::get_tile_at(int x, int y, int z) {
   return tiles[offset_x][offset_y][z];
 }
 
-void Chunk::set_tile_at(int x, int y, int z, Tile* tile) {
+void Chunk::setTileAt(int x, int y, int z, Tile* tile) {
   int offset_x = x / TILE_WIDTH - this->x * CHUNK_WIDTH;
   int offset_y = y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
 
@@ -122,7 +122,7 @@ void Chunk::set_tile_at(int x, int y, int z, Tile* tile) {
 }
 
 // Get item at position
-MapItem* Chunk::get_item_at(int x, int y) {
+MapItem* Chunk::getItemAt(int x, int y) {
   for (auto const& i : items) {
     if (i->x == x && i->y == y) {
       return i;
@@ -132,7 +132,7 @@ MapItem* Chunk::get_item_at(int x, int y) {
 }
 
 // Place item on map
-void Chunk::place_item_at(Item* item, int x, int y) {
+void Chunk::placeItemAt(Item* item, int x, int y) {
   if (item) {
     MapItem* newMapItem = new MapItem(x, y, item);
     items.push_back(newMapItem);
@@ -143,7 +143,7 @@ void Chunk::place_item_at(Item* item, int x, int y) {
 }
 
 // Remove item from map
-void Chunk::remove_item(MapItem* item) {
+void Chunk::removeItem(MapItem* item) {
   if (item != nullptr) {
     for (unsigned int i = 0; i < items.size(); i++) {
       if (items.at(i) == item) {
@@ -155,7 +155,7 @@ void Chunk::remove_item(MapItem* item) {
   }
 }
 
-void Chunk::set_draw_enabled(bool enabled) {
+void Chunk::setDrawEnabled(bool enabled) {
   if (is_drawing != enabled) {
     Graphics::Instance()->disableSort();
 
@@ -184,20 +184,20 @@ void Chunk::set_draw_enabled(bool enabled) {
   }
 }
 
-bool Chunk::should_exist(int x_1, int y_1, int x_2, int y_2) {
+bool Chunk::getInRange(int x_1, int y_1, int x_2, int y_2) {
   if (x_2 >= (this->x) * CHUNK_WIDTH * TILE_WIDTH &&
       x_1 <= (this->x + 1) * CHUNK_WIDTH * TILE_WIDTH &&
       y_2 >= (this->y) * CHUNK_HEIGHT * TILE_HEIGHT &&
       y_1 <= (this->y + 1) * CHUNK_HEIGHT * TILE_HEIGHT) {
     // Add to draw pool
     if (!is_drawing) {
-      set_draw_enabled(true);
+      setDrawEnabled(true);
     }
     return true;
   }
   // Remove from draw pool
   else if (is_drawing) {
-    set_draw_enabled(false);
+    setDrawEnabled(false);
   }
 
   return false;
@@ -221,9 +221,8 @@ void Chunk::tick() {
 
         // Done Growing
         if (current->getMeta() >= MAX_TILE_META) {
-          place_item_at(new Item(ITEM_BERRY), current->getX(), current->getY());
-          set_tile_at(current->getX(), current->getY(), current->getZ(),
-                      nullptr);
+          placeItemAt(new Item(ITEM_BERRY), current->getX(), current->getY());
+          setTileAt(current->getX(), current->getY(), current->getZ(), nullptr);
         }
       }
       // Tomatos
@@ -234,10 +233,8 @@ void Chunk::tick() {
 
         // Done Growing
         if (current->getMeta() >= MAX_TILE_META) {
-          place_item_at(new Item(ITEM_TOMATO), current->getX(),
-                        current->getY());
-          set_tile_at(current->getX(), current->getY(), current->getZ(),
-                      nullptr);
+          placeItemAt(new Item(ITEM_TOMATO), current->getX(), current->getY());
+          setTileAt(current->getX(), current->getY(), current->getZ(), nullptr);
         }
       }
       // Carrots
@@ -248,10 +245,8 @@ void Chunk::tick() {
 
         // Done Growing
         if (current->getMeta() >= MAX_TILE_META) {
-          place_item_at(new Item(ITEM_CARROT), current->getX(),
-                        current->getY());
-          set_tile_at(current->getX(), current->getY(), current->getZ(),
-                      nullptr);
+          placeItemAt(new Item(ITEM_CARROT), current->getX(), current->getY());
+          setTileAt(current->getX(), current->getY(), current->getZ(), nullptr);
         }
       }
       // Lavender
@@ -262,10 +257,9 @@ void Chunk::tick() {
 
         // Done Growing
         if (current->getMeta() >= MAX_TILE_META) {
-          place_item_at(new Item(ITEM_LAVENDER), current->getX(),
-                        current->getY());
-          set_tile_at(current->getX(), current->getY(), current->getZ(),
-                      nullptr);
+          placeItemAt(new Item(ITEM_LAVENDER), current->getX(),
+                      current->getY());
+          setTileAt(current->getX(), current->getY(), current->getZ(), nullptr);
         }
       }
     }
@@ -378,7 +372,7 @@ void Chunk::generate() {
           tiles[i][t][LAYER_FOREGROUND] = new Tile(
               TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, random(0, 3));
           if (random(0, 100) == 0) {
-            place_item_at(new Item(ITEM_CHICKEN), t_x, t_y);
+            placeItemAt(new Item(ITEM_CHICKEN), t_x, t_y);
           }
         }
       }
@@ -409,47 +403,47 @@ void Chunk::generate() {
 
       // Water deep
       if (height[i][t] < -32) {
-        set_tile_at(
+        setTileAt(
             t_x, t_y, LAYER_BACKGROUND,
             new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 3));
-        set_tile_at(t_x, t_y, LAYER_MIDGROUND, nullptr);
-        set_tile_at(t_x, t_y, LAYER_FOREGROUND,
-                    new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
+        setTileAt(t_x, t_y, LAYER_MIDGROUND, nullptr);
+        setTileAt(t_x, t_y, LAYER_FOREGROUND,
+                  new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
       }
       // Water
       else if (height[i][t] < -19) {
-        set_tile_at(
+        setTileAt(
             t_x, t_y, LAYER_BACKGROUND,
             new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 0));
-        set_tile_at(t_x, t_y, LAYER_MIDGROUND, nullptr);
-        set_tile_at(t_x, t_y, LAYER_FOREGROUND,
-                    new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
+        setTileAt(t_x, t_y, LAYER_MIDGROUND, nullptr);
+        setTileAt(t_x, t_y, LAYER_FOREGROUND,
+                  new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
       }
       // Water seaweed
       else if (height[i][t] < -17) {
-        set_tile_at(
+        setTileAt(
             t_x, t_y, LAYER_BACKGROUND,
             new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 1));
-        set_tile_at(t_x, t_y, LAYER_MIDGROUND, nullptr);
-        set_tile_at(t_x, t_y, LAYER_FOREGROUND,
-                    new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
+        setTileAt(t_x, t_y, LAYER_MIDGROUND, nullptr);
+        setTileAt(t_x, t_y, LAYER_FOREGROUND,
+                  new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
       }
       // Shore
       else if (height[i][t] < -14) {
-        set_tile_at(t_x, t_y, LAYER_BACKGROUND,
-                    new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND));
-        set_tile_at(t_x, t_y, LAYER_FOREGROUND,
-                    new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND));
+        setTileAt(t_x, t_y, LAYER_BACKGROUND,
+                  new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND));
+        setTileAt(t_x, t_y, LAYER_FOREGROUND,
+                  new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND));
       }
       // Stone
       else if (height[i][t] > 32) {
-        set_tile_at(t_x, t_y, LAYER_BACKGROUND,
-                    new Tile(TILE_STONE, t_x, t_y, LAYER_BACKGROUND));
-        set_tile_at(t_x, t_y, LAYER_MIDGROUND,
-                    new Tile(TILE_STONE, t_x, t_y, LAYER_MIDGROUND));
-        set_tile_at(t_x, t_y, LAYER_FOREGROUND,
-                    new Tile(TILE_STONE_WALL, t_x, t_y, LAYER_FOREGROUND,
-                             (height[i][t] - 32) / 6));
+        setTileAt(t_x, t_y, LAYER_BACKGROUND,
+                  new Tile(TILE_STONE, t_x, t_y, LAYER_BACKGROUND));
+        setTileAt(t_x, t_y, LAYER_MIDGROUND,
+                  new Tile(TILE_STONE, t_x, t_y, LAYER_MIDGROUND));
+        setTileAt(t_x, t_y, LAYER_FOREGROUND,
+                  new Tile(TILE_STONE_WALL, t_x, t_y, LAYER_FOREGROUND,
+                           (height[i][t] - 32) / 6));
       }
     }
   }

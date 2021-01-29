@@ -18,7 +18,7 @@ TileTypeManager::~TileTypeManager() {
 }
 
 // Load tiles
-int TileTypeManager::load_tiles(std::string path) {
+int TileTypeManager::loadTiles(std::string path) {
   // Open file or abort if it does not exist
   std::ifstream file(path);
   if (!file.is_open()) {
@@ -70,7 +70,7 @@ int TileTypeManager::load_tiles(std::string path) {
 }
 
 // Returns tile at ID
-TileType* TileTypeManager::getTileByID(int tileID) {
+TileType* TileTypeManager::getTileById(int tileID) {
   for (auto& tile : tile_defs) {
     if (tile.getID() == tileID) {
       return &tile;

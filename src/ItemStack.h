@@ -11,15 +11,15 @@ class ItemStack {
   ItemStack(Item* item, int quantity);
   virtual ~ItemStack();
 
-  void SetItem(Item* item, int quantity);
-  Item* GetItem();
-  int GetQuantity();
+  void setItem(Item* item, int quantity);
+  Item* getItem();
+  int getQuantity();
 
-  void Remove(int quantity);
-  void Add(int quantity);
-  void Clear();
+  void remove(int quantity);
+  void add(int quantity);
+  void clear();
 
-  void Draw(int x, int y, BITMAP* buffer);
+  void draw(int x, int y, BITMAP* buffer);
 
  protected:
  private:

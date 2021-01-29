@@ -11,13 +11,13 @@
 
 Game::Game() {
   // Nice Map
-  farm_world.init_ticker();
-  farm_world.load_images();
+  farm_world.initTicker();
+  farm_world.loadImages();
 
   // Setup jim
   jim.setPosition(15 * 16, 15 * 16);
 
-  jim.load_data();
+  jim.loadData();
   jim.setWorld(&farm_world);
 }
 
@@ -43,5 +43,5 @@ void Game::draw(BITMAP* buffer) {
   farm_world.draw(buffer);
 
   // Draw inventory
-  jim.draw_inventory(buffer);
+  jim.drawInventory(buffer);
 }

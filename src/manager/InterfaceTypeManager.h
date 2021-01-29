@@ -22,10 +22,10 @@ class InterfaceTypeManager {
   ~InterfaceTypeManager();
 
   // Load interface types
-  static int load_interfaces(std::string path);
+  static int loadInterfaces(std::string path);
 
   // Allows communication
-  static UI_Controller* getInterfaceByID(int id);
+  static UI_Controller* getInterfaceById(int id);
 
  private:
   // Stores all interfaces

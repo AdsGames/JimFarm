@@ -19,19 +19,19 @@ void Messenger::setColors(int font_col, int bg_col) {
   this->bg_col = bg_col;
 }
 
-void Messenger::push_message(std::string new_message) {
+void Messenger::pushMessage(std::string new_message) {
   msgs.push_back(new_message);
-  if (numberMessages() > this->max_size)
+  if (messageCount() > this->max_size)
     msgs.erase(msgs.begin());
 }
 
-unsigned int Messenger::numberMessages() {
+unsigned int Messenger::messageCount() {
   return msgs.size();
 }
 
 void Messenger::draw(BITMAP* buffer, int x, int y) {
   int offset = 0;
-  int numMsg = (signed)numberMessages();
+  int numMsg = (signed)messageCount();
   for (int i = numMsg - 1; i > -1; i--) {
     textprintf_ex(buffer, font, x, y + offset, font_col, bg_col, ">%s",
                   msgs.at(i).c_str());

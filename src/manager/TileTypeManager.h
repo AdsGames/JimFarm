@@ -22,14 +22,14 @@ class TileTypeManager {
   ~TileTypeManager();
 
   // Load tile types
-  static int load_tiles(std::string path);
-  static int load_items(std::string path);
-  static int load_interfaces(std::string path);
+  static int loadTiles(std::string path);
+  static int loadItems(std::string path);
+  static int loadInterfaces(std::string path);
 
   // Allows communication
-  static TileType* getTileByID(int tileID);
-  static TileType* getItemByID(int tileID);
-  static UI_Controller* getInterfaceByID(int id);
+  static TileType* getTileById(int tileID);
+  static TileType* getItemById(int tileID);
+  static UI_Controller* getInterfaceById(int id);
 
   static BITMAP* sprite_sheet_tiles;
   static BITMAP* sprite_sheet_items;

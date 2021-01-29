@@ -140,7 +140,7 @@ void setup() {
   LOCK_FUNCTION(close_button_handler);
   set_close_button_callback(close_button_handler);
 
-  // main_game_menu.load_data();
+  // main_game_menu.loadData();
 
   // Alpha blender
   set_alpha_blender();
