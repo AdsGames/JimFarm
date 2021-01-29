@@ -12,18 +12,18 @@ UI_Element::UI_Element(int x, int y, int width, int height) {
 
 UI_Element::~UI_Element() {}
 
-int UI_Element::GetX() {
+int UI_Element::getX() {
   return x;
 }
 
-int UI_Element::GetY() {
+int UI_Element::getY() {
   return y;
 }
 
-int UI_Element::GetWidth() {
+int UI_Element::getWidth() {
   return width;
 }
 
-int UI_Element::GetHeight() {
+int UI_Element::getHeight() {
   return height;
 }

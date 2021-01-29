@@ -19,11 +19,11 @@ class Menu : public State {
   virtual void update(StateEngine* engine) override;
 
  private:
-  void draw_slider(BITMAP* tempBitmap,
-                   int x,
-                   int y,
-                   int value,
-                   std::string title);
+  void drawSlider(BITMAP* tempBitmap,
+                  int x,
+                  int y,
+                  int value,
+                  std::string title);
 
   int tick;
   int coin_frame;
@@ -32,11 +32,6 @@ class Menu : public State {
   int music_volume;
 
   // Fonts
-  FONT* f1;
-  FONT* f2;
-  FONT* f3;
-  FONT* f4;
-  FONT* f5;
   FONT* pixelart;
 
   BITMAP* menu_image;

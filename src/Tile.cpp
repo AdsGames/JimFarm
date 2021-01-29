@@ -7,7 +7,7 @@
 Tile::Tile(char id, int x, int y, int z, unsigned char meta) : Sprite(x, y, z) {
   this->x = x;
   this->y = y;
-  this->tile_pointer = TileTypeManager::getTileByID(id);
+  this->tile_pointer = TileTypeManager::getTileById(id);
   this->meta = meta;
 }
 

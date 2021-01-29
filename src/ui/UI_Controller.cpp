@@ -33,7 +33,7 @@ UI_Controller::UI_Controller(int width, int height) {
 
 UI_Controller::~UI_Controller() {}
 
-void UI_Controller::AddElement(UI_Element* element) {
+void UI_Controller::addElement(UI_Element* element) {
   if (element) {
     elements.push_back(element);
 
@@ -41,17 +41,17 @@ void UI_Controller::AddElement(UI_Element* element) {
     UI_Slot* s = dynamic_cast<UI_Slot*>(element);
     if (s) {
       inv->addSpace();
-      s->BindStack(inv->getStack(currently_bound));
+      s->bindStack(inv->getStack(currently_bound));
       currently_bound++;
     }
   }
 }
 
-Inventory* UI_Controller::GetInventory() {
+Inventory* UI_Controller::getInventory() {
   return inv;
 }
 
-void UI_Controller::Draw(BITMAP* buffer) {
+void UI_Controller::draw(BITMAP* buffer) {
   // Caulculate x and y
   x = (buffer->w - width) / 2;
   y = (buffer->h - height) / 2;
@@ -62,7 +62,7 @@ void UI_Controller::Draw(BITMAP* buffer) {
 
   // Draw elements
   for (auto const& element : elements) {
-    element->Draw(buffer, x, y);
+    element->draw(buffer, x, y);
   }
 
   // Cursor
@@ -72,13 +72,13 @@ void UI_Controller::Draw(BITMAP* buffer) {
            mouse_y * ((float)buffer->h / SCREEN_H) + 2, makecol(255, 255, 255));
 
   // Item, if holding
-  if (mouse_item && mouse_item->GetItem()) {
-    mouse_item->Draw(mouse_x * ((float)buffer->w / SCREEN_W),
+  if (mouse_item && mouse_item->getItem()) {
+    mouse_item->draw(mouse_x * ((float)buffer->w / SCREEN_W),
                      mouse_y * ((float)buffer->h / SCREEN_H), buffer);
   }
 }
 
-void UI_Controller::Update(World* wrld) {
+void UI_Controller::update(World* wrld) {
   // Select item
   if (MouseListener::mouse_pressed & 1 || MouseListener::mouse_pressed & 2) {
     int trans_x =
@@ -87,7 +87,7 @@ void UI_Controller::Update(World* wrld) {
         mouse_y * ((wrld->VIEWPORT_HEIGHT / wrld->VIEWPORT_ZOOM) / SCREEN_H);
 
     // Element at position
-    UI_Element* elem = ElementAt(trans_x, trans_y);
+    UI_Element* elem = elementAt(trans_x, trans_y);
 
     // Check if move
     if (elem != nullptr) {
@@ -97,33 +97,33 @@ void UI_Controller::Update(World* wrld) {
       // Ensure that it is slot
       if (slt != nullptr) {
         if (MouseListener::mouse_pressed & 1) {
-          if (!(mouse_item->GetItem()) && slt->GetStack()->GetItem()) {
-            mouse_item->SetItem(slt->GetStack()->GetItem(),
-                                slt->GetStack()->GetQuantity());
-            slt->GetStack()->Clear();
-          } else if (mouse_item->GetItem() && !(slt->GetStack()->GetItem())) {
-            slt->GetStack()->SetItem(mouse_item->GetItem(),
-                                     mouse_item->GetQuantity());
-            mouse_item->Clear();
-          } else if (mouse_item->GetItem() &&
-                     slt->GetStack()->GetItem()->getID() ==
-                         mouse_item->GetItem()->getID()) {
-            slt->GetStack()->Add(mouse_item->GetQuantity());
-            mouse_item->Clear();
+          if (!(mouse_item->getItem()) && slt->getStack()->getItem()) {
+            mouse_item->setItem(slt->getStack()->getItem(),
+                                slt->getStack()->getQuantity());
+            slt->getStack()->clear();
+          } else if (mouse_item->getItem() && !(slt->getStack()->getItem())) {
+            slt->getStack()->setItem(mouse_item->getItem(),
+                                     mouse_item->getQuantity());
+            mouse_item->clear();
+          } else if (mouse_item->getItem() &&
+                     slt->getStack()->getItem()->getID() ==
+                         mouse_item->getItem()->getID()) {
+            slt->getStack()->add(mouse_item->getQuantity());
+            mouse_item->clear();
           }
         } else if (MouseListener::mouse_pressed & 2) {
-          if (!(mouse_item->GetItem()) && slt->GetStack()->GetItem()) {
-            int mouse_qty = ceil((float)slt->GetStack()->GetQuantity() / 2.0f);
-            mouse_item->SetItem(slt->GetStack()->GetItem(), mouse_qty);
-            slt->GetStack()->Remove(mouse_qty);
-          } else if (mouse_item->GetItem() && !(slt->GetStack()->GetItem())) {
-            slt->GetStack()->SetItem(mouse_item->GetItem(), 1);
-            mouse_item->Remove(1);
-          } else if (mouse_item->GetItem() &&
-                     slt->GetStack()->GetItem()->getID() ==
-                         mouse_item->GetItem()->getID()) {
-            slt->GetStack()->Add(1);
-            mouse_item->Remove(1);
+          if (!(mouse_item->getItem()) && slt->getStack()->getItem()) {
+            int mouse_qty = ceil((float)slt->getStack()->getQuantity() / 2.0f);
+            mouse_item->setItem(slt->getStack()->getItem(), mouse_qty);
+            slt->getStack()->remove(mouse_qty);
+          } else if (mouse_item->getItem() && !(slt->getStack()->getItem())) {
+            slt->getStack()->setItem(mouse_item->getItem(), 1);
+            mouse_item->remove(1);
+          } else if (mouse_item->getItem() &&
+                     slt->getStack()->getItem()->getID() ==
+                         mouse_item->getItem()->getID()) {
+            slt->getStack()->add(1);
+            mouse_item->remove(1);
           }
         }
       }
@@ -131,15 +131,15 @@ void UI_Controller::Update(World* wrld) {
   }
 }
 
-UI_Element* UI_Controller::ElementAt(int x, int y) {
+UI_Element* UI_Controller::elementAt(int x, int y) {
   int trans_x = x - this->x;
   int trans_y = y - this->y;
 
   for (auto const& element : elements) {
-    if (element->GetX() < trans_x &&
-        element->GetX() + element->GetWidth() > trans_x &&
-        element->GetY() < trans_y &&
-        element->GetY() + element->GetHeight() > trans_y) {
+    if (element->getX() < trans_x &&
+        element->getX() + element->getWidth() > trans_x &&
+        element->getY() < trans_y &&
+        element->getY() + element->getHeight() > trans_y) {
       return element;
     }
   }

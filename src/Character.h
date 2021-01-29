@@ -35,7 +35,7 @@ class Character : public Sprite {
   void setWorld(World* newTileMap);
 
   // Load images and samples
-  void load_data();
+  void loadData();
 
   // Position character
   void setPosition(int newX, int newY) {
@@ -49,7 +49,7 @@ class Character : public Sprite {
                     float y_1,
                     float x_2,
                     float y_2) override;
-  void draw_inventory(BITMAP* tempBuffer);
+  void drawInventory(BITMAP* tempBuffer);
 
   // Update
   void update();

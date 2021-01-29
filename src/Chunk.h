@@ -25,19 +25,19 @@ class Chunk {
   int getX();
   int getY();
 
-  Tile* get_tile_at(int x, int y, int z);
-  void set_tile_at(int x, int y, int z, Tile* tile);
+  Tile* getTileAt(int x, int y, int z);
+  void setTileAt(int x, int y, int z, Tile* tile);
 
-  MapItem* get_item_at(int x, int y);
-  void place_item_at(Item* item, int x, int y);
-  void remove_item(MapItem* item);
+  MapItem* getItemAt(int x, int y);
+  void placeItemAt(Item* item, int x, int y);
+  void removeItem(MapItem* item);
 
-  std::string get_biome_at(int x, int y);
-  char get_temperature_at(int x, int y);
+  std::string getBiomeAt(int x, int y);
+  char getTemperatureAt(int x, int y);
 
-  void set_draw_enabled(bool enabled);
+  void setDrawEnabled(bool enabled);
 
-  bool should_exist(int x_1, int y_1, int x_2, int y_2);
+  bool getInRange(int x_1, int y_1, int x_2, int y_2);
 
   void tick();
 

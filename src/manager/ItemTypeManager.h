@@ -22,10 +22,10 @@ class ItemTypeManager {
   ~ItemTypeManager();
 
   // Load tile types
-  static int load_items(std::string path);
+  static int loadItems(std::string path);
 
   // Allows communication
-  static TileType* getItemByID(int tileID);
+  static TileType* getItemById(int tileID);
 
   static BITMAP* sprite_sheet_items;
 

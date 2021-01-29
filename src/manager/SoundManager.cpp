@@ -60,7 +60,7 @@ int SoundManager::load(std::string path) {
     int frequency = sound["frequency"];
     int frequency_rand = sound["frequency_rand"];
 
-    SAMPLE* tempSample = load_sample_ex(file);
+    SAMPLE* tempSample = loadSample(file);
     SampleWrapper* tempWrapper = new SampleWrapper(
         tempSample, volume, panning, frequency, frequency_rand, false);
     sound_defs.push_back(tempWrapper);

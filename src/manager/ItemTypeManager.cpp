@@ -18,7 +18,7 @@ ItemTypeManager::~ItemTypeManager() {
 }
 
 // Load tiles
-int ItemTypeManager::load_items(std::string path) {
+int ItemTypeManager::loadItems(std::string path) {
   // Open file or abort if it does not exist
   std::ifstream file(path);
   if (!file.is_open()) {
@@ -56,7 +56,7 @@ int ItemTypeManager::load_items(std::string path) {
 }
 
 // Returns item at ID
-TileType* ItemTypeManager::getItemByID(int tileID) {
+TileType* ItemTypeManager::getItemById(int tileID) {
   for (auto& item : item_defs) {
     if (item.getID() == tileID) {
       return &item;

@@ -10,17 +10,17 @@ class UI_Controller {
   UI_Controller(int width, int height);
   virtual ~UI_Controller();
 
-  void Draw(BITMAP* buffer);
+  void draw(BITMAP* buffer);
 
-  void Update(World* wrld);
+  void update(World* wrld);
 
-  void AddElement(UI_Element* element);
+  void addElement(UI_Element* element);
 
-  Inventory* GetInventory();
+  Inventory* getInventory();
 
  protected:
  private:
-  UI_Element* ElementAt(int x, int y);
+  UI_Element* elementAt(int x, int y);
 
   bool is_open;
   Inventory* inv;

@@ -9,13 +9,13 @@ class UI_Element {
   explicit UI_Element(int x, int y, int width, int height);
   virtual ~UI_Element();
 
-  virtual void Draw(BITMAP* buffer, int parent_x, int parent_y) = 0;
+  virtual void draw(BITMAP* buffer, int parent_x, int parent_y) = 0;
 
-  int GetX();
-  int GetY();
+  int getX();
+  int getY();
 
-  int GetWidth();
-  int GetHeight();
+  int getWidth();
+  int getHeight();
 
  protected:
  private:

@@ -14,11 +14,11 @@ class UI_Slot : public UI_Element {
   UI_Slot(int x, int y, ItemStack* stk);
   virtual ~UI_Slot(){};
 
-  void BindStack(ItemStack* stk);
+  void bindStack(ItemStack* stk);
 
-  ItemStack* GetStack();
+  ItemStack* getStack();
 
-  virtual void Draw(BITMAP* buffer, int parent_x, int parent_y) override;
+  virtual void draw(BITMAP* buffer, int parent_x, int parent_y) override;
 
  protected:
  private:

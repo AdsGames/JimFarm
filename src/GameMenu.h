@@ -8,7 +8,7 @@ class GameMenu : public State {
   GameMenu();
   virtual ~GameMenu();
 
-  void load_data();
+  void loadData();
   void trigger();
   virtual void update(StateEngine* engine) override;
   virtual void draw(BITMAP* tempImage) override;
