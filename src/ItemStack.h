@@ -1,5 +1,5 @@
-#ifndef ITEMSTACK_H
-#define ITEMSTACK_H
+#ifndef SRC_ITEMSTACK_H_
+#define SRC_ITEMSTACK_H_
 
 #include <allegro.h>
 #include <vector>
@@ -27,4 +27,4 @@ class ItemStack {
   int quantity;
 };
 
-#endif  // ITEMSTACK_H
+#endif  // SRC_ITEMSTACK_H_

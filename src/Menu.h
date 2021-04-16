@@ -1,5 +1,5 @@
-#ifndef MENU_H
-#define MENU_H
+#ifndef SRC_MENU_H_
+#define SRC_MENU_H_
 
 #include <allegro.h>
 #include <vector>
@@ -14,9 +14,9 @@ class Menu : public State {
   Menu();
   virtual ~Menu();
 
-  virtual void draw(BITMAP* tempBitmap) override;
+  void draw(BITMAP* tempBitmap) override;
 
-  virtual void update(StateEngine* engine) override;
+  void update(StateEngine* engine) override;
 
  private:
   void drawSlider(BITMAP* tempBitmap,
@@ -48,4 +48,4 @@ class Menu : public State {
   int state;
 };
 
-#endif  // MENU_H
+#endif  // SRC_MENU_H_

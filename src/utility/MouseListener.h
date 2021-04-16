@@ -6,19 +6,15 @@
  * 18/01/2017
  **/
 
-//#include <iostream>
 #include <allegro.h>
 
-#ifndef MouseListener_H
-#define MouseListener_H
+#ifndef SRC_UTILITY_MOUSELISTENER_H_
+#define SRC_UTILITY_MOUSELISTENER_H_
 
 #define MAX_MOUSE_BUTTONS 3
 
 class MouseListener {
  public:
-  MouseListener();
-  virtual ~MouseListener();
-
   void update();
 
   static unsigned char mouse_button;
@@ -32,4 +28,4 @@ class MouseListener {
   static int mouse_z_old;
 };
 
-#endif  // MouseListener_H
+#endif  // SRC_UTILITY_MOUSELISTENER_H_

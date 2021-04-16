@@ -1,5 +1,5 @@
-#ifndef SPRITE_H
-#define SPRITE_H
+#ifndef SRC_SPRITE_H_
+#define SRC_SPRITE_H_
 
 #include <allegro.h>
 
@@ -37,10 +37,9 @@ class Sprite {
   int z;
   int id;
 
- protected:
  private:
   void setId();
   static int next_id;
 };
 
-#endif  // SPRITE_H
+#endif  // SRC_SPRITE_H_

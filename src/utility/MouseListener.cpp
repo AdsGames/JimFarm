@@ -8,10 +8,6 @@ unsigned char MouseListener::mouse_old = 0;
 int MouseListener::mouse_z_change = 0;
 int MouseListener::mouse_z_old = 0;
 
-MouseListener::MouseListener() {}
-
-MouseListener::~MouseListener() {}
-
 // Check those buttons!
 void MouseListener::update() {
   // Check button just pressed

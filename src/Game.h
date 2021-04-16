@@ -1,5 +1,5 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef SRC_GAME_H_
+#define SRC_GAME_H_
 
 #include "State.h"
 
@@ -11,8 +11,8 @@ class Game : public State {
   Game();
   virtual ~Game();
 
-  virtual void update(StateEngine* engine) override;
-  virtual void draw(BITMAP* buffer) override;
+  void update(StateEngine* engine) override;
+  void draw(BITMAP* buffer) override;
 
  protected:
  private:
@@ -20,4 +20,4 @@ class Game : public State {
   Character jim;
 };
 
-#endif  // GAME_H
+#endif  // SRC_GAME_H_

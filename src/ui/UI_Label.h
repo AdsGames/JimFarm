@@ -1,5 +1,5 @@
-#ifndef UI_LABEL_H
-#define UI_LABEL_H
+#ifndef SRC_UI_UI_LABEL_H_
+#define SRC_UI_UI_LABEL_H_
 
 #include <allegro.h>
 #include <string>
@@ -11,10 +11,10 @@ class UI_Label : public UI_Element {
   UI_Label(int x, int y, std::string text);
   virtual ~UI_Label();
 
-  virtual void draw(BITMAP* buffer, int parent_x, int parent_y) override;
+  void draw(BITMAP* buffer, int parent_x, int parent_y) override;
   std::string text;
 
  private:
 };
 
-#endif  // UI_LABEL_H
+#endif  // SRC_UI_UI_LABEL_H_

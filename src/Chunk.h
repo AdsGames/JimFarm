@@ -1,5 +1,5 @@
-#ifndef CHUNK_H
-#define CHUNK_H
+#ifndef SRC_CHUNK_H_
+#define SRC_CHUNK_H_
 
 #include "MapItem.h"
 #include "Tile.h"
@@ -67,4 +67,4 @@ class Chunk {
   bool is_drawing;
 };
 
-#endif  // CHUNK_H
+#endif  // SRC_CHUNK_H_
