@@ -7,8 +7,8 @@
  *   drawing and transitions
  */
 
-#ifndef STATE_H
-#define STATE_H
+#ifndef SRC_STATE_H_
+#define SRC_STATE_H_
 
 #include <allegro.h>
 
@@ -86,4 +86,4 @@ class State {
   int status;
 };
 
-#endif  // STATE_H
+#endif  // SRC_STATE_H_

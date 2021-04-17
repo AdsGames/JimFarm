@@ -1,5 +1,5 @@
-#ifndef TOOLS_H
-#define TOOLS_H
+#ifndef SRC_UTILITY_TOOLS_H_
+#define SRC_UTILITY_TOOLS_H_
 
 #define MAIN_MENU 0
 #define HELP 1
@@ -53,4 +53,4 @@ static T negative_clamp(T min_val, T max_val, T value) {
   return value;
 }
 
-#endif  // TOOLS_H
+#endif  // SRC_UTILITY_TOOLS_H_

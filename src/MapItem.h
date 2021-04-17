@@ -1,5 +1,5 @@
-#ifndef MAPITEM_H
-#define MAPITEM_H
+#ifndef SRC_MAPITEM_H_
+#define SRC_MAPITEM_H_
 
 #include "Item.h"
 #include "Sprite.h"
@@ -9,13 +9,13 @@ class MapItem : public Sprite {
   MapItem(int x, int y, Item* itemPtr);
   ~MapItem();
 
-  virtual void draw(BITMAP* tempBuffer,
-                    float x_1,
-                    float y_1,
-                    float x_2,
-                    float y_2) override;
+  void draw(BITMAP* tempBuffer,
+            float x_1,
+            float y_1,
+            float x_2,
+            float y_2) override;
 
   Item* itemPtr;
 };
 
-#endif  // MAPITEM_H
+#endif  // SRC_MAPITEM_H_

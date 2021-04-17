@@ -1,5 +1,5 @@
-#ifndef TILE_H
-#define TILE_H
+#ifndef SRC_TILE_H_
+#define SRC_TILE_H_
 
 #include <string>
 
@@ -15,7 +15,7 @@ class Tile : public Sprite {
  public:
   // Ctor and Dtor
   Tile(char id, int x, int y, int z, unsigned char meta = 0);
-  virtual ~Tile(){};
+  virtual ~Tile() {}
 
   // Define < operator for sorting
   virtual bool operator<(const Tile& other) const { return (y < other.y); }
@@ -59,4 +59,4 @@ class Tile : public Sprite {
   TileType* tile_pointer;
 };
 
-#endif  // TILE_H
+#endif  // SRC_TILE_H_

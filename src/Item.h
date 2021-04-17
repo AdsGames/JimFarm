@@ -1,5 +1,5 @@
-#ifndef ITEM_H
-#define ITEM_H
+#ifndef SRC_ITEM_H_
+#define SRC_ITEM_H_
 
 #include <string>
 
@@ -38,4 +38,4 @@ class Item {
   TileType* item_pointer;
 };
 
-#endif  // ITEM_H
+#endif  // SRC_ITEM_H_

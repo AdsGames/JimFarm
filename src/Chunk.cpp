@@ -69,9 +69,9 @@ std::string Chunk::getBiomeAt(int x, int y) {
   }
 
   std::stringstream stream;
-  stream << "temp:" << (int)temperature[offset_x][offset_y]
-         << " rain:" << (int)(rainfall[offset_x][offset_y] + 64)
-         << " height:" << (int)height[offset_x][offset_y];
+  stream << "temp:" << static_cast<int>(temperature[offset_x][offset_y])
+         << " rain:" << static_cast<int>((rainfall[offset_x][offset_y]) + 64)
+         << " height:" << static_cast<int>(height[offset_x][offset_y]);
 
   return stream.str();
 }
@@ -157,8 +157,6 @@ void Chunk::removeItem(MapItem* item) {
 
 void Chunk::setDrawEnabled(bool enabled) {
   if (is_drawing != enabled) {
-    Graphics::Instance()->disableSort();
-
     for (int i = 0; i < CHUNK_WIDTH; i++) {
       for (int t = 0; t < CHUNK_HEIGHT; t++) {
         for (int j = 0; j < CHUNK_LAYERS; j++) {
@@ -171,36 +169,35 @@ void Chunk::setDrawEnabled(bool enabled) {
       }
     }
 
-    for (auto const& i : items) {
+    for (auto const& item : items) {
       if (enabled) {
-        Graphics::Instance()->add(i);
+        Graphics::Instance()->add(item);
       } else {
-        Graphics::Instance()->remove(i);
+        Graphics::Instance()->remove(item);
       }
     }
 
-    Graphics::Instance()->enableSort();
     is_drawing = enabled;
   }
 }
 
 bool Chunk::getInRange(int x_1, int y_1, int x_2, int y_2) {
-  if (x_2 >= (this->x) * CHUNK_WIDTH * TILE_WIDTH &&
-      x_1 <= (this->x + 1) * CHUNK_WIDTH * TILE_WIDTH &&
-      y_2 >= (this->y) * CHUNK_HEIGHT * TILE_HEIGHT &&
-      y_1 <= (this->y + 1) * CHUNK_HEIGHT * TILE_HEIGHT) {
-    // Add to draw pool
-    if (!is_drawing) {
-      setDrawEnabled(true);
-    }
-    return true;
+  const int in_range = x_2 >= (this->x) * CHUNK_WIDTH * TILE_WIDTH &&
+                       x_1 <= (this->x + 1) * CHUNK_WIDTH * TILE_WIDTH &&
+                       y_2 >= (this->y) * CHUNK_HEIGHT * TILE_HEIGHT &&
+                       y_1 <= (this->y + 1) * CHUNK_HEIGHT * TILE_HEIGHT;
+
+  // Add to draw pool
+  if (in_range && !is_drawing) {
+    setDrawEnabled(true);
   }
+
   // Remove from draw pool
-  else if (is_drawing) {
+  if (!in_range && is_drawing) {
     setDrawEnabled(false);
   }
 
-  return false;
+  return in_range;
 }
 
 void Chunk::tick() {
@@ -282,18 +279,24 @@ void Chunk::generate() {
       const int t_y = (t + y * CHUNK_HEIGHT) * TILE_HEIGHT;
 
       this->temperature[i][t] =
-          sn_t->fractal(
-              10, Chunk::seed % 897 + (float)(i + x * CHUNK_WIDTH) / 100.0f,
-              Chunk::seed % 897 + (float)(t + y * CHUNK_HEIGHT) / 100.0f) *
+          sn_t->fractal(10,
+                        Chunk::seed % 897 +
+                            static_cast<float>(i + x * CHUNK_WIDTH) / 100.0f,
+                        Chunk::seed % 897 +
+                            static_cast<float>(t + y * CHUNK_HEIGHT) / 100.0f) *
           64;
       this->rainfall[i][t] =
-          sn_r->fractal(
-              10, Chunk::seed % 477 + (float)(i + x * CHUNK_WIDTH) / 100.0f,
-              Chunk::seed % 477 + (float)(t + y * CHUNK_HEIGHT) / 100.0f) *
+          sn_r->fractal(10,
+                        Chunk::seed % 477 +
+                            static_cast<float>(i + x * CHUNK_WIDTH) / 100.0f,
+                        Chunk::seed % 477 +
+                            static_cast<float>(t + y * CHUNK_HEIGHT) / 100.0f) *
           64;
       this->height[i][t] =
-          sn_h->fractal(10, Chunk::seed + (float)(i + x * CHUNK_WIDTH) / 100.0f,
-                        Chunk::seed + (float)(t + y * CHUNK_HEIGHT) / 100.0f) *
+          sn_h->fractal(
+              10,
+              Chunk::seed + static_cast<float>(i + x * CHUNK_WIDTH) / 100.0f,
+              Chunk::seed + static_cast<float>(t + y * CHUNK_HEIGHT) / 100.0f) *
           64;
 
       // High rainfall

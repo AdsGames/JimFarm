@@ -1,5 +1,5 @@
-#ifndef TILEMAP_H
-#define TILEMAP_H
+#ifndef SRC_TILEMAP_H_
+#define SRC_TILEMAP_H_
 
 #define M_PI 3.14159265
 
@@ -58,4 +58,4 @@ class TileMap {
   int height;
 };
 
-#endif  // TILEMAP_H
+#endif  // SRC_TILEMAP_H_

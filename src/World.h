@@ -1,5 +1,5 @@
-#ifndef TILE_MAP_H
-#define TILE_MAP_H
+#ifndef SRC_WORLD_H_
+#define SRC_WORLD_H_
 
 #include <allegro.h>
 
@@ -65,4 +65,4 @@ class World {
   Messenger* map_messages;
 };
 
-#endif  // TILE_MAP_H
+#endif  // SRC_WORLD_H_

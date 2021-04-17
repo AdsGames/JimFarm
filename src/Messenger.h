@@ -5,8 +5,8 @@
   A simple messenger system that stores messages
   and draws them when requested.
 */
-#ifndef MESSENGER_H
-#define MESSENGER_H
+#ifndef SRC_MESSENGER_H_
+#define SRC_MESSENGER_H_
 
 #include <allegro.h>
 #include <string>
@@ -27,7 +27,6 @@ class Messenger {
 
   void pushMessage(std::string new_message);
 
- protected:
  private:
   bool topDown;
   unsigned int max_size;
@@ -39,4 +38,4 @@ class Messenger {
   std::vector<std::string> msgs;
 };
 
-#endif  // MESSENGER_H
+#endif  // SRC_MESSENGER_H_

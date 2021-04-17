@@ -1,5 +1,5 @@
-#ifndef UI_ELEMENT_H
-#define UI_ELEMENT_H
+#ifndef SRC_UI_UI_ELEMENT_H_
+#define SRC_UI_UI_ELEMENT_H_
 
 #include <allegro.h>
 
@@ -23,4 +23,4 @@ class UI_Element {
   int width, height;
 };
 
-#endif  // UI_ELEMENT_H
+#endif  // SRC_UI_UI_ELEMENT_H_

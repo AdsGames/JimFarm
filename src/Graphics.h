@@ -1,5 +1,5 @@
-#ifndef SPRITEDRAW_H
-#define SPRITEDRAW_H
+#ifndef SRC_GRAPHICS_H_
+#define SRC_GRAPHICS_H_
 
 #include <vector>
 
@@ -28,6 +28,9 @@ class Graphics {
   // Should sort on add
   bool should_sort;
 
+  // Needs a sort
+  bool need_sort;
+
   // Sort
   void sort();
 
@@ -38,4 +41,4 @@ class Graphics {
   static Graphics* instance;
 };
 
-#endif  // SPRITEDRAW_H
+#endif  // SRC_GRAPHICS_H_

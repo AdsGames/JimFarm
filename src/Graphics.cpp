@@ -1,6 +1,7 @@
 #include "Graphics.h"
 
 #include <algorithm>
+#include <utility>
 
 Graphics* Graphics::instance = nullptr;
 
@@ -10,6 +11,7 @@ bool sortDrawableByZ(Sprite* A, Sprite* B) {
 
 Graphics::Graphics() {
   should_sort = false;
+  need_sort = false;
 }
 
 // Get instance
@@ -25,9 +27,14 @@ void Graphics::add(Sprite* sprite) {
   if (!sprite) {
     return;
   }
+
   sprites.push_back(sprite);
-  if (should_sort)
+
+  if (should_sort) {
     sort();
+  } else {
+    need_sort = true;
+  }
 }
 
 // Remove sprites
@@ -35,8 +42,22 @@ void Graphics::remove(Sprite* sprite) {
   if (!sprite) {
     return;
   }
-  sprites.erase(std::remove(sprites.begin(), sprites.end(), sprite),
-                sprites.end());
+
+  auto it = std::find(sprites.begin(), sprites.end(), sprite);
+
+  if (it == sprites.end()) {
+    return;
+  }
+
+  // Use back-swapping
+  *it = std::move(sprites.back());
+  sprites.pop_back();
+
+  if (should_sort) {
+    sort();
+  } else {
+    need_sort = true;
+  }
 }
 
 // Sort sprites
@@ -50,7 +71,9 @@ void Graphics::disableSort() {
 
 void Graphics::enableSort() {
   should_sort = true;
-  sort();
+  if (need_sort) {
+    sort();
+  }
 }
 
 void Graphics::draw(BITMAP* buffer, int x_1, int y_1, int x_2, int y_2) {

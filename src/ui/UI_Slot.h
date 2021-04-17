@@ -1,5 +1,5 @@
-#ifndef UI_SLOT_H
-#define UI_SLOT_H
+#ifndef SRC_UI_UI_SLOT_H_
+#define SRC_UI_UI_SLOT_H_
 
 #define SLOT_SIZE 16
 
@@ -12,17 +12,17 @@ class UI_Slot : public UI_Element {
  public:
   UI_Slot(int x, int y);
   UI_Slot(int x, int y, ItemStack* stk);
-  virtual ~UI_Slot(){};
+  virtual ~UI_Slot() {}
 
   void bindStack(ItemStack* stk);
 
   ItemStack* getStack();
 
-  virtual void draw(BITMAP* buffer, int parent_x, int parent_y) override;
+  void draw(BITMAP* buffer, int parent_x, int parent_y) override;
 
  protected:
  private:
   ItemStack* stkptr;
 };
 
-#endif  // UI_SLOT_H
+#endif  // SRC_UI_UI_SLOT_H_

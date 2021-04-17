@@ -1,5 +1,5 @@
-#ifndef INVENTORY_H
-#define INVENTORY_H
+#ifndef SRC_INVENTORY_H_
+#define SRC_INVENTORY_H_
 
 #include <vector>
 
@@ -29,4 +29,4 @@ class Inventory {
   std::vector<ItemStack*> contents;
 };
 
-#endif  // INVENTORY_H
+#endif  // SRC_INVENTORY_H_

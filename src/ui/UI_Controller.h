@@ -1,5 +1,7 @@
-#ifndef UI_CONTROLLER_H
-#define UI_CONTROLLER_H
+#ifndef SRC_UI_UI_CONTROLLER_H_
+#define SRC_UI_UI_CONTROLLER_H_
+
+#include <vector>
 
 #include "../Inventory.h"
 #include "../World.h"
@@ -18,7 +20,6 @@ class UI_Controller {
 
   Inventory* getInventory();
 
- protected:
  private:
   UI_Element* elementAt(int x, int y);
 
@@ -35,4 +36,4 @@ class UI_Controller {
   int currently_bound;
 };
 
-#endif  // UI_CONTROLLER_H
+#endif  // SRC_UI_UI_CONTROLLER_H_

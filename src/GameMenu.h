@@ -1,5 +1,5 @@
-#ifndef GAME_MENU_H
-#define GAME_MENU_H
+#ifndef SRC_GAMEMENU_H_
+#define SRC_GAMEMENU_H_
 
 #include "State.h"
 
@@ -10,8 +10,9 @@ class GameMenu : public State {
 
   void loadData();
   void trigger();
-  virtual void update(StateEngine* engine) override;
-  virtual void draw(BITMAP* tempImage) override;
+
+  void update(StateEngine* engine) override;
+  void draw(BITMAP* tempImage) override;
 
  private:
   BITMAP* image_menu;
@@ -19,4 +20,4 @@ class GameMenu : public State {
   int indicator_position;
 };
 
-#endif  // GAME_MENU_H
+#endif  // SRC_GAMEMENU_H_

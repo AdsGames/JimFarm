@@ -1,5 +1,5 @@
-#ifndef CHARACTER_H
-#define CHARACTER_H
+#ifndef SRC_CHARACTER_H_
+#define SRC_CHARACTER_H_
 
 #define HOTBAR_SIZE 8
 
@@ -105,4 +105,4 @@ class Character : public Sprite {
   friend class CharacterForeground;
 };
 
-#endif  // CHARACTER_H
+#endif  // SRC_CHARACTER_H_

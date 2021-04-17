@@ -148,6 +148,7 @@ void TileMap::removeItem(MapItem* item) {
 
 // Update chunks
 void TileMap::tick(int x_1, int y_1, int x_2, int y_2) {
+  Graphics::Instance()->disableSort();
   for (auto const& chunk : chunks) {
     for (auto const& chunk2 : chunk) {
       if (chunk2->getInRange(x_1, y_1, x_2, y_2)) {
@@ -155,13 +156,14 @@ void TileMap::tick(int x_1, int y_1, int x_2, int y_2) {
       }
     }
   }
+  Graphics::Instance()->enableSort();
 }
 
 // Generate map
 void TileMap::generateMap() {
   // Base map
-  width = 5;
-  height = 5;
+  width = 10;
+  height = 10;
 
   // Generating chunk
   std::cout << "Generating World (" << width << "," << height << ")...  ";
