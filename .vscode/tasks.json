@@ -6,12 +6,32 @@
     {
       "label": "Build",
       "type": "shell",
-      "detail": "Run and build jim farm",
-      "windows": {
-        "command": "make -j24 && cd build && JimFarm.exe"
-      },
+      "detail": "Build Jim farm",
+      "command": "make -j24",
       "group": "build",
       "problemMatcher": "$gcc"
+    },
+    {
+      "label": "Run",
+      "type": "shell",
+      "detail": "Run Jim farm",
+      "windows": {
+        "command": "cd build && JimFarm.exe"
+      },
+      "linux": {
+        "command": "cd build && ./JimFarm",
+        "options": {
+          "env": {
+            "DISPLAY": ":0"
+          }
+        }
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": "$gcc",
+      "dependsOn": "Build"
     }
   ]
 }

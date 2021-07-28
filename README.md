@@ -56,7 +56,7 @@ make
 #### Install Libraries
 
 ```bash
-sudo apt-get install liballegro4-dev libloadpng4-dev liblogg4-dev
+sudo apt install liblogg4-dev libloadpng4-dev liballegro4-dev libpng-dev nlohmann-json3-dev
 ```
 
 #### Build
@@ -67,4 +67,10 @@ cmake -G "Unix Makefiles" .
 
 ```bash
 make
+```
+
+#### WSL Running
+
+```bash
+C:\Windows\System32\wslg.exe ~ -d Ubuntu-20.04 /home/allan/github/JimFarm/build/JimFarm
 ```
