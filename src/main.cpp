@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
   nanoseconds lag(0ns);
   auto time_start = clock::now();
 
-  while (!asw::input::keyboard.down[SDL_SCANCODE_ESCAPE] && !asw::core::exit) {
+  while (!asw::core::exit) {
     auto delta_time = clock::now() - time_start;
     time_start = clock::now();
     lag += duration_cast<nanoseconds>(delta_time);

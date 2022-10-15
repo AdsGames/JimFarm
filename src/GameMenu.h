@@ -6,7 +6,6 @@
 class GameMenu : public State {
  public:
   GameMenu();
-  virtual ~GameMenu();
 
   void loadData();
   void trigger();
@@ -17,7 +16,7 @@ class GameMenu : public State {
  private:
   asw::Texture image_menu;
 
-  int indicator_position;
+  int indicator_position{0};
 };
 
 #endif  // SRC_GAMEMENU_H_

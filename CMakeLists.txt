@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+include(FetchContent)
+
 project (JimFarm)
 
 # Source code
@@ -14,6 +16,9 @@ file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h ${CMAKE_CURRENT_SO
 add_executable (${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
+
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
+FetchContent_MakeAvailable(json)
 
 target_include_directories(
   ${PROJECT_NAME} PRIVATE
@@ -30,7 +35,6 @@ if(NOT EMSCRIPTEN)
   find_library(SDL_GFX_LIBRARY NAMES SDL2_gfx REQUIRED)
   find_library(SDL_MAIN_LIBRARY NAMES SDL2main REQUIRED)
 endif(NOT EMSCRIPTEN)
-
 
 # Link Libs
 # Emscripten support
@@ -58,6 +62,7 @@ if(EMSCRIPTEN)
     -sSDL2_IMAGE_FORMATS=["png"] 
     -sDEMANGLE_SUPPORT=1
     -sTOTAL_MEMORY=512MB
+    nlohmann_json::nlohmann_json
   )
   set_target_properties(
     ${PROJECT_NAME} 
@@ -80,6 +85,7 @@ else(EMSCRIPTEN)
     ${SDL_IMAGE_LIBRARY} 
     ${SDL_TTF_LIBRARY} 
     ${SDL_GFX_LIBRARY} 
+    nlohmann_json::nlohmann_json
   )
 endif(EMSCRIPTEN)
 

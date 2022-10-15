@@ -4,10 +4,7 @@
 
 GameMenu::GameMenu() {
   image_menu = asw::assets::loadTexture("assets/images/game_menu.png");
-  indicator_position = 0;
 }
-
-GameMenu::~GameMenu() {}
 
 void GameMenu::update(StateEngine* engine) {
   // Change cursor location
@@ -32,6 +29,7 @@ void GameMenu::update(StateEngine* engine) {
     }
     // Save
     else if (indicator_position == 1) {
+      // Cant do this yet!
     }
     // Exit
     else {
@@ -43,10 +41,8 @@ void GameMenu::update(StateEngine* engine) {
 // Draw menu
 void GameMenu::draw() {
   asw::draw::sprite(image_menu, 0, 0);
-  asw::draw::rectFill(84, 58 + (indicator_position * 17), 84 + 9,
-                      58 + (indicator_position * 17) + 9,
+  asw::draw::rectFill(84, 58 + (indicator_position * 17), 9, 9,
                       asw::util::makeColor(0, 0, 0));
-  asw::draw::rectFill(136, 58 + (indicator_position * 17), 136 + 9,
-                      58 + (indicator_position * 17) + 9,
+  asw::draw::rectFill(136, 58 + (indicator_position * 17), 9, 9,
                       asw::util::makeColor(0, 0, 0));
 }

@@ -51,3 +51,4 @@ docs
 build/
 *.ninja*
 compile_commands.json
+_deps

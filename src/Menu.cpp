@@ -15,7 +15,7 @@ Menu::Menu() {
 
   blip = asw::assets::loadSample("assets/sfx/blip.wav");
 
-  music = asw::assets::loadSample("assets/sfx/farmy.mp3");
+  music = asw::assets::loadSample("assets/sfx/farmy.ogg");
   asw::sound::play(music);
 
   // Load fonts
