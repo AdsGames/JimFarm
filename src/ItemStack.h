@@ -1,7 +1,7 @@
 #ifndef SRC_ITEMSTACK_H_
 #define SRC_ITEMSTACK_H_
 
-#include <allegro.h>
+#include <asw/asw.h>
 #include <vector>
 #include "Item.h"
 
@@ -19,7 +19,7 @@ class ItemStack {
   void add(int quantity);
   void clear();
 
-  void draw(int x, int y, BITMAP* buffer);
+  void draw(int x, int y);
 
  protected:
  private:

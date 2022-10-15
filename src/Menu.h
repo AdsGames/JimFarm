@@ -1,7 +1,7 @@
 #ifndef SRC_MENU_H_
 #define SRC_MENU_H_
 
-#include <allegro.h>
+#include <asw/asw.h>
 #include <vector>
 
 #include "State.h"
@@ -9,43 +9,47 @@
 #include "Character.h"
 #include "Tile.h"
 
+enum class MenuState {
+  MAIN_MENU,
+  HELP,
+  OPTIONS,
+  STORY,
+};
+
 class Menu : public State {
  public:
   Menu();
-  virtual ~Menu();
+  virtual ~Menu(){};
 
-  void draw(BITMAP* tempBitmap) override;
+  void draw() override;
 
   void update(StateEngine* engine) override;
 
  private:
-  void drawSlider(BITMAP* tempBitmap,
-                  int x,
-                  int y,
-                  int value,
-                  std::string title);
+  void drawSlider(int x, int y, int value, std::string title);
 
-  int tick;
-  int coin_frame;
-  bool coin_direction;
-  int indicator_location;
-  int music_volume;
+  int tick{0};
+  int coin_frame{0};
+  bool coin_direction{false};
+  int indicator_location{4};
+  int music_volume{100};
 
   // Fonts
-  FONT* pixelart;
+  asw::Font pixelart;
 
-  BITMAP* menu_image;
-  BITMAP* story_image;
-  BITMAP* help_image;
-  BITMAP* options_image;
-  BITMAP* coin_flip;
-  BITMAP* options_slider;
-  BITMAP* options_slidee;
-  BITMAP* options_indicator;
+  asw::Texture menu_image;
+  asw::Texture story_image;
+  asw::Texture help_image;
+  asw::Texture options_image;
+  asw::Texture coin_flip;
+  asw::Texture options_slider;
+  asw::Texture options_slidee;
+  asw::Texture options_indicator;
 
-  SAMPLE* blip;
+  asw::Sample music;
+  asw::Sample blip;
 
-  int state;
+  MenuState state{MenuState::MAIN_MENU};
 };
 
 #endif  // SRC_MENU_H_

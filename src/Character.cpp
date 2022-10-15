@@ -1,10 +1,7 @@
 #include "Character.h"
 
 #include <math.h>
-#include <iostream>
 
-#include "utility/KeyListener.h"
-#include "utility/MouseListener.h"
 #include "utility/Tools.h"
 
 #include "manager/interface_defs.h"
@@ -22,16 +19,13 @@ CharacterForeground::CharacterForeground(Character* charPtr) : Sprite(0, 0, 5) {
   Graphics::Instance()->add(this);
 }
 
-void CharacterForeground::draw(BITMAP* tempBuffer,
-                               float x_1,
-                               float y_1,
-                               float x_2,
-                               float y_2) {
+void CharacterForeground::draw(float x_1, float y_1, float x_2, float y_2) {
   this->x = char_ptr->x;
   this->y = char_ptr->y;
-  masked_blit(char_ptr->image, tempBuffer, floor(char_ptr->ani_ticker / 4) * 16,
-              (char_ptr->direction - 1) * 20, x - char_ptr->map_pointer->getX(),
-              y - char_ptr->map_pointer->getY() - 8, 16, 8);
+  asw::draw::stretchSpriteBlit(
+      char_ptr->image, floor(char_ptr->ani_ticker / 4) * 16,
+      (char_ptr->direction - 1) * 20, 16, 8, x - char_ptr->map_pointer->getX(),
+      y - char_ptr->map_pointer->getY() - 8, 16, 8);
 }
 
 // Ctor for character
@@ -61,21 +55,19 @@ void Character::setWorld(World* newTileMap) {
 // Set image
 void Character::loadData() {
   // Images
-  image = loadBitmap("images/character_1.png");
-  inventory_gui = loadBitmap("images/GUI_INVENTORY.png");
-  indicator = loadBitmap("images/indicator.png");
-  indicator_2 = loadBitmap("images/indicator_2.png");
-  coin = loadBitmap("images/coin.png");
+  image = asw::assets::loadTexture("assets/images/character_1.png");
+  inventory_gui = asw::assets::loadTexture("assets/images/GUI_INVENTORY.png");
+  indicator = asw::assets::loadTexture("assets/images/indicator.png");
+  coin = asw::assets::loadTexture("assets/images/coin.png");
 
   // Sounds
-  pickup = loadSample("sfx/pickup.wav");
-  drop = loadSample("sfx/drop.wav");
-  step[0] = loadSample("sfx/step_1.wav");
-  step[1] = loadSample("sfx/step_2.wav");
+  pickup = asw::assets::loadSample("assets/sfx/pickup.wav");
+  drop = asw::assets::loadSample("assets/sfx/drop.wav");
+  step[0] = asw::assets::loadSample("assets/sfx/step_1.wav");
+  step[1] = asw::assets::loadSample("assets/sfx/step_2.wav");
 
   // Load fonts
-  pixelart = loadFont("fonts/pixelart_condensed.pcx");
-  font = pixelart;
+  pixelart = asw::assets::loadFont("assets/fonts/pixelart.ttf", 12);
 
   inventory_ui = InterfaceTypeManager::getInterfaceById(0);
 
@@ -86,87 +78,75 @@ void Character::loadData() {
   character_inv->addItem(new Item(ITEM_SHOVEL), 1);
   character_inv->addItem(new Item(ITEM_HOE), 1);
   character_inv->addItem(new Item(ITEM_BERRY_SEED), 4);
+  character_inv->addItem(new Item(ITEM_WATERING_CAN), 1);
 }
 
 // Draw character to screen
-void Character::draw(BITMAP* tempBuffer,
-                     float x_1,
-                     float y_1,
-                     float x_2,
-                     float y_2) {
+void Character::draw(float x_1, float y_1, float x_2, float y_2) {
+  auto screenSize = asw::display::getLogicalSize();
+
   // Indicator
   indicator_x =
-      mouse_x * ((map_pointer->VIEWPORT_WIDTH / map_pointer->VIEWPORT_ZOOM) /
-                 SCREEN_W) +
-      map_pointer->getX();
+      asw::input::mouse.x / map_pointer->VIEWPORT_ZOOM + map_pointer->getX();
   indicator_y =
-      mouse_y * ((map_pointer->VIEWPORT_HEIGHT / map_pointer->VIEWPORT_ZOOM) /
-                 SCREEN_H) +
-      map_pointer->getY();
+      asw::input::mouse.y / map_pointer->VIEWPORT_ZOOM + map_pointer->getY();
 
   // Cursor
-  rectfill(tempBuffer, indicator_x - map_pointer->getX(),
-           indicator_y - map_pointer->getY(),
-           indicator_x + 2 - map_pointer->getX(),
-           indicator_y + 2 - map_pointer->getY(), makecol(255, 255, 255));
+  asw::draw::rectFill(indicator_x - map_pointer->getX(),
+                      indicator_y - map_pointer->getY(), 2, 2,
+                      asw::util::makeColor(255, 255, 255));
 
   indicator_x -= indicator_x % 16;
   indicator_y -= indicator_y % 16;
 
   // Only item if hands arent empty
-  draw_trans_sprite(tempBuffer, indicator, indicator_x - map_pointer->getX(),
+  asw::draw::sprite(indicator, indicator_x - map_pointer->getX(),
                     indicator_y - map_pointer->getY());
 
   // Draw frame
-  masked_blit(image, tempBuffer, floor(ani_ticker / 4) * 16,
-              (direction - 1) * 20, x - map_pointer->getX(),
-              y - map_pointer->getY() - 8, 16, 20);
+  asw::draw::stretchSpriteBlit(
+      image, floor(ani_ticker / 4) * 16, (direction - 1) * 20, 16, 20,
+      x - map_pointer->getX(), y - map_pointer->getY() - 8, 16, 20);
 
   // Selected item
   if (character_inv->getStack(selected_item)->getItem()) {
     character_inv->getStack(selected_item)
         ->getItem()
-        ->draw(x - map_pointer->getX(), y - map_pointer->getY(), tempBuffer);
+        ->draw(x - map_pointer->getX(), y - map_pointer->getY());
   }
 }
 
 // Update player
-void Character::drawInventory(BITMAP* tempBuffer) {
-  const int draw_x = (tempBuffer->w - HOTBAR_SIZE * 18) / 2;
-  const int draw_y = tempBuffer->h - 20;
+void Character::drawInventory() {
+  auto screenSize = asw::display::getLogicalSize();
+  const int draw_x = (screenSize.x - HOTBAR_SIZE * 18) / 2;
+  const int draw_y = screenSize.y - 20;
 
   // Draw items
   for (int i = 0; i < HOTBAR_SIZE; i++) {
-    draw_sprite(tempBuffer, inventory_gui, 18 * i + draw_x, draw_y);
+    asw::draw::sprite(inventory_gui, 18 * i + draw_x, draw_y);
     if (i == selected_item)
-      draw_sprite(tempBuffer, indicator, 18 * i + 1 + draw_x, 1 + draw_y);
+      asw::draw::sprite(indicator, 18 * i + 1 + draw_x, 1 + draw_y);
     if (character_inv->getStack(i)) {
-      character_inv->getStack(i)->draw(18 * i + 1 + draw_x, 1 + draw_y,
-                                       tempBuffer);
-      if (i == selected_item && character_inv->getStack(i)->getItem())
-        textprintf_ex(tempBuffer, pixelart, 1 + draw_x, 21 + draw_y,
-                      makecol(255, 255, 255), -1,
-                      character_inv->getStack(i)->getItem()->getName().c_str());
+      character_inv->getStack(i)->draw(18 * i + 1 + draw_x, 1 + draw_y);
+      if (i == selected_item && character_inv->getStack(i)->getItem()) {
+        asw::draw::text(
+            pixelart, character_inv->getStack(i)->getItem()->getName(),
+            1 + draw_x, 21 + draw_y, asw::util::makeColor(255, 255, 255));
+      }
     }
   }
 
-  // Only item if hands arent empty
-  draw_trans_sprite(tempBuffer, indicator_2, indicator_x - map_pointer->getX(),
-                    indicator_y - map_pointer->getY());
-
   // Draw UI
   if (ui_open && attatched_ui) {
-    attatched_ui->draw(tempBuffer);
+    attatched_ui->draw();
   }
 }
 
 // Update player
 void Character::update() {
-  // Ask joystick for keys
-  poll_joystick();
-
   // Open UI
-  if (KeyListener::keyPressed[KEY_E]) {
+  if (asw::input::keyboard.pressed[SDL_SCANCODE_E]) {
     if (ui_open) {
       ui_open = false;
       attatched_ui = nullptr;
@@ -176,7 +156,7 @@ void Character::update() {
     }
   }
 
-  if (KeyListener::keyPressed[KEY_G]) {
+  if (asw::input::keyboard.pressed[SDL_SCANCODE_G]) {
     if (ui_open) {
       ui_open = false;
       attatched_ui = nullptr;
@@ -189,26 +169,30 @@ void Character::update() {
   // UI Open
   if (ui_open && attatched_ui != nullptr) {
     // Update UI
-    attatched_ui->update(map_pointer);
+    attatched_ui->update();
     return;
   }
 
   // Oh
   // Snap
-  if (x % 16 == 0 && y % 16 == 0)
+  if (x % 16 == 0 && y % 16 == 0) {
     moving = false;
+  }
 
   // Selector
-  if (KeyListener::keyPressed[KEY_Z] || MouseListener::mouse_z_change > 0)
+  if (asw::input::keyboard.pressed[SDL_SCANCODE_Z] || asw::input::mouse.z > 0) {
     selected_item = (selected_item + (HOTBAR_SIZE - 1)) % HOTBAR_SIZE;
-  if (KeyListener::keyPressed[KEY_X] || MouseListener::mouse_z_change < 0)
+  }
+  if (asw::input::keyboard.pressed[SDL_SCANCODE_X] || asw::input::mouse.z < 0) {
     selected_item = (selected_item + 1) % HOTBAR_SIZE;
+  }
 
   // Movement code
   // Move
   if (!moving) {
     // Up
-    if (key[KEY_UP] || key[KEY_W] || joy[0].stick[0].axis[1].d1) {
+    if (asw::input::keyboard.down[SDL_SCANCODE_UP] ||
+        asw::input::keyboard.down[SDL_SCANCODE_W]) {
       direction = DIR_UP;
       if (!map_pointer->world_map->isSolidAt(x, y - 16)) {
         moving = true;
@@ -216,7 +200,8 @@ void Character::update() {
       }
     }
     // Down
-    else if (key[KEY_DOWN] || key[KEY_S] || joy[0].stick[0].axis[1].d2) {
+    else if (asw::input::keyboard.down[SDL_SCANCODE_DOWN] ||
+             asw::input::keyboard.down[SDL_SCANCODE_S]) {
       direction = DIR_DOWN;
       if (!map_pointer->world_map->isSolidAt(x, y + 16)) {
         moving = true;
@@ -224,7 +209,8 @@ void Character::update() {
       }
     }
     // Left
-    else if (key[KEY_LEFT] || key[KEY_A] || joy[0].stick[0].axis[0].d1) {
+    else if (asw::input::keyboard.down[SDL_SCANCODE_LEFT] ||
+             asw::input::keyboard.down[SDL_SCANCODE_A]) {
       direction = DIR_LEFT;
       if (!map_pointer->world_map->isSolidAt(x - 16, y)) {
         moving = true;
@@ -232,7 +218,8 @@ void Character::update() {
       }
     }
     // Right
-    else if (key[KEY_RIGHT] || key[KEY_D] || joy[0].stick[0].axis[0].d2) {
+    else if (asw::input::keyboard.down[SDL_SCANCODE_RIGHT] ||
+             asw::input::keyboard.down[SDL_SCANCODE_D]) {
       direction = DIR_RIGHT;
       if (!map_pointer->world_map->isSolidAt(x + 16, y)) {
         moving = true;
@@ -241,8 +228,9 @@ void Character::update() {
     }
 
     // Walk sounds
-    if (moving)
-      play_sample(step[sound_step], 50, 125, 1300, 0);
+    if (moving) {
+      asw::sound::play(step[sound_step], 50, 125);
+    }
   }
 
   // Update movement
@@ -271,15 +259,15 @@ void Character::update() {
 
   // Pickup
   if (itemAtPos != nullptr) {
-    play_sample(pickup, 255, 125, 1000, 0);
+    asw::sound::play(pickup);
     if (character_inv->addItem(itemAtPos->itemPtr, 1)) {
       map_pointer->world_map->removeItem(itemAtPos);
     }
   }
 
   // Drop
-  if (KeyListener::keyPressed[KEY_F] || MouseListener::mouse_pressed & 2 ||
-      joy[0].button[2].b) {
+  if (asw::input::keyboard.pressed[SDL_SCANCODE_F] ||
+      asw::input::mouse.pressed[3]) {
     Item* itemInHand = nullptr;
     if (character_inv->getStack(selected_item)->getItem()) {
       itemInHand = character_inv->getStack(selected_item)->getItem();
@@ -287,15 +275,15 @@ void Character::update() {
 
     // Drop
     if (itemInHand != nullptr) {
-      play_sample(drop, 255, 125, 1000, 0);
+      asw::sound::play(drop);
       map_pointer->world_map->placeItemAt(itemInHand, indicator_x, indicator_y);
       character_inv->getStack(selected_item)->remove(1);
     }
   }
 
   // Interact with map
-  if (KeyListener::keyPressed[KEY_SPACE] || MouseListener::mouse_pressed & 1 ||
-      joy[0].button[0].b) {
+  if (asw::input::keyboard.pressed[SDL_SCANCODE_SPACE] ||
+      asw::input::mouse.pressed[1]) {
     if (character_inv->getStack(selected_item)->getItem()) {
       map_pointer->interact(indicator_x, indicator_y,
                             character_inv->getStack(selected_item)->getItem());

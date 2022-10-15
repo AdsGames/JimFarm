@@ -21,22 +21,18 @@ int Tile::getHeight() {
 }
 
 // Draw tile to screen
-void Tile::draw(BITMAP* tempBuffer,
-                float x_1,
-                float y_1,
-                float x_2,
-                float y_2) {
+void Tile::draw(float x_1, float y_1, float x_2, float y_2) {
   if (x >= x_1 - tile_pointer->getWidth() &&
       x <= x_2 + tile_pointer->getWidth() &&
       y >= y_1 - tile_pointer->getHeight() &&
       y <= y_2 + tile_pointer->getHeight()) {
-    tile_pointer->draw(x - x_1, y - y_1, tempBuffer, getMeta());
+    tile_pointer->draw(x - x_1, y - y_1, getMeta());
   }
 }
 
 // Draw tile at specific position
-void Tile::draw_at(int newX, int newY, BITMAP* tempBuffer) {
-  tile_pointer->draw(newX, newY, tempBuffer);
+void Tile::draw_at(int newX, int newY) {
+  tile_pointer->draw(newX, newY);
 }
 
 // Is this type solid?

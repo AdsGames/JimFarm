@@ -4,20 +4,15 @@
 #include <time.h>
 #include <iostream>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 #include "Graphics.h"
 #include "Item.h"
 
 #include "manager/tile_defs.h"
 #include "utility/Tools.h"
-
-TileMap::TileMap() {
-  width = 1;
-  height = 1;
-}
-
-TileMap::~TileMap() {
-  // dtor
-}
 
 // Size
 int TileMap::getWidth() {

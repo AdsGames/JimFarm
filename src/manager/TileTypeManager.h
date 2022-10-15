@@ -31,8 +31,8 @@ class TileTypeManager {
   static TileType* getItemById(int tileID);
   static UI_Controller* getInterfaceById(int id);
 
-  static BITMAP* sprite_sheet_tiles;
-  static BITMAP* sprite_sheet_items;
+  static asw::Texture sprite_sheet_tiles;
+  static asw::Texture sprite_sheet_items;
 
  private:
   // Stores all tiles and items

@@ -8,25 +8,25 @@
 #ifndef SOUND_MANAGER_H
 #define SOUND_MANAGER_H
 
-#include <allegro.h>
+#include <asw/asw.h>
 #include <string>
 #include <vector>
 
 /**
  * Wrapper for sample including all parameters
- * That would be passed to play_sample along with
+ * That would be passed to asw::sound::play along with
  * Additional, frequency randomization
  */
 class SampleWrapper {
  public:
-  SampleWrapper(SAMPLE* sample_ptr = NULL,
+  SampleWrapper(asw::Sample sample_ptr = NULL,
                 int vol = 255,
                 int pan = 128,
                 int freq = 1000,
                 int freq_rand = 0,
                 bool loop = false);
 
-  SAMPLE* sample_ptr;
+  asw::Sample sample_ptr;
   int vol;
   int pan;
   int freq;
@@ -40,9 +40,6 @@ class SampleWrapper {
  */
 class SoundManager {
  public:
-  SoundManager(){};
-  ~SoundManager();
-
   // Load tile types
   static int load(std::string path);
 

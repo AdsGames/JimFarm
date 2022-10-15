@@ -1,7 +1,8 @@
 #ifndef SRC_WORLD_H_
 #define SRC_WORLD_H_
 
-#include <allegro.h>
+#include <asw/asw.h>
+#include <asw/util/Timer.h>
 
 #include "Item.h"
 #include "MapItem.h"
@@ -12,10 +13,6 @@
 class World {
  public:
   World();
-  virtual ~World();
-
-  // Init ticker
-  void initTicker();
 
   // Constant
   int timer;
@@ -29,7 +26,7 @@ class World {
   float VIEWPORT_ZOOM;
 
   // Drawing
-  void draw(BITMAP* tempBuffer);
+  void draw();
 
   void loadImages();
 
@@ -55,11 +52,11 @@ class World {
   int x, y;
 
   // Buffer that holds whole map image
-  BITMAP *map_buffer, *overlay_buffer;
+  asw::Texture map_buffer;
+  asw::Texture overlay_buffer;
 
   // Ticker for world
-  static volatile int ticks;
-  static void tickCounter();
+  Timer ticker;
 
   // Messager
   Messenger* map_messages;

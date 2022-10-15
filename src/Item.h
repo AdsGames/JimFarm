@@ -14,7 +14,7 @@ class Item {
   ~Item();
 
   // Draw to screen
-  void draw(int x, int y, BITMAP* buffer);
+  void draw(int x, int y);
 
   // Get value of item
   unsigned char getValue();

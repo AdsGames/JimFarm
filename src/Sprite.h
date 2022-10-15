@@ -1,19 +1,14 @@
 #ifndef SRC_SPRITE_H_
 #define SRC_SPRITE_H_
 
-#include <allegro.h>
+#include <asw/asw.h>
 
 class Sprite {
  public:
   Sprite();
   Sprite(int x, int y, int z);
-  virtual ~Sprite();
 
-  virtual void draw(BITMAP* tempBuffer,
-                    float x_1,
-                    float y_1,
-                    float x_2,
-                    float y_2) = 0;
+  virtual void draw(float x_1, float y_1, float x_2, float y_2) = 0;
 
   void setZ(int z);
 

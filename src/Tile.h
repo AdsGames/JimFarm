@@ -25,12 +25,8 @@ class Tile : public Sprite {
   int getHeight();
 
   // Drawing
-  virtual void draw(BITMAP* tempBuffer,
-                    float x_1,
-                    float y_1,
-                    float x_2,
-                    float y_2);
-  void draw_at(int newX, int newY, BITMAP* tempBuffer);
+  void draw(float x_1, float y_1, float x_2, float y_2) override;
+  void draw_at(int newX, int newY);
 
   // Is this type solid?
   bool isSolid();

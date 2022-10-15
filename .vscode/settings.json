@@ -71,6 +71,9 @@
     "cinttypes": "cpp",
     "typeindex": "cpp",
     "typeinfo": "cpp",
-    "variant": "cpp"
-  }
+    "variant": "cpp",
+    "codecvt": "cpp",
+    "numbers": "cpp"
+  },
+  "sonarlint.pathToCompileCommands": "${workspaceFolder}\\compile_commands.json"
 }

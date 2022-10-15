@@ -7,7 +7,7 @@
 #ifndef TILE_TYPE_H
 #define TILE_TYPE_H
 
-#include <allegro.h>
+#include <asw/asw.h>
 #include <string>
 
 class TileType {
@@ -18,7 +18,6 @@ class TileType {
            std::string newName = "",
            int newAttribute = 0,
            unsigned char newValue = 0);
-  virtual ~TileType();
 
   // Get type
   unsigned char getID() const { return id; }
@@ -37,14 +36,10 @@ class TileType {
   unsigned char getValue() const { return value; }
 
   // Draw
-  void draw(int x,
-            int y,
-            BITMAP* tempBuffer,
-            unsigned char meta = 0,
-            char offset = 0);
+  void draw(int x, int y, unsigned char meta = 0, char offset = 0);
 
   // Set sprite sheet
-  void setSpriteSheet(BITMAP* newSpriteSheet);
+  void setSpriteSheet(asw::Texture newSpriteSheet);
 
   // Set special image stuff
   void setImageType(std::string newImageType,
@@ -75,9 +70,9 @@ class TileType {
 
   unsigned char num_images;
 
-  BITMAP* sprite_sheet;
+  asw::Texture sprite_sheet;
 
-  BITMAP* images[16];
+  asw::Texture images[16];
 };
 
 #endif  // TILE_TYPE_H

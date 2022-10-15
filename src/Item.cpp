@@ -12,9 +12,9 @@ Item::Item(char newID, unsigned char meta) {
 Item::~Item() {}
 
 // Draw item to screen
-void Item::draw(int x, int y, BITMAP* buffer) {
+void Item::draw(int x, int y) {
   if (item_pointer)
-    item_pointer->draw(x, y, buffer, getMeta());
+    item_pointer->draw(x, y, getMeta());
 }
 
 // Get value of item

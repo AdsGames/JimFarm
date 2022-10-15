@@ -4,67 +4,43 @@ Our submission to ToJam 11.
 
 A massive procedurally generated world in which you can set up a farm and collect resources.
 
-## Getting started
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=AdsGames_JimFarm&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=AdsGames_JimFarm)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=AdsGames_JimFarm&metric=bugs)](https://sonarcloud.io/summary/new_code?id=AdsGames_JimFarm)
+
+## Demo
+
+[Web Demo](https://adsgames.github.io/Memory/)
+
+## Setup
 
 ### Windows (MSYS2)
 
-#### Install Libraries (MSYS 2)
-
 ```bash
-https://www.allegro.cc/files/?v=4.4
+pacman -S mingw-w64-i686-gcc-libs mingw-w64-i686-SDL2 mingw-w64-i686-SDL2_mixer mingw-w64-i686-SDL2_image mingw-w64-i686-SDL2_ttf mingw-w64-i686-SDL2_gfx
 ```
 
-```bash
-pacman -S mingw-w64-i686-nlohmann-json
-```
-
-#### Build
+### Mac OS
 
 ```bash
-cmake -G "MSYS Makefiles" .
-```
-
-```bash
-make
-```
-
-### Mac OS (Brew)
-
-#### Install Libraries
-
-```bash
-https://github.com/msikma/liballeg.4.4.2-osx
-```
-
-```bash
-brew tap nlohmann/json
-brew install nlohmann-json
-```
-
-#### Build
-
-```bash
-cmake -G "Unix Makefiles" .
-```
-
-```bash
-make
+brew install sdl2 sdl2_image sdl2_gfx sdl2_ttf sdl2_mixer
 ```
 
 ### Linux
 
-#### Install Libraries
-
 ```bash
-sudo apt-get install liballegro4-dev libloadpng4-dev liblogg4-dev
+sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev libsdl2-gfx-dev
 ```
 
-#### Build
+### Build
 
 ```bash
-cmake -G "Unix Makefiles" .
+cmake .
+make
 ```
 
+### Build Emscripten
+
 ```bash
+emcmake cmake .
 make
 ```

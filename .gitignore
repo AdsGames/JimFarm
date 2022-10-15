@@ -48,5 +48,7 @@ Makefile
 install_manifest.txt
 bin
 docs
-lib
-build/JimFarm*
+build/
+*.ninja*
+compile_commands.json
+_deps

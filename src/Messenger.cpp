@@ -3,18 +3,17 @@
 Messenger::Messenger(int listSize,
                      bool topDown,
                      int padding,
-                     int font_col,
-                     int bg_col) {
-  this->max_size = listSize;
-  this->topDown = topDown;
-  this->padding = padding;
-  this->font_col = font_col;
-  this->bg_col = bg_col;
+                     asw::Color font_col,
+                     asw::Color bg_col)
+    : max_size(listSize),
+      topDown(topDown),
+      padding(padding),
+      font_col(font_col),
+      bg_col(bg_col) {
+  pixelart = asw::assets::loadFont("assets/fonts/pixelart.ttf", 8);
 }
 
-Messenger::~Messenger() {}
-
-void Messenger::setColors(int font_col, int bg_col) {
+void Messenger::setColors(asw::Color font_col, asw::Color bg_col) {
   this->font_col = font_col;
   this->bg_col = bg_col;
 }
@@ -29,16 +28,18 @@ unsigned int Messenger::messageCount() {
   return msgs.size();
 }
 
-void Messenger::draw(BITMAP* buffer, int x, int y) {
+void Messenger::draw(int x, int y) {
   int offset = 0;
   int numMsg = (signed)messageCount();
   for (int i = numMsg - 1; i > -1; i--) {
-    textprintf_ex(buffer, font, x, y + offset, font_col, bg_col, ">%s",
-                  msgs.at(i).c_str());
+    asw::draw::text(pixelart, ">" + msgs.at(i), x, y + offset, font_col);
 
-    if (topDown)
-      offset += text_height(font) + padding;
-    else
-      offset -= text_height(font) + padding;
+    auto fontSize = asw::util::getTextSize(pixelart, " ");
+
+    if (topDown) {
+      offset += fontSize.y + padding;
+    } else {
+      offset -= fontSize.y + padding;
+    }
   }
 }

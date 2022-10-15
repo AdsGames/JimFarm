@@ -1,23 +1,19 @@
 #include "GameMenu.h"
 
-#include "utility/KeyListener.h"
 #include "utility/Tools.h"
 
 GameMenu::GameMenu() {
-  image_menu = loadBitmap("images/game_menu.png");
-  indicator_position = 0;
+  image_menu = asw::assets::loadTexture("assets/images/game_menu.png");
 }
-
-GameMenu::~GameMenu() {}
 
 void GameMenu::update(StateEngine* engine) {
   // Change cursor location
-  if (KeyListener::keyPressed[KEY_DOWN]) {
+  if (asw::input::keyboard.pressed[SDL_SCANCODE_DOWN]) {
     indicator_position++;
     if (indicator_position > 2) {
       indicator_position = 0;
     }
-  } else if (KeyListener::keyPressed[KEY_UP]) {
+  } else if (asw::input::keyboard.pressed[SDL_SCANCODE_UP]) {
     indicator_position--;
     if (indicator_position < 0) {
       indicator_position = 2;
@@ -25,13 +21,15 @@ void GameMenu::update(StateEngine* engine) {
   }
 
   // Select
-  if (key[KEY_SPACE] || key[KEY_ENTER]) {
+  if (asw::input::keyboard.down[SDL_SCANCODE_SPACE] ||
+      asw::input::keyboard.down[SDL_SCANCODE_RETURN]) {
     // Menu
     if (indicator_position == 0) {
       setNextState(engine, StateEngine::STATE_MENU);
     }
     // Save
     else if (indicator_position == 1) {
+      // Cant do this yet!
     }
     // Exit
     else {
@@ -41,10 +39,10 @@ void GameMenu::update(StateEngine* engine) {
 }
 
 // Draw menu
-void GameMenu::draw(BITMAP* tempImage) {
-  draw_sprite(tempImage, image_menu, 0, 0);
-  rectfill(tempImage, 84, 58 + (indicator_position * 17), 84 + 9,
-           58 + (indicator_position * 17) + 9, makecol(0, 0, 0));
-  rectfill(tempImage, 136, 58 + (indicator_position * 17), 136 + 9,
-           58 + (indicator_position * 17) + 9, makecol(0, 0, 0));
+void GameMenu::draw() {
+  asw::draw::sprite(image_menu, 0, 0);
+  asw::draw::rectFill(84, 58 + (indicator_position * 17), 9, 9,
+                      asw::util::makeColor(0, 0, 0));
+  asw::draw::rectFill(136, 58 + (indicator_position * 17), 9, 9,
+                      asw::util::makeColor(0, 0, 0));
 }

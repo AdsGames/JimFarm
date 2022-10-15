@@ -1,8 +1,6 @@
 #ifndef SRC_TILEMAP_H_
 #define SRC_TILEMAP_H_
 
-#define M_PI 3.14159265
-
 #include <string>
 #include <vector>
 
@@ -12,9 +10,6 @@
 
 class TileMap {
  public:
-  TileMap();
-  virtual ~TileMap();
-
   // Size
   int getWidth();
   int getHeight();
@@ -54,8 +49,8 @@ class TileMap {
 
  private:
   // Size
-  int width;
-  int height;
+  int width{1};
+  int height{1};
 };
 
 #endif  // SRC_TILEMAP_H_

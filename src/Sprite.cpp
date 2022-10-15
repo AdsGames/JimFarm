@@ -12,10 +12,6 @@ Sprite::Sprite(int x, int y, int z) {
   setId();
 }
 
-Sprite::~Sprite() {
-  // dtor
-}
-
 void Sprite::setZ(int z) {
   this->z = z;
 }

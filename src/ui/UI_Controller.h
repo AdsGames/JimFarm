@@ -10,11 +10,10 @@
 class UI_Controller {
  public:
   UI_Controller(int width, int height);
-  virtual ~UI_Controller();
 
-  void draw(BITMAP* buffer);
+  void draw();
 
-  void update(World* wrld);
+  void update();
 
   void addElement(UI_Element* element);
 
@@ -27,13 +26,14 @@ class UI_Controller {
   Inventory* inv;
   int width, height;
 
-  int x, y;
+  int x{0};
+  int y{0};
 
   std::vector<UI_Element*> elements;
 
   static ItemStack* mouse_item;
 
-  int currently_bound;
+  int currently_bound{0};
 };
 
 #endif  // SRC_UI_UI_CONTROLLER_H_

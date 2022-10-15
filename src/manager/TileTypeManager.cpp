@@ -10,7 +10,7 @@
 
 std::vector<TileType> TileTypeManager::tile_defs;
 
-BITMAP* TileTypeManager::sprite_sheet_tiles = NULL;
+asw::Texture TileTypeManager::sprite_sheet_tiles = NULL;
 
 // Destructor
 TileTypeManager::~TileTypeManager() {

@@ -27,7 +27,7 @@ class ItemTypeManager {
   // Allows communication
   static TileType* getItemById(int tileID);
 
-  static BITMAP* sprite_sheet_items;
+  static asw::Texture sprite_sheet_items;
 
  private:
   // Stores all tiles and items

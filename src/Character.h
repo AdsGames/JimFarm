@@ -3,7 +3,7 @@
 
 #define HOTBAR_SIZE 8
 
-#include <allegro.h>
+#include <asw/asw.h>
 #include <string>
 
 #include "Inventory.h"
@@ -17,11 +17,7 @@ class Character;
 class CharacterForeground : public Sprite {
  public:
   CharacterForeground(Character* charPtr);
-  virtual void draw(BITMAP* tempBuffer,
-                    float x_1,
-                    float y_1,
-                    float x_2,
-                    float y_2) override;
+  void draw(float x_1, float y_1, float x_2, float y_2) override;
   Character* char_ptr;
 };
 
@@ -44,12 +40,8 @@ class Character : public Sprite {
   }
 
   // Draw
-  virtual void draw(BITMAP* tempBuffer,
-                    float x_1,
-                    float y_1,
-                    float x_2,
-                    float y_2) override;
-  void drawInventory(BITMAP* tempBuffer);
+  void draw(float x_1, float y_1, float x_2, float y_2) override;
+  void drawInventory();
 
   // Update
   void update();
@@ -73,7 +65,7 @@ class Character : public Sprite {
   enum directions { DIR_DOWN = 1, DIR_UP = 2, DIR_RIGHT = 3, DIR_LEFT = 4 };
 
   // Fonts
-  FONT* pixelart;
+  asw::Font pixelart;
   World* map_pointer;
 
   // Inventory
@@ -92,15 +84,15 @@ class Character : public Sprite {
   char ani_ticker;
 
   // Images for ui and character
-  BITMAP* image;
-  BITMAP* inventory_gui;
-  BITMAP *indicator, *indicator_2;
-  BITMAP* coin;
+  asw::Texture image;
+  asw::Texture inventory_gui;
+  asw::Texture indicator;
+  asw::Texture coin;
 
   // Sounds
-  SAMPLE* pickup;
-  SAMPLE* drop;
-  SAMPLE* step[2];
+  asw::Sample pickup;
+  asw::Sample drop;
+  asw::Sample step[2];
 
   friend class CharacterForeground;
 };

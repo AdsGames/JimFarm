@@ -1,28 +1,10 @@
 #ifndef SRC_UTILITY_TOOLS_H_
 #define SRC_UTILITY_TOOLS_H_
 
-#define MAIN_MENU 0
-#define HELP 1
-#define OPTIONS 2
-#define STORY 3
-
-#include <allegro.h>
 #include <string>
 
 // Random number generator. Use int random(highest,lowest);
 extern int random(int newLowest, int newHighest);
-
-// Error reporting
-extern void abort_on_error(const std::string& message);
-
-// Load and error check images
-extern BITMAP* loadBitmap(const std::string& path);
-
-// Load and error check sounds
-extern SAMPLE* loadSample(const std::string& path);
-
-// Load and error check fonts
-extern FONT* loadFont(const std::string& path);
 
 extern bool collision(int xMin1,
                       int xMax1,

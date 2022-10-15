@@ -9,11 +9,7 @@ class MapItem : public Sprite {
   MapItem(int x, int y, Item* itemPtr);
   ~MapItem();
 
-  void draw(BITMAP* tempBuffer,
-            float x_1,
-            float y_1,
-            float x_2,
-            float y_2) override;
+  void draw(float x_1, float y_1, float x_2, float y_2) override;
 
   Item* itemPtr;
 };
