@@ -3,7 +3,7 @@
 #include "UI_Slot.h"
 
 #include "../manager/item_defs.h"
-#include "../utility/tools.h"
+#include "../utility/Tools.h"
 
 #include <math.h>
 
