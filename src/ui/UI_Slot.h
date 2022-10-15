@@ -3,7 +3,7 @@
 
 #define SLOT_SIZE 16
 
-#include <allegro.h>
+#include <asw/asw.h>
 
 #include "../ItemStack.h"
 #include "UI_Element.h"
@@ -18,11 +18,11 @@ class UI_Slot : public UI_Element {
 
   ItemStack* getStack();
 
-  void draw(BITMAP* buffer, int parent_x, int parent_y) override;
+  void draw(int parent_x, int parent_y) override;
 
  protected:
  private:
-  ItemStack* stkptr;
+  ItemStack* stkptr{nullptr};
 };
 
 #endif  // SRC_UI_UI_SLOT_H_

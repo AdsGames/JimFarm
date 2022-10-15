@@ -10,7 +10,7 @@
 #ifndef SRC_STATE_H_
 #define SRC_STATE_H_
 
-#include <allegro.h>
+#include <asw/asw.h>
 
 #include <vector>
 
@@ -29,7 +29,7 @@ class StateEngine {
   void update();
 
   // Draw
-  void draw(BITMAP* buffer);
+  void draw();
 
   // Set next state
   void setNextState(int newState);
@@ -70,7 +70,7 @@ class State {
   virtual ~State(){};
 
   // Draw to screen
-  virtual void draw(BITMAP* buffer) = 0;
+  virtual void draw() = 0;
 
   // Update logic
   virtual void update(StateEngine* engine) = 0;

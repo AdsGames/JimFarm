@@ -10,7 +10,7 @@
 
 std::vector<TileType> ItemTypeManager::item_defs;
 
-BITMAP* ItemTypeManager::sprite_sheet_items = NULL;
+asw::Texture ItemTypeManager::sprite_sheet_items = NULL;
 
 // Destructor
 ItemTypeManager::~ItemTypeManager() {

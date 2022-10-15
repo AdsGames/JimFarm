@@ -3,16 +3,16 @@ import re
 import string
 import json
 
-tile_file_in = "build/data/tiles.json"
+tile_file_in = "assets/datatiles.json"
 tile_file_out = "src/manager/tile_defs.h"
 
-item_file_in = "build/data/items.json"
+item_file_in = "assets/dataitems.json"
 item_file_out = "src/manager/item_defs.h"
 
-sound_file_in = "build/data/sounds.json"
+sound_file_in = "assets/datasounds.json"
 sound_file_out = "src/manager/sound_defs.h"
 
-interface_file_in = "build/data/interfaces.json"
+interface_file_in = "assets/datainterfaces.json"
 interface_file_out = "src/manager/interface_defs.h"
 
 def parse_file(file_in, file_out, prefix):

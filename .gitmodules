@@ -1,0 +1,3 @@
+[submodule "lib/asw"]
+	path = lib/asw
+	url = https://github.com/AdsGames/asw

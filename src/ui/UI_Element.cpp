@@ -1,16 +1,15 @@
 #include "UI_Element.h"
 
+asw::Font UI_Element::font{nullptr};
+
 UI_Element::UI_Element(int x, int y) : UI_Element(x, y, 0, 0) {}
 
-UI_Element::UI_Element(int x, int y, int width, int height) {
-  this->x = x;
-  this->y = y;
-
-  this->width = width;
-  this->height = height;
+UI_Element::UI_Element(int x, int y, int width, int height)
+    : x(x), y(y), width(width), height(height) {
+  if (font == nullptr) {
+    font = asw::assets::loadFont("assets/fonts/pixelart.ttf", 8);
+  }
 }
-
-UI_Element::~UI_Element() {}
 
 int UI_Element::getX() {
   return x;

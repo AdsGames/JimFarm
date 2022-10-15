@@ -12,10 +12,10 @@ class GameMenu : public State {
   void trigger();
 
   void update(StateEngine* engine) override;
-  void draw(BITMAP* tempImage) override;
+  void draw() override;
 
  private:
-  BITMAP* image_menu;
+  asw::Texture image_menu;
 
   int indicator_position;
 };

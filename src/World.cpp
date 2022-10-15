@@ -12,7 +12,6 @@
 #include "manager/tile_defs.h"
 
 #include "manager/SoundManager.h"
-#include "utility/KeyListener.h"
 
 #include "Graphics.h"
 
@@ -27,7 +26,6 @@ World::World() {
   x = 0;
   y = 0;
 
-  ticks = 0;
   map_buffer = nullptr;
 
   map_messages = new Messenger(1, false, -4);
@@ -35,47 +33,30 @@ World::World() {
   VIEWPORT_ZOOM = 1.0f;
 
   world_map = new TileMap();
-}
 
-// Ticker
-World::~World() {}
-
-volatile int World::ticks = 0;
-
-void World::tickCounter() {
-  ticks++;
-}
-END_OF_FUNCTION(tickCounter)
-
-// Init ticker to 20 ticks per second
-void World::initTicker() {
-  LOCK_VARIABLE(ticks);
-  LOCK_FUNCTION(tickCounter);
-
-  install_int_ex(tickCounter, BPS_TO_TIMER(20));
+  ticker.start();
 }
 
 /*
  * IMAGES
  */
 // Draw bottom tiles
-void World::draw(BITMAP* tempBuffer) {
-  // Error check
-  if (!tempBuffer || !map_buffer)
-    return;
-
+void World::draw() {
   // Clear buffer
-  rectfill(map_buffer, 0, 0, map_buffer->w, map_buffer->h, makecol(255, 0, 0));
+  SDL_SetRenderTarget(asw::display::renderer, map_buffer.get());
 
   // Drawable
-  Graphics::Instance()->draw(map_buffer, x, y,
-                             x + VIEWPORT_WIDTH / VIEWPORT_ZOOM,
+  Graphics::Instance()->draw(x, y, x + VIEWPORT_WIDTH / VIEWPORT_ZOOM,
                              y + VIEWPORT_HEIGHT / VIEWPORT_ZOOM);
 
+  SDL_SetRenderTarget(asw::display::renderer, nullptr);
+
+  SDL_SetTextureBlendMode(map_buffer.get(), SDL_BLENDMODE_BLEND);
+
   // Draw buffer
-  stretch_blit(map_buffer, tempBuffer, 0, 0, VIEWPORT_WIDTH / VIEWPORT_ZOOM,
-               VIEWPORT_HEIGHT / VIEWPORT_ZOOM, 0, 0, VIEWPORT_WIDTH,
-               VIEWPORT_HEIGHT);
+  asw::draw::stretchSpriteBlit(map_buffer, 0, 0, VIEWPORT_WIDTH / VIEWPORT_ZOOM,
+                               VIEWPORT_HEIGHT / VIEWPORT_ZOOM, 0, 0,
+                               VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
   // Draw temperature indicator
   const char temp =
@@ -84,47 +65,59 @@ void World::draw(BITMAP* tempBuffer) {
   const char r_val = (temp > 0) ? (temp / 2) : 0;
   const char b_val = (temp < 0) ? (temp / 2 * -1) : 0;
 
-  if (r_val > 0)
-    rectfill(overlay_buffer, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT,
-             makeacol(255, 0, 0, r_val));
-  if (b_val > 0)
-    rectfill(overlay_buffer, 0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT,
-             makeacol(0, 0, 255, b_val));
+  SDL_SetRenderTarget(asw::display::renderer, overlay_buffer.get());
 
-  draw_trans_sprite(tempBuffer, overlay_buffer, 0, 0);
+  if (r_val > 0) {
+    asw::draw::rectFill(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT,
+                        asw::util::makeColor(255, 0, 0, r_val));
+  }
+  if (b_val > 0) {
+    asw::draw::rectFill(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT,
+                        asw::util::makeColor(0, 0, 255, b_val));
+  }
 
-  // Day night indicator
+  SDL_SetRenderTarget(asw::display::renderer, nullptr);
+
+  SDL_SetTextureBlendMode(overlay_buffer.get(), SDL_BLENDMODE_BLEND);
+
+  asw::draw::sprite(overlay_buffer, 0, 0);
 
   // Message system
-  map_messages->draw(tempBuffer, 5, 145);
+  map_messages->draw(5, 145);
 }
 
 // Load images
 void World::loadImages() {
-  TileTypeManager::sprite_sheet_tiles = loadBitmap("images/tiles.png");
-  ItemTypeManager::sprite_sheet_items = loadBitmap("images/items.png");
+  TileTypeManager::sprite_sheet_tiles =
+      asw::assets::loadTexture("assets/images/tiles.png");
+  ItemTypeManager::sprite_sheet_items =
+      asw::assets::loadTexture("assets/images/items.png");
 
-  std::cout << "Loading data/tiles.json \n";
-  if (TileTypeManager::loadTiles("data/tiles.json"))
-    abort_on_error("Could not load data/tiles.json");
+  std::cout << "Loading assets/data/tiles.json" << std::endl;
+  if (TileTypeManager::loadTiles("assets/data/tiles.json")) {
+    asw::util::abortOnError("Could not load assets/data/tiles.json");
+  }
 
-  std::cout << "Loading data/items.json \n";
-  if (ItemTypeManager::loadItems("data/items.json"))
-    abort_on_error("Could not load data/items.json");
+  std::cout << "Loading assets/data/items.json" << std::endl;
+  if (ItemTypeManager::loadItems("assets/data/items.json")) {
+    asw::util::abortOnError("Could not load assets/data/items.json");
+  }
 
-  std::cout << "Loading data/interfaces.json \n";
-  if (InterfaceTypeManager::loadInterfaces("data/interfaces.json"))
-    abort_on_error("Could not load data/interfaces.json");
+  std::cout << "Loading assets/data/interfaces.json" << std::endl;
+  if (InterfaceTypeManager::loadInterfaces("assets/data/interfaces.json")) {
+    asw::util::abortOnError("Could not load assets/data/interfaces.json");
+  }
 
-  std::cout << "Loading data/sounds.json \n";
-  if (SoundManager::load("data/sounds.json"))
-    abort_on_error("Could not load data/sounds.json");
+  std::cout << "Loading assets/data/sounds.json" << std::endl;
+  if (SoundManager::load("assets/data/sounds.json")) {
+    asw::util::abortOnError("Could not load assets/data/sounds.json");
+  }
 
   // Create map buffer
-  map_buffer = create_bitmap(VIEWPORT_WIDTH * VIEWPORT_MAX_ZOOM,
-                             VIEWPORT_HEIGHT * VIEWPORT_MAX_ZOOM);
+  map_buffer = asw::assets::createTexture(VIEWPORT_WIDTH * VIEWPORT_MAX_ZOOM,
+                                          VIEWPORT_HEIGHT * VIEWPORT_MAX_ZOOM);
 
-  overlay_buffer = create_bitmap(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+  overlay_buffer = asw::assets::createTexture(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
   world_map->generateMap();
 }
@@ -318,14 +311,15 @@ void World::interact(int inter_x, int inter_y, Item* inHand) {
 // Update tile map
 void World::update() {
   // Regen map
-  if (key[KEY_R]) {
+  if (asw::input::keyboard.down[SDL_SCANCODE_R]) {
     world_map->clearMap();
     world_map->generateMap();
   }
 
-  // One game tick (20x second)
-  if (ticks >= 1) {
-    ticks = 0;
+  // One game tick (20x second, 50ms)
+  auto tickTime = ticker.getElapsedTime<std::chrono::milliseconds>();
+  if (tickTime >= 50) {
+    ticker.reset();
 
     // Update tile map
     world_map->tick(x, y, x + VIEWPORT_WIDTH / VIEWPORT_ZOOM,
@@ -333,11 +327,11 @@ void World::update() {
   }
 
   // Zooming
-  if (KeyListener::keyPressed[KEY_PLUS_PAD] &&
+  if (asw::input::keyboard.pressed[SDL_SCANCODE_KP_PLUS] &&
       VIEWPORT_ZOOM < VIEWPORT_MAX_ZOOM) {
     VIEWPORT_ZOOM *= 2.0f;
   }
-  if (KeyListener::keyPressed[KEY_MINUS_PAD] &&
+  if (asw::input::keyboard.pressed[SDL_SCANCODE_KP_MINUS] &&
       VIEWPORT_ZOOM > VIEWPORT_MIN_ZOOM) {
     VIEWPORT_ZOOM *= 0.5f;
   }
@@ -348,15 +342,17 @@ void World::scroll(int player_x, int player_y) {
   x = player_x + (TILE_WIDTH - VIEWPORT_WIDTH / VIEWPORT_ZOOM) / 2;
   y = player_y + (TILE_HEIGHT - VIEWPORT_HEIGHT / VIEWPORT_ZOOM) / 2;
 
-  if (x < 0)
+  if (x < 0) {
     x = 0;
-  else if (x >
-           world_map->getWidth() * TILE_WIDTH - VIEWPORT_WIDTH / VIEWPORT_ZOOM)
+  } else if (x > world_map->getWidth() * TILE_WIDTH -
+                     VIEWPORT_WIDTH / VIEWPORT_ZOOM) {
     x = world_map->getWidth() * TILE_WIDTH - VIEWPORT_WIDTH / VIEWPORT_ZOOM;
+  }
 
-  if (y < 0)
+  if (y < 0) {
     y = 0;
-  else if (y > world_map->getHeight() * TILE_HEIGHT -
-                   VIEWPORT_HEIGHT / VIEWPORT_ZOOM)
+  } else if (y > world_map->getHeight() * TILE_HEIGHT -
+                     VIEWPORT_HEIGHT / VIEWPORT_ZOOM) {
     y = world_map->getHeight() * TILE_HEIGHT - VIEWPORT_HEIGHT / VIEWPORT_ZOOM;
+  }
 }

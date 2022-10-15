@@ -76,10 +76,10 @@ void Graphics::enableSort() {
   }
 }
 
-void Graphics::draw(BITMAP* buffer, int x_1, int y_1, int x_2, int y_2) {
+void Graphics::draw(int x_1, int y_1, int x_2, int y_2) {
   for (auto const& sprite : sprites) {
     if (sprite != nullptr) {
-      sprite->draw(buffer, x_1, y_1, x_2, y_2);
+      sprite->draw(x_1, y_1, x_2, y_2);
     }
   }
 }

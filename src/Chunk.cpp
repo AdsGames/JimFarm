@@ -1,6 +1,5 @@
 #include "Chunk.h"
 
-#include <iostream>
 #include <sstream>
 
 #include "manager/item_defs.h"

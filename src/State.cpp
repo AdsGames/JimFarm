@@ -18,9 +18,9 @@ StateEngine::StateEngine() {
 }
 
 // Draw
-void StateEngine::draw(BITMAP* buffer) {
+void StateEngine::draw() {
   if (state) {
-    state->draw(buffer);
+    state->draw();
   }
 }
 
@@ -59,22 +59,22 @@ void StateEngine::changeState() {
   switch (nextState) {
     case STATE_GAME:
       state = new Game();
-      std::cout << ("Switched state to game.\n");
+      std::cout << "Switched state to game." << std::endl;
       break;
     case STATE_MENU:
       state = new Menu();
-      std::cout << ("Switched state to main menu.\n");
+      std::cout << "Switched state to main menu." << std::endl;
       break;
     case STATE_OPTIONS:
       // states.push_back(new Options());
-      std::cout << ("Switched state to options.\n");
+      std::cout << "Switched state to options." << std::endl;
       break;
     case STATE_GAME_MENU:
       state = new GameMenu();
-      std::cout << ("Switched state to game menu.\n");
+      std::cout << "Switched state to game menu." << std::endl;
       break;
     default:
-      std::cout << ("Exiting program.");
+      std::cout << "Exiting program." << std::endl;
       break;
   }
 

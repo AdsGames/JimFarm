@@ -12,7 +12,7 @@ class Game : public State {
   virtual ~Game();
 
   void update(StateEngine* engine) override;
-  void draw(BITMAP* buffer) override;
+  void draw() override;
 
  protected:
  private:
