@@ -55,7 +55,7 @@ jobs:
       #     bucket-secret-key: ${{ secrets.LINODE_BUCKET_SECRET_KEY }}
       #     api-key: ${{ secrets.ADSGAMES_API_KEY }}
 
-  build-windows:
+  build-linux:
     name: Build Linux
     runs-on: ubuntu-latest
 
@@ -135,7 +135,7 @@ jobs:
         run: |
           Set-Item -Path Env:Path -Value ("C:/msys64/usr/bin;" + $Env:Path)
           pacman --noconfirm -S mingw-w64-i686-gcc-libs mingw-w64-i686-SDL2 mingw-w64-i686-SDL2_mixer mingw-w64-i686-SDL2_image mingw-w64-i686-SDL2_ttf mingw-w64-i686-SDL2_gfx
-      
+
       - name: Build
         run: |
           Set-Item -Path Env:Path -Value ("C:/msys64/mingw32/bin;" + $Env:Path)
