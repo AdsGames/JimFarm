@@ -1,4 +1,4 @@
-name: Build Web
+name: Release Build
 
 on:
   push:
@@ -10,12 +10,8 @@ on:
 
 jobs:
   build-web:
-    name: Build Web
+    name: Deploy Web
     runs-on: ubuntu-latest
-
-    env:
-      EM_VERSION: "latest"
-      EM_CACHE_FOLDER: "emsdk-cache"
 
     steps:
       - name: Checkout
@@ -27,36 +23,30 @@ jobs:
         id: cache-system-libraries
         uses: actions/cache@v2
         with:
-          path: ${{env.EM_CACHE_FOLDER}}
-          key: ${{env.EM_VERSION}}-${{ runner.os }}
+          path: emsdk-cache
+          key: latest-${{ runner.os }}
 
       - uses: mymindstorm/setup-emsdk@v11
         with:
-          version: ${{env.EM_VERSION}}
-          actions-cache-folder: ${{env.EM_CACHE_FOLDER}}
+          version: latest
+          actions-cache-folder: emsdk-cache
 
       - name: Build
         run: |
           emcmake cmake -G "Unix Makefiles" .
           emmake make -j4
 
-      - name: Get the version
-        id: get_version
-        run: echo "version=$(git describe --tags --always)" >> $GITHUB_OUTPUT
-
       # - name: Deploy to A.D.S. Games
       #   uses: adsgames/deploy-to-adsgames@v1
       #   with:
       #     project-id: jimfarm
-      #     version: ${{ steps.get_version.outputs.version }}
-      #     build-dir: export/html5/bin
       #     platform: WEB
       #     bucket-access-key: ${{ secrets.LINODE_BUCKET_ACCESS_KEY }}
       #     bucket-secret-key: ${{ secrets.LINODE_BUCKET_SECRET_KEY }}
       #     api-key: ${{ secrets.ADSGAMES_API_KEY }}
 
   build-linux:
-    name: Build Linux
+    name: Deploy Linux
     runs-on: ubuntu-latest
 
     steps:
@@ -75,28 +65,24 @@ jobs:
           cmake -G "Unix Makefiles" .
           make -j4
 
-      - name: Get the version
-        id: get_version
-        run: echo "version=$(git describe --tags --always)" >> $GITHUB_OUTPUT
-
       # - name: Deploy to A.D.S. Games
       #   uses: adsgames/deploy-to-adsgames@v1
       #   with:
       #     project-id: jimfarm
-      #     version: ${{ steps.get_version.outputs.version }}
-      #     build-dir: build/
       #     platform: LINUX
       #     bucket-access-key: ${{ secrets.LINODE_BUCKET_ACCESS_KEY }}
       #     bucket-secret-key: ${{ secrets.LINODE_BUCKET_SECRET_KEY }}
       #     api-key: ${{ secrets.ADSGAMES_API_KEY }}
 
   build-mac:
-    name: Build Mac OS
+    name: Deploy Mac OS
     runs-on: macos-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - name: Install Libraries
         run: |
@@ -108,28 +94,24 @@ jobs:
           export CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH:/usr/local/include"
           make -j4
 
-      - name: Get the version
-        id: get_version
-        run: echo "version=$(git describe --tags --always)" >> $GITHUB_OUTPUT
-
       # - name: Deploy to A.D.S. Games
       #   uses: adsgames/deploy-to-adsgames@v1
       #   with:
       #     project-id: jimfarm
-      #     version: ${{ steps.get_version.outputs.version }}
-      #     build-dir: build/
       #     platform: MAC
       #     bucket-access-key: ${{ secrets.LINODE_BUCKET_ACCESS_KEY }}
       #     bucket-secret-key: ${{ secrets.LINODE_BUCKET_SECRET_KEY }}
       #     api-key: ${{ secrets.ADSGAMES_API_KEY }}
 
   build-windows:
-    name: Build Windows
+    name: Deploy Windows
     runs-on: windows-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - name: Install Libraries
         run: |
@@ -143,16 +125,10 @@ jobs:
           Set-Item -Path Env:Path -Value ("C:/msys64/mingw32/bin;" + $Env:Path)
           make -j4
 
-      - name: Get the version
-        id: get_version
-        run: echo "version=$(git describe --tags --always)" >> $GITHUB_OUTPUT
-
       # - name: Deploy to A.D.S. Games
       #   uses: adsgames/deploy-to-adsgames@v1
       #   with:
       #     project-id: jimfarm
-      #     version: ${{ steps.get_version.outputs.version }}
-      #     build-dir: build/
       #     platform: WINDOWS
       #     bucket-access-key: ${{ secrets.LINODE_BUCKET_ACCESS_KEY }}
       #     bucket-secret-key: ${{ secrets.LINODE_BUCKET_SECRET_KEY }}
