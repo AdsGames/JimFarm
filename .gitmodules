@@ -1,3 +1,6 @@
 [submodule "lib/asw"]
 	path = lib/asw
 	url = https://github.com/AdsGames/asw
+[submodule "vcpkg"]
+	path = vcpkg
+	url = https://github.com/Microsoft/vcpkg.git

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "jim-farm",
+  "version": "1.0.0",
+  "dependencies": [
+    { "name": "sdl2", "platform": "!emscripten" },
+    { "name": "sdl2-gfx", "platform": "!emscripten" },
+    { "name": "sdl2-image", "platform": "!emscripten" },
+    { "name": "sdl2-mixer", "platform": "!emscripten" },
+    { "name": "sdl2-ttf", "platform": "!emscripten" },
+    { "name": "nlohmann-json" }
+  ]
+}

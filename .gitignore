@@ -52,3 +52,5 @@ build/
 *.ninja*
 compile_commands.json
 _deps
+vcpkg_installed
+vcpkg-manifest-install.log
