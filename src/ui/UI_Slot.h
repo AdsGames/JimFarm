@@ -1,28 +1,27 @@
 #ifndef SRC_UI_UI_SLOT_H_
 #define SRC_UI_UI_SLOT_H_
 
-#define SLOT_SIZE 16
-
 #include <asw/asw.h>
 
 #include "../ItemStack.h"
 #include "UI_Element.h"
 
+const int SLOT_SIZE = 16;
+
 class UI_Slot : public UI_Element {
  public:
   UI_Slot(int x, int y);
-  UI_Slot(int x, int y, ItemStack* stk);
-  virtual ~UI_Slot() {}
+  UI_Slot(int x, int y, std::shared_ptr<ItemStack> stk);
+  virtual ~UI_Slot() = default;
 
-  void bindStack(ItemStack* stk);
+  void bindStack(std::shared_ptr<ItemStack> stk);
 
-  ItemStack* getStack();
+  std::shared_ptr<ItemStack> getStack() const;
 
   void draw(int parent_x, int parent_y) override;
 
- protected:
  private:
-  ItemStack* stkptr{nullptr};
+  std::shared_ptr<ItemStack> stkptr{nullptr};
 };
 
 #endif  // SRC_UI_UI_SLOT_H_

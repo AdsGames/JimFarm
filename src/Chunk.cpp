@@ -13,52 +13,23 @@
 
 int Chunk::seed = 0;
 
-Chunk::Chunk(int x, int y) {
-  this->x = x;
-  this->y = y;
-
-  this->is_drawing = false;
-
-  for (int i = 0; i < CHUNK_WIDTH; i++) {
-    for (int t = 0; t < CHUNK_HEIGHT; t++) {
-      for (int j = 0; j < CHUNK_LAYERS; j++) {
-        tiles[i][t][j] = nullptr;
-      }
-    }
-  }
-
+Chunk::Chunk(int x, int y) : x(x), y(y) {
   generate();
 }
 
 Chunk::~Chunk() {
   setDrawEnabled(false);
-
-  for (int i = 0; i < CHUNK_WIDTH; i++) {
-    for (int t = 0; t < CHUNK_HEIGHT; t++) {
-      for (int j = 0; j < CHUNK_LAYERS; j++) {
-        if (tiles[i][t][j]) {
-          delete tiles[i][t][j];
-        }
-      }
-    }
-  }
-
-  for (auto const& i : items) {
-    delete i;
-  }
-
-  items.clear();
 }
 
-int Chunk::getX() {
+int Chunk::getX() const {
   return x;
 }
 
-int Chunk::getY() {
+int Chunk::getY() const {
   return y;
 }
 
-std::string Chunk::getBiomeAt(int x, int y) {
+std::string Chunk::getBiomeAt(int x, int y) const {
   int offset_x = x / TILE_WIDTH - this->x * CHUNK_WIDTH;
   int offset_y = y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
 
@@ -75,7 +46,7 @@ std::string Chunk::getBiomeAt(int x, int y) {
   return stream.str();
 }
 
-char Chunk::getTemperatureAt(int x, int y) {
+char Chunk::getTemperatureAt(int x, int y) const {
   int offset_x = x / TILE_WIDTH - this->x * CHUNK_WIDTH;
   int offset_y = y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
 
@@ -87,7 +58,7 @@ char Chunk::getTemperatureAt(int x, int y) {
   return temperature[offset_x][offset_y];
 }
 
-Tile* Chunk::getTileAt(int x, int y, int z) {
+std::shared_ptr<Tile> Chunk::getTileAt(int x, int y, int z) {
   int offset_x = x / TILE_WIDTH - this->x * CHUNK_WIDTH;
   int offset_y = y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
 
@@ -99,7 +70,7 @@ Tile* Chunk::getTileAt(int x, int y, int z) {
   return tiles[offset_x][offset_y][z];
 }
 
-void Chunk::setTileAt(int x, int y, int z, Tile* tile) {
+void Chunk::setTileAt(int x, int y, int z, std::shared_ptr<Tile> tile) {
   int offset_x = x / TILE_WIDTH - this->x * CHUNK_WIDTH;
   int offset_y = y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
 
@@ -109,19 +80,19 @@ void Chunk::setTileAt(int x, int y, int z, Tile* tile) {
   }
 
   if (tiles[offset_x][offset_y][z]) {
-    Graphics::Instance()->remove(tiles[offset_x][offset_y][z]);
-    delete tiles[offset_x][offset_y][z];
+    Graphics::Instance()->remove(tiles[offset_x][offset_y][z].get());
+    tiles[offset_x][offset_y][z].reset();
   }
 
   tiles[offset_x][offset_y][z] = tile;
 
   if (tile && is_drawing) {
-    Graphics::Instance()->add(tiles[offset_x][offset_y][z]);
+    Graphics::Instance()->add(tiles[offset_x][offset_y][z].get());
   }
 }
 
 // Get item at position
-MapItem* Chunk::getItemAt(int x, int y) {
+std::shared_ptr<MapItem> Chunk::getItemAt(int x, int y) {
   for (auto const& i : items) {
     if (i->x == x && i->y == y) {
       return i;
@@ -131,22 +102,23 @@ MapItem* Chunk::getItemAt(int x, int y) {
 }
 
 // Place item on map
-void Chunk::placeItemAt(Item* item, int x, int y) {
+void Chunk::placeItemAt(std::shared_ptr<Item> item, int x, int y) {
   if (item) {
-    MapItem* newMapItem = new MapItem(x, y, item);
+    auto newMapItem = std::make_shared<MapItem>(x, y, item);
     items.push_back(newMapItem);
 
-    if (is_drawing)
-      Graphics::Instance()->add(newMapItem);
+    if (is_drawing) {
+      Graphics::Instance()->add(newMapItem.get());
+    }
   }
 }
 
 // Remove item from map
-void Chunk::removeItem(MapItem* item) {
+void Chunk::removeItem(std::shared_ptr<MapItem> item) {
   if (item != nullptr) {
     for (unsigned int i = 0; i < items.size(); i++) {
       if (items.at(i) == item) {
-        Graphics::Instance()->remove(items.at(i));
+        Graphics::Instance()->remove(items.at(i).get());
         items.erase(items.begin() + i);
         break;
       }
@@ -160,9 +132,9 @@ void Chunk::setDrawEnabled(bool enabled) {
       for (int t = 0; t < CHUNK_HEIGHT; t++) {
         for (int j = 0; j < CHUNK_LAYERS; j++) {
           if (tiles[i][t][j] && enabled) {
-            Graphics::Instance()->add(tiles[i][t][j]);
+            Graphics::Instance()->add(tiles[i][t][j].get());
           } else if (tiles[i][t][j] && !enabled) {
-            Graphics::Instance()->remove(tiles[i][t][j]);
+            Graphics::Instance()->remove(tiles[i][t][j].get());
           }
         }
       }
@@ -170,9 +142,9 @@ void Chunk::setDrawEnabled(bool enabled) {
 
     for (auto const& item : items) {
       if (enabled) {
-        Graphics::Instance()->add(item);
+        Graphics::Instance()->add(item.get());
       } else {
-        Graphics::Instance()->remove(item);
+        Graphics::Instance()->remove(item.get());
       }
     }
 
@@ -204,7 +176,7 @@ void Chunk::tick() {
   for (int i = 0; i < CHUNK_WIDTH; i++) {
     for (int t = 0; t < CHUNK_HEIGHT; t++) {
       // Current tile
-      Tile* current = tiles[i][t][LAYER_FOREGROUND];
+      auto& current = tiles[i][t][LAYER_FOREGROUND];
 
       if (!current)
         continue;
@@ -212,36 +184,42 @@ void Chunk::tick() {
       // Berries
       if (current->getID() == TILE_BERRY) {
         // Grow a bit
-        if (true)
+        if (true) {
           current->changeMeta(1);
+        }
 
         // Done Growing
         if (current->getMeta() >= MAX_TILE_META) {
-          placeItemAt(new Item(ITEM_BERRY), current->getX(), current->getY());
+          placeItemAt(std::make_shared<Item>(ITEM_BERRY), current->getX(),
+                      current->getY());
           setTileAt(current->getX(), current->getY(), current->getZ(), nullptr);
         }
       }
       // Tomatos
       else if (current->getID() == TILE_TOMATO) {
         // Grow a bit
-        if (!random(0, 2))
+        if (!random(0, 2)) {
           current->changeMeta(1);
+        }
 
         // Done Growing
         if (current->getMeta() >= MAX_TILE_META) {
-          placeItemAt(new Item(ITEM_TOMATO), current->getX(), current->getY());
+          placeItemAt(std::make_shared<Item>(ITEM_TOMATO), current->getX(),
+                      current->getY());
           setTileAt(current->getX(), current->getY(), current->getZ(), nullptr);
         }
       }
       // Carrots
       else if (current->getID() == TILE_CARROT) {
         // Grow a bit
-        if (!random(0, 5))
+        if (!random(0, 5)) {
           current->changeMeta(1);
+        }
 
         // Done Growing
         if (current->getMeta() >= MAX_TILE_META) {
-          placeItemAt(new Item(ITEM_CARROT), current->getX(), current->getY());
+          placeItemAt(std::make_shared<Item>(ITEM_CARROT), current->getX(),
+                      current->getY());
           setTileAt(current->getX(), current->getY(), current->getZ(), nullptr);
         }
       }
@@ -253,7 +231,7 @@ void Chunk::tick() {
 
         // Done Growing
         if (current->getMeta() >= MAX_TILE_META) {
-          placeItemAt(new Item(ITEM_LAVENDER), current->getX(),
+          placeItemAt(std::make_shared<Item>(ITEM_LAVENDER), current->getX(),
                       current->getY());
           setTileAt(current->getX(), current->getY(), current->getZ(), nullptr);
         }
@@ -302,150 +280,162 @@ void Chunk::generate() {
       // Tundra
       if (temperature[i][t] < -32 && rainfall[i][t] >= 0) {
         tiles[i][t][LAYER_BACKGROUND] =
-            new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+            std::make_shared<Tile>(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
         tiles[i][t][LAYER_MIDGROUND] =
-            new Tile(TILE_SNOW, t_x, t_y, LAYER_MIDGROUND);
-        if (random(0, 30) == 0)
+            std::make_shared<Tile>(TILE_SNOW, t_x, t_y, LAYER_MIDGROUND);
+        if (random(0, 30) == 0) {
           tiles[i][t][LAYER_FOREGROUND] =
-              new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, 2);
+              std::make_shared<Tile>(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, 2);
+        }
       }
       // Forested tundra
       else if (temperature[i][t] < 0 && rainfall[i][t] >= 0) {
         tiles[i][t][LAYER_BACKGROUND] =
-            new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+            std::make_shared<Tile>(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
         tiles[i][t][LAYER_MIDGROUND] =
-            new Tile(TILE_SNOW, t_x, t_y, LAYER_MIDGROUND);
-        if (random(0, 3) == 0)
-          tiles[i][t][LAYER_FOREGROUND] =
-              new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(1, 2));
+            std::make_shared<Tile>(TILE_SNOW, t_x, t_y, LAYER_MIDGROUND);
+        if (random(0, 3) == 0) {
+          tiles[i][t][LAYER_FOREGROUND] = std::make_shared<Tile>(
+              TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(1, 2));
+        }
       }
       // Forest
       else if (temperature[i][t] < 24 && rainfall[i][t] >= 0) {
         tiles[i][t][LAYER_BACKGROUND] =
-            new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+            std::make_shared<Tile>(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
         tiles[i][t][LAYER_MIDGROUND] =
-            new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
-        if (random(0, 2) == 0)
-          tiles[i][t][LAYER_FOREGROUND] =
-              new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(0, 1));
+            std::make_shared<Tile>(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+        if (random(0, 2) == 0) {
+          tiles[i][t][LAYER_FOREGROUND] = std::make_shared<Tile>(
+              TILE_TREE, t_x, t_y, LAYER_FOREGROUND, random(0, 1));
+        }
       }
       // Dense forest
       else if (temperature[i][t] <= 64 && rainfall[i][t] >= 0) {
         tiles[i][t][LAYER_BACKGROUND] =
-            new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+            std::make_shared<Tile>(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
         tiles[i][t][LAYER_MIDGROUND] =
-            new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
-        if (random(0, 4) != 0)
+            std::make_shared<Tile>(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+        if (random(0, 4) != 0) {
           tiles[i][t][LAYER_FOREGROUND] =
-              new Tile(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, 3);
+              std::make_shared<Tile>(TILE_TREE, t_x, t_y, LAYER_FOREGROUND, 3);
+        }
       }
 
       // Low rainfall
       // Wasteland
       else if (temperature[i][t] < -32 && rainfall[i][t] < 0) {
         tiles[i][t][LAYER_BACKGROUND] =
-            new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+            std::make_shared<Tile>(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
       }
       // Wasteland
       else if (temperature[i][t] < -8 && rainfall[i][t] < 0) {
         tiles[i][t][LAYER_BACKGROUND] =
-            new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+            std::make_shared<Tile>(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
         tiles[i][t][LAYER_MIDGROUND] =
-            new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+            std::make_shared<Tile>(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
       }
       // Grassy wasteland
       else if (temperature[i][t] < 0 && rainfall[i][t] < 0) {
         tiles[i][t][LAYER_BACKGROUND] =
-            new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+            std::make_shared<Tile>(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
         tiles[i][t][LAYER_MIDGROUND] =
-            new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+            std::make_shared<Tile>(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
         if (random(0, 8) == 0) {
-          tiles[i][t][LAYER_FOREGROUND] = new Tile(
+          tiles[i][t][LAYER_FOREGROUND] = std::make_shared<Tile>(
               TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, random(0, 3));
         }
       }
       // Grassy wasteland
       else if (temperature[i][t] < 24 && rainfall[i][t] < 0) {
         tiles[i][t][LAYER_BACKGROUND] =
-            new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+            std::make_shared<Tile>(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
         tiles[i][t][LAYER_MIDGROUND] =
-            new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+            std::make_shared<Tile>(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
         if (random(0, 1) == 0) {
-          tiles[i][t][LAYER_FOREGROUND] = new Tile(
+          tiles[i][t][LAYER_FOREGROUND] = std::make_shared<Tile>(
               TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, random(0, 3));
           if (random(0, 100) == 0) {
-            placeItemAt(new Item(ITEM_CHICKEN), t_x, t_y);
+            placeItemAt(std::make_shared<Item>(ITEM_CHICKEN), t_x, t_y);
           }
         }
       }
       // Savana
       else if (temperature[i][t] < 32 && rainfall[i][t] < 0) {
         tiles[i][t][LAYER_BACKGROUND] =
-            new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+            std::make_shared<Tile>(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
         tiles[i][t][LAYER_MIDGROUND] =
-            new Tile(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
+            std::make_shared<Tile>(TILE_GRASS, t_x, t_y, LAYER_MIDGROUND);
         if (random(0, 5) == 0) {
-          tiles[i][t][LAYER_FOREGROUND] =
-              new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, 1);
+          tiles[i][t][LAYER_FOREGROUND] = std::make_shared<Tile>(
+              TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, 1);
         } else if (random(0, 10) == 0) {
           tiles[i][t][LAYER_FOREGROUND] =
-              new Tile(TILE_BUSH, t_x, t_y, LAYER_FOREGROUND, 1);
+              std::make_shared<Tile>(TILE_BUSH, t_x, t_y, LAYER_FOREGROUND, 1);
         } else if (random(0, 50) == 0) {
           tiles[i][t][LAYER_FOREGROUND] =
-              new Tile(TILE_BARN, t_x, t_y, LAYER_FOREGROUND, 1);
+              std::make_shared<Tile>(TILE_BARN, t_x, t_y, LAYER_FOREGROUND, 1);
         }
       }
       // Desert
       else if (temperature[i][t] <= 64 && rainfall[i][t] < 0) {
         tiles[i][t][LAYER_BACKGROUND] =
-            new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
+            std::make_shared<Tile>(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND);
         tiles[i][t][LAYER_MIDGROUND] =
-            new Tile(TILE_SAND, t_x, t_y, LAYER_MIDGROUND);
+            std::make_shared<Tile>(TILE_SAND, t_x, t_y, LAYER_MIDGROUND);
       }
 
       // Water deep
       if (height[i][t] < -32) {
-        setTileAt(
-            t_x, t_y, LAYER_BACKGROUND,
-            new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 3));
+        setTileAt(t_x, t_y, LAYER_BACKGROUND,
+                  std::make_shared<Tile>(TILE_UNDERWATER_SOIL, t_x, t_y,
+                                         LAYER_BACKGROUND, 3));
         setTileAt(t_x, t_y, LAYER_MIDGROUND, nullptr);
-        setTileAt(t_x, t_y, LAYER_FOREGROUND,
-                  new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
+        setTileAt(
+            t_x, t_y, LAYER_FOREGROUND,
+            std::make_shared<Tile>(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
       }
       // Water
       else if (height[i][t] < -19) {
-        setTileAt(
-            t_x, t_y, LAYER_BACKGROUND,
-            new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 0));
+        setTileAt(t_x, t_y, LAYER_BACKGROUND,
+                  std::make_shared<Tile>(TILE_UNDERWATER_SOIL, t_x, t_y,
+                                         LAYER_BACKGROUND, 0));
         setTileAt(t_x, t_y, LAYER_MIDGROUND, nullptr);
-        setTileAt(t_x, t_y, LAYER_FOREGROUND,
-                  new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
+        setTileAt(
+            t_x, t_y, LAYER_FOREGROUND,
+            std::make_shared<Tile>(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
       }
       // Water seaweed
       else if (height[i][t] < -17) {
-        setTileAt(
-            t_x, t_y, LAYER_BACKGROUND,
-            new Tile(TILE_UNDERWATER_SOIL, t_x, t_y, LAYER_BACKGROUND, 1));
+        setTileAt(t_x, t_y, LAYER_BACKGROUND,
+                  std::make_shared<Tile>(TILE_UNDERWATER_SOIL, t_x, t_y,
+                                         LAYER_BACKGROUND, 1));
         setTileAt(t_x, t_y, LAYER_MIDGROUND, nullptr);
-        setTileAt(t_x, t_y, LAYER_FOREGROUND,
-                  new Tile(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
+        setTileAt(
+            t_x, t_y, LAYER_FOREGROUND,
+            std::make_shared<Tile>(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
       }
       // Shore
       else if (height[i][t] < -14) {
-        setTileAt(t_x, t_y, LAYER_BACKGROUND,
-                  new Tile(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND));
+        setTileAt(
+            t_x, t_y, LAYER_BACKGROUND,
+            std::make_shared<Tile>(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND));
         setTileAt(t_x, t_y, LAYER_FOREGROUND,
-                  new Tile(TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND));
+                  std::make_shared<Tile>(TILE_DENSE_GRASS, t_x, t_y,
+                                         LAYER_FOREGROUND));
       }
       // Stone
       else if (height[i][t] > 32) {
-        setTileAt(t_x, t_y, LAYER_BACKGROUND,
-                  new Tile(TILE_STONE, t_x, t_y, LAYER_BACKGROUND));
-        setTileAt(t_x, t_y, LAYER_MIDGROUND,
-                  new Tile(TILE_STONE, t_x, t_y, LAYER_MIDGROUND));
-        setTileAt(t_x, t_y, LAYER_FOREGROUND,
-                  new Tile(TILE_STONE_WALL, t_x, t_y, LAYER_FOREGROUND,
-                           (height[i][t] - 32) / 6));
+        setTileAt(
+            t_x, t_y, LAYER_BACKGROUND,
+            std::make_shared<Tile>(TILE_STONE, t_x, t_y, LAYER_BACKGROUND));
+        setTileAt(
+            t_x, t_y, LAYER_MIDGROUND,
+            std::make_shared<Tile>(TILE_STONE, t_x, t_y, LAYER_MIDGROUND));
+        setTileAt(
+            t_x, t_y, LAYER_FOREGROUND,
+            std::make_shared<Tile>(TILE_STONE_WALL, t_x, t_y, LAYER_FOREGROUND,
+                                   (height[i][t] - 32) / 6));
       }
     }
   }

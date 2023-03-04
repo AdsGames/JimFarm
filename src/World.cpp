@@ -15,7 +15,7 @@
 
 #include "Graphics.h"
 
-bool comparePtrToNode(Tile* a, Tile* b) {
+bool comparePtrToNode(std::shared_ptr<Tile> a, std::shared_ptr<Tile> b) {
   return (*a < *b);
 }
 
@@ -23,14 +23,9 @@ bool comparePtrToNode(Tile* a, Tile* b) {
  * TILE MAP *
  ************/
 World::World() {
-  x = 0;
-  y = 0;
-
   map_buffer = nullptr;
 
   map_messages = new Messenger(1, false, -4);
-
-  VIEWPORT_ZOOM = 1.0f;
 
   world_map = new TileMap();
 
@@ -126,11 +121,12 @@ void World::loadImages() {
  * MAP
  */
 // Interact with
-void World::interact(int inter_x, int inter_y, Item* inHand) {
-  Tile* foregroundTile =
+void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
+  std::shared_ptr<Tile> foregroundTile =
       world_map->getTileAt(inter_x, inter_y, LAYER_FOREGROUND);
-  Tile* midgroundTile = world_map->getTileAt(inter_x, inter_y, LAYER_MIDGROUND);
-  Tile* backgroundTile =
+  std::shared_ptr<Tile> midgroundTile =
+      world_map->getTileAt(inter_x, inter_y, LAYER_MIDGROUND);
+  std::shared_ptr<Tile> backgroundTile =
       world_map->getTileAt(inter_x, inter_y, LAYER_BACKGROUND);
 
   // Hoe
@@ -138,15 +134,15 @@ void World::interact(int inter_x, int inter_y, Item* inHand) {
     if (midgroundTile && !foregroundTile) {
       if (midgroundTile->getID() == TILE_GRASS) {
         world_map->replaceTile(
-            midgroundTile,
-            new Tile(TILE_PLOWED_SOIL, midgroundTile->getX(),
-                     midgroundTile->getY(), midgroundTile->getZ()));
+            midgroundTile, std::make_shared<Tile>(
+                               TILE_PLOWED_SOIL, midgroundTile->getX(),
+                               midgroundTile->getY(), midgroundTile->getZ()));
         SoundManager::play(SOUND_HOE);
       } else if (midgroundTile->getID() == TILE_SOIL) {
         world_map->replaceTile(
-            midgroundTile,
-            new Tile(TILE_PLOWED_SOIL, midgroundTile->getX(),
-                     midgroundTile->getY(), midgroundTile->getZ()));
+            midgroundTile, std::make_shared<Tile>(
+                               TILE_PLOWED_SOIL, midgroundTile->getX(),
+                               midgroundTile->getY(), midgroundTile->getZ()));
         SoundManager::play(SOUND_HOE);
       } else {
         SoundManager::play(SOUND_ERROR);
@@ -159,8 +155,8 @@ void World::interact(int inter_x, int inter_y, Item* inHand) {
   else if (inHand->getID() == ITEM_SCYTHE) {
     if (foregroundTile && foregroundTile->getID() == TILE_DENSE_GRASS) {
       world_map->removeTile(foregroundTile);
-      world_map->placeItemAt(new Item(ITEM_HAY, 0), foregroundTile->getX(),
-                             foregroundTile->getY());
+      world_map->placeItemAt(std::make_shared<Item>(ITEM_HAY, 0),
+                             foregroundTile->getX(), foregroundTile->getY());
       SoundManager::play(SOUND_SCYTHE);
     } else {
       SoundManager::play(SOUND_ERROR);
@@ -170,8 +166,8 @@ void World::interact(int inter_x, int inter_y, Item* inHand) {
   else if (inHand->getID() == ITEM_BERRY_SEED) {
     if (midgroundTile && midgroundTile->getID() == TILE_PLOWED_SOIL &&
         !foregroundTile) {
-      world_map->placeTile(
-          new Tile(TILE_BERRY, inter_x, inter_y, LAYER_FOREGROUND));
+      world_map->placeTile(std::make_shared<Tile>(TILE_BERRY, inter_x, inter_y,
+                                                  LAYER_FOREGROUND));
     } else {
       SoundManager::play(SOUND_ERROR);
     }
@@ -180,8 +176,8 @@ void World::interact(int inter_x, int inter_y, Item* inHand) {
   else if (inHand->getID() == ITEM_TOMATO_SEED) {
     if (midgroundTile && midgroundTile->getID() == TILE_PLOWED_SOIL &&
         !foregroundTile) {
-      world_map->placeTile(
-          new Tile(TILE_TOMATO, inter_x, inter_y, LAYER_FOREGROUND));
+      world_map->placeTile(std::make_shared<Tile>(TILE_TOMATO, inter_x, inter_y,
+                                                  LAYER_FOREGROUND));
     } else {
       SoundManager::play(SOUND_ERROR);
     }
@@ -190,8 +186,8 @@ void World::interact(int inter_x, int inter_y, Item* inHand) {
   else if (inHand->getID() == ITEM_CARROT_SEED) {
     if (midgroundTile && midgroundTile->getID() == TILE_PLOWED_SOIL &&
         !foregroundTile) {
-      world_map->placeTile(
-          new Tile(TILE_CARROT, inter_x, inter_y, LAYER_FOREGROUND));
+      world_map->placeTile(std::make_shared<Tile>(TILE_CARROT, inter_x, inter_y,
+                                                  LAYER_FOREGROUND));
     } else {
       SoundManager::play(SOUND_ERROR);
     }
@@ -200,8 +196,8 @@ void World::interact(int inter_x, int inter_y, Item* inHand) {
   else if (inHand->getID() == ITEM_LAVENDER_SEED) {
     if (midgroundTile && midgroundTile->getID() == TILE_PLOWED_SOIL &&
         !foregroundTile) {
-      world_map->placeTile(
-          new Tile(TILE_LAVENDER, inter_x, inter_y, LAYER_FOREGROUND));
+      world_map->placeTile(std::make_shared<Tile>(TILE_LAVENDER, inter_x,
+                                                  inter_y, LAYER_FOREGROUND));
     } else {
       SoundManager::play(SOUND_ERROR);
     }
@@ -225,15 +221,15 @@ void World::interact(int inter_x, int inter_y, Item* inHand) {
   else if (inHand->getID() == ITEM_AXE) {
     if (foregroundTile && foregroundTile->getID() == TILE_TREE) {
       world_map->replaceTile(
-          foregroundTile,
-          new Tile(TILE_STUMP, foregroundTile->getX(), foregroundTile->getY(),
-                   foregroundTile->getZ()));
-      world_map->placeItemAt(new Item(ITEM_STICK, 0), foregroundTile->getX(),
-                             foregroundTile->getY());
-      world_map->placeItemAt(new Item(ITEM_STICK, 0), foregroundTile->getX(),
-                             foregroundTile->getY());
-      world_map->placeItemAt(new Item(ITEM_WOOD, 0), foregroundTile->getX(),
-                             foregroundTile->getY());
+          foregroundTile, std::make_shared<Tile>(
+                              TILE_STUMP, foregroundTile->getX(),
+                              foregroundTile->getY(), foregroundTile->getZ()));
+      world_map->placeItemAt(std::make_shared<Item>(ITEM_STICK, 0),
+                             foregroundTile->getX(), foregroundTile->getY());
+      world_map->placeItemAt(std::make_shared<Item>(ITEM_STICK, 0),
+                             foregroundTile->getX(), foregroundTile->getY());
+      world_map->placeItemAt(std::make_shared<Item>(ITEM_WOOD, 0),
+                             foregroundTile->getX(), foregroundTile->getY());
       SoundManager::play(SOUND_AXE);
     } else {
       SoundManager::play(SOUND_ERROR);
@@ -248,19 +244,19 @@ void World::interact(int inter_x, int inter_y, Item* inHand) {
     } else if (midgroundTile && midgroundTile->getID() == TILE_GRASS &&
                !foregroundTile) {
       world_map->removeTile(midgroundTile);
-      world_map->placeItemAt(new Item(ITEM_GRASS, 0), midgroundTile->getX(),
-                             midgroundTile->getY());
+      world_map->placeItemAt(std::make_shared<Item>(ITEM_GRASS, 0),
+                             midgroundTile->getX(), midgroundTile->getY());
       SoundManager::play(SOUND_SHOVEL);
     } else if (midgroundTile && midgroundTile->getID() == TILE_SAND &&
                !foregroundTile) {
       world_map->removeTile(midgroundTile);
-      world_map->placeItemAt(new Item(ITEM_SAND, 0), midgroundTile->getX(),
-                             midgroundTile->getY());
+      world_map->placeItemAt(std::make_shared<Item>(ITEM_SAND, 0),
+                             midgroundTile->getX(), midgroundTile->getY());
       SoundManager::play(SOUND_SHOVEL);
     } else if (foregroundTile && (foregroundTile->getID() == TILE_STONE_WALL)) {
       world_map->removeTile(foregroundTile);
-      world_map->placeItemAt(new Item(ITEM_STONE, 0), foregroundTile->getX(),
-                             foregroundTile->getY());
+      world_map->placeItemAt(std::make_shared<Item>(ITEM_STONE, 0),
+                             foregroundTile->getX(), foregroundTile->getY());
       SoundManager::play(SOUND_SHOVEL);
     } else {
       SoundManager::play(SOUND_ERROR);
@@ -269,8 +265,9 @@ void World::interact(int inter_x, int inter_y, Item* inHand) {
   // Wood Wall
   else if (inHand->getID() == ITEM_WOOD) {
     if (!foregroundTile && midgroundTile) {
-      world_map->placeTile(new Tile(TILE_WOOD_WALL, midgroundTile->getX(),
-                                    midgroundTile->getY(), LAYER_FOREGROUND));
+      world_map->placeTile(
+          std::make_shared<Tile>(TILE_WOOD_WALL, midgroundTile->getX(),
+                                 midgroundTile->getY(), LAYER_FOREGROUND));
       SoundManager::play(SOUND_SHOVEL);
     } else {
       SoundManager::play(SOUND_ERROR);
@@ -279,8 +276,9 @@ void World::interact(int inter_x, int inter_y, Item* inHand) {
   // Fence
   else if (inHand->getID() == ITEM_STICK) {
     if (!foregroundTile && midgroundTile) {
-      world_map->placeTile(new Tile(TILE_FENCE, midgroundTile->getX(),
-                                    midgroundTile->getY(), LAYER_FOREGROUND));
+      world_map->placeTile(
+          std::make_shared<Tile>(TILE_FENCE, midgroundTile->getX(),
+                                 midgroundTile->getY(), LAYER_FOREGROUND));
       SoundManager::play(SOUND_SHOVEL);
     } else {
       SoundManager::play(SOUND_ERROR);
@@ -289,8 +287,9 @@ void World::interact(int inter_x, int inter_y, Item* inHand) {
   // Place dirt
   else if (inHand->getID() == ITEM_GRASS) {
     if (backgroundTile && !midgroundTile) {
-      world_map->placeTile(new Tile(TILE_GRASS, backgroundTile->getX(),
-                                    backgroundTile->getY(), LAYER_MIDGROUND));
+      world_map->placeTile(
+          std::make_shared<Tile>(TILE_GRASS, backgroundTile->getX(),
+                                 backgroundTile->getY(), LAYER_MIDGROUND));
       SoundManager::play(SOUND_SHOVEL);
     } else {
       SoundManager::play(SOUND_ERROR);
@@ -299,8 +298,9 @@ void World::interact(int inter_x, int inter_y, Item* inHand) {
   // Place dirt
   else if (inHand->getID() == ITEM_SAND) {
     if (backgroundTile && !midgroundTile) {
-      world_map->placeTile(new Tile(TILE_SAND, backgroundTile->getX(),
-                                    backgroundTile->getY(), LAYER_MIDGROUND));
+      world_map->placeTile(
+          std::make_shared<Tile>(TILE_SAND, backgroundTile->getX(),
+                                 backgroundTile->getY(), LAYER_MIDGROUND));
       SoundManager::play(SOUND_SHOVEL);
     } else {
       SoundManager::play(SOUND_ERROR);

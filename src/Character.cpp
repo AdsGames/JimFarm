@@ -14,8 +14,8 @@
 #include "Graphics.h"
 
 // Top of head
-CharacterForeground::CharacterForeground(Character* charPtr) : Sprite(0, 0, 5) {
-  char_ptr = charPtr;
+CharacterForeground::CharacterForeground(Character* charPtr)
+    : Sprite(0, 0, 5), char_ptr(charPtr) {
   Graphics::Instance()->add(this);
 }
 
@@ -29,27 +29,14 @@ void CharacterForeground::draw(float x_1, float y_1, float x_2, float y_2) {
 }
 
 // Ctor for character
-Character::Character() : Sprite(0, 0, 2) {
-  moving = false;
-  direction = 1;
-  selected_item = 0;
-
-  sound_step = false;
-  ani_ticker = 0;
-
-  // UI
-  inventory_ui = nullptr;
-  attatched_ui = nullptr;
-  ui_open = false;
-
-  // Character foreground
-  c_fore = new CharacterForeground(this);
+Character::Character()
+    : Sprite(0, 0, 2), c_fore(new CharacterForeground(this)) {
   Graphics::Instance()->add(this);
 }
 
 // World object to point to (needs this!)
-void Character::setWorld(World* newTileMap) {
-  map_pointer = newTileMap;
+void Character::setWorld(World* map_pointer) {
+  this->map_pointer = map_pointer;
 }
 
 // Set image
@@ -73,17 +60,17 @@ void Character::loadData() {
 
   character_inv = inventory_ui->getInventory();
 
-  character_inv->addItem(new Item(ITEM_AXE), 1);
-  character_inv->addItem(new Item(ITEM_SCYTHE), 1);
-  character_inv->addItem(new Item(ITEM_SHOVEL), 1);
-  character_inv->addItem(new Item(ITEM_HOE), 1);
-  character_inv->addItem(new Item(ITEM_BERRY_SEED), 4);
-  character_inv->addItem(new Item(ITEM_WATERING_CAN), 1);
+  character_inv->addItem(std::make_shared<Item>(ITEM_AXE), 1);
+  character_inv->addItem(std::make_shared<Item>(ITEM_SCYTHE), 1);
+  character_inv->addItem(std::make_shared<Item>(ITEM_SHOVEL), 1);
+  character_inv->addItem(std::make_shared<Item>(ITEM_HOE), 1);
+  character_inv->addItem(std::make_shared<Item>(ITEM_BERRY_SEED), 4);
+  character_inv->addItem(std::make_shared<Item>(ITEM_WATERING_CAN), 1);
 }
 
 // Draw character to screen
 void Character::draw(float x_1, float y_1, float x_2, float y_2) {
-  auto screenSize = asw::display::getLogicalSize();
+  auto screen_size = asw::display::getLogicalSize();
 
   // Indicator
   indicator_x =
@@ -118,9 +105,9 @@ void Character::draw(float x_1, float y_1, float x_2, float y_2) {
 
 // Update player
 void Character::drawInventory() {
-  auto screenSize = asw::display::getLogicalSize();
-  const int draw_x = (screenSize.x - HOTBAR_SIZE * 18) / 2;
-  const int draw_y = screenSize.y - 20;
+  auto screen_size = asw::display::getLogicalSize();
+  const int draw_x = (screen_size.x - HOTBAR_SIZE * 18) / 2;
+  const int draw_y = screen_size.y - 20;
 
   // Draw items
   for (int i = 0; i < HOTBAR_SIZE; i++) {
@@ -254,8 +241,8 @@ void Character::update() {
   }
 
   // Pickup
-  MapItem* itemAtPos = map_pointer->world_map->getItemAt(
-      roundf(x / 16.0f) * 16, roundf(y / 16.0f) * 16);
+  auto itemAtPos = map_pointer->world_map->getItemAt(roundf(x / 16.0f) * 16,
+                                                     roundf(y / 16.0f) * 16);
 
   // Pickup
   if (itemAtPos != nullptr) {
@@ -268,7 +255,7 @@ void Character::update() {
   // Drop
   if (asw::input::keyboard.pressed[SDL_SCANCODE_F] ||
       asw::input::mouse.pressed[3]) {
-    Item* itemInHand = nullptr;
+    std::shared_ptr<Item> itemInHand = nullptr;
     if (character_inv->getStack(selected_item)->getItem()) {
       itemInHand = character_inv->getStack(selected_item)->getItem();
     }

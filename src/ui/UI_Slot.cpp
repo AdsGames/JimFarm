@@ -2,15 +2,15 @@
 
 UI_Slot::UI_Slot(int x, int y) : UI_Element(x, y, SLOT_SIZE, SLOT_SIZE) {}
 
-UI_Slot::UI_Slot(int x, int y, ItemStack* stk) : UI_Slot(x, y) {
+UI_Slot::UI_Slot(int x, int y, std::shared_ptr<ItemStack> stk) : UI_Slot(x, y) {
   bindStack(stk);
 }
 
-void UI_Slot::bindStack(ItemStack* stk) {
+void UI_Slot::bindStack(std::shared_ptr<ItemStack> stk) {
   this->stkptr = stk;
 }
 
-ItemStack* UI_Slot::getStack() {
+std::shared_ptr<ItemStack> UI_Slot::getStack() const {
   return this->stkptr;
 }
 

@@ -1,6 +1,7 @@
 #ifndef SRC_UI_UI_CONTROLLER_H_
 #define SRC_UI_UI_CONTROLLER_H_
 
+#include <memory>
 #include <vector>
 
 #include "../Inventory.h"
@@ -17,21 +18,22 @@ class UI_Controller {
 
   void addElement(UI_Element* element);
 
-  Inventory* getInventory();
+  std::shared_ptr<Inventory> getInventory() const;
 
  private:
   UI_Element* elementAt(int x, int y);
 
   bool is_open;
-  Inventory* inv;
-  int width, height;
+  std::shared_ptr<Inventory> inv;
+  int width;
+  int height;
 
   int x{0};
   int y{0};
 
   std::vector<UI_Element*> elements;
 
-  static ItemStack* mouse_item;
+  static std::shared_ptr<ItemStack> mouse_item;
 
   int currently_bound{0};
 };

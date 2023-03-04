@@ -1,18 +1,13 @@
 #include "Inventory.h"
 
-// Constructor
-Inventory::Inventory() {}
-
-Inventory::~Inventory() {}
-
 // Push item to contents (if it fits)
-bool Inventory::addItem(Item* item, int quantity) {
+bool Inventory::addItem(std::shared_ptr<Item> item, int quantity) {
   // Null item
   if (item == nullptr)
     return false;
 
   // Stack
-  ItemStack* stk = findStack(item);
+  auto stk = findStack(item);
   if (stk != nullptr) {
     stk->add(quantity);
     return true;
@@ -39,23 +34,26 @@ bool Inventory::removeItem(int index) {
 
 // Add a space
 void Inventory::addSpace() {
-  contents.push_back(new ItemStack());
+  contents.push_back(std::make_shared<ItemStack>());
 }
 
 // Gets item at index if exists
-ItemStack* Inventory::getStack(int index) {
-  if (index < getSize() && index >= 0)
+std::shared_ptr<ItemStack> Inventory::getStack(int index) {
+  if (index < getSize() && index >= 0) {
     return contents[index];
+  }
+
   return nullptr;
 }
 
 // Just returns first item
-ItemStack* Inventory::getFirstItem() {
+std::shared_ptr<ItemStack> Inventory::getFirstItem() {
   return getStack(0);
 }
 
 // Find stack
-ItemStack* Inventory::findStack(Item* item) {
+std::shared_ptr<ItemStack> Inventory::findStack(
+    std::shared_ptr<Item> item) const {
   for (auto const& content : contents) {
     if (content && content->getItem()) {
       if (content->getItem()->getID() == item->getID()) {
@@ -77,7 +75,7 @@ int Inventory::findFirstEmpty() {
 }
 
 // Current item count
-int Inventory::getSize() {
+int Inventory::getSize() const {
   return contents.size();
 }
 
@@ -85,6 +83,7 @@ int Inventory::getSize() {
 void Inventory::empty() {
   contents.clear();
 
-  for (int i = 0; i < getSize(); i++)
-    contents.push_back(new ItemStack());
+  for (int i = 0; i < getSize(); i++) {
+    contents.push_back(std::make_shared<ItemStack>());
+  }
 }

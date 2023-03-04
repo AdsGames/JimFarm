@@ -1,32 +1,29 @@
 #ifndef SRC_INVENTORY_H_
 #define SRC_INVENTORY_H_
 
+#include <memory>
 #include <vector>
 
 #include "ItemStack.h"
 
 class Inventory {
  public:
-  Inventory();
-
-  virtual ~Inventory();
-
-  bool addItem(Item* item, int quantity);
+  bool addItem(std::shared_ptr<Item> item, int quantity);
   bool removeItem(int index);
   void addSpace();
 
-  ItemStack* getStack(int index);
-  ItemStack* getFirstItem();
+  std::shared_ptr<ItemStack> getStack(int index);
+  std::shared_ptr<ItemStack> getFirstItem();
 
-  ItemStack* findStack(Item* item);
+  std::shared_ptr<ItemStack> findStack(std::shared_ptr<Item> item) const;
   int findFirstEmpty();
 
-  int getSize();
+  int getSize() const;
 
   void empty();
 
  private:
-  std::vector<ItemStack*> contents;
+  std::vector<std::shared_ptr<ItemStack>> contents;
 };
 
 #endif  // SRC_INVENTORY_H_
