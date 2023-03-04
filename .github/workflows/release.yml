@@ -13,7 +13,7 @@ jobs:
     name: Deploy Web
     runs-on: ubuntu-latest
     env:
-      EM_VERSION: 1.39.18
+      EM_VERSION: "latest"
       EM_CACHE_FOLDER: "emsdk-cache"
 
     steps:
@@ -120,7 +120,6 @@ jobs:
 
       - uses: msys2/setup-msys2@v2
         with:
-          update: true
           install: >-
             make
             git
