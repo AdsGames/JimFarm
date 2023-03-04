@@ -7,31 +7,29 @@
 #ifndef ITEM_TYPE_MANAGER_H
 #define ITEM_TYPE_MANAGER_H
 
-#define NON_SOLID 0
-#define SOLID 1
-
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "../ui/UI_Controller.h"
 #include "TileType.h"
 
+const int NON_SOLID = 0;
+const int SOLID = 1;
+
 class ItemTypeManager {
  public:
-  ItemTypeManager(){};
-  ~ItemTypeManager();
-
   // Load tile types
-  static int loadItems(std::string path);
+  static int loadItems(const std::string& path);
 
   // Allows communication
-  static TileType* getItemById(int tileID);
+  static std::shared_ptr<TileType> getItemById(int tileID);
 
   static asw::Texture sprite_sheet_items;
 
  private:
   // Stores all tiles and items
-  static std::vector<TileType> item_defs;
+  static std::vector<std::shared_ptr<TileType>> item_defs;
 };
 
 #endif  // ITEM_TYPE_MANAGER_H

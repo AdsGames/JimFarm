@@ -7,9 +7,7 @@
 #ifndef TILE_TYPE_MANAGER_H
 #define TILE_TYPE_MANAGER_H
 
-#define NON_SOLID 0
-#define SOLID 1
-
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -18,27 +16,17 @@
 
 class TileTypeManager {
  public:
-  TileTypeManager(){};
-  ~TileTypeManager();
-
   // Load tile types
-  static int loadTiles(std::string path);
-  static int loadItems(std::string path);
-  static int loadInterfaces(std::string path);
+  static int loadTiles(const std::string& path);
 
   // Allows communication
-  static TileType* getTileById(int tileID);
-  static TileType* getItemById(int tileID);
-  static UI_Controller* getInterfaceById(int id);
+  static std::shared_ptr<TileType> getTileById(int tileID);
 
   static asw::Texture sprite_sheet_tiles;
   static asw::Texture sprite_sheet_items;
 
  private:
-  // Stores all tiles and items
-  static std::vector<TileType> tile_defs;
-  static std::vector<TileType> item_defs;
-  static std::vector<UI_Controller*> ui_defs;
+  static std::vector<std::shared_ptr<TileType>> tile_defs;
 };
 
 #endif  // TILE_TYPE_MANAGER_H

@@ -80,14 +80,14 @@ void Chunk::setTileAt(int x, int y, int z, std::shared_ptr<Tile> tile) {
   }
 
   if (tiles[offset_x][offset_y][z]) {
-    Graphics::Instance()->remove(tiles[offset_x][offset_y][z].get());
+    Graphics::Instance()->remove(tiles[offset_x][offset_y][z]);
     tiles[offset_x][offset_y][z].reset();
   }
 
   tiles[offset_x][offset_y][z] = tile;
 
   if (tile && is_drawing) {
-    Graphics::Instance()->add(tiles[offset_x][offset_y][z].get());
+    Graphics::Instance()->add(tiles[offset_x][offset_y][z]);
   }
 }
 
@@ -108,7 +108,7 @@ void Chunk::placeItemAt(std::shared_ptr<Item> item, int x, int y) {
     items.push_back(newMapItem);
 
     if (is_drawing) {
-      Graphics::Instance()->add(newMapItem.get());
+      Graphics::Instance()->add(newMapItem);
     }
   }
 }
@@ -118,7 +118,7 @@ void Chunk::removeItem(std::shared_ptr<MapItem> item) {
   if (item != nullptr) {
     for (unsigned int i = 0; i < items.size(); i++) {
       if (items.at(i) == item) {
-        Graphics::Instance()->remove(items.at(i).get());
+        Graphics::Instance()->remove(items.at(i));
         items.erase(items.begin() + i);
         break;
       }
@@ -132,9 +132,9 @@ void Chunk::setDrawEnabled(bool enabled) {
       for (int t = 0; t < CHUNK_HEIGHT; t++) {
         for (int j = 0; j < CHUNK_LAYERS; j++) {
           if (tiles[i][t][j] && enabled) {
-            Graphics::Instance()->add(tiles[i][t][j].get());
+            Graphics::Instance()->add(tiles[i][t][j]);
           } else if (tiles[i][t][j] && !enabled) {
-            Graphics::Instance()->remove(tiles[i][t][j].get());
+            Graphics::Instance()->remove(tiles[i][t][j]);
           }
         }
       }
@@ -142,9 +142,9 @@ void Chunk::setDrawEnabled(bool enabled) {
 
     for (auto const& item : items) {
       if (enabled) {
-        Graphics::Instance()->add(item.get());
+        Graphics::Instance()->add(item);
       } else {
-        Graphics::Instance()->remove(item.get());
+        Graphics::Instance()->remove(item);
       }
     }
 

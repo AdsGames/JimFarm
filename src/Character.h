@@ -51,10 +51,10 @@ class Character : public Sprite {
   // Update
   void update();
 
-  // Character foreground
-  CharacterForeground* c_fore = nullptr;
-
  private:
+  // Character foreground
+  std::shared_ptr<CharacterForeground> c_fore = nullptr;
+
   // Attatched UI
   UI_Controller* attatched_ui = nullptr;
 

@@ -1,6 +1,7 @@
 #ifndef SRC_GRAPHICS_H_
 #define SRC_GRAPHICS_H_
 
+#include <memory>
 #include <vector>
 
 #include "Sprite.h"
@@ -11,8 +12,8 @@ class Graphics {
   static Graphics* Instance();
 
   // Add and remove sprites
-  void add(Sprite* sprite);
-  void remove(Sprite* sprite);
+  void add(std::shared_ptr<Sprite> sprite);
+  void remove(std::shared_ptr<Sprite> sprite);
 
   // Disable or enable sorting
   void disableSort();
@@ -35,7 +36,7 @@ class Graphics {
   void sort();
 
   // Drawable
-  std::vector<Sprite*> sprites;
+  std::vector<std::shared_ptr<Sprite>> sprites;
 
   // Single instance
   static Graphics* instance;

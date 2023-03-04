@@ -12,13 +12,8 @@
 
 std::vector<UI_Controller*> InterfaceTypeManager::ui_defs;
 
-// Destructor
-InterfaceTypeManager::~InterfaceTypeManager() {
-  ui_defs.clear();
-}
-
 // Load interfaces
-int InterfaceTypeManager::loadInterfaces(std::string path) {
+int InterfaceTypeManager::loadInterfaces(const std::string& path)  {
   // Open file or abort if it does not exist
   std::ifstream file(path);
   if (!file.is_open()) {

@@ -15,9 +15,7 @@
 
 // Top of head
 CharacterForeground::CharacterForeground(Character* charPtr)
-    : Sprite(0, 0, 5), char_ptr(charPtr) {
-  Graphics::Instance()->add(this);
-}
+    : Sprite(0, 0, 5), char_ptr(charPtr) {}
 
 void CharacterForeground::draw(float x_1, float y_1, float x_2, float y_2) {
   this->x = char_ptr->x;
@@ -29,9 +27,9 @@ void CharacterForeground::draw(float x_1, float y_1, float x_2, float y_2) {
 }
 
 // Ctor for character
-Character::Character()
-    : Sprite(0, 0, 2), c_fore(new CharacterForeground(this)) {
-  Graphics::Instance()->add(this);
+Character::Character() : Sprite(0, 0, 2) {
+  c_fore = std::make_shared<CharacterForeground>(this);
+  Graphics::Instance()->add(c_fore);
 }
 
 // World object to point to (needs this!)
@@ -70,8 +68,6 @@ void Character::loadData() {
 
 // Draw character to screen
 void Character::draw(float x_1, float y_1, float x_2, float y_2) {
-  auto screen_size = asw::display::getLogicalSize();
-
   // Indicator
   indicator_x =
       asw::input::mouse.x / map_pointer->VIEWPORT_ZOOM + map_pointer->getX();

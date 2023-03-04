@@ -8,17 +8,12 @@
 #include "../Tile.h"
 #include "../utility/Tools.h"
 
-std::vector<TileType> ItemTypeManager::item_defs;
+std::vector<std::shared_ptr<TileType>> ItemTypeManager::item_defs;
 
-asw::Texture ItemTypeManager::sprite_sheet_items = NULL;
-
-// Destructor
-ItemTypeManager::~ItemTypeManager() {
-  item_defs.clear();
-}
+asw::Texture ItemTypeManager::sprite_sheet_items = nullptr;
 
 // Load tiles
-int ItemTypeManager::loadItems(std::string path) {
+int ItemTypeManager::loadItems(const std::string& path) {
   // Open file or abort if it does not exist
   std::ifstream file(path);
   if (!file.is_open()) {
@@ -44,10 +39,11 @@ int ItemTypeManager::loadItems(std::string path) {
     int id = item["id"];
 
     // Create item, set variables and add it to the item list
-    TileType newTileType(1, 1, id, name, 0, (unsigned char)value);
-    newTileType.setSpriteSheet(sprite_sheet_items);
-    newTileType.setImageType("", 1, 1, image_x, image_y, 1, 1);
-    item_defs.push_back(newTileType);
+    auto tile_type =
+        std::make_shared<TileType>(1, 1, id, name, 0, (unsigned char)value);
+    tile_type->setSpriteSheet(sprite_sheet_items);
+    tile_type->setImageType("", 1, 1, image_x, image_y, 1, 1);
+    item_defs.push_back(tile_type);
   }
 
   // Close
@@ -56,10 +52,10 @@ int ItemTypeManager::loadItems(std::string path) {
 }
 
 // Returns item at ID
-TileType* ItemTypeManager::getItemById(int tileID) {
-  for (auto& item : item_defs) {
-    if (item.getID() == tileID) {
-      return &item;
+std::shared_ptr<TileType> ItemTypeManager::getItemById(int tileID) {
+  for (auto const& item : item_defs) {
+    if (item->getID() == tileID) {
+      return item;
     }
   }
   return nullptr;

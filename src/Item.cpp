@@ -8,9 +8,6 @@ Item::Item(char newID, unsigned char meta) {
   this->meta = meta;
 }
 
-// Dtor
-Item::~Item() {}
-
 // Draw item to screen
 void Item::draw(int x, int y) {
   if (item_pointer)
@@ -18,21 +15,21 @@ void Item::draw(int x, int y) {
 }
 
 // Get value of item
-unsigned char Item::getValue() {
+unsigned char Item::getValue() const {
   if (item_pointer)
     return item_pointer->getValue();
   return 0;
 }
 
 // Get ID
-unsigned char Item::getID() {
+unsigned char Item::getID() const {
   if (item_pointer)
     return item_pointer->getID();
   return 0;
 }
 
 // Get the name of item
-std::string Item::getName() {
+std::string Item::getName() const {
   if (item_pointer)
     return item_pointer->getName();
   return "null item";
