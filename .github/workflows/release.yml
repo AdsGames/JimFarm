@@ -135,7 +135,7 @@ jobs:
 
       - name: Build
         run: |
-          cmake -G Ninja . -DCMAKE_BUILD_TYPE=Release
+          cmake -G Ninja .
           make
 
       # - name: Deploy to A.D.S. Games
