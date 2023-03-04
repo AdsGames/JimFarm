@@ -9,7 +9,7 @@ A massive procedurally generated world in which you can set up a farm and collec
 
 ## Demo
 
-[Web Demo](https://adsgames.github.io/Memory/)
+[Web Demo](https://adsgames.github.io/JimFarm/)
 
 ## Setup
 

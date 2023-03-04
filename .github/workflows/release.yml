@@ -1,0 +1,146 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  build-web:
+    name: Deploy Web
+    runs-on: ubuntu-latest
+    env:
+      EM_VERSION: "latest"
+      EM_CACHE_FOLDER: "emsdk-cache"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - id: cache-system-libraries
+        uses: actions/cache@v2
+        with:
+          path: ${{env.EM_CACHE_FOLDER}}
+          key: ${{env.EM_VERSION}}-${{ runner.os }}
+
+      - uses: mymindstorm/setup-emsdk@v12
+        with:
+          version: ${{env.EM_VERSION}}
+          actions-cache-folder: ${{env.EM_CACHE_FOLDER}}
+
+      - name: Build
+        run: |
+          emcmake cmake -G "Unix Makefiles" .
+          emmake make -j4
+
+      # - name: Deploy to A.D.S. Games
+      #   uses: adsgames/deploy-to-adsgames@v1
+      #   with:
+      #     project-id: jimfarm
+      #     platform: WEB
+      #     bucket-access-key: ${{ secrets.LINODE_BUCKET_ACCESS_KEY }}
+      #     bucket-secret-key: ${{ secrets.LINODE_BUCKET_SECRET_KEY }}
+      #     api-key: ${{ secrets.ADSGAMES_API_KEY }}
+
+  build-linux:
+    name: Deploy Linux
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install Libraries
+        run: |
+          sudo apt update
+          sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev libsdl2-gfx-dev
+
+      - name: Build
+        run: |
+          cmake -G "Unix Makefiles" .
+          make -j4
+
+      # - name: Deploy to A.D.S. Games
+      #   uses: adsgames/deploy-to-adsgames@v1
+      #   with:
+      #     project-id: jimfarm
+      #     platform: LINUX
+      #     bucket-access-key: ${{ secrets.LINODE_BUCKET_ACCESS_KEY }}
+      #     bucket-secret-key: ${{ secrets.LINODE_BUCKET_SECRET_KEY }}
+      #     api-key: ${{ secrets.ADSGAMES_API_KEY }}
+
+  build-mac:
+    name: Deploy Mac OS
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install Libraries
+        run: |
+          brew install sdl2 sdl2_image sdl2_gfx sdl2_ttf sdl2_mixer
+
+      - name: Build
+        run: |
+          cmake -G "Unix Makefiles" .
+          export CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH:/usr/local/include"
+          make -j4
+
+      # - name: Deploy to A.D.S. Games
+      #   uses: adsgames/deploy-to-adsgames@v1
+      #   with:
+      #     project-id: jimfarm
+      #     platform: MAC
+      #     bucket-access-key: ${{ secrets.LINODE_BUCKET_ACCESS_KEY }}
+      #     bucket-secret-key: ${{ secrets.LINODE_BUCKET_SECRET_KEY }}
+      #     api-key: ${{ secrets.ADSGAMES_API_KEY }}
+
+  build-windows:
+    name: Deploy Windows
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          install: >-
+            make
+            git
+            mingw-w64-x86_64-gcc-libs
+            mingw-w64-x86_64-SDL2
+            mingw-w64-x86_64-SDL2_mixer
+            mingw-w64-x86_64-SDL2_image
+            mingw-w64-x86_64-SDL2_ttf
+            mingw-w64-x86_64-SDL2_gfx
+          pacboy: >-
+            toolchain:p
+            cmake:p
+            ninja:p
+
+      - name: Build
+        run: |
+          cmake -G Ninja .
+          ninja
+
+      # - name: Deploy to A.D.S. Games
+      #   uses: adsgames/deploy-to-adsgames@v1
+      #   with:
+      #     project-id: jimfarm
+      #     platform: WINDOWS
+      #     bucket-access-key: ${{ secrets.LINODE_BUCKET_ACCESS_KEY }}
+      #     bucket-secret-key: ${{ secrets.LINODE_BUCKET_SECRET_KEY }}
+      #     api-key: ${{ secrets.ADSGAMES_API_KEY }}
