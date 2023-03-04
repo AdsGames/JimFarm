@@ -12,6 +12,9 @@ jobs:
   build-web:
     name: Deploy Web
     runs-on: ubuntu-latest
+    env:
+      EM_VERSION: 1.39.18
+      EM_CACHE_FOLDER: "emsdk-cache"
 
     steps:
       - name: Checkout
@@ -19,17 +22,16 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup cache
-        id: cache-system-libraries
-        uses: actions/cache@v3
+      - id: cache-system-libraries
+        uses: actions/cache@v2
         with:
-          path: emsdk-cache
-          key: latest-${{ runner.os }}
+          path: ${{env.EM_CACHE_FOLDER}}
+          key: ${{env.EM_VERSION}}-${{ runner.os }}
 
-      - uses: mymindstorm/setup-emsdk@v11
+      - uses: mymindstorm/setup-emsdk@v12
         with:
-          version: latest
-          actions-cache-folder: emsdk-cache
+          version: ${{env.EM_VERSION}}
+          actions-cache-folder: ${{env.EM_CACHE_FOLDER}}
 
       - name: Build
         run: |
