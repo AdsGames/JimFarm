@@ -106,23 +106,37 @@ jobs:
   build-windows:
     name: Deploy Windows
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
 
     steps:
+      - uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >-
+            make
+            git
+            mingw-w64-x86_64-gcc-libs
+            mingw-w64-x86_64-SDL2
+            mingw-w64-x86_64-SDL2_mixer
+            mingw-w64-x86_64-SDL2_image
+            mingw-w64-x86_64-SDL2_ttf
+            mingw-w64-x86_64-SDL2_gfx
+          pacboy: >-
+            toolchain:p
+            cmake:p
+            ninja:p
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
           submodules: recursive
 
-      - name: Install Libraries
-        run: |
-          Set-Item -Path Env:Path -Value ("C:/msys64/usr/bin;" + $Env:Path)
-          pacman --noconfirm -S mingw-w64-i686-gcc-libs mingw-w64-i686-SDL2 mingw-w64-i686-SDL2_mixer mingw-w64-i686-SDL2_image mingw-w64-i686-SDL2_ttf mingw-w64-i686-SDL2_gfx
-
       - name: Build
         run: |
-          Set-Item -Path Env:Path -Value ("C:/msys64/mingw32/bin;" + $Env:Path)
-          cmake -G "MSYS Makefiles" .
-          make -j4
+          cmake -G Ninja . -DCMAKE_BUILD_TYPE=Release
+          make
 
       # - name: Deploy to A.D.S. Games
       #   uses: adsgames/deploy-to-adsgames@v1
