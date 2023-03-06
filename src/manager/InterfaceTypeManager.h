@@ -8,6 +8,7 @@
 #ifndef INTERFACE_TYPE_MANAGER_H
 #define INTERFACE_TYPE_MANAGER_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -19,11 +20,11 @@ class InterfaceTypeManager {
   static int loadInterfaces(const std::string& path);
 
   // Allows communication
-  static UI_Controller* getInterfaceById(int id);
+  static std::shared_ptr<UI_Controller> getInterfaceById(int id);
 
  private:
   // Stores all interfaces
-  static std::vector<UI_Controller*> ui_defs;
+  static std::vector<std::shared_ptr<UI_Controller>> ui_defs;
 };
 
 #endif  // INTERFACE_TYPE_MANAGER_H

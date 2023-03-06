@@ -20,12 +20,12 @@ UI_Controller::UI_Controller(int width, int height)
   }
 }
 
-void UI_Controller::addElement(UI_Element* element) {
+void UI_Controller::addElement(std::shared_ptr<UI_Element> element) {
   if (element) {
     elements.push_back(element);
 
     // Is it a slot?
-    auto s = dynamic_cast<UI_Slot*>(element);
+    auto s = std::dynamic_pointer_cast<UI_Slot>(element);
     if (s) {
       inv->addSpace();
       s->bindStack(inv->getStack(currently_bound));
@@ -70,12 +70,12 @@ void UI_Controller::update() {
     int trans_y = asw::input::mouse.y;
 
     // Element at position
-    UI_Element* elem = elementAt(trans_x, trans_y);
+    auto elem = elementAt(trans_x, trans_y);
 
     // Check if move
     if (elem != nullptr) {
       // Cast to slot
-      UI_Slot* slt = dynamic_cast<UI_Slot*>(elem);
+      auto slt = std::dynamic_pointer_cast<UI_Slot>(elem);
 
       // Ensure that it is slot
       if (slt != nullptr) {
@@ -114,7 +114,7 @@ void UI_Controller::update() {
   }
 }
 
-UI_Element* UI_Controller::elementAt(int x, int y) {
+std::shared_ptr<UI_Element> UI_Controller::elementAt(int x, int y) {
   int trans_x = x - this->x;
   int trans_y = y - this->y;
 

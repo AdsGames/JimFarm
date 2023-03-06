@@ -16,12 +16,12 @@ class UI_Controller {
 
   void update();
 
-  void addElement(UI_Element* element);
+  void addElement(std::shared_ptr<UI_Element> element);
 
   std::shared_ptr<Inventory> getInventory() const;
 
  private:
-  UI_Element* elementAt(int x, int y);
+  std::shared_ptr<UI_Element> elementAt(int x, int y);
 
   bool is_open;
   std::shared_ptr<Inventory> inv;
@@ -31,7 +31,7 @@ class UI_Controller {
   int x{0};
   int y{0};
 
-  std::vector<UI_Element*> elements;
+  std::vector<std::shared_ptr<UI_Element>> elements;
 
   static std::shared_ptr<ItemStack> mouse_item;
 

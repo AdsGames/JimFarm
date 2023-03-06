@@ -65,7 +65,7 @@ void Menu::update(StateEngine* engine) {
       tick = 0;
       if (indicator_location == 4) {
         asw::sound::play(blip);
-        setNextState(engine, StateEngine::STATE_GAME);
+        setNextState(engine, ProgramState::GAME);
         return;
       } else if (indicator_location == 3) {
         asw::sound::play(blip);
@@ -78,7 +78,7 @@ void Menu::update(StateEngine* engine) {
         state = MenuState::STORY;
         asw::sound::play(blip);
       } else if (indicator_location == 0) {
-        setNextState(engine, StateEngine::STATE_EXIT);
+        setNextState(engine, ProgramState::EXIT);
         return;
       }
     }

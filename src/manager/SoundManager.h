@@ -9,6 +9,7 @@
 #define SOUND_MANAGER_H
 
 #include <asw/asw.h>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -19,7 +20,7 @@
  */
 class SampleWrapper {
  public:
-  SampleWrapper(asw::Sample sample_ptr = NULL,
+  SampleWrapper(asw::Sample sample_ptr = nullptr,
                 int vol = 255,
                 int pan = 128,
                 int freq = 1000,
@@ -41,14 +42,14 @@ class SampleWrapper {
 class SoundManager {
  public:
   // Load tile types
-  static int load(std::string path);
+  static int load(const std::string& path);
 
   // Play sample
   static void play(unsigned int sound_id);
 
  private:
   // List of sounds
-  static std::vector<SampleWrapper*> sound_defs;
+  static std::vector<std::shared_ptr<SampleWrapper>> sound_defs;
 };
 
 #endif  // SOUND_MANAGER_H

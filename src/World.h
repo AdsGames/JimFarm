@@ -33,10 +33,10 @@ class World {
   int getY() const { return this->y; }
 
   // Get messenger
-  Messenger* getMessenger() { return this->map_messages; }
+  const Messenger& getMessenger() const { return this->map_messages; }
 
   // Tile map
-  TileMap* world_map = nullptr;
+  std::shared_ptr<TileMap> world_map = nullptr;
 
   // Viewport
   static constexpr int VIEWPORT_WIDTH = 240 * 2;
@@ -44,7 +44,7 @@ class World {
   static constexpr float VIEWPORT_MAX_ZOOM = 2.0f;
   static constexpr float VIEWPORT_MIN_ZOOM = 0.5f;
 
-  float VIEWPORT_ZOOM = 1.0f;
+  float VIEWPORT_ZOOM = 2.0f;
 
  private:
   // Scroll position
@@ -52,14 +52,14 @@ class World {
   int y = 0;
 
   // Buffer that holds whole map image
-  asw::Texture map_buffer{};
-  asw::Texture overlay_buffer{};
+  asw::Texture map_buffer = nullptr;
+  asw::Texture overlay_buffer = nullptr;
 
   // Ticker for world
-  Timer ticker;
+  Timer ticker{};
 
   // Messager
-  Messenger* map_messages = nullptr;
+  Messenger map_messages = Messenger(1, false, -4);
 };
 
 #endif  // SRC_WORLD_H_

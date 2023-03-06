@@ -3,21 +3,17 @@
 #include <algorithm>
 #include <utility>
 
-Graphics* Graphics::instance = nullptr;
+std::shared_ptr<Graphics> Graphics::instance = nullptr;
 
 bool sortDrawableByZ(std::shared_ptr<Sprite> A, std::shared_ptr<Sprite> B) {
   return (*A < *B);
 }
 
-Graphics::Graphics() {
-  should_sort = false;
-  need_sort = false;
-}
-
 // Get instance
-Graphics* Graphics::Instance() {
-  if (!instance)
-    instance = new Graphics();
+std::shared_ptr<Graphics> Graphics::Instance() {
+  if (!instance) {
+    instance = std::make_shared<Graphics>();
+  }
 
   return instance;
 }
@@ -76,7 +72,7 @@ void Graphics::enableSort() {
   }
 }
 
-void Graphics::draw(int x_1, int y_1, int x_2, int y_2) {
+void Graphics::draw(int x_1, int y_1, int x_2, int y_2) const {
   for (auto const& sprite : sprites) {
     if (sprite != nullptr) {
       sprite->draw(x_1, y_1, x_2, y_2);
