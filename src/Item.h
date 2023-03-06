@@ -13,7 +13,7 @@ class Item {
   Item(char newID, unsigned char meta = 0);
 
   // Draw to screen
-  void draw(int x, int y);
+  void draw(int x, int y) const;
 
   // Get value of item
   unsigned char getValue() const;
@@ -31,10 +31,10 @@ class Item {
 
  private:
   // Metadata info
-  unsigned char meta;
+  unsigned char meta = 0;
 
   // Pointer to item type
-  std::shared_ptr<TileType> item_pointer;
+  TileType& item_pointer;
 };
 
 #endif  // SRC_ITEM_H_

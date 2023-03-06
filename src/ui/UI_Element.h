@@ -7,6 +7,7 @@ class UI_Element {
  public:
   explicit UI_Element(int x, int y);
   explicit UI_Element(int x, int y, int width, int height);
+  virtual ~UI_Element() = default;
 
   virtual void draw(int parent_x, int parent_y) = 0;
 

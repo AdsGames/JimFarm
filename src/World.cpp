@@ -105,8 +105,9 @@ void World::loadImages() {
   }
 
   // Create map buffer
-  map_buffer = asw::assets::createTexture(VIEWPORT_WIDTH * VIEWPORT_MAX_ZOOM,
-                                          VIEWPORT_HEIGHT * VIEWPORT_MAX_ZOOM);
+  map_buffer = asw::assets::createTexture(
+      static_cast<int>(VIEWPORT_WIDTH * VIEWPORT_MAX_ZOOM),
+      static_cast<int>(VIEWPORT_HEIGHT * VIEWPORT_MAX_ZOOM));
 
   overlay_buffer = asw::assets::createTexture(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 

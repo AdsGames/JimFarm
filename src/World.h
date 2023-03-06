@@ -32,11 +32,11 @@ class World {
   int getX() const { return this->x; }
   int getY() const { return this->y; }
 
+  // Get map
+  const std::shared_ptr<TileMap>& getMap() const { return this->world_map; }
+
   // Get messenger
   const Messenger& getMessenger() const { return this->map_messages; }
-
-  // Tile map
-  std::shared_ptr<TileMap> world_map = nullptr;
 
   // Viewport
   static constexpr int VIEWPORT_WIDTH = 240 * 2;
@@ -47,6 +47,9 @@ class World {
   float VIEWPORT_ZOOM = 2.0f;
 
  private:
+  // Tile map
+  std::shared_ptr<TileMap> world_map = nullptr;
+
   // Scroll position
   int x = 0;
   int y = 0;

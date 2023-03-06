@@ -103,8 +103,9 @@ void TileMap::replaceTile(std::shared_ptr<Tile> oldTile,
 
 // Check for solid tile
 bool TileMap::isSolidAt(int x, int y) {
-  if (getTileAt(x, y, LAYER_FOREGROUND))
+  if (getTileAt(x, y, LAYER_FOREGROUND)) {
     return getTileAt(x, y, LAYER_FOREGROUND)->isSolid();
+  }
   return false;
 }
 

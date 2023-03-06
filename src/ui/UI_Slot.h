@@ -12,7 +12,7 @@ class UI_Slot : public UI_Element {
  public:
   UI_Slot(int x, int y);
   UI_Slot(int x, int y, std::shared_ptr<ItemStack> stk);
-  virtual ~UI_Slot() = default;
+  ~UI_Slot() final = default;
 
   void bindStack(std::shared_ptr<ItemStack> stk);
 

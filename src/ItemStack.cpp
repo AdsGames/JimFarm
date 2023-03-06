@@ -36,13 +36,15 @@ void ItemStack::clear() {
   remove(this->quantity);
 }
 
-void ItemStack::draw(int x, int y) {
-  if (item != nullptr) {
-    item->draw(x, y);
-    if (quantity > 1) {
-      // textprintf_centre_ex(buffer, font, x + 10, y + 2,
-      //                      asw::util::makeColor(255, 255, 255), -1, "x%d",
-      //                      quantity);
-    }
+void ItemStack::draw(int x, int y) const {
+  if (item == nullptr) {
+    return;
+  }
+
+  item->draw(x, y);
+  if (quantity > 1) {
+    // textprintf_centre_ex(buffer, font, x + 10, y + 2,
+    //                      asw::util::makeColor(255, 255, 255), -1, "x%d",
+    //                      quantity);
   }
 }

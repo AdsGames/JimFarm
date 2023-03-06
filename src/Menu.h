@@ -19,14 +19,14 @@ enum class MenuState {
 class Menu : public State {
  public:
   Menu();
-  virtual ~Menu(){};
+  ~Menu() final = default;
 
   void draw() override;
 
   void update(StateEngine* engine) override;
 
  private:
-  void drawSlider(int x, int y, int value, std::string title);
+  void drawSlider(int x, int y, int value, const std::string& title) const;
 
   int tick{0};
   int coin_frame{0};

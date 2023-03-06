@@ -1,5 +1,6 @@
 #include "InterfaceTypeManager.h"
 
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -10,7 +11,7 @@
 #include "../ui/UI_Label.h"
 #include "../ui/UI_Slot.h"
 
-std::vector<std::shared_ptr<UI_Controller>> InterfaceTypeManager::ui_defs;
+std::vector<UI_Controller> InterfaceTypeManager::ui_defs;
 
 // Load interfaces
 int InterfaceTypeManager::loadInterfaces(const std::string& path) {
@@ -33,21 +34,21 @@ int InterfaceTypeManager::loadInterfaces(const std::string& path) {
     int height = interface["height"];
 
     // Create ui controller
-    auto controller = std::make_shared<UI_Controller>(width, height);
+    auto controller = UI_Controller(width, height);
 
     // Labels
     for (auto const& label : interface["labels"]) {
       std::string text = label["text"];
       int x = label["x"];
       int y = label["y"];
-      controller->addElement(std::make_shared<UI_Label>(x, y, text));
+      controller.addElement(std::make_shared<UI_Label>(x, y, text));
     }
 
     // Slots
     for (auto const& slot : interface["slots"]) {
       int x = slot["x"];
       int y = slot["y"];
-      controller->addElement(std::make_shared<UI_Slot>(x, y));
+      controller.addElement(std::make_shared<UI_Slot>(x, y));
     }
 
     // Push to controllers
@@ -60,9 +61,11 @@ int InterfaceTypeManager::loadInterfaces(const std::string& path) {
 }
 
 // Get interfaces by ID
-std::shared_ptr<UI_Controller> InterfaceTypeManager::getInterfaceById(int id) {
+UI_Controller& InterfaceTypeManager::getInterfaceById(int id) {
   if (id >= 0 && id < (signed)ui_defs.size()) {
     return ui_defs.at(id);
   }
-  return nullptr;
+
+  // Throw error
+  throw std::runtime_error("Interface not found");
 }

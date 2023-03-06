@@ -9,7 +9,6 @@
 #define SOUND_MANAGER_H
 
 #include <asw/asw.h>
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -49,7 +48,7 @@ class SoundManager {
 
  private:
   // List of sounds
-  static std::vector<std::shared_ptr<SampleWrapper>> sound_defs;
+  static std::vector<SampleWrapper> sound_defs;
 };
 
 #endif  // SOUND_MANAGER_H

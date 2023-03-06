@@ -20,7 +20,11 @@ class CharacterForeground : public Sprite {
  public:
   explicit CharacterForeground(Character* charPtr);
 
-  void draw(float x_1, float y_1, float x_2, float y_2) override;
+  virtual ~CharacterForeground() = default;
+
+  void draw(float x_1, float y_1, float x_2, float y_2) const override;
+
+  void update();
 
   Character* char_ptr = nullptr;
 };
@@ -45,8 +49,8 @@ class Character : public Sprite {
   }
 
   // Draw
-  void draw(float x_1, float y_1, float x_2, float y_2) override;
-  void drawInventory();
+  void draw(float x_1, float y_1, float x_2, float y_2) const override;
+  void drawInventory() const;
 
   // Update
   void update();
@@ -56,11 +60,10 @@ class Character : public Sprite {
   std::shared_ptr<CharacterForeground> c_fore = nullptr;
 
   // Attached UI
-  std::shared_ptr<UI_Controller> attached_ui = nullptr;
+  int attached_ui;
 
   // Inventory UI
-  std::shared_ptr<UI_Controller> inventory_ui = nullptr;
-  std::shared_ptr<UI_Controller> hotbar_ui = nullptr;
+  UI_Controller& inventory_ui;
 
   // UI open
   bool ui_open = false;
@@ -71,9 +74,6 @@ class Character : public Sprite {
   // Fonts
   asw::Font pixelart{};
   World* map_pointer = nullptr;
-
-  // Inventory
-  std::shared_ptr<Inventory> character_inv = nullptr;
 
   // Item in hand
   int selected_item = 0;

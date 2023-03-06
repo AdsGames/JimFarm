@@ -6,31 +6,18 @@
 #include <math.h>
 
 // Init tile
-TileType::TileType(unsigned char newWidth,
-                   unsigned char newHeight,
-                   unsigned char newID,
-                   std::string newName,
-                   int newAttribute,
-                   unsigned char newValue) {
-  // Set init variables
-  id = newID;
-  name = newName;
-
-  width = newWidth;
-  height = newHeight;
-
-  attribute = newAttribute;
-  value = newValue;
-
-  sprite_sheet = nullptr;
-  image_type = "";
-  sheet_width = 1;
-  sheet_height = 1;
-  image_w = 1;
-  image_h = 1;
-  image_cord_x = 0;
-  image_cord_y = 0;
-}
+TileType::TileType(unsigned char width,
+                   unsigned char height,
+                   unsigned char id,
+                   const std::string& name,
+                   int attribute,
+                   unsigned char value)
+    : id(id),
+      width(width),
+      height(height),
+      name(name),
+      attribute(attribute),
+      value(value) {}
 
 // Draw tile
 void TileType::draw(int x, int y, unsigned char meta, char offset) {

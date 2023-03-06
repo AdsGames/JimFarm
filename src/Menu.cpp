@@ -42,7 +42,7 @@ void Menu::draw() {
                                  18);
   }
 }
-void Menu::drawSlider(int x, int y, int value, std::string title) {
+void Menu::drawSlider(int x, int y, int value, const std::string& title) const {
   std::string text = title + ": " + std::to_string(value);
   asw::draw::text(pixelart, text, x, y + 16, asw::util::makeColor(0, 0, 0));
 

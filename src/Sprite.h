@@ -7,8 +7,9 @@ class Sprite {
  public:
   Sprite();
   Sprite(int x, int y, int z);
+  virtual ~Sprite() = default;
 
-  virtual void draw(float x_1, float y_1, float x_2, float y_2) = 0;
+  virtual void draw(float x_1, float y_1, float x_2, float y_2) const = 0;
 
   void setZ(int z);
 
@@ -17,7 +18,7 @@ class Sprite {
   int getY() const { return this->y; }
   int getZ() const { return this->z; }
 
-  virtual bool operator<(const Sprite& other) const {
+  bool operator<(const Sprite& other) const {
     if (z != other.z) {
       return this->z < other.z;
     }

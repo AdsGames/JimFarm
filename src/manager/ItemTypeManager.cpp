@@ -8,7 +8,7 @@
 #include "../Tile.h"
 #include "../utility/Tools.h"
 
-std::vector<std::shared_ptr<TileType>> ItemTypeManager::item_defs;
+std::vector<TileType> ItemTypeManager::item_defs;
 
 asw::Texture ItemTypeManager::sprite_sheet_items = nullptr;
 
@@ -39,10 +39,9 @@ int ItemTypeManager::loadItems(const std::string& path) {
     int id = item["id"];
 
     // Create item, set variables and add it to the item list
-    auto tile_type =
-        std::make_shared<TileType>(1, 1, id, name, 0, (unsigned char)value);
-    tile_type->setSpriteSheet(sprite_sheet_items);
-    tile_type->setImageType("", 1, 1, image_x, image_y, 1, 1);
+    auto tile_type = TileType(1, 1, id, name, 0, (unsigned char)value);
+    tile_type.setSpriteSheet(sprite_sheet_items);
+    tile_type.setImageType("", 1, 1, image_x, image_y, 1, 1);
     item_defs.push_back(tile_type);
   }
 
@@ -52,11 +51,13 @@ int ItemTypeManager::loadItems(const std::string& path) {
 }
 
 // Returns item at ID
-std::shared_ptr<TileType> ItemTypeManager::getItemById(int tileID) {
-  for (auto const& item : item_defs) {
-    if (item->getID() == tileID) {
+TileType& ItemTypeManager::getItemById(int tileID) {
+  for (auto& item : item_defs) {
+    if (item.getID() == tileID) {
       return item;
     }
   }
-  return nullptr;
+
+  // Throw error if not found
+  throw std::runtime_error("Item not found");
 }
