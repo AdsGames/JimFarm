@@ -121,8 +121,8 @@ void Character::drawInventory() {
   }
 
   // Draw UI
-  if (ui_open && attatched_ui) {
-    attatched_ui->draw();
+  if (ui_open && attached_ui) {
+    attached_ui->draw();
   }
 }
 
@@ -132,27 +132,27 @@ void Character::update() {
   if (asw::input::keyboard.pressed[SDL_SCANCODE_E]) {
     if (ui_open) {
       ui_open = false;
-      attatched_ui = nullptr;
+      attached_ui = nullptr;
     } else {
       ui_open = true;
-      attatched_ui = inventory_ui;
+      attached_ui = inventory_ui;
     }
   }
 
   if (asw::input::keyboard.pressed[SDL_SCANCODE_G]) {
     if (ui_open) {
       ui_open = false;
-      attatched_ui = nullptr;
+      attached_ui = nullptr;
     } else {
       ui_open = true;
-      attatched_ui = InterfaceTypeManager::getInterfaceById(1);
+      attached_ui = InterfaceTypeManager::getInterfaceById(1);
     }
   }
 
   // UI Open
-  if (ui_open && attatched_ui != nullptr) {
+  if (ui_open && attached_ui != nullptr) {
     // Update UI
-    attatched_ui->update();
+    attached_ui->update();
     return;
   }
 

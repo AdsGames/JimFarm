@@ -13,23 +13,22 @@ SampleWrapper::SampleWrapper(asw::Sample sample_ptr,
                              int pan,
                              int freq,
                              int freq_rand,
-                             bool loop) {
-  this->sample_ptr = sample_ptr;
-  this->vol = vol;
-  this->pan = pan;
-  this->freq = freq;
-  this->freq_rand = freq_rand;
-  this->loop = loop;
-}
+                             bool loop)
+    : sample_ptr(sample_ptr),
+      vol(vol),
+      pan(pan),
+      freq(freq),
+      freq_rand(freq_rand),
+      loop(loop) {}
 
 // List of sounds
-std::vector<SampleWrapper*> SoundManager::sound_defs;
+std::vector<std::shared_ptr<SampleWrapper>> SoundManager::sound_defs;
 
 /*
  * Load sounds from file
  * Errors: 1 File Not Found,
  */
-int SoundManager::load(std::string path) {
+int SoundManager::load(const std::string& path) {
   // Open file or abort if it does not exist
   std::ifstream file(path);
   if (!file.is_open()) {
@@ -50,7 +49,7 @@ int SoundManager::load(std::string path) {
     int frequency_rand = sound["frequency_rand"];
 
     asw::Sample tempSample = asw::assets::loadSample(file);
-    SampleWrapper* tempWrapper = new SampleWrapper(
+    auto tempWrapper = std::make_shared<SampleWrapper>(
         tempSample, volume, panning, frequency, frequency_rand, false);
     sound_defs.push_back(tempWrapper);
   }

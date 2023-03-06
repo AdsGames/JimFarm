@@ -23,11 +23,7 @@ bool comparePtrToNode(std::shared_ptr<Tile> a, std::shared_ptr<Tile> b) {
  * TILE MAP *
  ************/
 World::World() {
-  map_buffer = nullptr;
-
-  map_messages = new Messenger(1, false, -4);
-
-  world_map = new TileMap();
+  world_map = std::make_shared<TileMap>();
 
   ticker.start();
 }
@@ -78,7 +74,7 @@ void World::draw() {
   asw::draw::sprite(overlay_buffer, 0, 0);
 
   // Message system
-  map_messages->draw(5, 145);
+  map_messages.draw(5, 145);
 }
 
 // Load images
@@ -205,15 +201,15 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
   // Watering can
   else if (inHand->getID() == ITEM_WATERING_CAN) {
     if (midgroundTile && midgroundTile->getID() == TILE_WELL_PATH) {
-      map_messages->pushMessage("Watering can filled");
+      map_messages.pushMessage("Watering can filled");
       inHand->setMeta(8);
       SoundManager::play(SOUND_WATER_FILL);
     } else if (inHand->getMeta() > 0) {
       inHand->changeMeta(-1);
-      map_messages->pushMessage("Watered");
+      map_messages.pushMessage("Watered");
       SoundManager::play(SOUND_WATER_POUR);
     } else {
-      map_messages->pushMessage("Out of water");
+      map_messages.pushMessage("Out of water");
       SoundManager::play(SOUND_ERROR);
     }
   }

@@ -25,7 +25,7 @@ void GameMenu::update(StateEngine* engine) {
       asw::input::keyboard.down[SDL_SCANCODE_RETURN]) {
     // Menu
     if (indicator_position == 0) {
-      setNextState(engine, StateEngine::STATE_MENU);
+      setNextState(engine, ProgramState::MENU);
     }
     // Save
     else if (indicator_position == 1) {
@@ -33,7 +33,7 @@ void GameMenu::update(StateEngine* engine) {
     }
     // Exit
     else {
-      setNextState(engine, StateEngine::STATE_GAME);
+      setNextState(engine, ProgramState::GAME);
     }
   }
 }

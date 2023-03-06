@@ -17,10 +17,6 @@ Chunk::Chunk(int x, int y) : x(x), y(y) {
   generate();
 }
 
-Chunk::~Chunk() {
-  setDrawEnabled(false);
-}
-
 int Chunk::getX() const {
   return x;
 }
@@ -39,9 +35,9 @@ std::string Chunk::getBiomeAt(int x, int y) const {
   }
 
   std::stringstream stream;
-  stream << "temp:" << static_cast<int>(temperature[offset_x][offset_y])
-         << " rain:" << static_cast<int>((rainfall[offset_x][offset_y]) + 64)
-         << " height:" << static_cast<int>(height[offset_x][offset_y]);
+  stream << "temp:" << temperature[offset_x][offset_y] << " "
+         << "rain:" << rainfall[offset_x][offset_y] + 64 << " "
+         << "height:" << height[offset_x][offset_y];
 
   return stream.str();
 }
@@ -58,7 +54,7 @@ char Chunk::getTemperatureAt(int x, int y) const {
   return temperature[offset_x][offset_y];
 }
 
-std::shared_ptr<Tile> Chunk::getTileAt(int x, int y, int z) {
+std::shared_ptr<Tile> Chunk::getTileAt(int x, int y, int z) const {
   int offset_x = x / TILE_WIDTH - this->x * CHUNK_WIDTH;
   int offset_y = y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
 
@@ -92,7 +88,7 @@ void Chunk::setTileAt(int x, int y, int z, std::shared_ptr<Tile> tile) {
 }
 
 // Get item at position
-std::shared_ptr<MapItem> Chunk::getItemAt(int x, int y) {
+std::shared_ptr<MapItem> Chunk::getItemAt(int x, int y) const {
   for (auto const& i : items) {
     if (i->x == x && i->y == y) {
       return i;
@@ -178,8 +174,9 @@ void Chunk::tick() {
       // Current tile
       auto& current = tiles[i][t][LAYER_FOREGROUND];
 
-      if (!current)
+      if (!current) {
         continue;
+      }
 
       // Berries
       if (current->getID() == TILE_BERRY) {
@@ -242,13 +239,13 @@ void Chunk::tick() {
 
 void Chunk::generate() {
   // Height
-  SimplexNoise* sn_h = new SimplexNoise(1.0f, 1.0f, 2.0f, 0.47f);
+  auto sn_h = std::make_unique<SimplexNoise>(1.0f, 1.0f, 2.0f, 0.47f);
 
   // Rainfall
-  SimplexNoise* sn_r = new SimplexNoise(0.3f, 0.3f, 1.0f, 2.0f);
+  auto sn_r = std::make_unique<SimplexNoise>(0.3f, 0.3f, 1.0f, 2.0f);
 
   // Temperature
-  SimplexNoise* sn_t = new SimplexNoise(0.3f, 0.3f, 1.0f, 2.0f);
+  auto sn_t = std::make_unique<SimplexNoise>(0.3f, 0.3f, 1.0f, 2.0f);
 
   for (int i = 0; i < CHUNK_WIDTH; i++) {
     for (int t = 0; t < CHUNK_HEIGHT; t++) {

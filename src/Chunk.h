@@ -22,15 +22,14 @@ const int LAYER_FOREGROUND = 4;
 class Chunk {
  public:
   Chunk(int x, int y);
-  virtual ~Chunk();
 
   int getX() const;
   int getY() const;
 
-  std::shared_ptr<Tile> getTileAt(int x, int y, int z);
+  std::shared_ptr<Tile> getTileAt(int x, int y, int z) const;
   void setTileAt(int x, int y, int z, std::shared_ptr<Tile> tile);
 
-  std::shared_ptr<MapItem> getItemAt(int x, int y);
+  std::shared_ptr<MapItem> getItemAt(int x, int y) const;
   void placeItemAt(std::shared_ptr<Item> item, int x, int y);
   void removeItem(std::shared_ptr<MapItem> item);
 

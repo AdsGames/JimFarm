@@ -30,7 +30,7 @@ void Game::update(StateEngine* engine) {
 
   // Go to menu
   if (asw::input::keyboard.pressed[SDL_SCANCODE_ESCAPE])
-    setNextState(engine, StateEngine::STATE_GAME_MENU);
+    setNextState(engine, ProgramState::GAME_MENU);
 }
 
 void Game::draw() {

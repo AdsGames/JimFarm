@@ -12,10 +12,14 @@
 
 #include <asw/asw.h>
 
+#include <memory>
 #include <vector>
 
 // Class
 class State;
+
+// Game states
+enum class ProgramState { NONE, EXIT, MENU, GAME, GAME_MENU, OPTIONS };
 
 /*****************
  * STATE ENGINE
@@ -23,7 +27,7 @@ class State;
 class StateEngine {
  public:
   // Init
-  StateEngine();
+  StateEngine() = default;
 
   // Update
   void update();
@@ -32,33 +36,23 @@ class StateEngine {
   void draw();
 
   // Set next state
-  void setNextState(int newState);
+  void setNextState(ProgramState state);
 
   // Get state id
-  int getStateId();
-
-  // Game states
-  enum programStates {
-    STATE_NULL,
-    STATE_EXIT,
-    STATE_MENU,
-    STATE_GAME,
-    STATE_GAME_MENU,
-    STATE_OPTIONS
-  };
+  ProgramState getStateId() const;
 
  private:
   // Change state
   void changeState();
 
   // Stores states
-  State* state;
+  std::unique_ptr<State> state = nullptr;
 
   // Next state
-  int nextState = STATE_NULL;
+  ProgramState nextState = ProgramState::NONE;
 
   // State id
-  int currentState = STATE_NULL;
+  ProgramState currentState = ProgramState::NONE;
 };
 
 /*********
@@ -67,7 +61,7 @@ class StateEngine {
 class State {
  public:
   // Virtual destructor
-  virtual ~State(){};
+  virtual ~State() = default;
 
   // Draw to screen
   virtual void draw() = 0;
@@ -76,10 +70,7 @@ class State {
   virtual void update(StateEngine* engine) = 0;
 
   // Change state
-  void setNextState(StateEngine* engine, int state);
-
-  // Get status
-  int getStatus();
+  void setNextState(StateEngine* engine, ProgramState state);
 
  private:
   // State status

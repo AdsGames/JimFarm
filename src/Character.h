@@ -55,12 +55,12 @@ class Character : public Sprite {
   // Character foreground
   std::shared_ptr<CharacterForeground> c_fore = nullptr;
 
-  // Attatched UI
-  UI_Controller* attatched_ui = nullptr;
+  // Attached UI
+  std::shared_ptr<UI_Controller> attached_ui = nullptr;
 
   // Inventory UI
-  UI_Controller* inventory_ui = nullptr;
-  UI_Controller* hotbar_ui = nullptr;
+  std::shared_ptr<UI_Controller> inventory_ui = nullptr;
+  std::shared_ptr<UI_Controller> hotbar_ui = nullptr;
 
   // UI open
   bool ui_open = false;

@@ -9,7 +9,7 @@
 class Graphics {
  public:
   // Get singleton instance
-  static Graphics* Instance();
+  static std::shared_ptr<Graphics> Instance();
 
   // Add and remove sprites
   void add(std::shared_ptr<Sprite> sprite);
@@ -20,17 +20,14 @@ class Graphics {
   void enableSort();
 
   // Draw managed sprites
-  void draw(int x_1, int y_1, int x_2, int y_2);
+  void draw(int x_1, int y_1, int x_2, int y_2) const;
 
  private:
-  // Prevent instantiation
-  Graphics();
-
   // Should sort on add
-  bool should_sort;
+  bool should_sort = false;
 
   // Needs a sort
-  bool need_sort;
+  bool need_sort = false;
 
   // Sort
   void sort();
@@ -39,7 +36,7 @@ class Graphics {
   std::vector<std::shared_ptr<Sprite>> sprites;
 
   // Single instance
-  static Graphics* instance;
+  static std::shared_ptr<Graphics> instance;
 };
 
 #endif  // SRC_GRAPHICS_H_

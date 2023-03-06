@@ -40,7 +40,7 @@ void update() {
   game_state.update();
 
   // Handle exit
-  if (game_state.getStateId() == StateEngine::STATE_EXIT) {
+  if (game_state.getStateId() == ProgramState::EXIT) {
     asw::core::exit = true;
   }
 }
@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
   setup();
 
   // Set the current state ID
-  game_state.setNextState(StateEngine::STATE_MENU);
+  game_state.setNextState(ProgramState::MENU);
 
 #ifdef __EMSCRIPTEN__
   emscripten_set_main_loop(loop, 0, 1);
