@@ -15,16 +15,16 @@
 #include "utility/Tools.h"
 
 // Size
-int TileMap::getWidth() {
+int TileMap::getWidth() const {
   return width * CHUNK_WIDTH;
 }
 
-int TileMap::getHeight() {
+int TileMap::getHeight() const {
   return height * CHUNK_HEIGHT;
 }
 
 // Chunk lookup
-Chunk* TileMap::getChunkAt(int x, int y) {
+std::shared_ptr<Chunk> TileMap::getChunkAt(int x, int y) {
   int pos_x = x / (CHUNK_WIDTH * TILE_WIDTH);
   int pos_y = y / (CHUNK_HEIGHT * TILE_HEIGHT);
 
@@ -40,36 +40,38 @@ Chunk* TileMap::getChunkAt(int x, int y) {
 }
 
 std::string TileMap::getBiomeAt(int x, int y) {
-  Chunk* chunk = getChunkAt(x, y);
+  auto chunk = getChunkAt(x, y);
   if (!chunk)
     return nullptr;
   return chunk->getBiomeAt(x, y);
 }
 
 char TileMap::getTemperatureAt(int x, int y) {
-  Chunk* chunk = getChunkAt(x, y);
+  auto chunk = getChunkAt(x, y);
   if (!chunk)
     return 0;
   return chunk->getTemperatureAt(x, y);
 }
 
 // Get tile at position
-Tile* TileMap::getTileAt(int x, int y, int layer) {
-  Chunk* chunk = getChunkAt(x, y);
+std::shared_ptr<Tile> TileMap::getTileAt(int x, int y, int layer) {
+  auto chunk = getChunkAt(x, y);
   if (!chunk)
     return nullptr;
   return chunk->getTileAt(x, y, layer);
 }
 
 // Place tile on map (world gen)
-void TileMap::placeTile(Tile* newTile) {
-  if (!newTile)
+void TileMap::placeTile(std::shared_ptr<Tile> newTile) {
+  if (!newTile) {
     return;
+  }
 
-  Chunk* chunk = getChunkAt(newTile->getX(), newTile->getY());
+  auto chunk = getChunkAt(newTile->getX(), newTile->getY());
 
-  if (!chunk)
+  if (!chunk) {
     return;
+  }
 
   chunk->setTileAt(newTile->getX(), newTile->getY(), newTile->getZ(), newTile);
 
@@ -77,11 +79,11 @@ void TileMap::placeTile(Tile* newTile) {
 }
 
 // Remove tile from map
-void TileMap::removeTile(Tile* newTile) {
+void TileMap::removeTile(std::shared_ptr<Tile> newTile) {
   if (!newTile)
     return;
 
-  Chunk* chunk = getChunkAt(newTile->getX(), newTile->getY());
+  auto chunk = getChunkAt(newTile->getX(), newTile->getY());
 
   if (!chunk)
     return;
@@ -90,7 +92,8 @@ void TileMap::removeTile(Tile* newTile) {
 }
 
 // Replace tile on map
-void TileMap::replaceTile(Tile* oldTile, Tile* newTile) {
+void TileMap::replaceTile(std::shared_ptr<Tile> oldTile,
+                          std::shared_ptr<Tile> newTile) {
   if (oldTile) {
     removeTile(oldTile);
     placeTile(newTile);
@@ -106,21 +109,22 @@ bool TileMap::isSolidAt(int x, int y) {
 }
 
 // Get item at position
-MapItem* TileMap::getItemAt(int x, int y) {
-  Chunk* chunk = getChunkAt(x, y);
+std::shared_ptr<MapItem> TileMap::getItemAt(int x, int y) {
+  auto chunk = getChunkAt(x, y);
 
-  if (!chunk)
+  if (!chunk) {
     return nullptr;
+  }
 
   return chunk->getItemAt(x, y);
 }
 
 // Place item on map
-void TileMap::placeItemAt(Item* item, int x, int y) {
+void TileMap::placeItemAt(std::shared_ptr<Item> item, int x, int y) {
   if (!item)
     return;
 
-  Chunk* chunk = getChunkAt(x, y);
+  auto chunk = getChunkAt(x, y);
 
   if (!chunk)
     return;
@@ -129,14 +133,16 @@ void TileMap::placeItemAt(Item* item, int x, int y) {
 }
 
 // Remove item from map
-void TileMap::removeItem(MapItem* item) {
-  if (!item)
+void TileMap::removeItem(std::shared_ptr<MapItem> item) {
+  if (!item) {
     return;
+  }
 
-  Chunk* chunk = getChunkAt(item->getX(), item->getY());
+  auto chunk = getChunkAt(item->getX(), item->getY());
 
-  if (!chunk)
+  if (!chunk) {
     return;
+  }
 
   chunk->removeItem(item);
 }
@@ -168,12 +174,12 @@ void TileMap::generateMap() {
   Chunk::seed = random(-10000, 10000);
   for (unsigned int t = 0; t < (unsigned)height; t++) {
     if (chunks.size() <= t) {
-      std::vector<Chunk*> newVec;
+      std::vector<std::shared_ptr<Chunk>> newVec;
       chunks.push_back(newVec);
     }
 
     for (int i = 0; i < width; i++) {
-      chunks[t].push_back(new Chunk(i, t));
+      chunks[t].push_back(std::make_shared<Chunk>(i, t));
     }
   }
 
@@ -193,29 +199,22 @@ void TileMap::generateMap() {
   std::cout << "done." << std::endl;
 }
 
-// Manually load new file
-void TileMap::loadMap(std::string fileName) {}
-
 // Clear map
 void TileMap::clearMap() {
-  for (auto const& chunk : chunks) {
-    for (auto chunk2 : chunk) {
-      delete chunk2;
-    }
-  }
   chunks.clear();
 }
 
 // Update bitmask
-void TileMap::updateBitMask(Tile* newTile) {
+void TileMap::updateBitMask(std::shared_ptr<Tile> newTile) {
   if (newTile && newTile->needsBitmask()) {
     int mask = 0;
 
     for (int i = 0; i < 4; i++) {
       int offset_x = sin(M_PI * (i / 2.0f)) * 16;
       int offset_y = cos(M_PI * (i / 2.0f)) * -16;
-      Tile* current = getTileAt(newTile->getX() + offset_x,
-                                newTile->getY() + offset_y, newTile->getZ());
+      std::shared_ptr<Tile> current =
+          getTileAt(newTile->getX() + offset_x, newTile->getY() + offset_y,
+                    newTile->getZ());
       if (current && current->getID() == newTile->getID())
         mask += pow(2, i);
     }
@@ -225,16 +224,18 @@ void TileMap::updateBitMask(Tile* newTile) {
 }
 
 // Update bitmask (and neighbours)
-void TileMap::updateBitmaskSurround(Tile* newTile) {
+void TileMap::updateBitmaskSurround(std::shared_ptr<Tile> newTile) {
   if (newTile) {
     updateBitMask(newTile);
     for (int i = 0; i < 4; i++) {
       int offset_x = sin(M_PI * (i / 2.0f)) * 16;
       int offset_y = cos(M_PI * (i / 2.0f)) * -16;
-      Tile* current = getTileAt(newTile->getX() + offset_x,
-                                newTile->getY() + offset_y, newTile->getZ());
-      if (current)
+      std::shared_ptr<Tile> current =
+          getTileAt(newTile->getX() + offset_x, newTile->getY() + offset_y,
+                    newTile->getZ());
+      if (current) {
         updateBitMask(current);
+      }
     }
   }
 }

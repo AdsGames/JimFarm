@@ -4,6 +4,8 @@
 #include <asw/asw.h>
 #include <asw/util/Timer.h>
 
+#include <memory>
+
 #include "Item.h"
 #include "MapItem.h"
 #include "Messenger.h"
@@ -14,8 +16,27 @@ class World {
  public:
   World();
 
-  // Constant
-  int timer;
+  // Drawing
+  void draw();
+
+  void loadImages();
+
+  // Interact with
+  void interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand);
+
+  // Map
+  void update();
+  void scroll(int player_x, int player_y);
+
+  // Get x and y
+  int getX() const { return this->x; }
+  int getY() const { return this->y; }
+
+  // Get messenger
+  Messenger* getMessenger() { return this->map_messages; }
+
+  // Tile map
+  TileMap* world_map = nullptr;
 
   // Viewport
   static constexpr int VIEWPORT_WIDTH = 240 * 2;
@@ -23,43 +44,22 @@ class World {
   static constexpr float VIEWPORT_MAX_ZOOM = 2.0f;
   static constexpr float VIEWPORT_MIN_ZOOM = 0.5f;
 
-  float VIEWPORT_ZOOM;
-
-  // Drawing
-  void draw();
-
-  void loadImages();
-
-  // Interact with
-  void interact(int inter_x, int inter_y, Item* inHand);
-
-  // Map
-  void update();
-  void scroll(int player_x, int player_y);
-
-  // Get x and y
-  int getX() { return this->x; }
-  int getY() { return this->y; }
-
-  // Get messenger
-  Messenger* getMessenger() { return this->map_messages; }
-
-  // Tile map
-  TileMap* world_map;
+  float VIEWPORT_ZOOM = 1.0f;
 
  private:
   // Scroll position
-  int x, y;
+  int x = 0;
+  int y = 0;
 
   // Buffer that holds whole map image
-  asw::Texture map_buffer;
-  asw::Texture overlay_buffer;
+  asw::Texture map_buffer{};
+  asw::Texture overlay_buffer{};
 
   // Ticker for world
   Timer ticker;
 
   // Messager
-  Messenger* map_messages;
+  Messenger* map_messages = nullptr;
 };
 
 #endif  // SRC_WORLD_H_

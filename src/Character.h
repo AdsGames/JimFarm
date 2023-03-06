@@ -1,9 +1,9 @@
 #ifndef SRC_CHARACTER_H_
 #define SRC_CHARACTER_H_
 
-#define HOTBAR_SIZE 8
-
 #include <asw/asw.h>
+#include <array>
+#include <memory>
 #include <string>
 
 #include "Inventory.h"
@@ -12,20 +12,25 @@
 
 #include "ui/UI_Controller.h"
 
+const int HOTBAR_SIZE = 8;
+
 class Character;
 
 class CharacterForeground : public Sprite {
  public:
-  CharacterForeground(Character* charPtr);
+  explicit CharacterForeground(Character* charPtr);
+
   void draw(float x_1, float y_1, float x_2, float y_2) override;
-  Character* char_ptr;
+
+  Character* char_ptr = nullptr;
 };
 
 class Character : public Sprite {
  public:
   // Ctor and dtor
   Character();
-  virtual ~Character(){};
+
+  virtual ~Character() = default;
 
   // Set world pointer
   void setWorld(World* newTileMap);
@@ -46,53 +51,53 @@ class Character : public Sprite {
   // Update
   void update();
 
-  // Character foreground
-  CharacterForeground* c_fore;
-
- protected:
  private:
+  // Character foreground
+  std::shared_ptr<CharacterForeground> c_fore = nullptr;
+
   // Attatched UI
-  UI_Controller* attatched_ui;
+  UI_Controller* attatched_ui = nullptr;
 
   // Inventory UI
-  UI_Controller* inventory_ui;
-  UI_Controller* hotbar_ui;
+  UI_Controller* inventory_ui = nullptr;
+  UI_Controller* hotbar_ui = nullptr;
 
   // UI open
-  bool ui_open;
+  bool ui_open = false;
 
   // Directions
   enum directions { DIR_DOWN = 1, DIR_UP = 2, DIR_RIGHT = 3, DIR_LEFT = 4 };
 
   // Fonts
-  asw::Font pixelart;
-  World* map_pointer;
+  asw::Font pixelart{};
+  World* map_pointer = nullptr;
 
   // Inventory
-  Inventory* character_inv;
+  std::shared_ptr<Inventory> character_inv = nullptr;
 
   // Item in hand
-  int selected_item;
+  int selected_item = 0;
 
   // What tile you are over
-  int indicator_x, indicator_y;
+  int indicator_x = 0;
+  int indicator_y = 0;
 
   // Movement
-  char direction;
-  bool moving;
-  bool sound_step;
-  char ani_ticker;
+  char direction = 1;
+  bool moving = false;
+  bool sound_step = false;
+  char ani_ticker = 0;
 
   // Images for ui and character
-  asw::Texture image;
-  asw::Texture inventory_gui;
-  asw::Texture indicator;
-  asw::Texture coin;
+  asw::Texture image{};
+  asw::Texture inventory_gui{};
+  asw::Texture indicator{};
+  asw::Texture coin{};
 
   // Sounds
-  asw::Sample pickup;
-  asw::Sample drop;
-  asw::Sample step[2];
+  asw::Sample pickup{};
+  asw::Sample drop{};
+  asw::Sample step[2]{};
 
   friend class CharacterForeground;
 };

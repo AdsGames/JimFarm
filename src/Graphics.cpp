@@ -5,7 +5,7 @@
 
 Graphics* Graphics::instance = nullptr;
 
-bool sortDrawableByZ(Sprite* A, Sprite* B) {
+bool sortDrawableByZ(std::shared_ptr<Sprite> A, std::shared_ptr<Sprite> B) {
   return (*A < *B);
 }
 
@@ -23,7 +23,7 @@ Graphics* Graphics::Instance() {
 }
 
 // Add sprites
-void Graphics::add(Sprite* sprite) {
+void Graphics::add(std::shared_ptr<Sprite> sprite) {
   if (!sprite) {
     return;
   }
@@ -38,7 +38,7 @@ void Graphics::add(Sprite* sprite) {
 }
 
 // Remove sprites
-void Graphics::remove(Sprite* sprite) {
+void Graphics::remove(std::shared_ptr<Sprite> sprite) {
   if (!sprite) {
     return;
   }

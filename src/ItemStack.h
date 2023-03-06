@@ -2,18 +2,20 @@
 #define SRC_ITEMSTACK_H_
 
 #include <asw/asw.h>
+#include <memory>
 #include <vector>
+
 #include "Item.h"
 
 class ItemStack {
  public:
-  ItemStack();
-  ItemStack(Item* item, int quantity);
-  virtual ~ItemStack();
+  ItemStack() = default;
+  ItemStack(std::shared_ptr<Item> item, int quantity);
 
-  void setItem(Item* item, int quantity);
-  Item* getItem();
-  int getQuantity();
+  void setItem(std::shared_ptr<Item> item, int quantity);
+
+  std::shared_ptr<Item> getItem() const;
+  int getQuantity() const;
 
   void remove(int quantity);
   void add(int quantity);
@@ -21,10 +23,9 @@ class ItemStack {
 
   void draw(int x, int y);
 
- protected:
  private:
-  Item* item;
-  int quantity;
+  std::shared_ptr<Item> item = nullptr;
+  int quantity = 0;
 };
 
 #endif  // SRC_ITEMSTACK_H_

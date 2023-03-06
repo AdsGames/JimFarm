@@ -7,16 +7,16 @@
 
 #include <math.h>
 
-ItemStack* UI_Controller::mouse_item = nullptr;
+std::shared_ptr<ItemStack> UI_Controller::mouse_item = nullptr;
 
 UI_Controller::UI_Controller(int width, int height)
     : width(width), height(height) {
   // Create inventory
-  this->inv = new Inventory();
+  this->inv = std::make_shared<Inventory>();
 
   // Make default mouse stack
   if (!mouse_item) {
-    mouse_item = new ItemStack();
+    mouse_item = std::make_shared<ItemStack>();
   }
 }
 
@@ -25,7 +25,7 @@ void UI_Controller::addElement(UI_Element* element) {
     elements.push_back(element);
 
     // Is it a slot?
-    UI_Slot* s = dynamic_cast<UI_Slot*>(element);
+    auto s = dynamic_cast<UI_Slot*>(element);
     if (s) {
       inv->addSpace();
       s->bindStack(inv->getStack(currently_bound));
@@ -34,7 +34,7 @@ void UI_Controller::addElement(UI_Element* element) {
   }
 }
 
-Inventory* UI_Controller::getInventory() {
+std::shared_ptr<Inventory> UI_Controller::getInventory() const {
   return inv;
 }
 

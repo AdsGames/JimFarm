@@ -4,36 +4,38 @@
 #include "MapItem.h"
 #include "Tile.h"
 
+#include <array>
+#include <memory>
 #include <string>
 #include <vector>
 
-#define CHUNK_WIDTH 16
-#define CHUNK_HEIGHT 16
-#define CHUNK_LAYERS 5
+const int CHUNK_WIDTH = 16;
+const int CHUNK_HEIGHT = 16;
+const int CHUNK_LAYERS = 5;
 
-#define LAYER_BACKGROUND 0
-#define LAYER_MIDGROUND 1
-#define LAYER_CHARACTER 2
-#define LAYER_ITEMS 3
-#define LAYER_FOREGROUND 4
+const int LAYER_BACKGROUND = 0;
+const int LAYER_MIDGROUND = 1;
+const int LAYER_CHARACTER = 2;
+const int LAYER_ITEMS = 3;
+const int LAYER_FOREGROUND = 4;
 
 class Chunk {
  public:
   Chunk(int x, int y);
   virtual ~Chunk();
 
-  int getX();
-  int getY();
+  int getX() const;
+  int getY() const;
 
-  Tile* getTileAt(int x, int y, int z);
-  void setTileAt(int x, int y, int z, Tile* tile);
+  std::shared_ptr<Tile> getTileAt(int x, int y, int z);
+  void setTileAt(int x, int y, int z, std::shared_ptr<Tile> tile);
 
-  MapItem* getItemAt(int x, int y);
-  void placeItemAt(Item* item, int x, int y);
-  void removeItem(MapItem* item);
+  std::shared_ptr<MapItem> getItemAt(int x, int y);
+  void placeItemAt(std::shared_ptr<Item> item, int x, int y);
+  void removeItem(std::shared_ptr<MapItem> item);
 
-  std::string getBiomeAt(int x, int y);
-  char getTemperatureAt(int x, int y);
+  std::string getBiomeAt(int x, int y) const;
+  char getTemperatureAt(int x, int y) const;
 
   void setDrawEnabled(bool enabled);
 
@@ -45,7 +47,7 @@ class Chunk {
 
  private:
   // Tiles
-  Tile* tiles[CHUNK_WIDTH][CHUNK_HEIGHT][CHUNK_LAYERS];
+  std::shared_ptr<Tile> tiles[CHUNK_WIDTH][CHUNK_HEIGHT][CHUNK_LAYERS];
 
   // Biome
   char temperature[CHUNK_WIDTH][CHUNK_HEIGHT];
@@ -53,18 +55,15 @@ class Chunk {
   char height[CHUNK_WIDTH][CHUNK_HEIGHT];
 
   // Items
-  std::vector<MapItem*> items;
-
-  // Near tiles
-  Chunk* neighbours[8];
+  std::vector<std::shared_ptr<MapItem>> items;
 
   // Generate
   void generate();
 
-  int x;
-  int y;
+  int x = 0;
+  int y = 0;
 
-  bool is_drawing;
+  bool is_drawing = false;
 };
 
 #endif  // SRC_CHUNK_H_

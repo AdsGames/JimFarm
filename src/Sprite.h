@@ -13,9 +13,9 @@ class Sprite {
   void setZ(int z);
 
   // Get position
-  int getX() { return this->x; }
-  int getY() { return this->y; }
-  int getZ() { return this->z; }
+  int getX() const { return this->x; }
+  int getY() const { return this->y; }
+  int getZ() const { return this->z; }
 
   virtual bool operator<(const Sprite& other) const {
     if (z != other.z) {

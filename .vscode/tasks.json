@@ -10,6 +10,9 @@
       "windows": {
         "command": "make -j24 && cd build && JimFarm.exe"
       },
+      "linux": {
+        "command": "cmake --build . && cd build && ./JimFarm"
+      },
       "group": "build",
       "problemMatcher": "$gcc"
     }

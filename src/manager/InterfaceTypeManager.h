@@ -8,9 +8,6 @@
 #ifndef INTERFACE_TYPE_MANAGER_H
 #define INTERFACE_TYPE_MANAGER_H
 
-#define NON_SOLID 0
-#define SOLID 1
-
 #include <string>
 #include <vector>
 
@@ -18,11 +15,8 @@
 
 class InterfaceTypeManager {
  public:
-  InterfaceTypeManager(){};
-  ~InterfaceTypeManager();
-
   // Load interface types
-  static int loadInterfaces(std::string path);
+  static int loadInterfaces(const std::string& path);
 
   // Allows communication
   static UI_Controller* getInterfaceById(int id);

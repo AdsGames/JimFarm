@@ -1,23 +1,19 @@
 #include "ItemStack.h"
 
-ItemStack::ItemStack() : ItemStack(nullptr, 0) {}
-
-ItemStack::ItemStack(Item* item, int quantity) {
+ItemStack::ItemStack(std::shared_ptr<Item> item, int quantity) {
   setItem(item, quantity);
 }
 
-ItemStack::~ItemStack() {}
-
-void ItemStack::setItem(Item* item, int quantity) {
+void ItemStack::setItem(std::shared_ptr<Item> item, int quantity) {
   this->item = item;
   this->quantity = quantity;
 }
 
-Item* ItemStack::getItem() {
+std::shared_ptr<Item> ItemStack::getItem() const {
   return item;
 }
 
-int ItemStack::getQuantity() {
+int ItemStack::getQuantity() const {
   return quantity;
 }
 

@@ -8,17 +8,15 @@
 #include "../Tile.h"
 #include "../utility/Tools.h"
 
-std::vector<TileType> TileTypeManager::tile_defs;
+const int NON_SOLID = 0;
+const int SOLID = 1;
 
-asw::Texture TileTypeManager::sprite_sheet_tiles = NULL;
+std::vector<std::shared_ptr<TileType>> TileTypeManager::tile_defs;
 
-// Destructor
-TileTypeManager::~TileTypeManager() {
-  tile_defs.clear();
-}
+asw::Texture TileTypeManager::sprite_sheet_tiles = nullptr;
 
 // Load tiles
-int TileTypeManager::loadTiles(std::string path) {
+int TileTypeManager::loadTiles(const std::string& path) {
   // Open file or abort if it does not exist
   std::ifstream file(path);
   if (!file.is_open()) {
@@ -57,11 +55,12 @@ int TileTypeManager::loadTiles(std::string path) {
       attrubite = SOLID;
 
     // Create tile, set variables and add it to the tile list
-    TileType newTileType(width * 16, height * 16, id, name, attrubite);
-    newTileType.setSpriteSheet(sprite_sheet_tiles);
-    newTileType.setImageType(image_type, sheet_width, sheet_height, image_x,
-                             image_y, image_w, image_h);
-    tile_defs.push_back(newTileType);
+    auto tile_type = std::make_shared<TileType>(width * 16, height * 16, id,
+                                                name, attrubite);
+    tile_type->setSpriteSheet(sprite_sheet_tiles);
+    tile_type->setImageType(image_type, sheet_width, sheet_height, image_x,
+                            image_y, image_w, image_h);
+    tile_defs.push_back(tile_type);
   }
 
   // Close
@@ -70,10 +69,10 @@ int TileTypeManager::loadTiles(std::string path) {
 }
 
 // Returns tile at ID
-TileType* TileTypeManager::getTileById(int tileID) {
-  for (auto& tile : tile_defs) {
-    if (tile.getID() == tileID) {
-      return &tile;
+std::shared_ptr<TileType> TileTypeManager::getTileById(int tileID) {
+  for (auto const& tile : tile_defs) {
+    if (tile->getID() == tileID) {
+      return tile;
     }
   }
   return nullptr;
