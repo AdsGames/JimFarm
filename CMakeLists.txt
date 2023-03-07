@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.24)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -13,18 +13,14 @@ project (JimFarm)
 file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/lib/*.cpp)
 file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h ${CMAKE_CURRENT_SOURCE_DIR}/lib/*.h)
 
-add_executable (${PROJECT_NAME} ${SOURCES} ${HEADERS})
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
 
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
 FetchContent_MakeAvailable(json)
 
-target_include_directories(
-  ${PROJECT_NAME} PRIVATE
-  lib/asw
-)
-
+add_subdirectory(lib/asw)
 
 # Find libs
 if(NOT EMSCRIPTEN)
@@ -86,6 +82,7 @@ else(EMSCRIPTEN)
     ${SDL_TTF_LIBRARY} 
     ${SDL_GFX_LIBRARY} 
     nlohmann_json::nlohmann_json
+    asw
   )
 endif(EMSCRIPTEN)
 
