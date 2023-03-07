@@ -59,6 +59,7 @@ if(EMSCRIPTEN)
     -sDEMANGLE_SUPPORT=1
     -sTOTAL_MEMORY=512MB
     nlohmann_json::nlohmann_json
+    asw
   )
   set_target_properties(
     ${PROJECT_NAME}

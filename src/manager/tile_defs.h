@@ -1,29 +1,29 @@
-#define TILE_NULL -1
-#define TILE_GRASS 0
-#define TILE_WATER 1
-#define TILE_SOIL 2
-#define TILE_WELL 3
-#define TILE_DENSE_GRASS 4
-#define TILE_TREE 5
-#define TILE_BUSH 6
-#define TILE_WELL_PATH 7
-#define TILE_FENCE 8
-#define TILE_FENCE_DOOR 9
-#define TILE_STUMP 11
-#define TILE_PLOWED_SOIL 18
-#define TILE_STORE_PATH 19
-#define TILE_PATH 20
-#define TILE_BERRY 30
-#define TILE_TOMATO 31
-#define TILE_CARROT 32
-#define TILE_LAVENDER 33
-#define TILE_PATCHY_GRASS 59
-#define TILE_STORE 60
-#define TILE_BARN 61
-#define TILE_GOAT 62
-#define TILE_UNDERWATER_SOIL 63
-#define TILE_SNOW 64
-#define TILE_SAND 65
-#define TILE_WOOD_WALL 66
-#define TILE_STONE_WALL 67
-#define TILE_STONE 68
+constexpr char TILE_NULL = -1;
+constexpr char TILE_GRASS = 0;
+constexpr char TILE_WATER = 1;
+constexpr char TILE_SOIL = 2;
+constexpr char TILE_WELL = 3;
+constexpr char TILE_DENSE_GRASS = 4;
+constexpr char TILE_TREE = 5;
+constexpr char TILE_BUSH = 6;
+constexpr char TILE_WELL_PATH = 7;
+constexpr char TILE_FENCE = 8;
+constexpr char TILE_FENCE_DOOR = 9;
+constexpr char TILE_STUMP = 11;
+constexpr char TILE_PLOWED_SOIL = 18;
+constexpr char TILE_STORE_PATH = 19;
+constexpr char TILE_PATH = 20;
+constexpr char TILE_BERRY = 30;
+constexpr char TILE_TOMATO = 31;
+constexpr char TILE_CARROT = 32;
+constexpr char TILE_LAVENDER = 33;
+constexpr char TILE_PATCHY_GRASS = 59;
+constexpr char TILE_STORE = 60;
+constexpr char TILE_BARN = 61;
+constexpr char TILE_GOAT = 62;
+constexpr char TILE_UNDERWATER_SOIL = 63;
+constexpr char TILE_SNOW = 64;
+constexpr char TILE_SAND = 65;
+constexpr char TILE_WOOD_WALL = 66;
+constexpr char TILE_STONE_WALL = 67;
+constexpr char TILE_STONE = 68;

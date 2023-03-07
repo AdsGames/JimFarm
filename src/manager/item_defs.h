@@ -1,25 +1,25 @@
-#define ITEM_NULL -1
-#define ITEM_HAND 0
-#define ITEM_HOE 1
-#define ITEM_SCYTHE 2
-#define ITEM_WATERING_CAN 3
-#define ITEM_AXE 4
-#define ITEM_SHOVEL 5
-#define ITEM_CHICKEN 6
-#define ITEM_EGG 7
-#define ITEM_BERRY_SEED 8
-#define ITEM_BERRY 9
-#define ITEM_TOMATO_SEED 10
-#define ITEM_TOMATO 11
-#define ITEM_CARROT_SEED 12
-#define ITEM_CARROT 13
-#define ITEM_LAVENDER_SEED 14
-#define ITEM_LAVENDER 15
-#define ITEM_STICK 16
-#define ITEM_WOOD 17
-#define ITEM_HAY 18
-#define ITEM_STONE 19
-#define ITEM_SAPLING 20
-#define ITEM_PLANK 21
-#define ITEM_GRASS 22
-#define ITEM_SAND 23
+constexpr char ITEM_NULL = -1;
+constexpr char ITEM_HAND = 0;
+constexpr char ITEM_HOE = 1;
+constexpr char ITEM_SCYTHE = 2;
+constexpr char ITEM_WATERING_CAN = 3;
+constexpr char ITEM_AXE = 4;
+constexpr char ITEM_SHOVEL = 5;
+constexpr char ITEM_CHICKEN = 6;
+constexpr char ITEM_EGG = 7;
+constexpr char ITEM_BERRY_SEED = 8;
+constexpr char ITEM_BERRY = 9;
+constexpr char ITEM_TOMATO_SEED = 10;
+constexpr char ITEM_TOMATO = 11;
+constexpr char ITEM_CARROT_SEED = 12;
+constexpr char ITEM_CARROT = 13;
+constexpr char ITEM_LAVENDER_SEED = 14;
+constexpr char ITEM_LAVENDER = 15;
+constexpr char ITEM_STICK = 16;
+constexpr char ITEM_WOOD = 17;
+constexpr char ITEM_HAY = 18;
+constexpr char ITEM_STONE = 19;
+constexpr char ITEM_SAPLING = 20;
+constexpr char ITEM_PLANK = 21;
+constexpr char ITEM_GRASS = 22;
+constexpr char ITEM_SAND = 23;
