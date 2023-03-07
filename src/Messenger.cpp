@@ -1,45 +1,38 @@
 #include "Messenger.h"
 
-Messenger::Messenger(int listSize,
-                     bool topDown,
-                     int padding,
-                     asw::Color font_col,
-                     asw::Color bg_col)
-    : max_size(listSize),
-      topDown(topDown),
-      padding(padding),
-      font_col(font_col),
-      bg_col(bg_col) {
-  pixelart = asw::assets::loadFont("assets/fonts/pixelart.ttf", 8);
+Messenger::Messenger(unsigned int list_size, bool is_top_down, int padding)
+    : max_size(list_size), top_down(is_top_down), padding(padding) {
+  this->pixelart = asw::assets::loadFont("assets/fonts/pixelart.ttf", 8);
 }
 
-void Messenger::setColors(asw::Color font_col, asw::Color bg_col) {
-  this->font_col = font_col;
-  this->bg_col = bg_col;
+void Messenger::setColors(asw::Color font, asw::Color background) {
+  this->font_color = font;
+  this->bg_color = background;
 }
 
-void Messenger::pushMessage(std::string new_message) {
-  msgs.push_back(new_message);
-  if (messageCount() > this->max_size)
+void Messenger::pushMessage(const std::string& message) {
+  msgs.push_back(message);
+  if (messageCount() > this->max_size) {
     msgs.erase(msgs.begin());
+  }
 }
 
-unsigned int Messenger::messageCount() {
+size_t Messenger::messageCount() const {
   return msgs.size();
 }
 
 void Messenger::draw(int x, int y) {
   int offset = 0;
-  int numMsg = (signed)messageCount();
-  for (int i = numMsg - 1; i > -1; i--) {
-    asw::draw::text(pixelart, ">" + msgs.at(i), x, y + offset, font_col);
+  auto num_messages = messageCount();
+  auto font_size = asw::util::getTextSize(pixelart, " ");
 
-    auto fontSize = asw::util::getTextSize(pixelart, " ");
+  for (auto i = num_messages - 1; i > -1; i--) {
+    asw::draw::text(pixelart, ">" + msgs.at(i), x, y + offset, font_color);
 
-    if (topDown) {
-      offset += fontSize.y + padding;
+    if (top_down) {
+      offset += font_size.y + padding;
     } else {
-      offset -= fontSize.y + padding;
+      offset -= font_size.y + padding;
     }
   }
 }

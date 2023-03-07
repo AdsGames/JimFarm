@@ -13,6 +13,13 @@ A massive procedurally generated world in which you can set up a farm and collec
 
 ## Setup
 
+### Dependencies
+To pull the submodules, run the following command:
+
+```bash
+git submodule update --init --recursive
+```
+
 ### Windows (MSYS2)
 
 ```bash

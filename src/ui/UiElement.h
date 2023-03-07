@@ -3,18 +3,19 @@
 
 #include <asw/asw.h>
 
-class UI_Element {
+class UiElement {
  public:
-  explicit UI_Element(int x, int y);
-  explicit UI_Element(int x, int y, int width, int height);
+  explicit UiElement(int x, int y);
+  explicit UiElement(int x, int y, int width, int height);
+  virtual ~UiElement() = default;
 
   virtual void draw(int parent_x, int parent_y) = 0;
 
-  int getX();
-  int getY();
+  int getX() const;
+  int getY() const;
 
-  int getWidth();
-  int getHeight();
+  int getWidth() const;
+  int getHeight() const;
 
  protected:
   static asw::Font font;

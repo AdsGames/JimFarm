@@ -1,5 +1,6 @@
 #include "TileTypeManager.h"
 
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -11,7 +12,7 @@
 const int NON_SOLID = 0;
 const int SOLID = 1;
 
-std::vector<std::shared_ptr<TileType>> TileTypeManager::tile_defs;
+std::vector<TileType> TileTypeManager::tile_defs;
 
 asw::Texture TileTypeManager::sprite_sheet_tiles = nullptr;
 
@@ -35,18 +36,18 @@ int TileTypeManager::loadTiles(const std::string& path) {
     int id = tile["id"];
 
     // Spritesheet coordinates
-    int image_x = tile["image"]["x"];
-    int image_y = tile["image"]["y"];
-    int image_h = tile["image"]["height"];
-    int image_w = tile["image"]["width"];
+    unsigned char image_x = tile["image"]["x"];
+    unsigned char image_y = tile["image"]["y"];
+    unsigned char image_h = tile["image"]["height"];
+    unsigned char image_w = tile["image"]["width"];
 
     // Size
-    int width = tile["width"];
-    int height = tile["height"];
+    unsigned char width = tile["width"];
+    unsigned char height = tile["height"];
 
     // Special tile types
-    int sheet_width = tile["image"]["spritesheet_width"];
-    int sheet_height = tile["image"]["spritesheet_height"];
+    unsigned char sheet_width = tile["image"]["spritesheet_width"];
+    unsigned char sheet_height = tile["image"]["spritesheet_height"];
     std::string image_type = tile["image"]["type"];
 
     // Get attrubite
@@ -55,11 +56,10 @@ int TileTypeManager::loadTiles(const std::string& path) {
       attrubite = SOLID;
 
     // Create tile, set variables and add it to the tile list
-    auto tile_type = std::make_shared<TileType>(width * 16, height * 16, id,
-                                                name, attrubite);
-    tile_type->setSpriteSheet(sprite_sheet_tiles);
-    tile_type->setImageType(image_type, sheet_width, sheet_height, image_x,
-                            image_y, image_w, image_h);
+    auto tile_type = TileType(width * 16, height * 16, id, name, attrubite);
+    tile_type.setSpriteSheet(sprite_sheet_tiles);
+    tile_type.setImageType(image_type, sheet_width, sheet_height, image_x,
+                           image_y, image_w, image_h);
     tile_defs.push_back(tile_type);
   }
 
@@ -69,11 +69,13 @@ int TileTypeManager::loadTiles(const std::string& path) {
 }
 
 // Returns tile at ID
-std::shared_ptr<TileType> TileTypeManager::getTileById(int tileID) {
-  for (auto const& tile : tile_defs) {
-    if (tile->getID() == tileID) {
+TileType& TileTypeManager::getTileById(int tileID) {
+  for (auto& tile : tile_defs) {
+    if (tile.getId() == tileID) {
       return tile;
     }
   }
-  return nullptr;
+
+  // Throw error if tile not found
+  throw std::runtime_error("Tile not found");
 }

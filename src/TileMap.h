@@ -23,10 +23,10 @@ class TileMap {
 
   // Tiles
   std::shared_ptr<Tile> getTileAt(int x, int y, int layer);
-  void placeTile(std::shared_ptr<Tile> newTile);
-  void replaceTile(std::shared_ptr<Tile> oldTile,
-                   std::shared_ptr<Tile> newTile);
-  void removeTile(std::shared_ptr<Tile> newTile);
+  void placeTile(std::shared_ptr<Tile> tile);
+  void replaceTile(std::shared_ptr<Tile> tile_old,
+                   std::shared_ptr<Tile> tile_new);
+  void removeTile(std::shared_ptr<Tile> tile);
   bool isSolidAt(int x, int y);
 
   // Items
@@ -35,15 +35,15 @@ class TileMap {
   void removeItem(std::shared_ptr<MapItem> item);
 
   // Update
-  void tick(int x_1, int y_1, int x_2, int y_2);
+  void tick(int x_1, int y_1, int x_2, int y_2) const;
 
   // Loading
   void generateMap();
   void clearMap();
 
   // Bitmasks
-  void updateBitMask(std::shared_ptr<Tile> newTile);
-  void updateBitmaskSurround(std::shared_ptr<Tile> newTile);
+  void updateBitMask(std::shared_ptr<Tile> tile);
+  void updateBitmaskSurround(std::shared_ptr<Tile> tile);
 
  private:
   // Size

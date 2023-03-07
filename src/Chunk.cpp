@@ -25,9 +25,9 @@ int Chunk::getY() const {
   return y;
 }
 
-std::string Chunk::getBiomeAt(int x, int y) const {
-  int offset_x = x / TILE_WIDTH - this->x * CHUNK_WIDTH;
-  int offset_y = y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
+std::string Chunk::getBiomeAt(int at_x, int at_y) const {
+  int offset_x = at_x / TILE_WIDTH - this->x * CHUNK_WIDTH;
+  int offset_y = at_y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
 
   if (offset_x < 0 || offset_x > CHUNK_WIDTH || offset_y < 0 ||
       offset_y > CHUNK_HEIGHT) {
@@ -66,31 +66,34 @@ std::shared_ptr<Tile> Chunk::getTileAt(int x, int y, int z) const {
   return tiles[offset_x][offset_y][z];
 }
 
-void Chunk::setTileAt(int x, int y, int z, std::shared_ptr<Tile> tile) {
-  int offset_x = x / TILE_WIDTH - this->x * CHUNK_WIDTH;
-  int offset_y = y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
+void Chunk::setTileAt(int tile_x,
+                      int tile_y,
+                      int tile_z,
+                      std::shared_ptr<Tile> tile) {
+  int offset_x = tile_x / TILE_WIDTH - this->x * CHUNK_WIDTH;
+  int offset_y = tile_y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
 
   if (offset_x < 0 || offset_x > CHUNK_WIDTH || offset_y < 0 ||
-      offset_y > CHUNK_HEIGHT || z < 0 || z > CHUNK_LAYERS) {
+      offset_y > CHUNK_HEIGHT || tile_z < 0 || tile_z > CHUNK_LAYERS) {
     return;
   }
 
-  if (tiles[offset_x][offset_y][z]) {
-    Graphics::Instance()->remove(tiles[offset_x][offset_y][z]);
-    tiles[offset_x][offset_y][z].reset();
+  if (tiles[offset_x][offset_y][tile_z]) {
+    Graphics::Instance()->remove(tiles[offset_x][offset_y][tile_z]);
+    tiles[offset_x][offset_y][tile_z].reset();
   }
 
-  tiles[offset_x][offset_y][z] = tile;
+  tiles[offset_x][offset_y][tile_z] = tile;
 
   if (tile && is_drawing) {
-    Graphics::Instance()->add(tiles[offset_x][offset_y][z]);
+    Graphics::Instance()->add(tiles[offset_x][offset_y][tile_z]);
   }
 }
 
 // Get item at position
-std::shared_ptr<MapItem> Chunk::getItemAt(int x, int y) const {
+std::shared_ptr<MapItem> Chunk::getItemAt(int item_x, int item_y) const {
   for (auto const& i : items) {
-    if (i->x == x && i->y == y) {
+    if (i->getX() == item_x && i->getY() == item_y) {
       return i;
     }
   }
@@ -98,9 +101,9 @@ std::shared_ptr<MapItem> Chunk::getItemAt(int x, int y) const {
 }
 
 // Place item on map
-void Chunk::placeItemAt(std::shared_ptr<Item> item, int x, int y) {
+void Chunk::placeItemAt(std::shared_ptr<Item> item, int item_x, int item_y) {
   if (item) {
-    auto newMapItem = std::make_shared<MapItem>(x, y, item);
+    auto newMapItem = std::make_shared<MapItem>(item_x, item_y, item);
     items.push_back(newMapItem);
 
     if (is_drawing) {
@@ -179,7 +182,7 @@ void Chunk::tick() {
       }
 
       // Berries
-      if (current->getID() == TILE_BERRY) {
+      if (current->getId() == TILE_BERRY) {
         // Grow a bit
         if (true) {
           current->changeMeta(1);
@@ -193,7 +196,7 @@ void Chunk::tick() {
         }
       }
       // Tomatos
-      else if (current->getID() == TILE_TOMATO) {
+      else if (current->getId() == TILE_TOMATO) {
         // Grow a bit
         if (!random(0, 2)) {
           current->changeMeta(1);
@@ -207,7 +210,7 @@ void Chunk::tick() {
         }
       }
       // Carrots
-      else if (current->getID() == TILE_CARROT) {
+      else if (current->getId() == TILE_CARROT) {
         // Grow a bit
         if (!random(0, 5)) {
           current->changeMeta(1);
@@ -221,7 +224,7 @@ void Chunk::tick() {
         }
       }
       // Lavender
-      else if (current->getID() == TILE_LAVENDER) {
+      else if (current->getId() == TILE_LAVENDER) {
         // Grow a bit
         if (!random(0, 10))
           current->changeMeta(1);

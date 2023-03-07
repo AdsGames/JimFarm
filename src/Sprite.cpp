@@ -5,11 +5,11 @@ int Sprite::next_id = 0;
 Sprite::Sprite() : Sprite(0, 0, 0) {}
 
 Sprite::Sprite(int x, int y, int z) : x(x), y(y), z(z) {
-  setId();
+  this->setId();
 }
 
-void Sprite::setZ(int z) {
-  this->z = z;
+void Sprite::setZ(int new_z) {
+  this->z = new_z;
 }
 
 void Sprite::setId() {

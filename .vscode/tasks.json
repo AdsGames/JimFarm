@@ -7,11 +7,9 @@
       "label": "Build",
       "type": "shell",
       "detail": "Run and build jim farm",
+      "command": "cmake --build . && cd build && ./JimFarm",
       "windows": {
         "command": "make -j24 && cd build && JimFarm.exe"
-      },
-      "linux": {
-        "command": "cmake --build . && cd build && ./JimFarm"
       },
       "group": "build",
       "problemMatcher": "$gcc"

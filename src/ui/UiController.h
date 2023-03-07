@@ -6,32 +6,32 @@
 
 #include "../Inventory.h"
 #include "../World.h"
-#include "UI_Element.h"
+#include "UiElement.h"
 
-class UI_Controller {
+class UiController {
  public:
-  UI_Controller(int width, int height);
+  UiController(int width, int height);
 
   void draw();
 
   void update();
 
-  void addElement(std::shared_ptr<UI_Element> element);
+  void addElement(std::shared_ptr<UiElement> element);
 
   std::shared_ptr<Inventory> getInventory() const;
 
  private:
-  std::shared_ptr<UI_Element> elementAt(int x, int y);
+  std::shared_ptr<UiElement> elementAt(int x, int y);
 
-  bool is_open;
   std::shared_ptr<Inventory> inv;
-  int width;
-  int height;
+
+  int width{0};
+  int height{0};
 
   int x{0};
   int y{0};
 
-  std::vector<std::shared_ptr<UI_Element>> elements;
+  std::vector<std::shared_ptr<UiElement>> elements;
 
   static std::shared_ptr<ItemStack> mouse_item;
 

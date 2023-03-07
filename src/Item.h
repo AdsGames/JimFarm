@@ -10,31 +10,28 @@ const int MAX_ITEM_META = 255;
 class Item {
  public:
   // Ctor and Dtor
-  Item(char newID, unsigned char meta = 0);
+  Item(char id, unsigned char meta = 0);
 
   // Draw to screen
-  void draw(int x, int y);
-
-  // Get value of item
-  unsigned char getValue() const;
+  void draw(int x, int y) const;
 
   // Modify ID
-  unsigned char getID() const;
+  unsigned char getId() const;
 
   // Get the name of item
   std::string getName() const;
 
   // Access and set meta data byte
-  void setMeta(unsigned char meta) { this->meta = meta; }
-  void changeMeta(unsigned char amt) { this->meta += amt; }
-  unsigned char getMeta() const { return this->meta; }
+  void setMeta(unsigned char meta);
+  void changeMeta(unsigned char amt);
+  unsigned char getMeta() const;
 
  private:
   // Metadata info
-  unsigned char meta;
+  unsigned char meta = 0;
 
   // Pointer to item type
-  std::shared_ptr<TileType> item_pointer;
+  TileType& item_pointer;
 };
 
 #endif  // SRC_ITEM_H_

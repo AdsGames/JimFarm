@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.24)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -7,24 +7,20 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(FetchContent)
 
-project (JimFarm)
+project(JimFarm)
 
 # Source code
 file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/lib/*.cpp)
 file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h ${CMAKE_CURRENT_SOURCE_DIR}/lib/*.h)
 
-add_executable (${PROJECT_NAME} ${SOURCES} ${HEADERS})
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
 
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
 FetchContent_MakeAvailable(json)
 
-target_include_directories(
-  ${PROJECT_NAME} PRIVATE
-  lib/asw
-)
-
+add_subdirectory(lib/asw)
 
 # Find libs
 if(NOT EMSCRIPTEN)
@@ -43,30 +39,30 @@ if(EMSCRIPTEN)
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
   target_compile_options(
     ${PROJECT_NAME}
-    PRIVATE  
-    -sUSE_SDL=2 
-    -sUSE_SDL_IMAGE=2 
-    -sUSE_SDL_TTF=2 
-    -sUSE_SDL_MIXER=2 
-    -sUSE_SDL_GFX=2 
+    PRIVATE
+    -sUSE_SDL=2
+    -sUSE_SDL_IMAGE=2
+    -sUSE_SDL_TTF=2
+    -sUSE_SDL_MIXER=2
+    -sUSE_SDL_GFX=2
     -sSDL2_IMAGE_FORMATS=["png"]
   )
   target_link_libraries(
-    ${PROJECT_NAME} 
-    -sWASM=1 
-    -sUSE_SDL=2 
-    -sUSE_SDL_IMAGE=2 
-    -sUSE_SDL_TTF=2 
-    -sUSE_SDL_MIXER=2 
-    -sUSE_SDL_GFX=2 
-    -sSDL2_IMAGE_FORMATS=["png"] 
+    ${PROJECT_NAME}
+    -sWASM=1
+    -sUSE_SDL=2
+    -sUSE_SDL_IMAGE=2
+    -sUSE_SDL_TTF=2
+    -sUSE_SDL_MIXER=2
+    -sUSE_SDL_GFX=2
+    -sSDL2_IMAGE_FORMATS=["png"]
     -sDEMANGLE_SUPPORT=1
     -sTOTAL_MEMORY=512MB
     nlohmann_json::nlohmann_json
   )
   set_target_properties(
-    ${PROJECT_NAME} 
-    PROPERTIES 
+    ${PROJECT_NAME}
+    PROPERTIES
     LINK_FLAGS
     "--preload-file ${CMAKE_CURRENT_LIST_DIR}/assets@/assets --use-preload-plugins"
   )
@@ -76,16 +72,18 @@ else(EMSCRIPTEN)
   if(MINGW)
     target_link_libraries(${PROJECT_NAME} -lmingw32)
   endif(MINGW)
+
   target_link_libraries(
-    ${PROJECT_NAME} 
-    -lm 
-    ${SDL_MAIN_LIBRARY} 
-    ${SDL_LIBRARY} 
-    ${SDL_MIXER_LIBRARY} 
-    ${SDL_IMAGE_LIBRARY} 
-    ${SDL_TTF_LIBRARY} 
-    ${SDL_GFX_LIBRARY} 
+    ${PROJECT_NAME}
+    -lm
+    ${SDL_MAIN_LIBRARY}
+    ${SDL_LIBRARY}
+    ${SDL_MIXER_LIBRARY}
+    ${SDL_IMAGE_LIBRARY}
+    ${SDL_TTF_LIBRARY}
+    ${SDL_GFX_LIBRARY}
     nlohmann_json::nlohmann_json
+    asw
   )
 endif(EMSCRIPTEN)
 

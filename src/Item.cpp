@@ -3,34 +3,32 @@
 #include "manager/ItemTypeManager.h"
 
 // Ctor for item
-Item::Item(char newID, unsigned char meta) {
-  this->item_pointer = ItemTypeManager::getItemById(newID);
-  this->meta = meta;
-}
+Item::Item(char id, unsigned char meta)
+    : meta(meta), item_pointer(ItemTypeManager::getItemById(id)) {}
 
 // Draw item to screen
-void Item::draw(int x, int y) {
-  if (item_pointer)
-    item_pointer->draw(x, y, getMeta());
-}
-
-// Get value of item
-unsigned char Item::getValue() const {
-  if (item_pointer)
-    return item_pointer->getValue();
-  return 0;
+void Item::draw(int x, int y) const {
+  item_pointer.draw(x, y, getMeta());
 }
 
 // Get ID
-unsigned char Item::getID() const {
-  if (item_pointer)
-    return item_pointer->getID();
-  return 0;
+unsigned char Item::getId() const {
+  return item_pointer.getId();
 }
 
 // Get the name of item
 std::string Item::getName() const {
-  if (item_pointer)
-    return item_pointer->getName();
-  return "null item";
+  return item_pointer.getName();
+}
+
+void Item::setMeta(unsigned char meta) {
+  this->meta = meta;
+}
+
+void Item::changeMeta(unsigned char amt) {
+  this->meta += amt;
+}
+
+unsigned char Item::getMeta() const {
+  return this->meta;
 }

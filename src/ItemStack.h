@@ -21,7 +21,7 @@ class ItemStack {
   void add(int quantity);
   void clear();
 
-  void draw(int x, int y);
+  void draw(int x, int y) const;
 
  private:
   std::shared_ptr<Item> item = nullptr;

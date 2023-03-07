@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-#include "../ui/UI_Controller.h"
+#include "../ui/UiController.h"
 #include "TileType.h"
 
 const int NON_SOLID = 0;
@@ -23,13 +23,13 @@ class ItemTypeManager {
   static int loadItems(const std::string& path);
 
   // Allows communication
-  static std::shared_ptr<TileType> getItemById(int tileID);
+  static TileType& getItemById(int tileID);
 
   static asw::Texture sprite_sheet_items;
 
  private:
   // Stores all tiles and items
-  static std::vector<std::shared_ptr<TileType>> item_defs;
+  static std::vector<TileType> item_defs;
 };
 
 #endif  // ITEM_TYPE_MANAGER_H

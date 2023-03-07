@@ -16,44 +16,41 @@ class Tile : public Sprite {
  public:
   // Ctor and Dtor
   Tile(char id, int x, int y, int z, unsigned char meta = 0);
-  virtual ~Tile() = default;
+  ~Tile() final = default;
 
   // Define < operator for sorting
-  virtual bool operator<(const Tile& other) const { return (y < other.y); }
+  bool operator<(const Tile& other) const { return (y < other.y); }
 
   // Gets size
-  int getWidth();
-  int getHeight();
+  int getWidth() const;
+  int getHeight() const;
 
   // Drawing
-  void draw(float x_1, float y_1, float x_2, float y_2) override;
-  void draw_at(int newX, int newY);
+  void draw(int x_1, int y_1, int x_2, int y_2) const override;
 
   // Is this type solid?
-  bool isSolid();
+  bool isSolid() const;
 
   // Modify ID
-  unsigned char getID();
+  unsigned char getId() const;
 
   // Get name of tile
-  std::string getName();
+  std::string getName() const;
 
   // Access and set meta data byte
   void setMeta(unsigned char meta);
-  unsigned char getMeta();
+  unsigned char getMeta() const;
   void changeMeta(unsigned char amt);
 
-  // Temperature and moisture
-
   // Get image type
-  bool needsBitmask();
+  bool needsBitmask() const;
 
  private:
   // Metadata info
   unsigned char meta;
 
   // Ptr to tile type
-  std::shared_ptr<TileType> tile_pointer;
+  TileType& tile_pointer;
 };
 
 #endif  // SRC_TILE_H_

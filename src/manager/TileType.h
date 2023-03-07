@@ -8,19 +8,19 @@
 #define TILE_TYPE_H
 
 #include <asw/asw.h>
+#include <array>
 #include <string>
 
 class TileType {
  public:
-  TileType(unsigned char newWidth = 1,
-           unsigned char newHeight = 1,
-           unsigned char newID = 0,
-           std::string newName = "",
-           int newAttribute = 0,
-           unsigned char newValue = 0);
+  TileType(unsigned char width,
+           unsigned char height,
+           unsigned char id,
+           const std::string& name,
+           unsigned char attribute = 0);
 
   // Get type
-  unsigned char getID() const { return id; }
+  unsigned char getId() const { return id; }
 
   // Get name
   std::string getName() const { return name; }
@@ -33,46 +33,48 @@ class TileType {
   unsigned char getImageY() const { return image_cord_y; }
   unsigned char getWidth() const { return width; }
   unsigned char getHeight() const { return height; }
-  unsigned char getValue() const { return value; }
 
   // Draw
-  void draw(int x, int y, unsigned char meta = 0, char offset = 0);
+  void draw(int x, int y, unsigned char meta = 0);
 
   // Set sprite sheet
-  void setSpriteSheet(asw::Texture newSpriteSheet);
+  void setSpriteSheet(asw::Texture spriteSheet);
 
   // Set special image stuff
-  void setImageType(std::string newImageType,
-                    int newSheetWidth,
-                    int newSheetHeight,
-                    int newImageX,
-                    int newImageY,
-                    int newImageWidth,
-                    int newImageHeight);
-  std::string getImageType() { return this->image_type; }
+  void setImageType(const std::string& imageType,
+                    unsigned char sheetWidth,
+                    unsigned char sheetHeight,
+                    unsigned char imageX,
+                    unsigned char imageY,
+                    unsigned char imageWidth,
+                    unsigned char imageHeight);
+
+  std::string getImageType() const { return this->image_type; }
 
  private:
   unsigned char id;
+
+  unsigned char width;
+  unsigned char height;
+
   std::string name;
   unsigned char attribute;
 
-  std::string image_type;
-  int sheet_width;
-  int sheet_height;
+  unsigned char num_images = 0;
 
-  int width;
-  int height;
+  std::string image_type = "";
+  unsigned char sheet_width = 1;
+  unsigned char sheet_height = 1;
 
-  unsigned char image_cord_x, image_cord_y;
-  unsigned char image_h, image_w;
+  unsigned char image_cord_x = 0;
+  unsigned char image_cord_y = 0;
 
-  unsigned char value;
+  unsigned char image_h = 1;
+  unsigned char image_w = 1;
 
-  unsigned char num_images;
+  asw::Texture sprite_sheet = nullptr;
 
-  asw::Texture sprite_sheet;
-
-  asw::Texture images[16];
+  std::array<asw::Texture, 16> images{};
 };
 
 #endif  // TILE_TYPE_H
