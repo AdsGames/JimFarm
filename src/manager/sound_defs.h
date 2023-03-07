@@ -1,9 +1,9 @@
-#define SOUND_NULL -1
-#define SOUND_ERROR 0
-#define SOUND_EGG 1
-#define SOUND_HOE 2
-#define SOUND_AXE 3
-#define SOUND_SCYTHE 4
-#define SOUND_SHOVEL 5
-#define SOUND_WATER_FILL 6
-#define SOUND_WATER_POUR 7
+constexpr char SOUND_NULL = -1;
+constexpr char SOUND_ERROR = 0;
+constexpr char SOUND_EGG = 1;
+constexpr char SOUND_HOE = 2;
+constexpr char SOUND_AXE = 3;
+constexpr char SOUND_SCYTHE = 4;
+constexpr char SOUND_SHOVEL = 5;
+constexpr char SOUND_WATER_FILL = 6;
+constexpr char SOUND_WATER_POUR = 7;
