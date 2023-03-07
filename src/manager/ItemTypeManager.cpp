@@ -25,21 +25,14 @@ int ItemTypeManager::loadItems(const std::string& path) {
 
   // Parse data
   for (auto const& item : doc) {
-    // Name of item
+    // Read from json
     std::string name = item["name"];
-
-    // Spritesheet info
     int image_x = item["image_x"];
-
     int image_y = item["image_y"];
-
-    // Cost if sold
-    int value = item["value"];
-
-    int id = item["id"];
+    unsigned char id = item["id"];
 
     // Create item, set variables and add it to the item list
-    auto tile_type = TileType(1, 1, id, name, 0, (unsigned char)value);
+    auto tile_type = TileType(1, 1, id, name, 0);
     tile_type.setSpriteSheet(sprite_sheet_items);
     tile_type.setImageType("", 1, 1, image_x, image_y, 1, 1);
     item_defs.push_back(tile_type);
@@ -53,7 +46,7 @@ int ItemTypeManager::loadItems(const std::string& path) {
 // Returns item at ID
 TileType& ItemTypeManager::getItemById(int tileID) {
   for (auto& item : item_defs) {
-    if (item.getID() == tileID) {
+    if (item.getId() == tileID) {
       return item;
     }
   }

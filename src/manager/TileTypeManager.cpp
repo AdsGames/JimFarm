@@ -36,18 +36,18 @@ int TileTypeManager::loadTiles(const std::string& path) {
     int id = tile["id"];
 
     // Spritesheet coordinates
-    int image_x = tile["image"]["x"];
-    int image_y = tile["image"]["y"];
-    int image_h = tile["image"]["height"];
-    int image_w = tile["image"]["width"];
+    unsigned char image_x = tile["image"]["x"];
+    unsigned char image_y = tile["image"]["y"];
+    unsigned char image_h = tile["image"]["height"];
+    unsigned char image_w = tile["image"]["width"];
 
     // Size
-    int width = tile["width"];
-    int height = tile["height"];
+    unsigned char width = tile["width"];
+    unsigned char height = tile["height"];
 
     // Special tile types
-    int sheet_width = tile["image"]["spritesheet_width"];
-    int sheet_height = tile["image"]["spritesheet_height"];
+    unsigned char sheet_width = tile["image"]["spritesheet_width"];
+    unsigned char sheet_height = tile["image"]["spritesheet_height"];
     std::string image_type = tile["image"]["type"];
 
     // Get attrubite
@@ -71,7 +71,7 @@ int TileTypeManager::loadTiles(const std::string& path) {
 // Returns tile at ID
 TileType& TileTypeManager::getTileById(int tileID) {
   for (auto& tile : tile_defs) {
-    if (tile.getID() == tileID) {
+    if (tile.getId() == tileID) {
       return tile;
     }
   }

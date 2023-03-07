@@ -16,23 +16,16 @@ using namespace std::chrono_literals;
 using namespace std::chrono;
 constexpr nanoseconds timestep(16ms);
 
-// State engine
-StateEngine game_state;
-
-// FPS system
-int fps = 0;
-int frames_done = 0;
-
 // Setup game
 void setup() {
   // Load allegro library
-  asw::core::init(World::VIEWPORT_WIDTH, World::VIEWPORT_HEIGHT);
+  asw::core::init(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 }
 
 /*********************
  *   Update logic
  *********************/
-void update() {
+void update(StateEngine& game_state) {
   // Update core
   asw::core::update();
 
@@ -48,16 +41,12 @@ void update() {
 /*********************
  *  Draw to screen
  *********************/
-void draw() {
+void draw(StateEngine& game_state) {
   // Clear screen
   SDL_RenderClear(asw::display::renderer);
 
   // Draw game state
   game_state.draw();
-
-  // FPS
-  // asw::draw::text(buffer, font, 0, 145, asw::util::makeColor(255, 255, 255),
-  //               asw::util::makeColor(0, 0, 0), "FPS:%d", fps);
 
   // Update screen
   SDL_RenderPresent(asw::display::renderer);
@@ -75,6 +64,9 @@ void loop() {
 int main(int argc, char* argv[]) {
   // Setup basic functionality
   setup();
+
+  // State engine
+  StateEngine game_state;
 
   // Set the current state ID
   game_state.setNextState(ProgramState::MENU);
@@ -94,11 +86,10 @@ int main(int argc, char* argv[]) {
 
     while (lag >= timestep) {
       lag -= timestep;
-      update();
+      update(game_state);
     }
 
-    draw();
-    frames_done++;
+    draw(game_state);
   }
 #endif
 

@@ -21,14 +21,14 @@ class SampleWrapper {
  public:
   SampleWrapper(asw::Sample sample_ptr = nullptr,
                 int vol = 255,
-                int pan = 128,
+                unsigned char pan = 128,
                 int freq = 1000,
                 int freq_rand = 0,
                 bool loop = false);
 
   asw::Sample sample_ptr;
   int vol;
-  int pan;
+  unsigned char pan;
   int freq;
   int freq_rand;
   bool loop;

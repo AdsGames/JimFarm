@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-#include "../ui/UI_Controller.h"
+#include "../ui/UiController.h"
 #include "TileType.h"
 
 const int NON_SOLID = 0;

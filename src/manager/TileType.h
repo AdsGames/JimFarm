@@ -13,15 +13,14 @@
 
 class TileType {
  public:
-  TileType(unsigned char width = 1,
-           unsigned char height = 1,
-           unsigned char id = 0,
-           const std::string& name = "",
-           int attribute = 0,
-           unsigned char value = 0);
+  TileType(unsigned char width,
+           unsigned char height,
+           unsigned char id,
+           const std::string& name,
+           unsigned char attribute = 0);
 
   // Get type
-  unsigned char getID() const { return id; }
+  unsigned char getId() const { return id; }
 
   // Get name
   std::string getName() const { return name; }
@@ -34,22 +33,21 @@ class TileType {
   unsigned char getImageY() const { return image_cord_y; }
   unsigned char getWidth() const { return width; }
   unsigned char getHeight() const { return height; }
-  unsigned char getValue() const { return value; }
 
   // Draw
-  void draw(int x, int y, unsigned char meta = 0, char offset = 0);
+  void draw(int x, int y, unsigned char meta = 0);
 
   // Set sprite sheet
   void setSpriteSheet(asw::Texture spriteSheet);
 
   // Set special image stuff
-  void setImageType(std::string imageType,
-                    int sheetWidth,
-                    int sheetHeight,
-                    int imageX,
-                    int imageY,
-                    int imageWidth,
-                    int imageHeight);
+  void setImageType(const std::string& imageType,
+                    unsigned char sheetWidth,
+                    unsigned char sheetHeight,
+                    unsigned char imageX,
+                    unsigned char imageY,
+                    unsigned char imageWidth,
+                    unsigned char imageHeight);
 
   std::string getImageType() const { return this->image_type; }
 
@@ -62,13 +60,11 @@ class TileType {
   std::string name;
   unsigned char attribute;
 
-  unsigned char value;
-
   unsigned char num_images = 0;
 
   std::string image_type = "";
-  int sheet_width = 1;
-  int sheet_height = 1;
+  unsigned char sheet_width = 1;
+  unsigned char sheet_height = 1;
 
   unsigned char image_cord_x = 0;
   unsigned char image_cord_y = 0;

@@ -10,7 +10,10 @@
 #include "Sprite.h"
 #include "World.h"
 
-#include "ui/UI_Controller.h"
+#include "manager/InterfaceTypeManager.h"
+#include "manager/interface_defs.h"
+
+#include "ui/UiController.h"
 
 const int HOTBAR_SIZE = 8;
 
@@ -20,12 +23,13 @@ class CharacterForeground : public Sprite {
  public:
   explicit CharacterForeground(Character* charPtr);
 
-  virtual ~CharacterForeground() = default;
+  ~CharacterForeground() final = default;
 
-  void draw(float x_1, float y_1, float x_2, float y_2) const override;
+  void draw(int x_1, int y_1, int x_2, int y_2) const override;
 
   void update();
 
+ private:
   Character* char_ptr = nullptr;
 };
 
@@ -34,7 +38,7 @@ class Character : public Sprite {
   // Ctor and dtor
   Character();
 
-  virtual ~Character() = default;
+  ~Character() final = default;
 
   // Set world pointer
   void setWorld(World* newTileMap);
@@ -43,13 +47,10 @@ class Character : public Sprite {
   void loadData();
 
   // Position character
-  void setPosition(int newX, int newY) {
-    x = newX;
-    y = newY;
-  }
+  void setPosition(int x, int y);
 
   // Draw
-  void draw(float x_1, float y_1, float x_2, float y_2) const override;
+  void draw(int x_1, int y_1, int x_2, int y_2) const override;
   void drawInventory() const;
 
   // Update
@@ -57,36 +58,37 @@ class Character : public Sprite {
 
  private:
   // Character foreground
-  std::shared_ptr<CharacterForeground> c_fore = nullptr;
+  std::shared_ptr<CharacterForeground> c_fore{nullptr};
 
   // Attached UI
-  int attached_ui;
+  int attached_ui{-1};
 
   // Inventory UI
-  UI_Controller& inventory_ui;
+  UiController& inventory_ui{
+      InterfaceTypeManager::getInterfaceById(INTERFACE_INVENTORY)};
 
   // UI open
-  bool ui_open = false;
+  bool ui_open{false};
 
   // Directions
   enum directions { DIR_DOWN = 1, DIR_UP = 2, DIR_RIGHT = 3, DIR_LEFT = 4 };
 
   // Fonts
   asw::Font pixelart{};
-  World* map_pointer = nullptr;
+  World* map_pointer{nullptr};
 
   // Item in hand
-  int selected_item = 0;
+  int selected_item{0};
 
   // What tile you are over
-  int indicator_x = 0;
-  int indicator_y = 0;
+  int indicator_x{0};
+  int indicator_y{0};
 
   // Movement
-  char direction = 1;
-  bool moving = false;
-  bool sound_step = false;
-  char ani_ticker = 0;
+  char direction{1};
+  bool moving{false};
+  bool sound_step{false};
+  char ani_ticker{0};
 
   // Images for ui and character
   asw::Texture image{};
@@ -97,7 +99,7 @@ class Character : public Sprite {
   // Sounds
   asw::Sample pickup{};
   asw::Sample drop{};
-  asw::Sample step[2]{};
+  std::array<asw::Sample, 2> step{};
 
   friend class CharacterForeground;
 };

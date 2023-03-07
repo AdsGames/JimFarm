@@ -9,7 +9,7 @@ class Sprite {
   Sprite(int x, int y, int z);
   virtual ~Sprite() = default;
 
-  virtual void draw(float x_1, float y_1, float x_2, float y_2) const = 0;
+  virtual void draw(int x_1, int y_1, int x_2, int y_2) const = 0;
 
   void setZ(int z);
 
@@ -28,6 +28,7 @@ class Sprite {
     return this->id < other.id;
   }
 
+ protected:
   int x;
   int y;
   int z;

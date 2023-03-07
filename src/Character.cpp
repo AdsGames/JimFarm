@@ -4,11 +4,9 @@
 
 #include "utility/Tools.h"
 
-#include "manager/interface_defs.h"
 #include "manager/item_defs.h"
 #include "manager/tile_defs.h"
 
-#include "manager/InterfaceTypeManager.h"
 #include "manager/TileTypeManager.h"
 
 #include "Graphics.h"
@@ -17,14 +15,14 @@
 CharacterForeground::CharacterForeground(Character* charPtr)
     : Sprite(0, 0, 5), char_ptr(charPtr) {}
 
-void CharacterForeground::draw(float x_1,
-                               float y_1,
-                               float x_2,
-                               float y_2) const {
-  asw::draw::stretchSpriteBlit(
-      char_ptr->image, floor(char_ptr->ani_ticker / 4) * 16,
-      (char_ptr->direction - 1) * 20, 16, 8, x - char_ptr->map_pointer->getX(),
-      y - char_ptr->map_pointer->getY() - 8, 16, 8);
+void CharacterForeground::draw(int x_1, int y_1, int x_2, int y_2) const {
+  auto animation_frame =
+      static_cast<int>(floor(char_ptr->ani_ticker / 4.0f)) * 16;
+
+  asw::draw::stretchSpriteBlit(char_ptr->image, animation_frame,
+                               (char_ptr->direction - 1) * 20, 16, 8,
+                               x - char_ptr->map_pointer->getX(),
+                               y - char_ptr->map_pointer->getY() - 8, 16, 8);
 }
 
 void CharacterForeground::update() {
@@ -33,15 +31,14 @@ void CharacterForeground::update() {
 }
 
 // Ctor for character
-Character::Character()
-    : Sprite(0, 0, 2), inventory_ui(InterfaceTypeManager::getInterfaceById(0)) {
+Character::Character() : Sprite(0, 0, 2) {
   c_fore = std::make_shared<CharacterForeground>(this);
   Graphics::Instance()->add(c_fore);
 }
 
 // World object to point to (needs this!)
-void Character::setWorld(World* map_pointer) {
-  this->map_pointer = map_pointer;
+void Character::setWorld(World* wrld) {
+  this->map_pointer = wrld;
 }
 
 // Set image
@@ -71,10 +68,17 @@ void Character::loadData() {
       std::make_shared<Item>(ITEM_WATERING_CAN), 1);
 }
 
+void Character::setPosition(int pos_x, int pos_y) {
+  x = pos_x;
+  y = pos_y;
+}
+
 // Draw character to screen
-void Character::draw(float x_1, float y_1, float x_2, float y_2) const {
-  const auto cursor_x = asw::input::mouse.x / map_pointer->VIEWPORT_ZOOM;
-  const auto cursor_y = asw::input::mouse.y / map_pointer->VIEWPORT_ZOOM;
+void Character::draw(int x_1, int y_1, int x_2, int y_2) const {
+  const auto cursor_x =
+      asw::input::mouse.x / static_cast<int>(map_pointer->getZoom());
+  const auto cursor_y =
+      asw::input::mouse.y / static_cast<int>(map_pointer->getZoom());
 
   // Cursor
   asw::draw::rectFill(cursor_x, cursor_y, 2, 2,
@@ -85,9 +89,9 @@ void Character::draw(float x_1, float y_1, float x_2, float y_2) const {
                     indicator_y - map_pointer->getY());
 
   // Draw frame
-  asw::draw::stretchSpriteBlit(
-      image, floor(ani_ticker / 4) * 16, (direction - 1) * 20, 16, 20,
-      x - map_pointer->getX(), y - map_pointer->getY() - 8, 16, 20);
+  asw::draw::stretchSpriteBlit(image, ani_ticker / 4 * 16, (direction - 1) * 20,
+                               16, 20, x - map_pointer->getX(),
+                               y - map_pointer->getY() - 8, 16, 20);
 
   // Selected item
   if (inventory_ui.getInventory()->getStack(selected_item)->getItem()) {
@@ -107,8 +111,9 @@ void Character::drawInventory() const {
   // Draw items
   for (int i = 0; i < HOTBAR_SIZE; i++) {
     asw::draw::sprite(inventory_gui, 18 * i + draw_x, draw_y);
-    if (i == selected_item)
+    if (i == selected_item) {
       asw::draw::sprite(indicator, 18 * i + 1 + draw_x, 1 + draw_y);
+    }
     if (inventory_ui.getInventory()->getStack(i)) {
       inventory_ui.getInventory()->getStack(i)->draw(18 * i + 1 + draw_x,
                                                      1 + draw_y);
@@ -133,10 +138,10 @@ void Character::drawInventory() const {
 // Update player
 void Character::update() {
   const auto relative_x =
-      static_cast<int>(asw::input::mouse.x / map_pointer->VIEWPORT_ZOOM) +
+      asw::input::mouse.x / static_cast<int>(map_pointer->getZoom()) +
       map_pointer->getX();
   const auto relative_y =
-      static_cast<int>(asw::input::mouse.y / map_pointer->VIEWPORT_ZOOM) +
+      asw::input::mouse.y / static_cast<int>(map_pointer->getZoom()) +
       map_pointer->getY();
 
   // Indicator
@@ -194,7 +199,7 @@ void Character::update() {
     if (asw::input::keyboard.down[SDL_SCANCODE_UP] ||
         asw::input::keyboard.down[SDL_SCANCODE_W]) {
       direction = DIR_UP;
-      if (!map_pointer->getMap()->isSolidAt(x, y - 16)) {
+      if (!map_pointer->getMap().isSolidAt(x, y - 16)) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -203,7 +208,7 @@ void Character::update() {
     else if (asw::input::keyboard.down[SDL_SCANCODE_DOWN] ||
              asw::input::keyboard.down[SDL_SCANCODE_S]) {
       direction = DIR_DOWN;
-      if (!map_pointer->getMap()->isSolidAt(x, y + 16)) {
+      if (!map_pointer->getMap().isSolidAt(x, y + 16)) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -212,7 +217,7 @@ void Character::update() {
     else if (asw::input::keyboard.down[SDL_SCANCODE_LEFT] ||
              asw::input::keyboard.down[SDL_SCANCODE_A]) {
       direction = DIR_LEFT;
-      if (!map_pointer->getMap()->isSolidAt(x - 16, y)) {
+      if (!map_pointer->getMap().isSolidAt(x - 16, y)) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -221,7 +226,7 @@ void Character::update() {
     else if (asw::input::keyboard.down[SDL_SCANCODE_RIGHT] ||
              asw::input::keyboard.down[SDL_SCANCODE_D]) {
       direction = DIR_RIGHT;
-      if (!map_pointer->getMap()->isSolidAt(x + 16, y)) {
+      if (!map_pointer->getMap().isSolidAt(x + 16, y)) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -239,12 +244,12 @@ void Character::update() {
     if (direction == DIR_UP && y > 0)
       y -= 2;
     else if (direction == DIR_DOWN &&
-             y < (map_pointer->getMap()->getHeight() * 16) - 16)
+             y < (map_pointer->getMap().getHeight() * 16) - 16)
       y += 2;
     else if (direction == DIR_LEFT && x > 0)
       x -= 2;
     else if (direction == DIR_RIGHT &&
-             x < (map_pointer->getMap()->getWidth() * 16) - 16)
+             x < (map_pointer->getMap().getWidth() * 16) - 16)
       x += 2;
 
     // Increase animation ticker
@@ -254,14 +259,14 @@ void Character::update() {
   }
 
   // Pickup
-  auto itemAtPos = map_pointer->getMap()->getItemAt(roundf(x / 16.0f) * 16,
-                                                    roundf(y / 16.0f) * 16);
+  auto item_at_position =
+      map_pointer->getMap().getItemAt(x / 16 * 16, y / 16 * 16);
 
   // Pickup
-  if (itemAtPos != nullptr) {
+  if (item_at_position != nullptr) {
     asw::sound::play(pickup);
-    if (inventory_ui.getInventory()->addItem(itemAtPos->itemPtr, 1)) {
-      map_pointer->getMap()->removeItem(itemAtPos);
+    if (inventory_ui.getInventory()->addItem(item_at_position->itemPtr, 1)) {
+      map_pointer->getMap().removeItem(item_at_position);
     }
   }
 
@@ -277,7 +282,7 @@ void Character::update() {
     // Drop
     if (itemInHand != nullptr) {
       asw::sound::play(drop);
-      map_pointer->getMap()->placeItemAt(itemInHand, indicator_x, indicator_y);
+      map_pointer->getMap().placeItemAt(itemInHand, indicator_x, indicator_y);
       inventory_ui.getInventory()->getStack(selected_item)->remove(1);
     }
   }

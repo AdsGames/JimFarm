@@ -23,8 +23,6 @@ bool comparePtrToNode(std::shared_ptr<Tile> a, std::shared_ptr<Tile> b) {
  * TILE MAP *
  ************/
 World::World() {
-  world_map = std::make_shared<TileMap>();
-
   ticker.start();
 }
 
@@ -36,23 +34,23 @@ void World::draw() {
   // Clear buffer
   SDL_SetRenderTarget(asw::display::renderer, map_buffer.get());
 
+  const auto v_width = static_cast<int>(VIEWPORT_WIDTH / zoom);
+  const auto v_height = static_cast<int>(VIEWPORT_HEIGHT / zoom);
+
   // Drawable
-  Graphics::Instance()->draw(x, y, x + VIEWPORT_WIDTH / VIEWPORT_ZOOM,
-                             y + VIEWPORT_HEIGHT / VIEWPORT_ZOOM);
+  Graphics::Instance()->draw(x, y, x + v_width, y + v_height);
 
   SDL_SetRenderTarget(asw::display::renderer, nullptr);
 
   SDL_SetTextureBlendMode(map_buffer.get(), SDL_BLENDMODE_BLEND);
 
   // Draw buffer
-  asw::draw::stretchSpriteBlit(map_buffer, 0, 0, VIEWPORT_WIDTH / VIEWPORT_ZOOM,
-                               VIEWPORT_HEIGHT / VIEWPORT_ZOOM, 0, 0,
+  asw::draw::stretchSpriteBlit(map_buffer, 0, 0, v_width, v_height, 0, 0,
                                VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
   // Draw temperature indicator
   const char temp =
-      world_map->getTemperatureAt(x + (VIEWPORT_WIDTH / VIEWPORT_ZOOM) / 2,
-                                  y + (VIEWPORT_HEIGHT / VIEWPORT_ZOOM) / 2);
+      tile_map.getTemperatureAt(x + v_width / 2, y + v_height / 2);
   const char r_val = (temp > 0) ? (temp / 2) : 0;
   const char b_val = (temp < 0) ? (temp / 2 * -1) : 0;
 
@@ -111,7 +109,7 @@ void World::loadImages() {
 
   overlay_buffer = asw::assets::createTexture(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
-  world_map->generateMap();
+  tile_map.generateMap();
 }
 
 /*
@@ -120,26 +118,28 @@ void World::loadImages() {
 // Interact with
 void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
   std::shared_ptr<Tile> foregroundTile =
-      world_map->getTileAt(inter_x, inter_y, LAYER_FOREGROUND);
-  std::shared_ptr<Tile> midgroundTile =
-      world_map->getTileAt(inter_x, inter_y, LAYER_MIDGROUND);
-  std::shared_ptr<Tile> backgroundTile =
-      world_map->getTileAt(inter_x, inter_y, LAYER_BACKGROUND);
+      tile_map.getTileAt(inter_x, inter_y, LAYER_FOREGROUND);
+  std::shared_ptr<Tile> midground_tile =
+      tile_map.getTileAt(inter_x, inter_y, LAYER_MIDGROUND);
+  std::shared_ptr<Tile> background_tile =
+      tile_map.getTileAt(inter_x, inter_y, LAYER_BACKGROUND);
 
   // Hoe
-  if (inHand->getID() == ITEM_HOE) {
-    if (midgroundTile && !foregroundTile) {
-      if (midgroundTile->getID() == TILE_GRASS) {
-        world_map->replaceTile(
-            midgroundTile, std::make_shared<Tile>(
-                               TILE_PLOWED_SOIL, midgroundTile->getX(),
-                               midgroundTile->getY(), midgroundTile->getZ()));
+  if (inHand->getId() == ITEM_HOE) {
+    if (midground_tile && !foregroundTile) {
+      if (midground_tile->getId() == TILE_GRASS) {
+        tile_map.replaceTile(
+            midground_tile,
+            std::make_shared<Tile>(TILE_PLOWED_SOIL, midground_tile->getX(),
+                                   midground_tile->getY(),
+                                   midground_tile->getZ()));
         SoundManager::play(SOUND_HOE);
-      } else if (midgroundTile->getID() == TILE_SOIL) {
-        world_map->replaceTile(
-            midgroundTile, std::make_shared<Tile>(
-                               TILE_PLOWED_SOIL, midgroundTile->getX(),
-                               midgroundTile->getY(), midgroundTile->getZ()));
+      } else if (midground_tile->getId() == TILE_SOIL) {
+        tile_map.replaceTile(
+            midground_tile,
+            std::make_shared<Tile>(TILE_PLOWED_SOIL, midground_tile->getX(),
+                                   midground_tile->getY(),
+                                   midground_tile->getZ()));
         SoundManager::play(SOUND_HOE);
       } else {
         SoundManager::play(SOUND_ERROR);
@@ -149,59 +149,59 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
     }
   }
   // Scythe
-  else if (inHand->getID() == ITEM_SCYTHE) {
-    if (foregroundTile && foregroundTile->getID() == TILE_DENSE_GRASS) {
-      world_map->removeTile(foregroundTile);
-      world_map->placeItemAt(std::make_shared<Item>(ITEM_HAY, 0),
-                             foregroundTile->getX(), foregroundTile->getY());
+  else if (inHand->getId() == ITEM_SCYTHE) {
+    if (foregroundTile && foregroundTile->getId() == TILE_DENSE_GRASS) {
+      tile_map.removeTile(foregroundTile);
+      tile_map.placeItemAt(std::make_shared<Item>(ITEM_HAY, 0),
+                           foregroundTile->getX(), foregroundTile->getY());
       SoundManager::play(SOUND_SCYTHE);
     } else {
       SoundManager::play(SOUND_ERROR);
     }
   }
   // Berry
-  else if (inHand->getID() == ITEM_BERRY_SEED) {
-    if (midgroundTile && midgroundTile->getID() == TILE_PLOWED_SOIL &&
+  else if (inHand->getId() == ITEM_BERRY_SEED) {
+    if (midground_tile && midground_tile->getId() == TILE_PLOWED_SOIL &&
         !foregroundTile) {
-      world_map->placeTile(std::make_shared<Tile>(TILE_BERRY, inter_x, inter_y,
-                                                  LAYER_FOREGROUND));
+      tile_map.placeTile(std::make_shared<Tile>(TILE_BERRY, inter_x, inter_y,
+                                                LAYER_FOREGROUND));
     } else {
       SoundManager::play(SOUND_ERROR);
     }
   }
   // Tomato
-  else if (inHand->getID() == ITEM_TOMATO_SEED) {
-    if (midgroundTile && midgroundTile->getID() == TILE_PLOWED_SOIL &&
+  else if (inHand->getId() == ITEM_TOMATO_SEED) {
+    if (midground_tile && midground_tile->getId() == TILE_PLOWED_SOIL &&
         !foregroundTile) {
-      world_map->placeTile(std::make_shared<Tile>(TILE_TOMATO, inter_x, inter_y,
-                                                  LAYER_FOREGROUND));
+      tile_map.placeTile(std::make_shared<Tile>(TILE_TOMATO, inter_x, inter_y,
+                                                LAYER_FOREGROUND));
     } else {
       SoundManager::play(SOUND_ERROR);
     }
   }
   // Carrot
-  else if (inHand->getID() == ITEM_CARROT_SEED) {
-    if (midgroundTile && midgroundTile->getID() == TILE_PLOWED_SOIL &&
+  else if (inHand->getId() == ITEM_CARROT_SEED) {
+    if (midground_tile && midground_tile->getId() == TILE_PLOWED_SOIL &&
         !foregroundTile) {
-      world_map->placeTile(std::make_shared<Tile>(TILE_CARROT, inter_x, inter_y,
-                                                  LAYER_FOREGROUND));
+      tile_map.placeTile(std::make_shared<Tile>(TILE_CARROT, inter_x, inter_y,
+                                                LAYER_FOREGROUND));
     } else {
       SoundManager::play(SOUND_ERROR);
     }
   }
   // Lavender
-  else if (inHand->getID() == ITEM_LAVENDER_SEED) {
-    if (midgroundTile && midgroundTile->getID() == TILE_PLOWED_SOIL &&
+  else if (inHand->getId() == ITEM_LAVENDER_SEED) {
+    if (midground_tile && midground_tile->getId() == TILE_PLOWED_SOIL &&
         !foregroundTile) {
-      world_map->placeTile(std::make_shared<Tile>(TILE_LAVENDER, inter_x,
-                                                  inter_y, LAYER_FOREGROUND));
+      tile_map.placeTile(std::make_shared<Tile>(TILE_LAVENDER, inter_x, inter_y,
+                                                LAYER_FOREGROUND));
     } else {
       SoundManager::play(SOUND_ERROR);
     }
   }
   // Watering can
-  else if (inHand->getID() == ITEM_WATERING_CAN) {
-    if (midgroundTile && midgroundTile->getID() == TILE_WELL_PATH) {
+  else if (inHand->getId() == ITEM_WATERING_CAN) {
+    if (midground_tile && midground_tile->getId() == TILE_WELL_PATH) {
       map_messages.pushMessage("Watering can filled");
       inHand->setMeta(8);
       SoundManager::play(SOUND_WATER_FILL);
@@ -215,89 +215,89 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
     }
   }
   // Axe
-  else if (inHand->getID() == ITEM_AXE) {
-    if (foregroundTile && foregroundTile->getID() == TILE_TREE) {
-      world_map->replaceTile(
-          foregroundTile, std::make_shared<Tile>(
-                              TILE_STUMP, foregroundTile->getX(),
-                              foregroundTile->getY(), foregroundTile->getZ()));
-      world_map->placeItemAt(std::make_shared<Item>(ITEM_STICK, 0),
-                             foregroundTile->getX(), foregroundTile->getY());
-      world_map->placeItemAt(std::make_shared<Item>(ITEM_STICK, 0),
-                             foregroundTile->getX(), foregroundTile->getY());
-      world_map->placeItemAt(std::make_shared<Item>(ITEM_WOOD, 0),
-                             foregroundTile->getX(), foregroundTile->getY());
+  else if (inHand->getId() == ITEM_AXE) {
+    if (foregroundTile && foregroundTile->getId() == TILE_TREE) {
+      tile_map.replaceTile(foregroundTile,
+                           std::make_shared<Tile>(
+                               TILE_STUMP, foregroundTile->getX(),
+                               foregroundTile->getY(), foregroundTile->getZ()));
+      tile_map.placeItemAt(std::make_shared<Item>(ITEM_STICK, 0),
+                           foregroundTile->getX(), foregroundTile->getY());
+      tile_map.placeItemAt(std::make_shared<Item>(ITEM_STICK, 0),
+                           foregroundTile->getX(), foregroundTile->getY());
+      tile_map.placeItemAt(std::make_shared<Item>(ITEM_WOOD, 0),
+                           foregroundTile->getX(), foregroundTile->getY());
       SoundManager::play(SOUND_AXE);
     } else {
       SoundManager::play(SOUND_ERROR);
     }
   }
   // Shovel
-  else if (inHand->getID() == ITEM_SHOVEL) {
-    if (foregroundTile && (foregroundTile->getID() == TILE_BUSH ||
-                           foregroundTile->getID() == TILE_STUMP)) {
-      world_map->removeTile(foregroundTile);
+  else if (inHand->getId() == ITEM_SHOVEL) {
+    if (foregroundTile && (foregroundTile->getId() == TILE_BUSH ||
+                           foregroundTile->getId() == TILE_STUMP)) {
+      tile_map.removeTile(foregroundTile);
       SoundManager::play(SOUND_SHOVEL);
-    } else if (midgroundTile && midgroundTile->getID() == TILE_GRASS &&
+    } else if (midground_tile && midground_tile->getId() == TILE_GRASS &&
                !foregroundTile) {
-      world_map->removeTile(midgroundTile);
-      world_map->placeItemAt(std::make_shared<Item>(ITEM_GRASS, 0),
-                             midgroundTile->getX(), midgroundTile->getY());
+      tile_map.removeTile(midground_tile);
+      tile_map.placeItemAt(std::make_shared<Item>(ITEM_GRASS, 0),
+                           midground_tile->getX(), midground_tile->getY());
       SoundManager::play(SOUND_SHOVEL);
-    } else if (midgroundTile && midgroundTile->getID() == TILE_SAND &&
+    } else if (midground_tile && midground_tile->getId() == TILE_SAND &&
                !foregroundTile) {
-      world_map->removeTile(midgroundTile);
-      world_map->placeItemAt(std::make_shared<Item>(ITEM_SAND, 0),
-                             midgroundTile->getX(), midgroundTile->getY());
+      tile_map.removeTile(midground_tile);
+      tile_map.placeItemAt(std::make_shared<Item>(ITEM_SAND, 0),
+                           midground_tile->getX(), midground_tile->getY());
       SoundManager::play(SOUND_SHOVEL);
-    } else if (foregroundTile && (foregroundTile->getID() == TILE_STONE_WALL)) {
-      world_map->removeTile(foregroundTile);
-      world_map->placeItemAt(std::make_shared<Item>(ITEM_STONE, 0),
-                             foregroundTile->getX(), foregroundTile->getY());
+    } else if (foregroundTile && (foregroundTile->getId() == TILE_STONE_WALL)) {
+      tile_map.removeTile(foregroundTile);
+      tile_map.placeItemAt(std::make_shared<Item>(ITEM_STONE, 0),
+                           foregroundTile->getX(), foregroundTile->getY());
       SoundManager::play(SOUND_SHOVEL);
     } else {
       SoundManager::play(SOUND_ERROR);
     }
   }
   // Wood Wall
-  else if (inHand->getID() == ITEM_WOOD) {
-    if (!foregroundTile && midgroundTile) {
-      world_map->placeTile(
-          std::make_shared<Tile>(TILE_WOOD_WALL, midgroundTile->getX(),
-                                 midgroundTile->getY(), LAYER_FOREGROUND));
+  else if (inHand->getId() == ITEM_WOOD) {
+    if (!foregroundTile && midground_tile) {
+      tile_map.placeTile(
+          std::make_shared<Tile>(TILE_WOOD_WALL, midground_tile->getX(),
+                                 midground_tile->getY(), LAYER_FOREGROUND));
       SoundManager::play(SOUND_SHOVEL);
     } else {
       SoundManager::play(SOUND_ERROR);
     }
   }
   // Fence
-  else if (inHand->getID() == ITEM_STICK) {
-    if (!foregroundTile && midgroundTile) {
-      world_map->placeTile(
-          std::make_shared<Tile>(TILE_FENCE, midgroundTile->getX(),
-                                 midgroundTile->getY(), LAYER_FOREGROUND));
+  else if (inHand->getId() == ITEM_STICK) {
+    if (!foregroundTile && midground_tile) {
+      tile_map.placeTile(
+          std::make_shared<Tile>(TILE_FENCE, midground_tile->getX(),
+                                 midground_tile->getY(), LAYER_FOREGROUND));
       SoundManager::play(SOUND_SHOVEL);
     } else {
       SoundManager::play(SOUND_ERROR);
     }
   }
   // Place dirt
-  else if (inHand->getID() == ITEM_GRASS) {
-    if (backgroundTile && !midgroundTile) {
-      world_map->placeTile(
-          std::make_shared<Tile>(TILE_GRASS, backgroundTile->getX(),
-                                 backgroundTile->getY(), LAYER_MIDGROUND));
+  else if (inHand->getId() == ITEM_GRASS) {
+    if (background_tile && !midground_tile) {
+      tile_map.placeTile(
+          std::make_shared<Tile>(TILE_GRASS, background_tile->getX(),
+                                 background_tile->getY(), LAYER_MIDGROUND));
       SoundManager::play(SOUND_SHOVEL);
     } else {
       SoundManager::play(SOUND_ERROR);
     }
   }
   // Place dirt
-  else if (inHand->getID() == ITEM_SAND) {
-    if (backgroundTile && !midgroundTile) {
-      world_map->placeTile(
-          std::make_shared<Tile>(TILE_SAND, backgroundTile->getX(),
-                                 backgroundTile->getY(), LAYER_MIDGROUND));
+  else if (inHand->getId() == ITEM_SAND) {
+    if (background_tile && !midground_tile) {
+      tile_map.placeTile(
+          std::make_shared<Tile>(TILE_SAND, background_tile->getX(),
+                                 background_tile->getY(), LAYER_MIDGROUND));
       SoundManager::play(SOUND_SHOVEL);
     } else {
       SoundManager::play(SOUND_ERROR);
@@ -307,10 +307,13 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
 
 // Update tile map
 void World::update() {
+  auto v_width = static_cast<int>(VIEWPORT_WIDTH / zoom);
+  auto v_height = static_cast<int>(VIEWPORT_HEIGHT / zoom);
+
   // Regen map
   if (asw::input::keyboard.down[SDL_SCANCODE_R]) {
-    world_map->clearMap();
-    world_map->generateMap();
+    tile_map.clearMap();
+    tile_map.generateMap();
   }
 
   // One game tick (20x second, 50ms)
@@ -319,37 +322,61 @@ void World::update() {
     ticker.reset();
 
     // Update tile map
-    world_map->tick(x, y, x + VIEWPORT_WIDTH / VIEWPORT_ZOOM,
-                    y + VIEWPORT_HEIGHT / VIEWPORT_ZOOM);
+    tile_map.tick(x, y, x + v_width, y + v_height);
   }
 
   // Zooming
   if (asw::input::keyboard.pressed[SDL_SCANCODE_KP_PLUS] &&
-      VIEWPORT_ZOOM < VIEWPORT_MAX_ZOOM) {
-    VIEWPORT_ZOOM *= 2.0f;
+      zoom < VIEWPORT_MAX_ZOOM) {
+    zoom *= 2.0f;
   }
+
   if (asw::input::keyboard.pressed[SDL_SCANCODE_KP_MINUS] &&
-      VIEWPORT_ZOOM > VIEWPORT_MIN_ZOOM) {
-    VIEWPORT_ZOOM *= 0.5f;
+      zoom > VIEWPORT_MIN_ZOOM) {
+    zoom *= 0.5f;
   }
 }
 
 // Scroll
-void World::scroll(int player_x, int player_y) {
-  x = player_x + (TILE_WIDTH - VIEWPORT_WIDTH / VIEWPORT_ZOOM) / 2;
-  y = player_y + (TILE_HEIGHT - VIEWPORT_HEIGHT / VIEWPORT_ZOOM) / 2;
+void World::scroll(int scroll_x, int scroll_y) {
+  auto v_width = static_cast<int>(VIEWPORT_WIDTH / zoom);
+  auto v_height = static_cast<int>(VIEWPORT_HEIGHT / zoom);
+
+  x = scroll_x + (TILE_WIDTH - v_width) / 2;
+  y = scroll_y + (TILE_HEIGHT - v_height) / 2;
 
   if (x < 0) {
     x = 0;
-  } else if (x > world_map->getWidth() * TILE_WIDTH -
-                     VIEWPORT_WIDTH / VIEWPORT_ZOOM) {
-    x = world_map->getWidth() * TILE_WIDTH - VIEWPORT_WIDTH / VIEWPORT_ZOOM;
+  } else if (x > tile_map.getWidth() * TILE_WIDTH - v_width) {
+    x = tile_map.getWidth() * TILE_WIDTH - v_width;
   }
 
   if (y < 0) {
     y = 0;
-  } else if (y > world_map->getHeight() * TILE_HEIGHT -
-                     VIEWPORT_HEIGHT / VIEWPORT_ZOOM) {
-    y = world_map->getHeight() * TILE_HEIGHT - VIEWPORT_HEIGHT / VIEWPORT_ZOOM;
+  } else if (y > tile_map.getHeight() * TILE_HEIGHT - v_height) {
+    y = tile_map.getHeight() * TILE_HEIGHT - v_height;
   }
+}
+
+// Get x and y
+int World::getX() const {
+  return this->x;
+}
+
+int World::getY() const {
+  return this->y;
+}
+
+float World::getZoom() const {
+  return this->zoom;
+}
+
+// Get map
+TileMap& World::getMap() {
+  return this->tile_map;
+}
+
+// Get messenger
+Messenger& World::getMessenger() {
+  return this->map_messages;
 }

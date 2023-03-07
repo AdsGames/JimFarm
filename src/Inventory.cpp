@@ -56,7 +56,7 @@ std::shared_ptr<ItemStack> Inventory::findStack(
     std::shared_ptr<Item> item) const {
   for (auto const& content : contents) {
     if (content && content->getItem()) {
-      if (content->getItem()->getID() == item->getID()) {
+      if (content->getItem()->getId() == item->getId()) {
         return content;
       }
     }

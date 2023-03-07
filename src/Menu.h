@@ -35,19 +35,19 @@ class Menu : public State {
   int music_volume{100};
 
   // Fonts
-  asw::Font pixelart;
+  asw::Font pixelart{};
 
-  asw::Texture menu_image;
-  asw::Texture story_image;
-  asw::Texture help_image;
-  asw::Texture options_image;
-  asw::Texture coin_flip;
-  asw::Texture options_slider;
-  asw::Texture options_slidee;
-  asw::Texture options_indicator;
+  asw::Texture menu_image{};
+  asw::Texture story_image{};
+  asw::Texture help_image{};
+  asw::Texture options_image{};
+  asw::Texture coin_flip{};
+  asw::Texture options_slider{};
+  asw::Texture options_slidee{};
+  asw::Texture options_indicator{};
 
-  asw::Sample music;
-  asw::Sample blip;
+  asw::Sample music{};
+  asw::Sample blip{};
 
   MenuState state{MenuState::MAIN_MENU};
 };

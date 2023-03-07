@@ -9,15 +9,17 @@
 #include <string>
 #include <vector>
 
-const int CHUNK_WIDTH = 16;
-const int CHUNK_HEIGHT = 16;
-const int CHUNK_LAYERS = 5;
+constexpr int CHUNK_WIDTH = 16;
+constexpr int CHUNK_HEIGHT = 16;
+constexpr int CHUNK_LAYERS = 5;
+constexpr int CHUNK_WIDTH_PX = CHUNK_WIDTH * TILE_WIDTH;
+constexpr int CHUNK_HEIGHT_PX = CHUNK_HEIGHT * TILE_HEIGHT;
 
-const int LAYER_BACKGROUND = 0;
-const int LAYER_MIDGROUND = 1;
-const int LAYER_CHARACTER = 2;
-const int LAYER_ITEMS = 3;
-const int LAYER_FOREGROUND = 4;
+constexpr int LAYER_BACKGROUND = 0;
+constexpr int LAYER_MIDGROUND = 1;
+constexpr int LAYER_CHARACTER = 2;
+constexpr int LAYER_ITEMS = 3;
+constexpr int LAYER_FOREGROUND = 4;
 
 class Chunk {
  public:

@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "../ui/UI_Controller.h"
+#include "../ui/UiController.h"
 #include "TileType.h"
 
 class TileTypeManager {

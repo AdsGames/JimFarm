@@ -4,11 +4,11 @@
 #include <asw/asw.h>
 #include <string>
 
-#include "UI_Element.h"
+#include "UiElement.h"
 
-class UI_Label : public UI_Element {
+class UiLabel : public UiElement {
  public:
-  UI_Label(int x, int y, std::string text);
+  UiLabel(int x, int y, const std::string& text);
 
   void draw(int parent_x, int parent_y) override;
   std::string text;

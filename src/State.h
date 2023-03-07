@@ -71,10 +71,6 @@ class State {
 
   // Change state
   void setNextState(StateEngine* engine, ProgramState state);
-
- private:
-  // State status
-  int status;
 };
 
 #endif  // SRC_STATE_H_

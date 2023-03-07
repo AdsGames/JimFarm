@@ -14,31 +14,30 @@
 
 class Messenger {
  public:
-  Messenger(int listSize = 1,
-            bool topDown = false,
-            int padding = 5,
-            asw::Color font_col = asw::util::makeColor(255, 255, 255),
-            asw::Color bg_col = asw::util::makeColor(0, 0, 0, 0));
+  Messenger(unsigned int list_size = 1,
+            bool is_top_down = false,
+            int padding = 5);
 
-  unsigned int messageCount();
+  size_t messageCount() const;
+
   void draw(int x, int y);
-  void setColors(asw::Color font_col, asw::Color bg_col);
+  void setColors(asw::Color font, asw::Color background);
 
-  void pushMessage(std::string new_message);
+  void pushMessage(const std::string& message);
 
  private:
-  unsigned int max_size;
+  unsigned int max_size{1};
 
-  bool topDown;
+  bool top_down{false};
 
-  int padding;
+  int padding{5};
 
-  asw::Color font_col;
-  asw::Color bg_col;
+  asw::Color font_color{asw::util::makeColor(255, 255, 255)};
+  asw::Color bg_color{asw::util::makeColor(0, 0, 0, 0)};
 
-  std::vector<std::string> msgs;
+  std::vector<std::string> msgs{};
 
-  asw::Font pixelart;
+  asw::Font pixelart{};
 };
 
 #endif  // SRC_MESSENGER_H_

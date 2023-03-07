@@ -12,6 +12,12 @@
 
 #include "TileMap.h"
 
+// Viewport
+constexpr int VIEWPORT_WIDTH = 240 * 2;
+constexpr int VIEWPORT_HEIGHT = 160 * 2;
+constexpr float VIEWPORT_MAX_ZOOM = 2.0f;
+constexpr float VIEWPORT_MIN_ZOOM = 0.5f;
+
 class World {
  public:
   World();
@@ -26,43 +32,39 @@ class World {
 
   // Map
   void update();
-  void scroll(int player_x, int player_y);
+  void scroll(int scroll_x, int scroll_y);
 
   // Get x and y
-  int getX() const { return this->x; }
-  int getY() const { return this->y; }
+  int getX() const;
+  int getY() const;
+  float getZoom() const;
 
   // Get map
-  const std::shared_ptr<TileMap>& getMap() const { return this->world_map; }
+  TileMap& getMap();
 
   // Get messenger
-  const Messenger& getMessenger() const { return this->map_messages; }
-
-  // Viewport
-  static constexpr int VIEWPORT_WIDTH = 240 * 2;
-  static constexpr int VIEWPORT_HEIGHT = 160 * 2;
-  static constexpr float VIEWPORT_MAX_ZOOM = 2.0f;
-  static constexpr float VIEWPORT_MIN_ZOOM = 0.5f;
-
-  float VIEWPORT_ZOOM = 2.0f;
+  Messenger& getMessenger();
 
  private:
   // Tile map
-  std::shared_ptr<TileMap> world_map = nullptr;
+  TileMap tile_map;
 
   // Scroll position
-  int x = 0;
-  int y = 0;
+  int x{0};
+  int y{0};
+
+  // Zoom
+  float zoom{2.0f};
 
   // Buffer that holds whole map image
-  asw::Texture map_buffer = nullptr;
-  asw::Texture overlay_buffer = nullptr;
+  asw::Texture map_buffer{nullptr};
+  asw::Texture overlay_buffer{nullptr};
 
   // Ticker for world
   Timer ticker{};
 
   // Messager
-  Messenger map_messages = Messenger(1, false, -4);
+  Messenger map_messages{Messenger(1, false, -4)};
 };
 
 #endif  // SRC_WORLD_H_

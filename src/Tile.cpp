@@ -19,7 +19,7 @@ int Tile::getHeight() const {
 }
 
 // Draw tile to screen
-void Tile::draw(float x_1, float y_1, float x_2, float y_2) const {
+void Tile::draw(int x_1, int y_1, int x_2, int y_2) const {
   if (x >= x_1 - tile_pointer.getWidth() &&
       x <= x_2 + tile_pointer.getWidth() &&
       y >= y_1 - tile_pointer.getHeight() &&
@@ -28,19 +28,14 @@ void Tile::draw(float x_1, float y_1, float x_2, float y_2) const {
   }
 }
 
-// Draw tile at specific position
-void Tile::drawAt(int newX, int newY) const {
-  tile_pointer.draw(newX, newY);
-}
-
 // Is this type solid?
 bool Tile::isSolid() const {
   return tile_pointer.getAttribute();
 }
 
 // Modify ID
-unsigned char Tile::getID() const {
-  return tile_pointer.getID();
+unsigned char Tile::getId() const {
+  return tile_pointer.getId();
 }
 
 // Get name of tile
@@ -49,8 +44,8 @@ std::string Tile::getName() const {
 }
 
 // Access and set meta data byte
-void Tile::setMeta(unsigned char meta) {
-  this->meta = meta;
+void Tile::setMeta(unsigned char new_meta) {
+  this->meta = new_meta;
 }
 
 unsigned char Tile::getMeta() const {

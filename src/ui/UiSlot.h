@@ -4,15 +4,15 @@
 #include <asw/asw.h>
 
 #include "../ItemStack.h"
-#include "UI_Element.h"
+#include "UiElement.h"
 
 const int SLOT_SIZE = 16;
 
-class UI_Slot : public UI_Element {
+class UiSlot : public UiElement {
  public:
-  UI_Slot(int x, int y);
-  UI_Slot(int x, int y, std::shared_ptr<ItemStack> stk);
-  ~UI_Slot() final = default;
+  UiSlot(int x, int y);
+  UiSlot(int x, int y, std::shared_ptr<ItemStack> stk);
+  ~UiSlot() final = default;
 
   void bindStack(std::shared_ptr<ItemStack> stk);
 

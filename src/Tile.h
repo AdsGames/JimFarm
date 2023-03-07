@@ -26,14 +26,13 @@ class Tile : public Sprite {
   int getHeight() const;
 
   // Drawing
-  void draw(float x_1, float y_1, float x_2, float y_2) const override;
-  void drawAt(int newX, int newY) const;
+  void draw(int x_1, int y_1, int x_2, int y_2) const override;
 
   // Is this type solid?
   bool isSolid() const;
 
   // Modify ID
-  unsigned char getID() const;
+  unsigned char getId() const;
 
   // Get name of tile
   std::string getName() const;
@@ -42,8 +41,6 @@ class Tile : public Sprite {
   void setMeta(unsigned char meta);
   unsigned char getMeta() const;
   void changeMeta(unsigned char amt);
-
-  // Temperature and moisture
 
   // Get image type
   bool needsBitmask() const;
