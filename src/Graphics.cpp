@@ -1,13 +1,8 @@
 #include "Graphics.h"
 
 #include <algorithm>
-#include <utility>
 
 std::shared_ptr<Graphics> Graphics::instance = nullptr;
-
-bool sortDrawableByZ(std::shared_ptr<Sprite> A, std::shared_ptr<Sprite> B) {
-  return (*A < *B);
-}
 
 // Get instance
 std::shared_ptr<Graphics> Graphics::Instance() {
@@ -24,51 +19,18 @@ void Graphics::add(std::shared_ptr<Sprite> sprite) {
     return;
   }
 
-  sprites.push_back(sprite);
-
-  if (should_sort) {
-    sort();
-  } else {
-    need_sort = true;
-  }
+  sprites.insert(sprite);
 }
 
 // Remove sprites
-void Graphics::remove(std::shared_ptr<Sprite> sprite) {
-  if (!sprite) {
-    return;
-  }
+void Graphics::remove(const unsigned int sprite_id) {
+  auto it = std::find_if(sprites.begin(), sprites.end(),
+                         [sprite_id](const std::shared_ptr<Sprite>& sprite) {
+                           return sprite->getSpriteId() == sprite_id;
+                         });
 
-  auto it = std::find(sprites.begin(), sprites.end(), sprite);
-
-  if (it == sprites.end()) {
-    return;
-  }
-
-  // Use back-swapping
-  *it = std::move(sprites.back());
-  sprites.pop_back();
-
-  if (should_sort) {
-    sort();
-  } else {
-    need_sort = true;
-  }
-}
-
-// Sort sprites
-void Graphics::sort() {
-  std::sort(sprites.begin(), sprites.end(), sortDrawableByZ);
-}
-
-void Graphics::disableSort() {
-  should_sort = false;
-}
-
-void Graphics::enableSort() {
-  should_sort = true;
-  if (need_sort) {
-    sort();
+  if (it != sprites.end()) {
+    sprites.erase(it);
   }
 }
 

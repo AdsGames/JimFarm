@@ -1,5 +1,6 @@
 #include "State.h"
 
+#include <exception>
 #include <iostream>
 
 #include "Game.h"
@@ -22,6 +23,7 @@ void StateEngine::update() {
   if (state) {
     state->update(this);
   }
+
   changeState();
 }
 

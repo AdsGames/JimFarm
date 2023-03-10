@@ -75,10 +75,10 @@ void Character::setPosition(int pos_x, int pos_y) {
 
 // Draw character to screen
 void Character::draw(int x_1, int y_1, int x_2, int y_2) const {
-  const auto cursor_x =
-      asw::input::mouse.x / static_cast<int>(map_pointer->getZoom());
-  const auto cursor_y =
-      asw::input::mouse.y / static_cast<int>(map_pointer->getZoom());
+  const auto cursor_x = static_cast<int>(
+      static_cast<float>(asw::input::mouse.x) / map_pointer->getZoom());
+  const auto cursor_y = static_cast<int>(
+      static_cast<float>(asw::input::mouse.y) / map_pointer->getZoom());
 
   // Cursor
   asw::draw::rectFill(cursor_x, cursor_y, 2, 2,
@@ -137,12 +137,15 @@ void Character::drawInventory() const {
 
 // Update player
 void Character::update() {
-  const auto relative_x =
-      asw::input::mouse.x / static_cast<int>(map_pointer->getZoom()) +
-      map_pointer->getX();
-  const auto relative_y =
-      asw::input::mouse.y / static_cast<int>(map_pointer->getZoom()) +
-      map_pointer->getY();
+  auto relative_x = static_cast<int>(static_cast<float>(asw::input::mouse.x) /
+                                     map_pointer->getZoom()) +
+                    map_pointer->getX();
+  auto relative_y = static_cast<int>(static_cast<float>(asw::input::mouse.y) /
+                                     map_pointer->getZoom()) +
+                    map_pointer->getY();
+
+  auto tile_x = x / TILE_SIZE;
+  auto tile_y = y / TILE_SIZE;
 
   // Indicator
   indicator_x = relative_x - (relative_x % 16);
@@ -180,7 +183,7 @@ void Character::update() {
 
   // Oh
   // Snap
-  if (x % 16 == 0 && y % 16 == 0) {
+  if (x % TILE_SIZE == 0 && y % TILE_SIZE == 0) {
     moving = false;
   }
 
@@ -199,7 +202,7 @@ void Character::update() {
     if (asw::input::keyboard.down[SDL_SCANCODE_UP] ||
         asw::input::keyboard.down[SDL_SCANCODE_W]) {
       direction = DIR_UP;
-      if (!map_pointer->getMap().isSolidAt(x, y - 16)) {
+      if (!map_pointer->getMap().isSolidAt(tile_x, tile_y - 1)) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -208,7 +211,7 @@ void Character::update() {
     else if (asw::input::keyboard.down[SDL_SCANCODE_DOWN] ||
              asw::input::keyboard.down[SDL_SCANCODE_S]) {
       direction = DIR_DOWN;
-      if (!map_pointer->getMap().isSolidAt(x, y + 16)) {
+      if (!map_pointer->getMap().isSolidAt(tile_x, tile_y + 1)) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -217,7 +220,7 @@ void Character::update() {
     else if (asw::input::keyboard.down[SDL_SCANCODE_LEFT] ||
              asw::input::keyboard.down[SDL_SCANCODE_A]) {
       direction = DIR_LEFT;
-      if (!map_pointer->getMap().isSolidAt(x - 16, y)) {
+      if (!map_pointer->getMap().isSolidAt(tile_x - 1, tile_y)) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -226,7 +229,7 @@ void Character::update() {
     else if (asw::input::keyboard.down[SDL_SCANCODE_RIGHT] ||
              asw::input::keyboard.down[SDL_SCANCODE_D]) {
       direction = DIR_RIGHT;
-      if (!map_pointer->getMap().isSolidAt(x + 16, y)) {
+      if (!map_pointer->getMap().isSolidAt(tile_x + 1, tile_y)) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -241,16 +244,18 @@ void Character::update() {
   // Update movement
   if (moving) {
     // Smooth move
-    if (direction == DIR_UP && y > 0)
+    if (direction == DIR_UP && y > 0) {
       y -= 2;
-    else if (direction == DIR_DOWN &&
-             y < (map_pointer->getMap().getHeight() * 16) - 16)
+    } else if (direction == DIR_DOWN &&
+               y < (map_pointer->getMap().getHeight() * TILE_SIZE) -
+                       TILE_SIZE) {
       y += 2;
-    else if (direction == DIR_LEFT && x > 0)
+    } else if (direction == DIR_LEFT && x > 0) {
       x -= 2;
-    else if (direction == DIR_RIGHT &&
-             x < (map_pointer->getMap().getWidth() * 16) - 16)
+    } else if (direction == DIR_RIGHT &&
+               x < (map_pointer->getMap().getWidth() * TILE_SIZE) - TILE_SIZE) {
       x += 2;
+    }
 
     // Increase animation ticker
     ani_ticker = (ani_ticker + 1) % 16;
@@ -260,7 +265,7 @@ void Character::update() {
 
   // Pickup
   auto item_at_position =
-      map_pointer->getMap().getItemAt(x / 16 * 16, y / 16 * 16);
+      map_pointer->getMap().getItemAt(x / TILE_SIZE, y / TILE_SIZE);
 
   // Pickup
   if (item_at_position != nullptr) {
@@ -282,7 +287,8 @@ void Character::update() {
     // Drop
     if (itemInHand != nullptr) {
       asw::sound::play(drop);
-      map_pointer->getMap().placeItemAt(itemInHand, indicator_x, indicator_y);
+      map_pointer->getMap().placeItemAt(itemInHand, indicator_x / TILE_SIZE,
+                                        indicator_y / TILE_SIZE);
       inventory_ui.getInventory()->getStack(selected_item)->remove(1);
     }
   }

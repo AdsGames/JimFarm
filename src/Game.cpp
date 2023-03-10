@@ -13,7 +13,7 @@ Game::Game() {
 
   // Setup jim
   jim = std::make_shared<Character>();
-  jim->setPosition(15 * 16, 15 * 16);
+  jim->setPosition(15 * TILE_SIZE, 15 * TILE_SIZE);
 
   jim->loadData();
   jim->setWorld(&farm_world);

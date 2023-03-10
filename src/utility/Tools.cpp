@@ -1,11 +1,6 @@
 #include "Tools.h"
 
-#include <time.h>
-
-// Random number generator. Use int random(highest,lowest);
-int random(int min, int max) {
-  return (rand() % (max + 1 - min)) + min;
-}
+std::default_random_engine generator;
 
 // Collision
 bool collision(int xMin1,

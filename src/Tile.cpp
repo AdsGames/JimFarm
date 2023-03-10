@@ -18,6 +18,14 @@ int Tile::getHeight() const {
   return tile_pointer.getHeight();
 }
 
+int Tile::getTileX() const {
+  return x / TILE_SIZE;
+}
+
+int Tile::getTileY() const {
+  return y / TILE_SIZE;
+}
+
 // Draw tile to screen
 void Tile::draw(int x_1, int y_1, int x_2, int y_2) const {
   if (x >= x_1 - tile_pointer.getWidth() &&

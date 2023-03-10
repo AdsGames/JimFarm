@@ -1,5 +1,6 @@
 #include "Chunk.h"
 
+#include <iostream>
 #include <sstream>
 
 #include "manager/item_defs.h"
@@ -13,36 +14,36 @@
 
 int Chunk::seed = 0;
 
-Chunk::Chunk(int x, int y) : x(x), y(y) {
+Chunk::Chunk(int index_x, int index_y) : index_x(index_x), index_y(index_y) {
   generate();
 }
 
 Chunk::~Chunk() {
-  items.clear();
-
   for (auto const& tile : tiles) {
-    Graphics::Instance()->remove(tile);
+    if (tile) {
+      Graphics::Instance()->remove(tile->getSpriteId());
+    }
+  }
+
+  for (auto const& item : items) {
+    Graphics::Instance()->remove(item->getSpriteId());
   }
 }
 
-int Chunk::getX() const {
-  return x;
+int Chunk::getXIndex() const {
+  return index_x;
 }
 
-int Chunk::getY() const {
-  return y;
+int Chunk::getYIndex() const {
+  return index_y;
 }
 
-std::string Chunk::getBiomeAt(int at_x, int at_y) const {
-  int offset_x = at_x / TILE_WIDTH - this->x * CHUNK_WIDTH;
-  int offset_y = at_y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
+std::string Chunk::getBiomeAt(int x, int y) const {
+  auto offset = this->getTileIndex(x, y, 0);
 
-  if (offset_x < 0 || offset_x > CHUNK_WIDTH || offset_y < 0 ||
-      offset_y > CHUNK_HEIGHT) {
-    return "unknown";
+  if (offset >= tiles.size()) {
+    return "none";
   }
-
-  int offset = offset_x + offset_y * CHUNK_WIDTH;
 
   std::stringstream stream;
   stream << "temp:" << temperature[offset] << " "
@@ -53,51 +54,38 @@ std::string Chunk::getBiomeAt(int at_x, int at_y) const {
 }
 
 char Chunk::getTemperatureAt(int x, int y) const {
-  int offset_x = x / TILE_WIDTH - this->x * CHUNK_WIDTH;
-  int offset_y = y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
+  auto offset = this->getTileIndex(x, y, 0);
 
-  if (offset_x < 0 || offset_x > CHUNK_WIDTH || offset_y < 0 ||
-      offset_y > CHUNK_HEIGHT) {
+  if (offset >= tiles.size()) {
     return 0;
   }
-
-  int offset = offset_x + offset_y * CHUNK_WIDTH;
 
   return temperature[offset];
 }
 
 std::shared_ptr<Tile> Chunk::getTileAt(int x, int y, int z) const {
-  int offset_x = x / TILE_WIDTH - this->x * CHUNK_WIDTH;
-  int offset_y = y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
+  auto offset = this->getTileIndex(x, y, z);
 
-  if (offset_x < 0 || offset_x > CHUNK_WIDTH || offset_y < 0 ||
-      offset_y > CHUNK_HEIGHT || z < 0 || z > CHUNK_LAYERS) {
+  if (offset >= tiles.size()) {
+    std::cout << "Tile out of bounds: " << x << ", " << y << ", " << z
+              << std::endl;
     return nullptr;
   }
-
-  int offset =
-      offset_x + offset_y * CHUNK_WIDTH + z * CHUNK_WIDTH * CHUNK_HEIGHT;
 
   return tiles[offset];
 }
 
-void Chunk::setTileAt(int tile_x,
-                      int tile_y,
-                      int tile_z,
-                      std::shared_ptr<Tile> tile) {
-  int offset_x = tile_x / TILE_WIDTH - this->x * CHUNK_WIDTH;
-  int offset_y = tile_y / TILE_HEIGHT - this->y * CHUNK_HEIGHT;
+void Chunk::setTileAt(int x, int y, int z, std::shared_ptr<Tile> tile) {
+  auto offset = this->getTileIndex(x, y, z);
 
-  if (offset_x < 0 || offset_x > CHUNK_WIDTH || offset_y < 0 ||
-      offset_y > CHUNK_HEIGHT || tile_z < 0 || tile_z > CHUNK_LAYERS) {
+  if (offset >= tiles.size()) {
+    std::cout << "Tile out of bounds: " << x << ", " << y << ", " << z
+              << std::endl;
     return;
   }
 
-  int offset =
-      offset_x + offset_y * CHUNK_WIDTH + tile_z * CHUNK_WIDTH * CHUNK_HEIGHT;
-
   if (tiles[offset]) {
-    Graphics::Instance()->remove(tiles[offset]);
+    Graphics::Instance()->remove(tiles[offset]->getSpriteId());
     tiles[offset].reset();
   }
 
@@ -109,9 +97,9 @@ void Chunk::setTileAt(int tile_x,
 }
 
 // Get item at position
-std::shared_ptr<MapItem> Chunk::getItemAt(int item_x, int item_y) const {
+std::shared_ptr<MapItem> Chunk::getItemAt(int x, int y) const {
   for (auto const& i : items) {
-    if (i->getX() == item_x && i->getY() == item_y) {
+    if (i->getX() == x * TILE_SIZE && i->getY() == y * TILE_SIZE) {
       return i;
     }
   }
@@ -119,14 +107,19 @@ std::shared_ptr<MapItem> Chunk::getItemAt(int item_x, int item_y) const {
 }
 
 // Place item on map
-void Chunk::placeItemAt(std::shared_ptr<Item> item, int item_x, int item_y) {
-  if (item) {
-    auto newMapItem = std::make_shared<MapItem>(item_x, item_y, item);
-    items.push_back(newMapItem);
+void Chunk::placeItemAt(std::shared_ptr<Item> item, int x, int y) {
+  if (!item) {
+    return;
+  }
 
-    if (is_drawing) {
-      Graphics::Instance()->add(newMapItem);
-    }
+  // Annoying to deal with 2 coordinate systems
+  auto newMapItem =
+      std::make_shared<MapItem>(x * TILE_SIZE, y * TILE_SIZE, item);
+
+  items.push_back(newMapItem);
+
+  if (is_drawing) {
+    Graphics::Instance()->add(newMapItem);
   }
 }
 
@@ -135,7 +128,7 @@ void Chunk::removeItem(std::shared_ptr<MapItem> item) {
   if (item != nullptr) {
     for (unsigned int i = 0; i < items.size(); i++) {
       if (items.at(i) == item) {
-        Graphics::Instance()->remove(items.at(i));
+        Graphics::Instance()->remove(items.at(i)->getSpriteId());
         items.erase(items.begin() + i);
         break;
       }
@@ -144,52 +137,34 @@ void Chunk::removeItem(std::shared_ptr<MapItem> item) {
 }
 
 void Chunk::setDrawEnabled(bool enabled) {
-  if (is_drawing != enabled) {
-    for (auto const& tile : tiles) {
-      if (tile && enabled) {
-        Graphics::Instance()->add(tile);
-      } else if (tile && !enabled) {
-        Graphics::Instance()->remove(tile);
-      }
+  if (is_drawing == enabled) {
+    return;
+  }
+
+  for (auto const& tile : tiles) {
+    if (tile && enabled) {
+      Graphics::Instance()->add(tile);
+    } else if (tile && !enabled) {
+      Graphics::Instance()->remove(tile->getSpriteId());
     }
+  }
 
-    for (auto const& item : items) {
-      if (enabled) {
-        Graphics::Instance()->add(item);
-      } else {
-        Graphics::Instance()->remove(item);
-      }
+  for (auto const& item : items) {
+    if (enabled) {
+      Graphics::Instance()->add(item);
+    } else {
+      Graphics::Instance()->remove(item->getSpriteId());
     }
-
-    is_drawing = enabled;
-  }
-}
-
-bool Chunk::getInRange(int x_1, int y_1, int x_2, int y_2) {
-  const int in_range = x_2 >= (this->x) * CHUNK_WIDTH * TILE_WIDTH &&
-                       x_1 <= (this->x + 1) * CHUNK_WIDTH * TILE_WIDTH &&
-                       y_2 >= (this->y) * CHUNK_HEIGHT * TILE_HEIGHT &&
-                       y_1 <= (this->y + 1) * CHUNK_HEIGHT * TILE_HEIGHT;
-
-  // Add to draw pool
-  if (in_range && !is_drawing) {
-    setDrawEnabled(true);
   }
 
-  // Remove from draw pool
-  if (!in_range && is_drawing) {
-    setDrawEnabled(false);
-  }
-
-  return in_range;
+  is_drawing = enabled;
 }
 
 void Chunk::tick() {
   // Tiles
-  for (int i = 0; i < CHUNK_WIDTH; i++) {
-    for (int t = 0; t < CHUNK_HEIGHT; t++) {
-      int offset =
-          i + t * CHUNK_WIDTH + LAYER_FOREGROUND * CHUNK_WIDTH * CHUNK_HEIGHT;
+  for (int i = 0; i < CHUNK_SIZE; i++) {
+    for (int t = 0; t < CHUNK_SIZE; t++) {
+      auto offset = this->getTileIndex(i, t, LAYER_FOREGROUND);
 
       // Current tile
       auto& current = tiles[offset];
@@ -201,15 +176,12 @@ void Chunk::tick() {
       // Berries
       if (current->getId() == TILE_BERRY) {
         // Grow a bit
-        if (true) {
-          current->changeMeta(1);
-        }
+        current->changeMeta(1);
 
         // Done Growing
         if (current->getMeta() >= MAX_TILE_META) {
-          placeItemAt(std::make_shared<Item>(ITEM_BERRY), current->getX(),
-                      current->getY());
-          setTileAt(current->getX(), current->getY(), current->getZ(), nullptr);
+          placeItemAt(std::make_shared<Item>(ITEM_BERRY), i, t);
+          setTileAt(i, t, current->getZ(), nullptr);
         }
       }
       // Tomatos
@@ -221,9 +193,8 @@ void Chunk::tick() {
 
         // Done Growing
         if (current->getMeta() >= MAX_TILE_META) {
-          placeItemAt(std::make_shared<Item>(ITEM_TOMATO), current->getX(),
-                      current->getY());
-          setTileAt(current->getX(), current->getY(), current->getZ(), nullptr);
+          placeItemAt(std::make_shared<Item>(ITEM_TOMATO), i, t);
+          setTileAt(i, t, current->getZ(), nullptr);
         }
       }
       // Carrots
@@ -235,9 +206,8 @@ void Chunk::tick() {
 
         // Done Growing
         if (current->getMeta() >= MAX_TILE_META) {
-          placeItemAt(std::make_shared<Item>(ITEM_CARROT), current->getX(),
-                      current->getY());
-          setTileAt(current->getX(), current->getY(), current->getZ(), nullptr);
+          placeItemAt(std::make_shared<Item>(ITEM_CARROT), i, t);
+          setTileAt(i, t, current->getZ(), nullptr);
         }
       }
       // Lavender
@@ -248,9 +218,8 @@ void Chunk::tick() {
 
         // Done Growing
         if (current->getMeta() >= MAX_TILE_META) {
-          placeItemAt(std::make_shared<Item>(ITEM_LAVENDER), current->getX(),
-                      current->getY());
-          setTileAt(current->getX(), current->getY(), current->getZ(), nullptr);
+          placeItemAt(std::make_shared<Item>(ITEM_LAVENDER), i, t);
+          setTileAt(i, t, current->getZ(), nullptr);
         }
       }
     }
@@ -258,47 +227,17 @@ void Chunk::tick() {
 }
 
 void Chunk::generate() {
-  // Height
-  auto sn_h = std::make_unique<SimplexNoise>(1.0f, 1.0f, 2.0f, 0.47f);
+  this->generateBiome();
 
-  // Rainfall
-  auto sn_r = std::make_unique<SimplexNoise>(0.3f, 0.3f, 1.0f, 2.0f);
+  for (int i = 0; i < CHUNK_SIZE; i++) {
+    for (int t = 0; t < CHUNK_SIZE; t++) {
+      const int t_x = (i + index_x * CHUNK_SIZE) * TILE_SIZE;
+      const int t_y = (t + index_y * CHUNK_SIZE) * TILE_SIZE;
 
-  // Temperature
-  auto sn_t = std::make_unique<SimplexNoise>(0.3f, 0.3f, 1.0f, 2.0f);
-
-  for (int i = 0; i < CHUNK_WIDTH; i++) {
-    for (int t = 0; t < CHUNK_HEIGHT; t++) {
-      const int t_x = (i + x * CHUNK_WIDTH) * TILE_WIDTH;
-      const int t_y = (t + y * CHUNK_HEIGHT) * TILE_HEIGHT;
-      const int pos_2 = (i + t * CHUNK_WIDTH);
-      const int pos_3_background =
-          pos_2 + LAYER_BACKGROUND * CHUNK_WIDTH * CHUNK_HEIGHT;
-      const int pos_3_foreground =
-          pos_2 + LAYER_FOREGROUND * CHUNK_WIDTH * CHUNK_HEIGHT;
-      const int pos_3_midground =
-          pos_2 + LAYER_MIDGROUND * CHUNK_WIDTH * CHUNK_HEIGHT;
-
-      this->temperature[pos_2] =
-          sn_t->fractal(10,
-                        Chunk::seed % 897 +
-                            static_cast<float>(i + x * CHUNK_WIDTH) / 100.0f,
-                        Chunk::seed % 897 +
-                            static_cast<float>(t + y * CHUNK_HEIGHT) / 100.0f) *
-          64;
-      this->rainfall[pos_2] =
-          sn_r->fractal(10,
-                        Chunk::seed % 477 +
-                            static_cast<float>(i + x * CHUNK_WIDTH) / 100.0f,
-                        Chunk::seed % 477 +
-                            static_cast<float>(t + y * CHUNK_HEIGHT) / 100.0f) *
-          64;
-      this->height[pos_2] =
-          sn_h->fractal(
-              10,
-              Chunk::seed + static_cast<float>(i + x * CHUNK_WIDTH) / 100.0f,
-              Chunk::seed + static_cast<float>(t + y * CHUNK_HEIGHT) / 100.0f) *
-          64;
+      const auto pos_2 = this->getTileIndex(i, t, 0);
+      const auto pos_3_background = this->getTileIndex(i, t, LAYER_BACKGROUND);
+      const auto pos_3_midground = this->getTileIndex(i, t, LAYER_MIDGROUND);
+      const auto pos_3_foreground = this->getTileIndex(i, t, LAYER_FOREGROUND);
 
       // High rainfall
       // Tundra
@@ -380,7 +319,7 @@ void Chunk::generate() {
           tiles[pos_3_foreground] = std::make_shared<Tile>(
               TILE_DENSE_GRASS, t_x, t_y, LAYER_FOREGROUND, random(0, 3));
           if (random(0, 100) == 0) {
-            placeItemAt(std::make_shared<Item>(ITEM_CHICKEN), t_x, t_y);
+            placeItemAt(std::make_shared<Item>(ITEM_CHICKEN), i, t);
           }
         }
       }
@@ -411,56 +350,97 @@ void Chunk::generate() {
 
       // Water deep
       if (height[pos_2] < -32) {
-        setTileAt(t_x, t_y, LAYER_BACKGROUND,
+        setTileAt(i, t, LAYER_BACKGROUND,
                   std::make_shared<Tile>(TILE_UNDERWATER_SOIL, t_x, t_y,
                                          LAYER_BACKGROUND, 3));
-        setTileAt(t_x, t_y, LAYER_MIDGROUND, nullptr);
+        setTileAt(i, t, LAYER_MIDGROUND, nullptr);
         setTileAt(
-            t_x, t_y, LAYER_FOREGROUND,
+            i, t, LAYER_FOREGROUND,
             std::make_shared<Tile>(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
       }
       // Water
       else if (height[pos_2] < -19) {
-        setTileAt(t_x, t_y, LAYER_BACKGROUND,
+        setTileAt(i, t, LAYER_BACKGROUND,
                   std::make_shared<Tile>(TILE_UNDERWATER_SOIL, t_x, t_y,
                                          LAYER_BACKGROUND, 0));
-        setTileAt(t_x, t_y, LAYER_MIDGROUND, nullptr);
+        setTileAt(i, t, LAYER_MIDGROUND, nullptr);
         setTileAt(
-            t_x, t_y, LAYER_FOREGROUND,
+            i, t, LAYER_FOREGROUND,
             std::make_shared<Tile>(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
       }
       // Water seaweed
       else if (height[pos_2] < -17) {
-        setTileAt(t_x, t_y, LAYER_BACKGROUND,
+        setTileAt(i, t, LAYER_BACKGROUND,
                   std::make_shared<Tile>(TILE_UNDERWATER_SOIL, t_x, t_y,
                                          LAYER_BACKGROUND, 1));
-        setTileAt(t_x, t_y, LAYER_MIDGROUND, nullptr);
+        setTileAt(i, t, LAYER_MIDGROUND, nullptr);
         setTileAt(
-            t_x, t_y, LAYER_FOREGROUND,
+            i, t, LAYER_FOREGROUND,
             std::make_shared<Tile>(TILE_WATER, t_x, t_y, LAYER_FOREGROUND));
       }
       // Shore
       else if (height[pos_2] < -14) {
         setTileAt(
-            t_x, t_y, LAYER_BACKGROUND,
+            i, t, LAYER_BACKGROUND,
             std::make_shared<Tile>(TILE_SOIL, t_x, t_y, LAYER_BACKGROUND));
-        setTileAt(t_x, t_y, LAYER_FOREGROUND,
+        setTileAt(i, t, LAYER_FOREGROUND,
                   std::make_shared<Tile>(TILE_DENSE_GRASS, t_x, t_y,
                                          LAYER_FOREGROUND));
       }
       // Stone
       else if (height[pos_2] > 32) {
         setTileAt(
-            t_x, t_y, LAYER_BACKGROUND,
+            i, t, LAYER_BACKGROUND,
             std::make_shared<Tile>(TILE_STONE, t_x, t_y, LAYER_BACKGROUND));
         setTileAt(
-            t_x, t_y, LAYER_MIDGROUND,
+            i, t, LAYER_MIDGROUND,
             std::make_shared<Tile>(TILE_STONE, t_x, t_y, LAYER_MIDGROUND));
         setTileAt(
-            t_x, t_y, LAYER_FOREGROUND,
+            i, t, LAYER_FOREGROUND,
             std::make_shared<Tile>(TILE_STONE_WALL, t_x, t_y, LAYER_FOREGROUND,
                                    (height[pos_2] - 32) / 6));
       }
     }
   }
+}
+
+void Chunk::generateBiome() {
+  // Height
+  auto sn_h = std::make_unique<SimplexNoise>(1.0f, 1.0f, 2.0f, 0.47f);
+
+  // Rainfall
+  auto sn_r = std::make_unique<SimplexNoise>(0.3f, 0.3f, 1.0f, 2.0f);
+
+  // Temperature
+  auto sn_t = std::make_unique<SimplexNoise>(0.3f, 0.3f, 1.0f, 2.0f);
+
+  auto temp_size = static_cast<float>(Chunk::seed % 897);
+  auto rain_size = static_cast<float>(Chunk::seed % 477);
+  auto height_size = static_cast<float>(Chunk::seed);
+
+  for (int i = 0; i < CHUNK_SIZE; i++) {
+    for (int t = 0; t < CHUNK_SIZE; t++) {
+      auto pos_2 = this->getTileIndex(i, t, 0);
+      auto fractal_x = static_cast<float>(i + index_x * CHUNK_SIZE) / 100.0f;
+      auto fractal_y = static_cast<float>(t + index_y * CHUNK_SIZE) / 100.0f;
+
+      auto temp_val =
+          sn_t->fractal(10, temp_size + fractal_x, temp_size + fractal_y) * 64;
+      auto rain_val =
+          sn_r->fractal(10, rain_size + fractal_x, rain_size + fractal_y) * 64;
+      auto height_val =
+          sn_h->fractal(10, height_size + fractal_x, height_size + fractal_y) *
+          64;
+
+      this->temperature[pos_2] = static_cast<char>(temp_val);
+      this->rainfall[pos_2] = static_cast<char>(rain_val);
+      this->height[pos_2] = static_cast<char>(height_val);
+    }
+  }
+}
+
+size_t Chunk::getTileIndex(unsigned int x,
+                           unsigned int y,
+                           unsigned int z) const {
+  return x + y * CHUNK_SIZE + z * CHUNK_SIZE * CHUNK_SIZE;
 }

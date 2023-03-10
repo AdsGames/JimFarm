@@ -9,8 +9,7 @@
 
 const int MAX_TILE_META = 255;
 
-const int TILE_WIDTH = 16;
-const int TILE_HEIGHT = 16;
+const int TILE_SIZE = 16;
 
 class Tile : public Sprite {
  public:
@@ -24,6 +23,9 @@ class Tile : public Sprite {
   // Gets size
   int getWidth() const;
   int getHeight() const;
+
+  int getTileX() const;
+  int getTileY() const;
 
   // Drawing
   void draw(int x_1, int y_1, int x_2, int y_2) const override;

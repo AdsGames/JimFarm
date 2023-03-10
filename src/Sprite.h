@@ -18,15 +18,7 @@ class Sprite {
   int getY() const { return this->y; }
   int getZ() const { return this->z; }
 
-  bool operator<(const Sprite& other) const {
-    if (z != other.z) {
-      return this->z < other.z;
-    }
-    if (y != other.y) {
-      return this->y < other.y;
-    }
-    return this->id < other.id;
-  }
+  int getSpriteId() const { return this->id; }
 
  protected:
   int x;
