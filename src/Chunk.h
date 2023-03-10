@@ -11,19 +11,20 @@
 
 constexpr int CHUNK_WIDTH = 16;
 constexpr int CHUNK_HEIGHT = 16;
-constexpr int CHUNK_LAYERS = 5;
+constexpr int CHUNK_LAYERS = 3;
+constexpr int CHUNK_LAYER_SIZE = CHUNK_WIDTH * CHUNK_HEIGHT;
+constexpr int CHUNK_SIZE = CHUNK_WIDTH * CHUNK_HEIGHT * CHUNK_LAYERS;
 constexpr int CHUNK_WIDTH_PX = CHUNK_WIDTH * TILE_WIDTH;
 constexpr int CHUNK_HEIGHT_PX = CHUNK_HEIGHT * TILE_HEIGHT;
 
 constexpr int LAYER_BACKGROUND = 0;
 constexpr int LAYER_MIDGROUND = 1;
-constexpr int LAYER_CHARACTER = 2;
-constexpr int LAYER_ITEMS = 3;
-constexpr int LAYER_FOREGROUND = 4;
+constexpr int LAYER_FOREGROUND = 2;
 
 class Chunk {
  public:
   Chunk(int x, int y);
+  ~Chunk();
 
   int getX() const;
   int getY() const;
@@ -48,12 +49,12 @@ class Chunk {
 
  private:
   // Tiles
-  std::shared_ptr<Tile> tiles[CHUNK_WIDTH][CHUNK_HEIGHT][CHUNK_LAYERS];
+  std::array<std::shared_ptr<Tile>, CHUNK_SIZE> tiles;
 
   // Biome
-  char temperature[CHUNK_WIDTH][CHUNK_HEIGHT];
-  char rainfall[CHUNK_WIDTH][CHUNK_HEIGHT];
-  char height[CHUNK_WIDTH][CHUNK_HEIGHT];
+  std::array<char, CHUNK_LAYER_SIZE> temperature;
+  std::array<char, CHUNK_LAYER_SIZE> rainfall;
+  std::array<char, CHUNK_LAYER_SIZE> height;
 
   // Items
   std::vector<std::shared_ptr<MapItem>> items;

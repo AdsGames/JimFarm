@@ -43,7 +43,7 @@ void update(StateEngine& game_state) {
  *********************/
 void draw(StateEngine& game_state) {
   // Clear screen
-  SDL_RenderClear(asw::display::renderer);
+  asw::draw::clearColor(asw::util::makeColor(0, 0, 0, 255));
 
   // Draw game state
   game_state.draw();

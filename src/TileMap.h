@@ -43,7 +43,7 @@ class TileMap {
 
   // Bitmasks
   void updateBitMask(std::shared_ptr<Tile> tile);
-  void updateBitmaskSurround(std::shared_ptr<Tile> tile);
+  void updateBitmaskSurround(int x, int y, int z);
 
  private:
   // Size

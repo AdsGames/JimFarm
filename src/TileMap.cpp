@@ -84,7 +84,7 @@ void TileMap::placeTile(std::shared_ptr<Tile> tile) {
 
   chunk->setTileAt(tile->getX(), tile->getY(), tile->getZ(), tile);
 
-  updateBitmaskSurround(tile);
+  updateBitmaskSurround(tile->getX(), tile->getY(), tile->getZ());
 }
 
 // Remove tile from map
@@ -99,7 +99,13 @@ void TileMap::removeTile(std::shared_ptr<Tile> tile) {
     return;
   }
 
+  auto old_x = tile->getX();
+  auto old_y = tile->getY();
+  auto old_z = tile->getZ();
+
   chunk->setTileAt(tile->getX(), tile->getY(), tile->getZ(), nullptr);
+
+  updateBitmaskSurround(old_x, old_y, old_z);
 }
 
 // Replace tile on map
@@ -111,7 +117,7 @@ void TileMap::replaceTile(std::shared_ptr<Tile> tile_old,
 
   removeTile(tile_old);
   placeTile(tile_new);
-  updateBitmaskSurround(tile_new);
+  updateBitmaskSurround(tile_new->getX(), tile_new->getY(), tile_new->getZ());
 }
 
 // Check for solid tile
@@ -245,19 +251,14 @@ void TileMap::updateBitMask(std::shared_ptr<Tile> tile) {
 }
 
 // Update bitmask (and neighbours)
-void TileMap::updateBitmaskSurround(std::shared_ptr<Tile> tile) {
-  if (!tile) {
-    return;
-  }
-
-  updateBitMask(tile);
+void TileMap::updateBitmaskSurround(int x, int y, int z) {
+  updateBitMask(getTileAt(x, y, z));
 
   for (unsigned char i = 0; i < 4; i++) {
     int offset_x = static_cast<int>(sin(M_PI * (i / 2.0))) * 16;
     int offset_y = static_cast<int>(cos(M_PI * (i / 2.0))) * -16;
 
-    std::shared_ptr<Tile> current = getTileAt(
-        tile->getX() + offset_x, tile->getY() + offset_y, tile->getZ());
+    std::shared_ptr<Tile> current = getTileAt(x + offset_x, y + offset_y, z);
 
     if (current) {
       updateBitMask(current);
