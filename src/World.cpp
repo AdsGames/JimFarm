@@ -15,15 +15,30 @@
 
 #include "Graphics.h"
 
-bool comparePtrToNode(std::shared_ptr<Tile> a, std::shared_ptr<Tile> b) {
-  return (*a < *b);
-}
-
 /************
  * TILE MAP *
  ************/
 World::World() {
   ticker.start();
+  resetCamera();
+}
+
+void World::resetCamera() {
+  Quad<int> bounds = {
+      .x_1 = 0,
+      .y_1 = 0,
+      .x_2 = VIEWPORT_WIDTH,
+      .y_2 = VIEWPORT_HEIGHT,
+  };
+
+  Quad<int> outer_bounds = {
+      .x_1 = 0,
+      .y_1 = 0,
+      .x_2 = tile_map.getWidth() * TILE_SIZE,
+      .y_2 = tile_map.getHeight() * TILE_SIZE,
+  };
+
+  camera = Camera(bounds, outer_bounds);
 }
 
 /*
@@ -34,23 +49,22 @@ void World::draw() {
   // Clear buffer
   SDL_SetRenderTarget(asw::display::renderer, map_buffer.get());
 
-  const auto v_width = static_cast<int>(VIEWPORT_WIDTH / zoom);
-  const auto v_height = static_cast<int>(VIEWPORT_HEIGHT / zoom);
-
   // Drawable
-  Graphics::Instance()->draw(x, y, x + v_width, y + v_height);
+  Graphics::Instance()->draw(camera);
 
   SDL_SetRenderTarget(asw::display::renderer, nullptr);
 
   SDL_SetTextureBlendMode(map_buffer.get(), SDL_BLENDMODE_BLEND);
 
   // Draw buffer
-  asw::draw::stretchSpriteBlit(map_buffer, 0, 0, v_width, v_height, 0, 0,
-                               VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+  asw::draw::stretchSpriteBlit(map_buffer, 0, 0, camera.getWidth(),
+                               camera.getHeight(), 0, 0, VIEWPORT_WIDTH,
+                               VIEWPORT_HEIGHT);
 
   // Draw temperature indicator
   const char temp =
-      tile_map.getTemperatureAt(x + v_width / 2, y + v_height / 2);
+      tile_map.getTemperatureAt(camera.getX() + camera.getWidth() / 2,
+                                camera.getY() + camera.getHeight() / 2);
   const char r_val = (temp > 0) ? (temp / 2) : 0;
   const char b_val = (temp < 0) ? (temp / 2 * -1) : 0;
 
@@ -110,6 +124,8 @@ void World::loadImages() {
   overlay_buffer = asw::assets::createTexture(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
   tile_map.generateMap();
+
+  resetCamera();
 }
 
 /*
@@ -300,9 +316,6 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
 
 // Update tile map
 void World::update() {
-  auto v_width = static_cast<int>(VIEWPORT_WIDTH / zoom);
-  auto v_height = static_cast<int>(VIEWPORT_HEIGHT / zoom);
-
   // Regen map
   if (asw::input::keyboard.down[SDL_SCANCODE_R]) {
     tile_map.clearMap();
@@ -315,53 +328,21 @@ void World::update() {
     ticker.reset();
 
     // Update tile map
-    tile_map.tick(x, y, x + v_width, y + v_height);
+    tile_map.tick(camera);
   }
 
   // Zooming
+  const auto zoom = camera.getZoom();
+
   if (asw::input::keyboard.pressed[SDL_SCANCODE_KP_PLUS] &&
       zoom < VIEWPORT_MAX_ZOOM) {
-    zoom *= 2.0f;
+    camera.setZoom(zoom * 2.0f);
   }
 
   if (asw::input::keyboard.pressed[SDL_SCANCODE_KP_MINUS] &&
       zoom > VIEWPORT_MIN_ZOOM) {
-    zoom *= 0.5f;
+    camera.setZoom(zoom * 0.5f);
   }
-}
-
-// Scroll
-void World::scroll(int scroll_x, int scroll_y) {
-  auto v_width = static_cast<int>(VIEWPORT_WIDTH / zoom);
-  auto v_height = static_cast<int>(VIEWPORT_HEIGHT / zoom);
-
-  x = scroll_x + (TILE_SIZE - v_width) / 2;
-  y = scroll_y + (TILE_SIZE - v_height) / 2;
-
-  if (x < 0) {
-    x = 0;
-  } else if (x > tile_map.getWidth() * TILE_SIZE - v_width) {
-    x = tile_map.getWidth() * TILE_SIZE - v_width;
-  }
-
-  if (y < 0) {
-    y = 0;
-  } else if (y > tile_map.getHeight() * TILE_SIZE - v_height) {
-    y = tile_map.getHeight() * TILE_SIZE - v_height;
-  }
-}
-
-// Get x and y
-int World::getX() const {
-  return this->x;
-}
-
-int World::getY() const {
-  return this->y;
-}
-
-float World::getZoom() const {
-  return this->zoom;
 }
 
 // Get map
@@ -372,4 +353,8 @@ TileMap& World::getMap() {
 // Get messenger
 Messenger& World::getMessenger() {
   return this->map_messages;
+}
+
+Camera& World::getCamera() {
+  return camera;
 }

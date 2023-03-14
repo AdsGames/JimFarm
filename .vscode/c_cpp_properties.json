@@ -4,7 +4,8 @@
       "name": "Win32",
       "includePath": ["${default}", "${workspaceFolder}/lib/asw/include"],
       "defines": ["_DEBUG", "UNICODE", "_UNICODE"],
-      "compileCommands": "${workspaceFolder}/compile_commands.json"
+      "compileCommands": "${workspaceFolder}/compile_commands.json",
+      "configurationProvider": "ms-vscode.cmake-tools"
     }
   ],
   "version": 4

@@ -2,6 +2,11 @@
 #define SRC_SPRITE_H_
 
 #include <asw/asw.h>
+#include <string>
+
+#include "utility/Camera.h"
+
+constexpr unsigned int MAX_SPRITES = 1000000;
 
 class Sprite {
  public:
@@ -9,25 +14,22 @@ class Sprite {
   Sprite(int x, int y, int z);
   virtual ~Sprite() = default;
 
-  virtual void draw(int x_1, int y_1, int x_2, int y_2) const = 0;
-
-  void setZ(int z);
+  virtual void draw(const Camera& camera) const = 0;
 
   // Get position
   int getX() const { return this->x; }
   int getY() const { return this->y; }
   int getZ() const { return this->z; }
 
-  int getSpriteId() const { return this->id; }
+  unsigned int getSpriteId() const { return this->id; }
 
  protected:
   int x;
   int y;
   int z;
-  int id;
 
  private:
-  void setId();
+  const int id = Sprite::next_id;
   static int next_id;
 };
 

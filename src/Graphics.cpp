@@ -15,29 +15,25 @@ std::shared_ptr<Graphics> Graphics::Instance() {
 
 // Add sprites
 void Graphics::add(std::shared_ptr<Sprite> sprite) {
-  if (!sprite) {
-    return;
-  }
-
-  sprites.insert(sprite);
+  sprites[sprite->getSpriteId()] = sprite;
 }
 
 // Remove sprites
-void Graphics::remove(const unsigned int sprite_id) {
-  auto it = std::find_if(sprites.begin(), sprites.end(),
-                         [sprite_id](const std::shared_ptr<Sprite>& sprite) {
-                           return sprite->getSpriteId() == sprite_id;
-                         });
-
-  if (it != sprites.end()) {
-    sprites.erase(it);
-  }
+void Graphics::remove(std::shared_ptr<Sprite> sprite) {
+  sprites.erase(sprite->getSpriteId());
 }
 
-void Graphics::draw(int x_1, int y_1, int x_2, int y_2) const {
-  for (auto const& sprite : sprites) {
-    if (sprite != nullptr) {
-      sprite->draw(x_1, y_1, x_2, y_2);
+void Graphics::draw(const Camera& camera) const {
+  auto sorted_sprites = std::set<std::shared_ptr<Sprite>, SpriteCmp>{};
+  auto& camera_bounds = camera.getBounds();
+
+  for (auto const& [_index, sprite] : sprites) {
+    if (sprite && camera_bounds.contains(sprite->getX(), sprite->getY())) {
+      sorted_sprites.insert(sprite);
     }
+  }
+
+  for (auto const& sprite : sorted_sprites) {
+    sprite->draw(camera);
   }
 }

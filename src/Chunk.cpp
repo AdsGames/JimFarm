@@ -21,12 +21,12 @@ Chunk::Chunk(int index_x, int index_y) : index_x(index_x), index_y(index_y) {
 Chunk::~Chunk() {
   for (auto const& tile : tiles) {
     if (tile) {
-      Graphics::Instance()->remove(tile->getSpriteId());
+      Graphics::Instance()->remove(tile);
     }
   }
 
   for (auto const& item : items) {
-    Graphics::Instance()->remove(item->getSpriteId());
+    Graphics::Instance()->remove(item);
   }
 }
 
@@ -85,7 +85,7 @@ void Chunk::setTileAt(int x, int y, int z, std::shared_ptr<Tile> tile) {
   }
 
   if (tiles[offset]) {
-    Graphics::Instance()->remove(tiles[offset]->getSpriteId());
+    Graphics::Instance()->remove(tiles[offset]);
     tiles[offset].reset();
   }
 
@@ -128,7 +128,7 @@ void Chunk::removeItem(std::shared_ptr<MapItem> item) {
   if (item != nullptr) {
     for (unsigned int i = 0; i < items.size(); i++) {
       if (items.at(i) == item) {
-        Graphics::Instance()->remove(items.at(i)->getSpriteId());
+        Graphics::Instance()->remove(items.at(i));
         items.erase(items.begin() + i);
         break;
       }
@@ -145,7 +145,7 @@ void Chunk::setDrawEnabled(bool enabled) {
     if (tile && enabled) {
       Graphics::Instance()->add(tile);
     } else if (tile && !enabled) {
-      Graphics::Instance()->remove(tile->getSpriteId());
+      Graphics::Instance()->remove(tile);
     }
   }
 
@@ -153,7 +153,7 @@ void Chunk::setDrawEnabled(bool enabled) {
     if (enabled) {
       Graphics::Instance()->add(item);
     } else {
-      Graphics::Instance()->remove(item->getSpriteId());
+      Graphics::Instance()->remove(item);
     }
   }
 

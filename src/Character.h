@@ -25,7 +25,7 @@ class CharacterForeground : public Sprite {
 
   ~CharacterForeground() final = default;
 
-  void draw(int x_1, int y_1, int x_2, int y_2) const override;
+  void draw(const Camera& camera) const override;
 
   void update();
 
@@ -40,9 +40,6 @@ class Character : public Sprite {
 
   ~Character() final = default;
 
-  // Set world pointer
-  void setWorld(World* newTileMap);
-
   // Load images and samples
   void loadData();
 
@@ -50,11 +47,11 @@ class Character : public Sprite {
   void setPosition(int x, int y);
 
   // Draw
-  void draw(int x_1, int y_1, int x_2, int y_2) const override;
+  void draw(const Camera& camera) const override;
   void drawInventory() const;
 
   // Update
-  void update();
+  void update(World& world);
 
  private:
   // Character foreground
@@ -75,7 +72,6 @@ class Character : public Sprite {
 
   // Fonts
   asw::Font pixelart{};
-  World* map_pointer{nullptr};
 
   // Item in hand
   int selected_item{0};

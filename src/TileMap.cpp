@@ -1,13 +1,7 @@
 #include "TileMap.h"
 
-#include <math.h>
-#include <time.h>
 #include <exception>
 #include <iostream>
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
 
 #include "Graphics.h"
 #include "Item.h"
@@ -174,13 +168,15 @@ void TileMap::removeItem(std::shared_ptr<MapItem> item) {
 }
 
 // Update chunks
-void TileMap::tick(int x_1, int y_1, int x_2, int y_2) const {
+void TileMap::tick(const Camera& camera) const {
+  const auto& bounds = camera.getBounds();
+
   for (auto const& y_chunks : chunks) {
     for (auto const& chunk : y_chunks) {
-      if (x_2 >= (chunk->getXIndex()) * CHUNK_SIZE * TILE_SIZE &&
-          x_1 <= (chunk->getXIndex() + 1) * CHUNK_SIZE * TILE_SIZE &&
-          y_2 >= (chunk->getYIndex()) * CHUNK_SIZE * TILE_SIZE &&
-          y_1 <= (chunk->getYIndex() + 1) * CHUNK_SIZE * TILE_SIZE) {
+      if (bounds.x_2 >= (chunk->getXIndex()) * CHUNK_SIZE * TILE_SIZE &&
+          bounds.x_1 <= (chunk->getXIndex() + 1) * CHUNK_SIZE * TILE_SIZE &&
+          bounds.y_2 >= (chunk->getYIndex()) * CHUNK_SIZE * TILE_SIZE &&
+          bounds.y_1 <= (chunk->getYIndex() + 1) * CHUNK_SIZE * TILE_SIZE) {
         chunk->setDrawEnabled(true);
         chunk->tick();
       } else {
@@ -204,7 +200,7 @@ void TileMap::generateMap() {
 
   for (unsigned int t = 0; t < (unsigned)height; t++) {
     if (chunks.size() <= t) {
-      chunks.push_back(std::vector<std::shared_ptr<Chunk>>());
+      chunks.emplace_back();
     }
 
     for (int i = 0; i < width; i++) {

@@ -9,13 +9,14 @@
 #include "Item.h"
 #include "MapItem.h"
 #include "Messenger.h"
+#include "utility/Camera.h"
 
 #include "TileMap.h"
 
 // Viewport
 constexpr int VIEWPORT_WIDTH = 240 * 2;
 constexpr int VIEWPORT_HEIGHT = 160 * 2;
-constexpr float VIEWPORT_MAX_ZOOM = 2.0f;
+constexpr float VIEWPORT_MAX_ZOOM = 4.0f;
 constexpr float VIEWPORT_MIN_ZOOM = 0.5f;
 
 class World {
@@ -32,12 +33,6 @@ class World {
 
   // Map
   void update();
-  void scroll(int scroll_x, int scroll_y);
-
-  // Get x and y
-  int getX() const;
-  int getY() const;
-  float getZoom() const;
 
   // Get map
   TileMap& getMap();
@@ -45,16 +40,13 @@ class World {
   // Get messenger
   Messenger& getMessenger();
 
+  void resetCamera();
+
+  Camera& getCamera();
+
  private:
   // Tile map
   TileMap tile_map;
-
-  // Scroll position
-  int x{0};
-  int y{0};
-
-  // Zoom
-  float zoom{2.0f};
 
   // Buffer that holds whole map image
   asw::Texture map_buffer{nullptr};
@@ -62,6 +54,9 @@ class World {
 
   // Ticker for world
   Timer ticker{};
+
+  // Camera config
+  Camera camera{};
 
   // Messager
   Messenger map_messages{Messenger(1, false, -4)};

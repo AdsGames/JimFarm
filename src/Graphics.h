@@ -1,10 +1,13 @@
 #ifndef SRC_GRAPHICS_H_
 #define SRC_GRAPHICS_H_
 
+#include <map>
 #include <memory>
 #include <set>
+#include <string>
 
 #include "Sprite.h"
+#include "utility/Camera.h"
 
 struct SpriteCmp {
   bool operator()(const std::shared_ptr<Sprite>& a,
@@ -26,14 +29,16 @@ class Graphics {
 
   // Add and remove sprites
   void add(std::shared_ptr<Sprite> sprite);
-  void remove(const unsigned int sprite_id);
+  void remove(std::shared_ptr<Sprite> sprite);
 
   // Draw managed sprites
-  void draw(int x_1, int y_1, int x_2, int y_2) const;
+  void draw(const Camera& camera) const;
 
  private:
   // Drawable
-  std::set<std::shared_ptr<Sprite>, SpriteCmp> sprites;
+  std::map<unsigned int, std::shared_ptr<Sprite>> sprites{};
+
+  bool needs_sorting = false;
 
   // Single instance
   static std::shared_ptr<Graphics> instance;

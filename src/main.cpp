@@ -19,7 +19,7 @@ constexpr nanoseconds timestep(16ms);
 // Setup game
 void setup() {
   // Load allegro library
-  asw::core::init(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+  asw::core::init(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, 2);
 }
 
 /*********************

@@ -57,7 +57,7 @@ class TileMap {
   void removeItem(std::shared_ptr<MapItem> item);
 
   // Update
-  void tick(int x_1, int y_1, int x_2, int y_2) const;
+  void tick(const Camera& camera) const;
 
   // Loading
   void generateMap();

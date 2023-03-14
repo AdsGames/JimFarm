@@ -9,7 +9,7 @@ class MapItem : public Sprite {
   MapItem(int x, int y, std::shared_ptr<Item> itemPtr);
   ~MapItem() final = default;
 
-  void draw(int x_1, int y_1, int x_2, int y_2) const override;
+  void draw(const Camera& camera) const override;
 
   std::shared_ptr<Item> itemPtr;
 };

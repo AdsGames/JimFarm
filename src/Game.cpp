@@ -14,10 +14,7 @@ Game::Game() {
   // Setup jim
   jim = std::make_shared<Character>();
   jim->setPosition(15 * TILE_SIZE, 15 * TILE_SIZE);
-
   jim->loadData();
-  jim->setWorld(&farm_world);
-
   Graphics::Instance()->add(jim);
 }
 
@@ -26,11 +23,12 @@ void Game::update(StateEngine* engine) {
   farm_world.update();
 
   // Update character
-  jim->update();
+  jim->update(farm_world);
 
   // Go to menu
-  if (asw::input::keyboard.pressed[SDL_SCANCODE_ESCAPE])
+  if (asw::input::keyboard.pressed[SDL_SCANCODE_ESCAPE]) {
     setNextState(engine, ProgramState::GAME_MENU);
+  }
 }
 
 void Game::draw() {

@@ -1,7 +1,14 @@
 #include "ItemStack.h"
 
-ItemStack::ItemStack(std::shared_ptr<Item> item, int quantity) {
-  setItem(item, quantity);
+asw::Font ItemStack::pixelart = nullptr;
+
+ItemStack::ItemStack() : ItemStack(nullptr, 0) {}
+
+ItemStack::ItemStack(std::shared_ptr<Item> item, int quantity)
+    : item(item), quantity(quantity) {
+  if (!pixelart) {
+    pixelart = asw::assets::loadFont("assets/fonts/pixelart.ttf", 8);
+  }
 }
 
 void ItemStack::setItem(std::shared_ptr<Item> item, int quantity) {
@@ -44,7 +51,9 @@ void ItemStack::draw(int x, int y) const {
   item->draw(x, y);
 
   if (quantity > 1) {
-    // asw::draw::textCenter(font, std::to_string(quantity), x + 10, y + 2,
-    //                       asw::util::makeColor(255, 255, 255));
+    asw::draw::textCenter(pixelart, std::to_string(quantity), x + 13, y + 9,
+                          asw::util::makeColor(0, 0, 0));
+    asw::draw::textCenter(pixelart, std::to_string(quantity), x + 12, y + 8,
+                          asw::util::makeColor(255, 255, 255));
   }
 }
