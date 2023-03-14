@@ -1,10 +1,17 @@
 #ifndef SRC_UTILITY_TOOLS_H_
 #define SRC_UTILITY_TOOLS_H_
 
+#include <random>
 #include <string>
 
+extern std::default_random_engine generator;
+
 // Random number generator. Use int random(highest,lowest);
-extern int random(int newLowest, int newHighest);
+template <class T>
+T random(T min, T max) {
+  std::uniform_int_distribution<T> distribution(min, max);
+  return distribution(generator);
+}
 
 extern bool collision(int xMin1,
                       int xMax1,

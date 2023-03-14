@@ -1,13 +1,8 @@
 #include "Graphics.h"
 
 #include <algorithm>
-#include <utility>
 
 std::shared_ptr<Graphics> Graphics::instance = nullptr;
-
-bool sortDrawableByZ(std::shared_ptr<Sprite> A, std::shared_ptr<Sprite> B) {
-  return (*A < *B);
-}
 
 // Get instance
 std::shared_ptr<Graphics> Graphics::Instance() {
@@ -20,62 +15,25 @@ std::shared_ptr<Graphics> Graphics::Instance() {
 
 // Add sprites
 void Graphics::add(std::shared_ptr<Sprite> sprite) {
-  if (!sprite) {
-    return;
-  }
-
-  sprites.push_back(sprite);
-
-  if (should_sort) {
-    sort();
-  } else {
-    need_sort = true;
-  }
+  sprites[sprite->getSpriteId()] = sprite;
 }
 
 // Remove sprites
 void Graphics::remove(std::shared_ptr<Sprite> sprite) {
-  if (!sprite) {
-    return;
-  }
-
-  auto it = std::find(sprites.begin(), sprites.end(), sprite);
-
-  if (it == sprites.end()) {
-    return;
-  }
-
-  // Use back-swapping
-  *it = std::move(sprites.back());
-  sprites.pop_back();
-
-  if (should_sort) {
-    sort();
-  } else {
-    need_sort = true;
-  }
+  sprites.erase(sprite->getSpriteId());
 }
 
-// Sort sprites
-void Graphics::sort() {
-  std::sort(sprites.begin(), sprites.end(), sortDrawableByZ);
-}
+void Graphics::draw(const Camera& camera) const {
+  auto sorted_sprites = std::set<std::shared_ptr<Sprite>, SpriteCmp>{};
+  auto& camera_bounds = camera.getBounds();
 
-void Graphics::disableSort() {
-  should_sort = false;
-}
-
-void Graphics::enableSort() {
-  should_sort = true;
-  if (need_sort) {
-    sort();
-  }
-}
-
-void Graphics::draw(int x_1, int y_1, int x_2, int y_2) const {
-  for (auto const& sprite : sprites) {
-    if (sprite != nullptr) {
-      sprite->draw(x_1, y_1, x_2, y_2);
+  for (auto const& [_index, sprite] : sprites) {
+    if (sprite && camera_bounds.contains(sprite->getX(), sprite->getY())) {
+      sorted_sprites.insert(sprite);
     }
+  }
+
+  for (auto const& sprite : sorted_sprites) {
+    sprite->draw(camera);
   }
 }

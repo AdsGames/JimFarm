@@ -1,10 +1,26 @@
 #ifndef SRC_GRAPHICS_H_
 #define SRC_GRAPHICS_H_
 
+#include <map>
 #include <memory>
-#include <vector>
+#include <set>
+#include <string>
 
 #include "Sprite.h"
+#include "utility/Camera.h"
+
+struct SpriteCmp {
+  bool operator()(const std::shared_ptr<Sprite>& a,
+                  const std::shared_ptr<Sprite>& b) const {
+    if (a->getZ() != b->getZ()) {
+      return a->getZ() < b->getZ();
+    }
+    if (a->getY() != b->getY()) {
+      return a->getY() < b->getY();
+    }
+    return a->getSpriteId() < b->getSpriteId();
+  }
+};
 
 class Graphics {
  public:
@@ -15,25 +31,14 @@ class Graphics {
   void add(std::shared_ptr<Sprite> sprite);
   void remove(std::shared_ptr<Sprite> sprite);
 
-  // Disable or enable sorting
-  void disableSort();
-  void enableSort();
-
   // Draw managed sprites
-  void draw(int x_1, int y_1, int x_2, int y_2) const;
+  void draw(const Camera& camera) const;
 
  private:
-  // Should sort on add
-  bool should_sort = false;
-
-  // Needs a sort
-  bool need_sort = false;
-
-  // Sort
-  void sort();
-
   // Drawable
-  std::vector<std::shared_ptr<Sprite>> sprites;
+  std::map<unsigned int, std::shared_ptr<Sprite>> sprites{};
+
+  bool needs_sorting = false;
 
   // Single instance
   static std::shared_ptr<Graphics> instance;

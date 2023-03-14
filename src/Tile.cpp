@@ -18,13 +18,21 @@ int Tile::getHeight() const {
   return tile_pointer.getHeight();
 }
 
+int Tile::getTileX() const {
+  return x / TILE_SIZE;
+}
+
+int Tile::getTileY() const {
+  return y / TILE_SIZE;
+}
+
 // Draw tile to screen
-void Tile::draw(int x_1, int y_1, int x_2, int y_2) const {
-  if (x >= x_1 - tile_pointer.getWidth() &&
-      x <= x_2 + tile_pointer.getWidth() &&
-      y >= y_1 - tile_pointer.getHeight() &&
-      y <= y_2 + tile_pointer.getHeight()) {
-    tile_pointer.draw(x - x_1, y - y_1, getMeta());
+void Tile::draw(const Camera& camera) const {
+  if (x >= camera.getX() - tile_pointer.getWidth() &&
+      x <= camera.getX() + camera.getWidth() + tile_pointer.getWidth() &&
+      y >= camera.getY() - tile_pointer.getHeight() &&
+      y <= camera.getY() + camera.getHeight() + tile_pointer.getHeight()) {
+    tile_pointer.draw(x - camera.getX(), y - camera.getY(), getMeta());
   }
 }
 

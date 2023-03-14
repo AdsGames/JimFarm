@@ -7,9 +7,6 @@ class GameMenu : public State {
  public:
   GameMenu();
 
-  void loadData();
-  void trigger();
-
   void update(StateEngine* engine) override;
   void draw() override;
 

@@ -6,11 +6,11 @@
 
 #include "Sprite.h"
 #include "manager/TileType.h"
+#include "utility/Camera.h"
 
-const int MAX_TILE_META = 255;
+constexpr int MAX_TILE_META = 255;
 
-const int TILE_WIDTH = 16;
-const int TILE_HEIGHT = 16;
+constexpr int TILE_SIZE = 16;
 
 class Tile : public Sprite {
  public:
@@ -18,15 +18,15 @@ class Tile : public Sprite {
   Tile(char id, int x, int y, int z, unsigned char meta = 0);
   ~Tile() final = default;
 
-  // Define < operator for sorting
-  bool operator<(const Tile& other) const { return (y < other.y); }
-
   // Gets size
   int getWidth() const;
   int getHeight() const;
 
+  int getTileX() const;
+  int getTileY() const;
+
   // Drawing
-  void draw(int x_1, int y_1, int x_2, int y_2) const override;
+  void draw(const Camera& camera) const override;
 
   // Is this type solid?
   bool isSolid() const;

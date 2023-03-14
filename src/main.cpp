@@ -19,7 +19,7 @@ constexpr nanoseconds timestep(16ms);
 // Setup game
 void setup() {
   // Load allegro library
-  asw::core::init(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+  asw::core::init(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, 2);
 }
 
 /*********************
@@ -43,7 +43,7 @@ void update(StateEngine& game_state) {
  *********************/
 void draw(StateEngine& game_state) {
   // Clear screen
-  SDL_RenderClear(asw::display::renderer);
+  asw::draw::clearColor(asw::util::makeColor(0, 0, 0, 255));
 
   // Draw game state
   game_state.draw();
