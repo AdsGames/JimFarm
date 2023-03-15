@@ -21,7 +21,7 @@ class TileMap {
   /**
    * @brief Get the Biome at tile position x, y
    *
-   * @param pos Chunk position in chunk coordinates
+   * @param pos Position in tile coordinates
    * @return std::string Biome name
    */
   std::string getBiomeAt(Vec2<int> pos);
@@ -29,7 +29,7 @@ class TileMap {
   /**
    * @brief Get the Temperature at tile position x, y
    *
-   * @param pos Chunk position in chunk coordinates
+   * @param pos Position in tile coordinates
    * @return char Temperature
    */
   char getTemperatureAt(Vec2<int> pos);
@@ -37,15 +37,13 @@ class TileMap {
   /**
    * @brief Get the Tile position and layer
    *
-   * @param pos Chunk position in chunk coordinates
+   * @param pos Position in tile coordinates
    * @param layer Tile layer (z)
    * @return std::shared_ptr<Tile> Tile, if found
    */
   std::shared_ptr<Tile> getTileAt(Vec2<int> pos, int layer);
 
   void placeTile(std::shared_ptr<Tile> tile);
-  void replaceTile(std::shared_ptr<Tile> tile_old,
-                   std::shared_ptr<Tile> tile_new);
   void removeTile(std::shared_ptr<Tile> tile);
   bool isSolidAt(Vec2<int> pos);
 

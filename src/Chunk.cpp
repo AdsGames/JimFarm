@@ -79,9 +79,8 @@ void Chunk::setTileAt(Vec2<int> position, int z, std::shared_ptr<Tile> tile) {
     return;
   }
 
-  if (tiles[offset]) {
+  if (tiles[offset] && is_drawing) {
     Graphics::Instance()->remove(tiles[offset]);
-    tiles[offset].reset();
   }
 
   tiles[offset] = tile;
@@ -106,6 +105,9 @@ void Chunk::placeItemAt(std::shared_ptr<Item> item, Vec2<int> position) {
   if (!item) {
     return;
   }
+
+  std::cout << "Placing item at " << position.x << "," << position.y
+            << std::endl;
 
   // Annoying to deal with 2 coordinate systems
   auto newMapItem = std::make_shared<MapItem>(position * TILE_SIZE, item);
@@ -159,6 +161,8 @@ void Chunk::tick() {
   for (int i = 0; i < CHUNK_SIZE; i++) {
     for (int t = 0; t < CHUNK_SIZE; t++) {
       const auto idx = Vec2<int>(i, t);
+      const auto i_pos =
+          Vec2<int>(i + index_x * CHUNK_SIZE, t + index_y * CHUNK_SIZE);
 
       auto offset = this->getTileIndex(idx, LAYER_FOREGROUND);
 
@@ -176,7 +180,7 @@ void Chunk::tick() {
 
         // Done Growing
         if (current->getMeta() >= MAX_TILE_META) {
-          placeItemAt(std::make_shared<Item>("item:berry"), idx);
+          placeItemAt(std::make_shared<Item>("item:berry"), i_pos);
           setTileAt(idx, current->getZ(), nullptr);
         }
       }
@@ -189,7 +193,7 @@ void Chunk::tick() {
 
         // Done Growing
         if (current->getMeta() >= MAX_TILE_META) {
-          placeItemAt(std::make_shared<Item>("item:tomato"), idx);
+          placeItemAt(std::make_shared<Item>("item:tomato"), i_pos);
           setTileAt(idx, current->getZ(), nullptr);
         }
       }
@@ -202,19 +206,20 @@ void Chunk::tick() {
 
         // Done Growing
         if (current->getMeta() >= MAX_TILE_META) {
-          placeItemAt(std::make_shared<Item>("item:tomato"), idx);
+          placeItemAt(std::make_shared<Item>("item:tomato"), i_pos);
           setTileAt(idx, current->getZ(), nullptr);
         }
       }
       // Lavender
       else if (current->getType().getId() == "tile:lavender") {
         // Grow a bit
-        if (!random(0, 10))
+        if (!random(0, 10)) {
           current->changeMeta(1);
+        }
 
         // Done Growing
         if (current->getMeta() >= MAX_TILE_META) {
-          placeItemAt(std::make_shared<Item>("item:lavender"), idx);
+          placeItemAt(std::make_shared<Item>("item:lavender"), i_pos);
           setTileAt(idx, current->getZ(), nullptr);
         }
       }
@@ -229,9 +234,9 @@ void Chunk::generate() {
     for (int t = 0; t < CHUNK_SIZE; t++) {
       const auto idx = Vec2<int>(i, t);
 
-      const auto t_pos =
-          Vec2<int>(i + index_x * CHUNK_SIZE, t + index_y * CHUNK_SIZE) *
-          TILE_SIZE;
+      const auto i_pos = idx + Vec2<int>(index_x, index_y) * CHUNK_SIZE;
+
+      const auto t_pos = i_pos * TILE_SIZE;
 
       const auto pos_2 = this->getTileIndex(idx, 0);
       const auto pos_3_background = this->getTileIndex(idx, LAYER_BACKGROUND);
@@ -317,9 +322,6 @@ void Chunk::generate() {
         if (random(0, 1) == 0) {
           tiles[pos_3_foreground] = std::make_shared<Tile>(
               "tile:dense_grass", t_pos, LAYER_FOREGROUND, random(0, 3));
-          if (random(0, 100) == 0) {
-            placeItemAt(std::make_shared<Item>("item:chicken"), idx);
-          }
         }
       }
       // Savana
@@ -331,6 +333,7 @@ void Chunk::generate() {
         if (random(0, 5) == 0) {
           tiles[pos_3_foreground] = std::make_shared<Tile>(
               "tile:dense_grass", t_pos, LAYER_FOREGROUND, 1);
+
         } else if (random(0, 10) == 0) {
           tiles[pos_3_foreground] =
               std::make_shared<Tile>("tile:bush", t_pos, LAYER_FOREGROUND, 1);
@@ -384,6 +387,9 @@ void Chunk::generate() {
         setTileAt(idx, LAYER_FOREGROUND,
                   std::make_shared<Tile>("tile:dense_grass", t_pos,
                                          LAYER_FOREGROUND));
+        if (random(0, 100) == 0) {
+          placeItemAt(std::make_shared<Item>("item:chicken"), i_pos);
+        }
       }
       // Stone
       else if (height[pos_2] > 32) {
