@@ -14,8 +14,7 @@ constexpr int TILE_SIZE = 16;
 
 class Tile : public Sprite {
  public:
-  // Ctor and Dtor
-  Tile(char id, int x, int y, int z, unsigned char meta = 0);
+  Tile(const std::string& id, int x, int y, int z, unsigned char meta = 0);
   ~Tile() final = default;
 
   // Gets size
@@ -32,7 +31,7 @@ class Tile : public Sprite {
   bool isSolid() const;
 
   // Modify ID
-  unsigned char getId() const;
+  const std::string& getId() const;
 
   // Get name of tile
   std::string getName() const;

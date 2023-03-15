@@ -6,7 +6,6 @@
 #include "Graphics.h"
 #include "Item.h"
 
-#include "manager/tile_defs.h"
 #include "utility/Tools.h"
 
 const std::array<std::pair<int, int>, 4> TileMap::BITMASK_DIRECTIONS = {
@@ -69,13 +68,13 @@ std::shared_ptr<Tile> TileMap::getTileAt(int x, int y, int layer) {
 // Place tile on map (world gen)
 void TileMap::placeTile(std::shared_ptr<Tile> tile) {
   if (!tile) {
-    throw new std::runtime_error("Can not place tile, tile is null");
+    throw std::runtime_error("Can not place tile, tile is null");
   }
 
   auto chunk = getChunkAt(tile->getTileX(), tile->getTileY());
 
   if (!chunk) {
-    throw new std::runtime_error("Can not place tile, chunk is null");
+    throw std::runtime_error("Can not place tile, chunk is null");
   }
 
   chunk->setTileAt(tile->getTileX() % CHUNK_SIZE, tile->getTileY() % CHUNK_SIZE,
@@ -88,13 +87,13 @@ void TileMap::placeTile(std::shared_ptr<Tile> tile) {
 // Remove tile from map
 void TileMap::removeTile(std::shared_ptr<Tile> tile) {
   if (!tile) {
-    throw new std::runtime_error("Can not remove tile, tile is null");
+    throw std::runtime_error("Can not remove tile, tile is null");
   }
 
   auto chunk = getChunkAt(tile->getTileX(), tile->getTileY());
 
   if (!chunk) {
-    throw new std::runtime_error("Can not place tile, chunk is null");
+    throw std::runtime_error("Can not place tile, chunk is null");
   }
 
   auto old_x = tile->getTileX();
@@ -111,7 +110,7 @@ void TileMap::removeTile(std::shared_ptr<Tile> tile) {
 void TileMap::replaceTile(std::shared_ptr<Tile> tile_old,
                           std::shared_ptr<Tile> tile_new) {
   if (!tile_old) {
-    throw new std::runtime_error("Can not replace tile, tile_old is null");
+    throw std::runtime_error("Can not replace tile, tile_old is null");
   }
 
   removeTile(tile_old);
@@ -131,7 +130,7 @@ std::shared_ptr<MapItem> TileMap::getItemAt(int x, int y) {
   auto chunk = getChunkAt(x, y);
 
   if (!chunk) {
-    throw new std::runtime_error("Can not place tile, chunk is null");
+    throw std::runtime_error("Can not place tile, chunk is null");
   }
 
   return chunk->getItemAt(x, y);
@@ -140,13 +139,13 @@ std::shared_ptr<MapItem> TileMap::getItemAt(int x, int y) {
 // Place item on map
 void TileMap::placeItemAt(std::shared_ptr<Item> item, int x, int y) {
   if (!item) {
-    throw new std::runtime_error("Can not place item, item is null");
+    throw std::runtime_error("Can not place item, item is null");
   }
 
   auto chunk = getChunkAt(x, y);
 
   if (!chunk) {
-    throw new std::runtime_error("Can not place tile, chunk is null");
+    throw std::runtime_error("Can not place tile, chunk is null");
   }
 
   chunk->placeItemAt(item, x, y);
@@ -155,13 +154,13 @@ void TileMap::placeItemAt(std::shared_ptr<Item> item, int x, int y) {
 // Remove item from map
 void TileMap::removeItem(std::shared_ptr<MapItem> item) {
   if (!item) {
-    throw new std::runtime_error("Can not remove item, item is null");
+    throw std::runtime_error("Can not remove item, item is null");
   }
 
   auto chunk = getChunkAt(item->getX() / TILE_SIZE, item->getY() / TILE_SIZE);
 
   if (!chunk) {
-    throw new std::runtime_error("Can not place tile, chunk is null");
+    throw std::runtime_error("Can not place tile, chunk is null");
   }
 
   chunk->removeItem(item);

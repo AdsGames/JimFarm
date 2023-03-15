@@ -21,7 +21,7 @@ class UiController {
   std::shared_ptr<Inventory> getInventory() const;
 
  private:
-  std::shared_ptr<UiElement> elementAt(int x, int y);
+  std::shared_ptr<UiElement> elementAt(int x, int y) const;
 
   std::shared_ptr<Inventory> inv;
 

@@ -3,8 +3,8 @@
 #include "manager/ItemTypeManager.h"
 
 // Ctor for item
-Item::Item(char id, unsigned char meta)
-    : meta(meta), item_pointer(ItemTypeManager::getItemById(id)) {}
+Item::Item(const std::string& id, unsigned char meta)
+    : meta(meta), item_pointer(ItemTypeManager::getItem(id)) {}
 
 // Draw item to screen
 void Item::draw(int x, int y) const {
@@ -12,12 +12,12 @@ void Item::draw(int x, int y) const {
 }
 
 // Get ID
-unsigned char Item::getId() const {
+const std::string& Item::getId() const {
   return item_pointer.getId();
 }
 
 // Get the name of item
-std::string Item::getName() const {
+const std::string& Item::getName() const {
   return item_pointer.getName();
 }
 

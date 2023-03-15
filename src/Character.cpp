@@ -4,9 +4,6 @@
 
 #include "utility/Tools.h"
 
-#include "manager/item_defs.h"
-#include "manager/tile_defs.h"
-
 #include "manager/TileTypeManager.h"
 
 #include "Graphics.h"
@@ -52,14 +49,16 @@ void Character::loadData() {
   // Load fonts
   pixelart = asw::assets::loadFont("assets/fonts/pixelart.ttf", 12);
 
-  inventory_ui.getInventory()->addItem(std::make_shared<Item>(ITEM_AXE), 1);
-  inventory_ui.getInventory()->addItem(std::make_shared<Item>(ITEM_SCYTHE), 1);
-  inventory_ui.getInventory()->addItem(std::make_shared<Item>(ITEM_SHOVEL), 1);
-  inventory_ui.getInventory()->addItem(std::make_shared<Item>(ITEM_HOE), 1);
-  inventory_ui.getInventory()->addItem(std::make_shared<Item>(ITEM_BERRY_SEED),
-                                       4);
+  inventory_ui.getInventory()->addItem(std::make_shared<Item>("item:axe"), 1);
+  inventory_ui.getInventory()->addItem(std::make_shared<Item>("item:scythe"),
+                                       1);
+  inventory_ui.getInventory()->addItem(std::make_shared<Item>("item:shovel"),
+                                       1);
+  inventory_ui.getInventory()->addItem(std::make_shared<Item>("item:hoe"), 1);
   inventory_ui.getInventory()->addItem(
-      std::make_shared<Item>(ITEM_WATERING_CAN), 1);
+      std::make_shared<Item>("item:berry_seed"), 4);
+  inventory_ui.getInventory()->addItem(
+      std::make_shared<Item>("item:watering_can"), 1);
 }
 
 void Character::setPosition(int pos_x, int pos_y) {

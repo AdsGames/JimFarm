@@ -47,13 +47,13 @@ void Camera::pan(int x, int y) {
     y = outer_bounds.y_2 - this->bounds.getHeight();
   }
 
-  int width = this->bounds.getWidth();
-  int height = this->bounds.getHeight();
+  int prev_w = this->bounds.getWidth();
+  int prev_h = this->bounds.getHeight();
 
   this->bounds.x_1 = x;
   this->bounds.y_1 = y;
-  this->bounds.x_2 = x + width;
-  this->bounds.y_2 = y + height;
+  this->bounds.x_2 = x + prev_w;
+  this->bounds.y_2 = y + prev_h;
 }
 
 int Camera::getWidth() const {

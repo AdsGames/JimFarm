@@ -1,14 +1,11 @@
 #include "TileType.h"
 
-#include "item_defs.h"
-#include "tile_defs.h"
-
 #include <math.h>
 
 // Init tile
 TileType::TileType(unsigned char width,
                    unsigned char height,
-                   unsigned char id,
+                   const std::string& id,
                    const std::string& name,
                    unsigned char attribute)
     : id(id), width(width), height(height), name(name), attribute(attribute) {}
