@@ -7,9 +7,9 @@
 #ifndef ITEM_TYPE_MANAGER_H
 #define ITEM_TYPE_MANAGER_H
 
+#include <map>
 #include <memory>
 #include <string>
-#include <vector>
 
 #include "../ui/UiController.h"
 #include "TileType.h"
@@ -23,13 +23,13 @@ class ItemTypeManager {
   static int loadItems(const std::string& path);
 
   // Allows communication
-  static TileType& getItemById(int tileID);
+  static TileType& getItem(const std::string& tileID);
 
   static asw::Texture sprite_sheet_items;
 
  private:
   // Stores all tiles and items
-  static std::vector<TileType> item_defs;
+  static std::map<std::string, TileType> item_defs;
 };
 
 #endif  // ITEM_TYPE_MANAGER_H

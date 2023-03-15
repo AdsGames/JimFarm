@@ -2,7 +2,6 @@
 #include "UiLabel.h"
 #include "UiSlot.h"
 
-#include "../manager/item_defs.h"
 #include "../utility/Tools.h"
 
 #include <math.h>
@@ -115,7 +114,7 @@ void UiController::update() {
   }
 }
 
-std::shared_ptr<UiElement> UiController::elementAt(int at_x, int at_y) {
+std::shared_ptr<UiElement> UiController::elementAt(int at_x, int at_y) const {
   int trans_x = at_x - this->x;
   int trans_y = at_y - this->y;
 

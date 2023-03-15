@@ -4,10 +4,8 @@
 #include "utility/Tools.h"
 
 // Ctor for tile
-Tile::Tile(char id, int x, int y, int z, unsigned char meta)
-    : Sprite(x, y, z),
-      meta(meta),
-      tile_pointer(TileTypeManager::getTileById(id)) {}
+Tile::Tile(const std::string& id, int x, int y, int z, unsigned char meta)
+    : Sprite(x, y, z), meta(meta), tile_pointer(TileTypeManager::getTile(id)) {}
 
 // Gets size
 int Tile::getWidth() const {
@@ -42,7 +40,7 @@ bool Tile::isSolid() const {
 }
 
 // Modify ID
-unsigned char Tile::getId() const {
+const std::string& Tile::getId() const {
   return tile_pointer.getId();
 }
 
