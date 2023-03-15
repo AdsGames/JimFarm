@@ -136,17 +136,19 @@ void World::interact(Vec2<int> inter_pos, std::shared_ptr<Item> inHand) {
   if (inHand->getType().getId() == "item:hoe") {
     if (tile_m && !tile_f) {
       if (tile_m->getType().getId() == "tile:grass") {
-        auto plowed_tile = std::make_shared<Tile>("tile:plowed_soil", tile_pos,
-                                                  tile_m->getZ());
+        auto plowed_tile = std::make_shared<Tile>("tile:plowed_soil", inter_pos,
+                                                  LAYER_MIDGROUND);
 
-        tile_map.replaceTile(tile_m, plowed_tile);
+        tile_map.removeTile(tile_m);
+        tile_map.placeTile(plowed_tile);
 
         SoundManager::play(SOUND_HOE);
       } else if (tile_m->getType().getId() == "tile:soil") {
-        auto plowed_tile = std::make_shared<Tile>("tile:plowed_soil", tile_pos,
-                                                  tile_m->getZ());
+        auto plowed_tile = std::make_shared<Tile>("tile:plowed_soil", inter_pos,
+                                                  LAYER_MIDGROUND);
 
-        tile_map.replaceTile(tile_m, plowed_tile);
+        tile_map.removeTile(tile_m);
+        tile_map.placeTile(plowed_tile);
 
         SoundManager::play(SOUND_HOE);
       } else {
@@ -222,8 +224,9 @@ void World::interact(Vec2<int> inter_pos, std::shared_ptr<Item> inHand) {
   // Axe
   else if (inHand->getType().getId() == "item:axe") {
     if (tile_f && tile_f->getType().getId() == "tile:tree") {
-      tile_map.replaceTile(tile_f, std::make_shared<Tile>(
-                                       "tile:stump", tile_pos, tile_f->getZ()));
+      tile_map.removeTile(tile_f);
+      tile_map.placeTile(
+          std::make_shared<Tile>("tile:stump", inter_pos, LAYER_FOREGROUND));
       tile_map.placeItemAt(std::make_shared<Item>("item:stick", 0), tile_pos);
       tile_map.placeItemAt(std::make_shared<Item>("item:stick", 0), tile_pos);
       tile_map.placeItemAt(std::make_shared<Item>("item:wood", 0), tile_pos);
@@ -257,8 +260,8 @@ void World::interact(Vec2<int> inter_pos, std::shared_ptr<Item> inHand) {
   // Wood Wall
   else if (inHand->getType().getId() == "item:wood") {
     if (!tile_f && tile_m) {
-      tile_map.placeTile(
-          std::make_shared<Tile>("tile:wood_wall", tile_pos, LAYER_FOREGROUND));
+      tile_map.placeTile(std::make_shared<Tile>("tile:wood_wall", inter_pos,
+                                                LAYER_FOREGROUND));
       SoundManager::play(SOUND_SHOVEL);
     } else {
       SoundManager::play(SOUND_ERROR);
@@ -268,7 +271,7 @@ void World::interact(Vec2<int> inter_pos, std::shared_ptr<Item> inHand) {
   else if (inHand->getType().getId() == "item:stick") {
     if (!tile_f && tile_m) {
       tile_map.placeTile(
-          std::make_shared<Tile>("tile:fence", tile_pos, LAYER_FOREGROUND));
+          std::make_shared<Tile>("tile:fence", inter_pos, LAYER_FOREGROUND));
       SoundManager::play(SOUND_SHOVEL);
     } else {
       SoundManager::play(SOUND_ERROR);
@@ -278,7 +281,7 @@ void World::interact(Vec2<int> inter_pos, std::shared_ptr<Item> inHand) {
   else if (inHand->getType().getId() == "item:grass") {
     if (tile_b && !tile_m) {
       tile_map.placeTile(
-          std::make_shared<Tile>("tile:grass", tile_pos, LAYER_MIDGROUND));
+          std::make_shared<Tile>("tile:grass", inter_pos, LAYER_MIDGROUND));
       SoundManager::play(SOUND_SHOVEL);
     } else {
       SoundManager::play(SOUND_ERROR);
@@ -288,7 +291,7 @@ void World::interact(Vec2<int> inter_pos, std::shared_ptr<Item> inHand) {
   else if (inHand->getType().getId() == "item:sand") {
     if (tile_b && !tile_m) {
       tile_map.placeTile(
-          std::make_shared<Tile>("tile:sand", tile_pos, LAYER_MIDGROUND));
+          std::make_shared<Tile>("tile:sand", inter_pos, LAYER_MIDGROUND));
       SoundManager::play(SOUND_SHOVEL);
     } else {
       SoundManager::play(SOUND_ERROR);

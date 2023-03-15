@@ -79,7 +79,7 @@ void TileMap::placeTile(std::shared_ptr<Tile> tile) {
 
   chunk->setTileAt(tile->getTilePosition() % CHUNK_SIZE, tile->getZ(), tile);
 
-  updateBitmaskSurround(tile->getTilePosition() % CHUNK_SIZE, tile->getZ());
+  updateBitmaskSurround(tile->getTilePosition(), tile->getZ());
 }
 
 // Remove tile from map
@@ -100,18 +100,6 @@ void TileMap::removeTile(std::shared_ptr<Tile> tile) {
   chunk->setTileAt(tile->getTilePosition() % CHUNK_SIZE, tile->getZ(), nullptr);
 
   updateBitmaskSurround(old_pos, old_z);
-}
-
-// Replace tile on map
-void TileMap::replaceTile(std::shared_ptr<Tile> tile_old,
-                          std::shared_ptr<Tile> tile_new) {
-  if (!tile_old) {
-    throw std::runtime_error("Can not replace tile, tile_old is null");
-  }
-
-  removeTile(tile_old);
-  placeTile(tile_new);
-  updateBitmaskSurround(tile_new->getTilePosition(), tile_new->getZ());
 }
 
 // Check for solid tile
@@ -184,8 +172,8 @@ void TileMap::tick(const Camera& camera) const {
 // Generate map
 void TileMap::generateMap() {
   // Base map
-  width = 10;
-  height = 10;
+  width = 2;
+  height = 2;
 
   // Generating chunk
   std::cout << "Generating World (" << width << "," << height << ")...  ";
