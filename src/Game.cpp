@@ -1,11 +1,11 @@
 #include "Game.h"
 
 #include "GameMenu.h"
+#include "Graphics.h"
 #include "Menu.h"
 #include "Tile.h"
 #include "utility/Tools.h"
-
-#include "Graphics.h"
+#include "utility/Vec2.h"
 
 Game::Game() {
   // Nice Map
@@ -13,7 +13,7 @@ Game::Game() {
 
   // Setup jim
   jim = std::make_shared<Character>();
-  jim->setPosition(15 * TILE_SIZE, 15 * TILE_SIZE);
+  jim->setPosition(Vec2<int>(15, 15) * TILE_SIZE);
   jim->loadData();
   Graphics::Instance()->add(jim);
 }

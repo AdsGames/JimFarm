@@ -84,6 +84,6 @@ void StateEngine::changeState() {
  *********/
 
 // Change state
-void State::setNextState(StateEngine* engine, ProgramState state) {
+void State::setNextState(StateEngine* engine, ProgramState state) const {
   engine->setNextState(state);
 }

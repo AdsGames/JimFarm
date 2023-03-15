@@ -4,20 +4,17 @@
 #include "utility/Tools.h"
 
 // Ctor for tile
-Tile::Tile(const std::string& id, int x, int y, int z, unsigned char meta)
-    : Sprite(x, y, z), meta(meta), tile_pointer(TileTypeManager::getTile(id)) {}
+Tile::Tile(const std::string& id, Vec2<int> pos, int z, unsigned char meta)
+    : Sprite(pos, z), meta(meta), tile_pointer(TileTypeManager::getTile(id)) {}
 
-int Tile::getTileX() const {
-  return x / TILE_SIZE;
-}
-
-int Tile::getTileY() const {
-  return y / TILE_SIZE;
+Vec2<int> Tile::getTilePosition() const {
+  return pos / TILE_SIZE;
 }
 
 // Draw tile to screen
 void Tile::draw(const Camera& camera) const {
-  tile_pointer.draw(x - camera.getX(), y - camera.getY(), getMeta());
+  tile_pointer.draw(pos.x - camera.getPosition().x,
+                    pos.y - camera.getPosition().y, getMeta());
 }
 
 const TileType& Tile::getType() const {

@@ -1,4 +1,5 @@
 #include <asw/asw.h>
+
 #include <chrono>
 #include <memory>
 
@@ -7,9 +8,8 @@
 #include <emscripten/html5.h>
 #endif
 
-#include "World.h"
-
 #include "State.h"
+#include "World.h"
 
 // Images
 using namespace std::chrono_literals;

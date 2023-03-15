@@ -15,8 +15,8 @@ struct SpriteCmp {
     if (a->getZ() != b->getZ()) {
       return a->getZ() < b->getZ();
     }
-    if (a->getY() != b->getY()) {
-      return a->getY() < b->getY();
+    if (a->getPosition().y != b->getPosition().y) {
+      return a->getPosition().y < b->getPosition().y;
     }
     return a->getSpriteId() < b->getSpriteId();
   }

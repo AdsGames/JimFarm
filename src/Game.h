@@ -3,9 +3,8 @@
 
 #include <memory>
 
-#include "State.h"
-
 #include "Character.h"
+#include "State.h"
 #include "World.h"
 
 class Game : public State {

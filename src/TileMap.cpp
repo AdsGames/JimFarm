@@ -5,7 +5,6 @@
 
 #include "Graphics.h"
 #include "Item.h"
-
 #include "utility/Tools.h"
 
 const std::array<std::pair<int, int>, 4> TileMap::BITMASK_DIRECTIONS = {
@@ -21,9 +20,9 @@ int TileMap::getHeight() const {
 }
 
 // Chunk lookup
-std::shared_ptr<Chunk> TileMap::getChunkAt(int x, int y) {
-  auto offset_x = x / CHUNK_SIZE;
-  auto offset_y = y / CHUNK_SIZE;
+std::shared_ptr<Chunk> TileMap::getChunkAt(Vec2<int> pos) {
+  auto offset_x = pos.x / CHUNK_SIZE;
+  auto offset_y = pos.y / CHUNK_SIZE;
 
   if (offset_y < 0 || offset_y >= (signed)chunks.size()) {
     return nullptr;
@@ -36,33 +35,34 @@ std::shared_ptr<Chunk> TileMap::getChunkAt(int x, int y) {
   return chunks.at(offset_y).at(offset_x);
 }
 
-std::string TileMap::getBiomeAt(int x, int y) {
-  auto chunk = getChunkAt(x, y);
+std::string TileMap::getBiomeAt(Vec2<int> pos) {
+  auto chunk = getChunkAt(pos);
 
   if (!chunk) {
     return "none";
   }
-  return chunk->getBiomeAt(x % CHUNK_SIZE, y % CHUNK_SIZE);
+  return chunk->getBiomeAt(pos % CHUNK_SIZE);
 }
 
-char TileMap::getTemperatureAt(int x, int y) {
-  auto chunk = getChunkAt(x, y);
+char TileMap::getTemperatureAt(Vec2<int> pos) {
+  auto chunk = getChunkAt(pos);
 
   if (!chunk) {
     return 0;
   }
-  return chunk->getTemperatureAt(x % CHUNK_SIZE, y % CHUNK_SIZE);
+
+  return chunk->getTemperatureAt(pos % CHUNK_SIZE);
 }
 
 // Get tile at position
-std::shared_ptr<Tile> TileMap::getTileAt(int x, int y, int layer) {
-  auto chunk = getChunkAt(x, y);
+std::shared_ptr<Tile> TileMap::getTileAt(Vec2<int> pos, int layer) {
+  auto chunk = getChunkAt(pos);
 
   if (!chunk) {
     return nullptr;
   }
 
-  return chunk->getTileAt(x % CHUNK_SIZE, y % CHUNK_SIZE, layer);
+  return chunk->getTileAt(pos % CHUNK_SIZE, layer);
 }
 
 // Place tile on map (world gen)
@@ -71,17 +71,15 @@ void TileMap::placeTile(std::shared_ptr<Tile> tile) {
     throw std::runtime_error("Can not place tile, tile is null");
   }
 
-  auto chunk = getChunkAt(tile->getTileX(), tile->getTileY());
+  auto chunk = getChunkAt(tile->getTilePosition());
 
   if (!chunk) {
     throw std::runtime_error("Can not place tile, chunk is null");
   }
 
-  chunk->setTileAt(tile->getTileX() % CHUNK_SIZE, tile->getTileY() % CHUNK_SIZE,
-                   tile->getZ(), tile);
+  chunk->setTileAt(tile->getTilePosition() % CHUNK_SIZE, tile->getZ(), tile);
 
-  updateBitmaskSurround(tile->getTileX() % CHUNK_SIZE,
-                        tile->getTileY() % CHUNK_SIZE, tile->getZ());
+  updateBitmaskSurround(tile->getTilePosition() % CHUNK_SIZE, tile->getZ());
 }
 
 // Remove tile from map
@@ -90,20 +88,18 @@ void TileMap::removeTile(std::shared_ptr<Tile> tile) {
     throw std::runtime_error("Can not remove tile, tile is null");
   }
 
-  auto chunk = getChunkAt(tile->getTileX(), tile->getTileY());
+  auto chunk = getChunkAt(tile->getTilePosition());
 
   if (!chunk) {
     throw std::runtime_error("Can not place tile, chunk is null");
   }
 
-  auto old_x = tile->getTileX();
-  auto old_y = tile->getTileY();
+  auto old_pos = tile->getTilePosition();
   auto old_z = tile->getZ();
 
-  chunk->setTileAt(tile->getTileX() % CHUNK_SIZE, tile->getTileY() % CHUNK_SIZE,
-                   tile->getZ(), nullptr);
+  chunk->setTileAt(tile->getTilePosition() % CHUNK_SIZE, tile->getZ(), nullptr);
 
-  updateBitmaskSurround(old_x, old_y, old_z);
+  updateBitmaskSurround(old_pos, old_z);
 }
 
 // Replace tile on map
@@ -115,40 +111,39 @@ void TileMap::replaceTile(std::shared_ptr<Tile> tile_old,
 
   removeTile(tile_old);
   placeTile(tile_new);
-  updateBitmaskSurround(tile_new->getTileX(), tile_new->getTileY(),
-                        tile_new->getZ());
+  updateBitmaskSurround(tile_new->getTilePosition(), tile_new->getZ());
 }
 
 // Check for solid tile
-bool TileMap::isSolidAt(int x, int y) {
-  auto tile = getTileAt(x, y, LAYER_FOREGROUND);
+bool TileMap::isSolidAt(Vec2<int> pos) {
+  auto tile = getTileAt(pos, LAYER_FOREGROUND);
   return tile && tile->getType().getAttribute();
 }
 
 // Get item at position
-std::shared_ptr<MapItem> TileMap::getItemAt(int x, int y) {
-  auto chunk = getChunkAt(x, y);
+std::shared_ptr<MapItem> TileMap::getItemAt(Vec2<int> pos) {
+  auto chunk = getChunkAt(pos);
 
   if (!chunk) {
     throw std::runtime_error("Can not place tile, chunk is null");
   }
 
-  return chunk->getItemAt(x, y);
+  return chunk->getItemAt(pos);
 }
 
 // Place item on map
-void TileMap::placeItemAt(std::shared_ptr<Item> item, int x, int y) {
+void TileMap::placeItemAt(std::shared_ptr<Item> item, Vec2<int> pos) {
   if (!item) {
     throw std::runtime_error("Can not place item, item is null");
   }
 
-  auto chunk = getChunkAt(x, y);
+  auto chunk = getChunkAt(pos);
 
   if (!chunk) {
     throw std::runtime_error("Can not place tile, chunk is null");
   }
 
-  chunk->placeItemAt(item, x, y);
+  chunk->placeItemAt(item, pos);
 }
 
 // Remove item from map
@@ -157,7 +152,8 @@ void TileMap::removeItem(std::shared_ptr<MapItem> item) {
     throw std::runtime_error("Can not remove item, item is null");
   }
 
-  auto chunk = getChunkAt(item->getX() / TILE_SIZE, item->getY() / TILE_SIZE);
+  auto chunk =
+      getChunkAt(item->getPosition() / Vec2<int>(TILE_SIZE, TILE_SIZE));
 
   if (!chunk) {
     throw std::runtime_error("Can not place tile, chunk is null");
@@ -215,7 +211,7 @@ void TileMap::generateMap() {
   for (int x = 0; x < width * CHUNK_SIZE; x++) {
     for (int y = 0; y < height * CHUNK_SIZE; y++) {
       for (int z = 0; z < CHUNK_LAYERS; z++) {
-        updateBitMask(getTileAt(x, y, z));
+        updateBitMask(getTileAt(Vec2<int>(x, y), z));
       }
     }
   }
@@ -239,8 +235,8 @@ void TileMap::updateBitMask(std::shared_ptr<Tile> tile) {
   for (unsigned char i = 0; i < 4; i++) {
     const auto& [first, second] = TileMap::BITMASK_DIRECTIONS[i];
 
-    auto current = getTileAt(tile->getTileX() + first,
-                             tile->getTileY() + second, tile->getZ());
+    auto current = getTileAt(tile->getTilePosition() + Vec2<int>(first, second),
+                             tile->getZ());
 
     if (current && current->getType().getId() == tile->getType().getId()) {
       mask += static_cast<unsigned char>(pow(2, i));
@@ -251,10 +247,10 @@ void TileMap::updateBitMask(std::shared_ptr<Tile> tile) {
 }
 
 // Update bitmask (and neighbours)
-void TileMap::updateBitmaskSurround(int x, int y, int z) {
-  updateBitMask(getTileAt(x, y, z));
-  updateBitMask(getTileAt(x, y - 1, z));
-  updateBitMask(getTileAt(x, y + 1, z));
-  updateBitMask(getTileAt(x - 1, y, z));
-  updateBitMask(getTileAt(x + 1, y, z));
+void TileMap::updateBitmaskSurround(Vec2<int> pos, int z) {
+  updateBitMask(getTileAt(pos + Vec2<int>(0, 0), z));
+  updateBitMask(getTileAt(pos + Vec2<int>(0, -1), z));
+  updateBitMask(getTileAt(pos + Vec2<int>(0, 1), z));
+  updateBitMask(getTileAt(pos + Vec2<int>(-1, 0), z));
+  updateBitMask(getTileAt(pos + Vec2<int>(1, 0), z));
 }

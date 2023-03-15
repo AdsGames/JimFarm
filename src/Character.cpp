@@ -2,15 +2,15 @@
 
 #include <math.h>
 
-#include "utility/Tools.h"
-
-#include "manager/TileTypeManager.h"
-
 #include "Graphics.h"
+#include "manager/TileTypeManager.h"
+#include "utility/Tools.h"
 
 // Top of head
 CharacterForeground::CharacterForeground(Character* charPtr)
-    : Sprite(0, 0, 5), char_ptr(charPtr) {}
+    : Sprite(), char_ptr(charPtr) {
+  this->z = 5;
+}
 
 void CharacterForeground::draw(const Camera& camera) const {
   auto animation_frame =
@@ -18,16 +18,17 @@ void CharacterForeground::draw(const Camera& camera) const {
 
   asw::draw::stretchSpriteBlit(char_ptr->image, animation_frame,
                                (char_ptr->direction - 1) * 20, 16, 8,
-                               x - camera.getX(), y - camera.getY() - 8, 16, 8);
+                               pos.x - camera.getPosition().x,
+                               pos.y - camera.getPosition().y - 8, 16, 8);
 }
 
 void CharacterForeground::update() {
-  this->x = char_ptr->x;
-  this->y = char_ptr->y;
+  this->pos = char_ptr->pos;
 }
 
 // Ctor for character
-Character::Character() : Sprite(0, 0, 2) {
+Character::Character() : Sprite() {
+  this->z = 2;
   c_fore = std::make_shared<CharacterForeground>(this);
   Graphics::Instance()->add(c_fore);
 }
@@ -61,9 +62,8 @@ void Character::loadData() {
       std::make_shared<Item>("item:watering_can"), 1);
 }
 
-void Character::setPosition(int pos_x, int pos_y) {
-  x = pos_x;
-  y = pos_y;
+void Character::setPosition(Vec2<int> pos) {
+  this->pos = pos;
 }
 
 // Draw character to screen
@@ -78,20 +78,20 @@ void Character::draw(const Camera& camera) const {
                       asw::util::makeColor(255, 255, 255));
 
   // Only item if hands arent empty
-  asw::draw::sprite(indicator, indicator_x - camera.getX(),
-                    indicator_y - camera.getY());
+  asw::draw::sprite(indicator, indicator_pos.x - camera.getPosition().x,
+                    indicator_pos.y - camera.getPosition().y);
 
   // Draw frame
   asw::draw::stretchSpriteBlit(image, ani_ticker / 4 * 16, (direction - 1) * 20,
-                               16, 20, x - camera.getX(), y - camera.getY() - 8,
-                               16, 20);
+                               16, 20, pos.x - camera.getPosition().x,
+                               pos.y - camera.getPosition().y - 8, 16, 20);
 
   // Selected item
   if (inventory_ui.getInventory()->getStack(selected_item)->getItem()) {
     inventory_ui.getInventory()
         ->getStack(selected_item)
         ->getItem()
-        ->draw(x - camera.getX(), y - camera.getY());
+        ->draw(pos - camera.getPosition());
   }
 }
 
@@ -112,7 +112,7 @@ void Character::drawInventory() const {
     auto stack = inventory_ui.getInventory()->getStack(i);
 
     if (stack) {
-      stack->draw(18 * i + 1 + draw_x, 1 + draw_y);
+      stack->draw(Vec2<int>(18 * i + 1 + draw_x, 1 + draw_y));
     }
   }
 
@@ -132,17 +132,16 @@ std::shared_ptr<Item> Character::getSelectedItem() const {
 void Character::update(World& world) {
   auto relative_x = static_cast<int>(static_cast<float>(asw::input::mouse.x) /
                                      world.getCamera().getZoom()) +
-                    world.getCamera().getX();
+                    world.getCamera().getPosition().x;
   auto relative_y = static_cast<int>(static_cast<float>(asw::input::mouse.y) /
                                      world.getCamera().getZoom()) +
-                    world.getCamera().getY();
+                    world.getCamera().getPosition().y;
 
-  auto tile_x = x / TILE_SIZE;
-  auto tile_y = y / TILE_SIZE;
+  auto tile_index = pos / TILE_SIZE;
 
   // Indicator
-  indicator_x = relative_x - (relative_x % 16);
-  indicator_y = relative_y - (relative_y % 16);
+  indicator_pos =
+      Vec2<int>(relative_x - (relative_x % 16), relative_y - (relative_y % 16));
 
   // Open UI
   if (asw::input::keyboard.pressed[SDL_SCANCODE_E]) {
@@ -176,7 +175,7 @@ void Character::update(World& world) {
 
   // Oh
   // Snap
-  if (x % TILE_SIZE == 0 && y % TILE_SIZE == 0) {
+  if (pos.x % TILE_SIZE == 0 && pos.y % TILE_SIZE == 0) {
     moving = false;
   }
 
@@ -195,7 +194,7 @@ void Character::update(World& world) {
     if (asw::input::keyboard.down[SDL_SCANCODE_UP] ||
         asw::input::keyboard.down[SDL_SCANCODE_W]) {
       direction = DIR_UP;
-      if (!world.getMap().isSolidAt(tile_x, tile_y - 1)) {
+      if (!world.getMap().isSolidAt(tile_index + Vec2<int>(0, -1))) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -204,7 +203,7 @@ void Character::update(World& world) {
     else if (asw::input::keyboard.down[SDL_SCANCODE_DOWN] ||
              asw::input::keyboard.down[SDL_SCANCODE_S]) {
       direction = DIR_DOWN;
-      if (!world.getMap().isSolidAt(tile_x, tile_y + 1)) {
+      if (!world.getMap().isSolidAt(tile_index + Vec2<int>(0, 1))) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -213,7 +212,7 @@ void Character::update(World& world) {
     else if (asw::input::keyboard.down[SDL_SCANCODE_LEFT] ||
              asw::input::keyboard.down[SDL_SCANCODE_A]) {
       direction = DIR_LEFT;
-      if (!world.getMap().isSolidAt(tile_x - 1, tile_y)) {
+      if (!world.getMap().isSolidAt(tile_index + Vec2<int>(-1, 0))) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -222,7 +221,7 @@ void Character::update(World& world) {
     else if (asw::input::keyboard.down[SDL_SCANCODE_RIGHT] ||
              asw::input::keyboard.down[SDL_SCANCODE_D]) {
       direction = DIR_RIGHT;
-      if (!world.getMap().isSolidAt(tile_x + 1, tile_y)) {
+      if (!world.getMap().isSolidAt(tile_index + Vec2<int>(1, 0))) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -237,16 +236,16 @@ void Character::update(World& world) {
   // Update movement
   if (moving) {
     // Smooth move
-    if (direction == DIR_UP && y > 0) {
-      y -= 2;
+    if (direction == DIR_UP && pos.y > 0) {
+      pos.y -= 2;
     } else if (direction == DIR_DOWN &&
-               y < (world.getMap().getHeight() * TILE_SIZE) - TILE_SIZE) {
-      y += 2;
-    } else if (direction == DIR_LEFT && x > 0) {
-      x -= 2;
+               pos.y < (world.getMap().getHeight() * TILE_SIZE) - TILE_SIZE) {
+      pos.y += 2;
+    } else if (direction == DIR_LEFT && pos.x > 0) {
+      pos.x -= 2;
     } else if (direction == DIR_RIGHT &&
-               x < (world.getMap().getWidth() * TILE_SIZE) - TILE_SIZE) {
-      x += 2;
+               pos.x < (world.getMap().getWidth() * TILE_SIZE) - TILE_SIZE) {
+      pos.x += 2;
     }
 
     // Increase animation ticker
@@ -256,8 +255,7 @@ void Character::update(World& world) {
   }
 
   // Pickup
-  auto item_at_position =
-      world.getMap().getItemAt(x / TILE_SIZE, y / TILE_SIZE);
+  auto item_at_position = world.getMap().getItemAt(tile_index);
 
   // Pickup
   if (item_at_position != nullptr) {
@@ -279,8 +277,7 @@ void Character::update(World& world) {
     // Drop
     if (itemInHand != nullptr) {
       asw::sound::play(drop);
-      world.getMap().placeItemAt(itemInHand, indicator_x / TILE_SIZE,
-                                 indicator_y / TILE_SIZE);
+      world.getMap().placeItemAt(itemInHand, indicator_pos / TILE_SIZE);
       inventory_ui.getInventory()->getStack(selected_item)->remove(1);
     }
   }
@@ -290,13 +287,12 @@ void Character::update(World& world) {
        asw::input::mouse.pressed[1]) &&
       inventory_ui.getInventory()->getStack(selected_item)->getItem()) {
     world.interact(
-        indicator_x, indicator_y,
+        indicator_pos,
         inventory_ui.getInventory()->getStack(selected_item)->getItem());
   }
 
   // Scroll map
-  world.getCamera().pan(x - world.getCamera().getWidth() / 2 + TILE_SIZE / 2,
-                        y - world.getCamera().getHeight() / 2 + TILE_SIZE / 2);
+  world.getCamera().pan(pos - world.getCamera().getSize() / 2);
 
   this->c_fore->update();
 }

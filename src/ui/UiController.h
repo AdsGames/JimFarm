@@ -6,11 +6,12 @@
 
 #include "../Inventory.h"
 #include "../World.h"
+#include "../utility/Vec2.h"
 #include "UiElement.h"
 
 class UiController {
  public:
-  UiController(int width, int height);
+  explicit UiController(Vec2<int> size);
 
   void draw();
 
@@ -21,15 +22,12 @@ class UiController {
   std::shared_ptr<Inventory> getInventory() const;
 
  private:
-  std::shared_ptr<UiElement> elementAt(int x, int y) const;
+  std::shared_ptr<UiElement> elementAt(Vec2<int> pos) const;
 
   std::shared_ptr<Inventory> inv;
 
-  int width{0};
-  int height{0};
-
-  int x{0};
-  int y{0};
+  Vec2<int> size;
+  Vec2<int> position;
 
   std::vector<std::shared_ptr<UiElement>> elements;
 

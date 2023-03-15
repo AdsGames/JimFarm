@@ -9,9 +9,9 @@
 #include "Item.h"
 #include "MapItem.h"
 #include "Messenger.h"
-#include "utility/Camera.h"
-
 #include "TileMap.h"
+#include "utility/Camera.h"
+#include "utility/Vec2.h"
 
 // Viewport
 constexpr int VIEWPORT_WIDTH = 240 * 2;
@@ -29,7 +29,7 @@ class World {
   void loadImages();
 
   // Interact with
-  void interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand);
+  void interact(Vec2<int> inter_pos, std::shared_ptr<Item> in_hand);
 
   // Map
   void update();

@@ -4,6 +4,7 @@
 #include <string>
 
 #include "manager/TileType.h"
+#include "utility/Vec2.h"
 
 class Item {
  public:
@@ -11,7 +12,7 @@ class Item {
   Item(const std::string& id, unsigned char meta = 0);
 
   // Draw to screen
-  void draw(int x, int y) const;
+  void draw(Vec2<int> position) const;
 
   // Access and set meta data byte
   void setMeta(unsigned char meta);

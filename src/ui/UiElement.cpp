@@ -2,27 +2,18 @@
 
 asw::Font UiElement::font{nullptr};
 
-UiElement::UiElement(int x, int y) : UiElement(x, y, 0, 0) {}
+UiElement::UiElement(Vec2<int> pos) : UiElement(pos, Vec2<int>(0, 0)) {}
 
-UiElement::UiElement(int x, int y, int width, int height)
-    : x(x), y(y), width(width), height(height) {
+UiElement::UiElement(Vec2<int> pos, Vec2<int> size) : pos(pos), size(size) {
   if (font == nullptr) {
     font = asw::assets::loadFont("assets/fonts/pixelart.ttf", 8);
   }
 }
 
-int UiElement::getX() const {
-  return x;
+Vec2<int> UiElement::getPosition() const {
+  return pos;
 }
 
-int UiElement::getY() const {
-  return y;
-}
-
-int UiElement::getWidth() const {
-  return width;
-}
-
-int UiElement::getHeight() const {
-  return height;
+Vec2<int> UiElement::getSize() const {
+  return size;
 }

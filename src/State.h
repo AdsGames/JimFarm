@@ -70,7 +70,7 @@ class State {
   virtual void update(StateEngine* engine) = 0;
 
   // Change state
-  void setNextState(StateEngine* engine, ProgramState state);
+  void setNextState(StateEngine* engine, ProgramState state) const;
 };
 
 #endif  // SRC_STATE_H_
