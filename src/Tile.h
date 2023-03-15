@@ -17,24 +17,13 @@ class Tile : public Sprite {
   Tile(const std::string& id, int x, int y, int z, unsigned char meta = 0);
   ~Tile() final = default;
 
-  // Gets size
-  int getWidth() const;
-  int getHeight() const;
-
   int getTileX() const;
   int getTileY() const;
 
   // Drawing
   void draw(const Camera& camera) const override;
 
-  // Is this type solid?
-  bool isSolid() const;
-
-  // Modify ID
-  const std::string& getId() const;
-
-  // Get name of tile
-  std::string getName() const;
+  const TileType& getType() const;
 
   // Access and set meta data byte
   void setMeta(unsigned char meta);

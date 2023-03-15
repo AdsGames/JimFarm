@@ -104,19 +104,15 @@ void Character::drawInventory() const {
   // Draw items
   for (int i = 0; i < HOTBAR_SIZE; i++) {
     asw::draw::sprite(inventory_gui, 18 * i + draw_x, draw_y);
+
     if (i == selected_item) {
       asw::draw::sprite(indicator, 18 * i + 1 + draw_x, 1 + draw_y);
     }
-    if (inventory_ui.getInventory()->getStack(i)) {
-      inventory_ui.getInventory()->getStack(i)->draw(18 * i + 1 + draw_x,
-                                                     1 + draw_y);
-      if (i == selected_item &&
-          inventory_ui.getInventory()->getStack(i)->getItem()) {
-        asw::draw::text(
-            pixelart,
-            inventory_ui.getInventory()->getStack(i)->getItem()->getName(),
-            1 + draw_x, 21 + draw_y, asw::util::makeColor(255, 255, 255));
-      }
+
+    auto stack = inventory_ui.getInventory()->getStack(i);
+
+    if (stack) {
+      stack->draw(18 * i + 1 + draw_x, 1 + draw_y);
     }
   }
 
@@ -126,6 +122,10 @@ void Character::drawInventory() const {
         InterfaceTypeManager::getInterfaceById(attached_ui);
     attached_ui_instance.draw();
   }
+}
+
+std::shared_ptr<Item> Character::getSelectedItem() const {
+  return inventory_ui.getInventory()->getStack(selected_item)->getItem();
 }
 
 // Update player

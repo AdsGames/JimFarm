@@ -171,7 +171,7 @@ void Chunk::tick() {
       }
 
       // Berries
-      if (current->getId() == "tile:berry") {
+      if (current->getType().getId() == "tile:berry") {
         // Grow a bit
         current->changeMeta(1);
 
@@ -182,7 +182,7 @@ void Chunk::tick() {
         }
       }
       // Tomatos
-      else if (current->getId() == "tile:tomato") {
+      else if (current->getType().getId() == "tile:tomato") {
         // Grow a bit
         if (!random(0, 2)) {
           current->changeMeta(1);
@@ -195,7 +195,7 @@ void Chunk::tick() {
         }
       }
       // Carrots
-      else if (current->getId() == "tile:carrot") {
+      else if (current->getType().getId() == "tile:carrot") {
         // Grow a bit
         if (!random(0, 5)) {
           current->changeMeta(1);
@@ -208,7 +208,7 @@ void Chunk::tick() {
         }
       }
       // Lavender
-      else if (current->getId() == "tile:lavender") {
+      else if (current->getType().getId() == "tile:lavender") {
         // Grow a bit
         if (!random(0, 10))
           current->changeMeta(1);

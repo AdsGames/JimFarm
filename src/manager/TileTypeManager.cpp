@@ -60,6 +60,16 @@ int TileTypeManager::loadTiles(const std::string& path) {
     tile_defs[id].setSpriteSheet(sprite_sheet_tiles);
     tile_defs[id].setImageType(image_type, sheet_width, sheet_height, image_x,
                                image_y, image_w, image_h);
+
+    if (tile.contains(std::string{"drops"}) && tile["drops"].is_array()) {
+      for (auto& [_idx, drop] : tile["drops"].items()) {
+        auto drop_id = drop["id"].get<std::string>();
+        auto drop_amount = drop["amount"].get<unsigned char>();
+        auto drop_tool = drop["tool"].get<std::string>();
+
+        tile_defs[id].addDrop({drop_id, drop_tool, drop_amount});
+      }
+    }
   }
 
   // Close

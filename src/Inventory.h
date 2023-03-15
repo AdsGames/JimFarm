@@ -9,6 +9,7 @@
 class Inventory {
  public:
   bool addItem(std::shared_ptr<Item> item, int quantity);
+
   bool removeItem(int index);
   void addSpace();
 

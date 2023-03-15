@@ -13,13 +13,7 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID",
-    "drops": [
-      {
-        "item": "Grass",
-        "chance": 0.5
-      }
-    ]
+    "attribute": "NON_SOLID"
   },
   {
     "id": "tile:water",
@@ -99,7 +93,14 @@
       "height": 2,
       "width": 1
     },
-    "attribute": "SOLID"
+    "attribute": "SOLID",
+    "drops": [
+      {
+        "id": "item:wood",
+        "amount": 1,
+        "tool": "item:axe"
+      }
+    ]
   },
   {
     "id": "tile:bush",

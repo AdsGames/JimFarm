@@ -50,6 +50,8 @@ class Character : public Sprite {
   void draw(const Camera& camera) const override;
   void drawInventory() const;
 
+  std::shared_ptr<Item> getSelectedItem() const;
+
   // Update
   void update(World& world);
 
