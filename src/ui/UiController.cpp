@@ -94,7 +94,8 @@ void UiController::update() {
       } else if (item && !(stack->getItem())) {
         stack->setItem(item, mouse_item->getQuantity());
         mouse_item->clear();
-      } else if (item && stack->getItem()->getId() == item->getId()) {
+      } else if (item && stack->getItem()->getType().getId() ==
+                             item->getType().getId()) {
         stack->add(mouse_item->getQuantity());
         mouse_item->clear();
       }
@@ -106,7 +107,8 @@ void UiController::update() {
       } else if (item && !(stack->getItem())) {
         stack->setItem(item, 1);
         mouse_item->remove(1);
-      } else if (item && stack->getItem()->getId() == item->getId()) {
+      } else if (item && stack->getItem()->getType().getId() ==
+                             item->getType().getId()) {
         stack->add(1);
         mouse_item->remove(1);
       }

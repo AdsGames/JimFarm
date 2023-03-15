@@ -5,8 +5,6 @@
 
 #include "manager/TileType.h"
 
-const int MAX_ITEM_META = 255;
-
 class Item {
  public:
   // Ctor and Dtor
@@ -15,16 +13,12 @@ class Item {
   // Draw to screen
   void draw(int x, int y) const;
 
-  // Modify ID
-  const std::string& getId() const;
-
-  // Get the name of item
-  const std::string& getName() const;
-
   // Access and set meta data byte
   void setMeta(unsigned char meta);
   void changeMeta(unsigned char amt);
   unsigned char getMeta() const;
+
+  const TileType& getType() const;
 
  private:
   // Metadata info

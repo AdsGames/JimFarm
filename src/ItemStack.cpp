@@ -4,8 +4,7 @@ asw::Font ItemStack::pixelart = nullptr;
 
 ItemStack::ItemStack() : ItemStack(nullptr, 0) {}
 
-ItemStack::ItemStack(std::shared_ptr<Item> item, int quantity)
-    : item(item), quantity(quantity) {
+ItemStack::ItemStack(std::shared_ptr<Item> item, int quantity) : item(item), quantity(quantity) {
   if (!pixelart) {
     pixelart = asw::assets::loadFont("assets/fonts/pixelart.ttf", 8);
   }

@@ -87,3 +87,7 @@ void TileType::setImageType(const std::string& type,
     SDL_SetRenderTarget(asw::display::renderer, nullptr);
   }
 }
+
+void TileType::addDrop(const TileTypeDrop& drop) {
+  drops.emplace_back(drop);
+}

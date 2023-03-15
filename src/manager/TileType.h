@@ -10,6 +10,13 @@
 #include <asw/asw.h>
 #include <array>
 #include <string>
+#include <vector>
+
+struct TileTypeDrop {
+  std::string item_id;
+  std::string tool_id;
+  unsigned char amount;
+};
 
 class TileType {
  public:
@@ -50,6 +57,12 @@ class TileType {
                     unsigned char imageWidth,
                     unsigned char imageHeight);
 
+  // Set drops
+  void addDrop(const TileTypeDrop& drop);
+
+  // Get drops
+  const std::vector<TileTypeDrop>& getDrops() const { return drops; }
+
   std::string getImageType() const { return this->image_type; }
 
  private:
@@ -76,6 +89,8 @@ class TileType {
   asw::Texture sprite_sheet{nullptr};
 
   std::array<asw::Texture, 16> images{};
+
+  std::vector<TileTypeDrop> drops{};
 };
 
 #endif  // TILE_TYPE_H

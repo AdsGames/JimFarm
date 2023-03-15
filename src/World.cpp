@@ -142,16 +142,16 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
       tile_map.getTileAt(tile_x, tile_y, LAYER_BACKGROUND);
 
   // Hoe
-  if (inHand->getId() == "item:hoe") {
+  if (inHand->getType().getId() == "item:hoe") {
     if (tile_m && !tile_f) {
-      if (tile_m->getId() == "tile:grass") {
+      if (tile_m->getType().getId() == "tile:grass") {
         auto plowed_tile = std::make_shared<Tile>(
             "tile:plowed_soil", tile_m->getX(), tile_m->getY(), tile_m->getZ());
 
         tile_map.replaceTile(tile_m, plowed_tile);
 
         SoundManager::play(SOUND_HOE);
-      } else if (tile_m->getId() == "tile:soil") {
+      } else if (tile_m->getType().getId() == "tile:soil") {
         auto plowed_tile = std::make_shared<Tile>(
             "tile:plowed_soil", tile_m->getX(), tile_m->getY(), tile_m->getZ());
 
@@ -166,8 +166,8 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
     }
   }
   // Scythe
-  else if (inHand->getId() == "item:scythe") {
-    if (tile_f && tile_f->getId() == "tile:dense_grass") {
+  else if (inHand->getType().getId() == "item:scythe") {
+    if (tile_f && tile_f->getType().getId() == "tile:dense_grass") {
       tile_map.removeTile(tile_f);
 
       auto hay_item = std::make_shared<Item>("item:hay", 0);
@@ -178,8 +178,8 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
     }
   }
   // Berry
-  else if (inHand->getId() == "item:berry_seed") {
-    if (tile_m && tile_m->getId() == "tile:plowed_soil" && !tile_f) {
+  else if (inHand->getType().getId() == "item:berry_seed") {
+    if (tile_m && tile_m->getType().getId() == "tile:plowed_soil" && !tile_f) {
       tile_map.placeTile(std::make_shared<Tile>("tile:berry", inter_x, inter_y,
                                                 LAYER_FOREGROUND));
     } else {
@@ -187,8 +187,8 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
     }
   }
   // Tomato
-  else if (inHand->getId() == "item:tomato_seed") {
-    if (tile_m && tile_m->getId() == "tile:plowed_soil" && !tile_f) {
+  else if (inHand->getType().getId() == "item:tomato_seed") {
+    if (tile_m && tile_m->getType().getId() == "tile:plowed_soil" && !tile_f) {
       tile_map.placeTile(std::make_shared<Tile>("tile:tomato", inter_x, inter_y,
                                                 LAYER_FOREGROUND));
     } else {
@@ -196,8 +196,8 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
     }
   }
   // Carrot
-  else if (inHand->getId() == "item:carrot_seed") {
-    if (tile_m && tile_m->getId() == "tile:plowed_soil" && !tile_f) {
+  else if (inHand->getType().getId() == "item:carrot_seed") {
+    if (tile_m && tile_m->getType().getId() == "tile:plowed_soil" && !tile_f) {
       tile_map.placeTile(std::make_shared<Tile>("tile:carrot", inter_x, inter_y,
                                                 LAYER_FOREGROUND));
     } else {
@@ -205,8 +205,8 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
     }
   }
   // Lavender
-  else if (inHand->getId() == "item:lavender_seed") {
-    if (tile_m && tile_m->getId() == "tile:plowed_soil" && !tile_f) {
+  else if (inHand->getType().getId() == "item:lavender_seed") {
+    if (tile_m && tile_m->getType().getId() == "tile:plowed_soil" && !tile_f) {
       tile_map.placeTile(std::make_shared<Tile>("tile:lavender", inter_x,
                                                 inter_y, LAYER_FOREGROUND));
     } else {
@@ -214,8 +214,8 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
     }
   }
   // Watering can
-  else if (inHand->getId() == "item:watering_can") {
-    if (tile_m && tile_m->getId() == "tile:well_path") {
+  else if (inHand->getType().getId() == "item:watering_can") {
+    if (tile_m && tile_m->getType().getId() == "tile:well_path") {
       map_messages.pushMessage("Watering can filled");
       inHand->setMeta(8);
       SoundManager::play(SOUND_WATER_FILL);
@@ -229,8 +229,8 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
     }
   }
   // Axe
-  else if (inHand->getId() == "item:axe") {
-    if (tile_f && tile_f->getId() == "tile:tree") {
+  else if (inHand->getType().getId() == "item:axe") {
+    if (tile_f && tile_f->getType().getId() == "tile:tree") {
       tile_map.replaceTile(
           tile_f, std::make_shared<Tile>("tile:stump", tile_f->getX(),
                                          tile_f->getY(), tile_f->getZ()));
@@ -246,22 +246,22 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
     }
   }
   // Shovel
-  else if (inHand->getId() == "item:shovel") {
-    if (tile_f &&
-        (tile_f->getId() == "tile:bush" || tile_f->getId() == "tile:stump")) {
+  else if (inHand->getType().getId() == "item:shovel") {
+    if (tile_f && (tile_f->getType().getId() == "tile:bush" ||
+                   tile_f->getType().getId() == "tile:stump")) {
       tile_map.removeTile(tile_f);
       SoundManager::play(SOUND_SHOVEL);
-    } else if (tile_m && tile_m->getId() == "tile:grass" && !tile_f) {
+    } else if (tile_m && tile_m->getType().getId() == "tile:grass" && !tile_f) {
       tile_map.removeTile(tile_m);
       tile_map.placeItemAt(std::make_shared<Item>("item:grass", 0),
                            tile_m->getTileX(), tile_m->getTileY());
       SoundManager::play(SOUND_SHOVEL);
-    } else if (tile_m && tile_m->getId() == "tile:sand" && !tile_f) {
+    } else if (tile_m && tile_m->getType().getId() == "tile:sand" && !tile_f) {
       tile_map.removeTile(tile_m);
       tile_map.placeItemAt(std::make_shared<Item>("item:sand", 0),
                            tile_m->getTileX(), tile_m->getTileY());
       SoundManager::play(SOUND_SHOVEL);
-    } else if (tile_f && (tile_f->getId() == "tile:stone_wall")) {
+    } else if (tile_f && (tile_f->getType().getId() == "tile:stone_wall")) {
       tile_map.removeTile(tile_f);
       tile_map.placeItemAt(std::make_shared<Item>("item:stone", 0),
                            tile_f->getTileX(), tile_f->getTileY());
@@ -271,7 +271,7 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
     }
   }
   // Wood Wall
-  else if (inHand->getId() == "item:wood") {
+  else if (inHand->getType().getId() == "item:wood") {
     if (!tile_f && tile_m) {
       tile_map.placeTile(std::make_shared<Tile>(
           "tile:wood_wall", tile_m->getX(), tile_m->getY(), LAYER_FOREGROUND));
@@ -281,7 +281,7 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
     }
   }
   // Fence
-  else if (inHand->getId() == "item:stick") {
+  else if (inHand->getType().getId() == "item:stick") {
     if (!tile_f && tile_m) {
       tile_map.placeTile(std::make_shared<Tile>(
           "tile:fence", tile_m->getX(), tile_m->getY(), LAYER_FOREGROUND));
@@ -291,7 +291,7 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
     }
   }
   // Place dirt
-  else if (inHand->getId() == "item:grass") {
+  else if (inHand->getType().getId() == "item:grass") {
     if (tile_b && !tile_m) {
       tile_map.placeTile(std::make_shared<Tile>(
           "tile:grass", tile_b->getX(), tile_b->getY(), LAYER_MIDGROUND));
@@ -301,7 +301,7 @@ void World::interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand) {
     }
   }
   // Place dirt
-  else if (inHand->getId() == "item:sand") {
+  else if (inHand->getType().getId() == "item:sand") {
     if (tile_b && !tile_m) {
       tile_map.placeTile(std::make_shared<Tile>(
           "tile:sand", tile_b->getX(), tile_b->getY(), LAYER_MIDGROUND));

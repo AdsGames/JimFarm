@@ -122,7 +122,7 @@ void TileMap::replaceTile(std::shared_ptr<Tile> tile_old,
 // Check for solid tile
 bool TileMap::isSolidAt(int x, int y) {
   auto tile = getTileAt(x, y, LAYER_FOREGROUND);
-  return tile && tile->isSolid();
+  return tile && tile->getType().getAttribute();
 }
 
 // Get item at position
@@ -242,7 +242,7 @@ void TileMap::updateBitMask(std::shared_ptr<Tile> tile) {
     auto current = getTileAt(tile->getTileX() + first,
                              tile->getTileY() + second, tile->getZ());
 
-    if (current && current->getId() == tile->getId()) {
+    if (current && current->getType().getId() == tile->getType().getId()) {
       mask += static_cast<unsigned char>(pow(2, i));
     }
   }

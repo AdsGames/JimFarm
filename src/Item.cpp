@@ -11,16 +11,6 @@ void Item::draw(int x, int y) const {
   item_pointer.draw(x, y, getMeta());
 }
 
-// Get ID
-const std::string& Item::getId() const {
-  return item_pointer.getId();
-}
-
-// Get the name of item
-const std::string& Item::getName() const {
-  return item_pointer.getName();
-}
-
 void Item::setMeta(unsigned char meta) {
   this->meta = meta;
 }
@@ -31,4 +21,8 @@ void Item::changeMeta(unsigned char amt) {
 
 unsigned char Item::getMeta() const {
   return this->meta;
+}
+
+const TileType& Item::getType() const {
+  return item_pointer;
 }
