@@ -1,5 +1,4 @@
 ---
 BasedOnStyle: Chromium
 ---
-Language: Cpp
-ColumnLimit: 100
+

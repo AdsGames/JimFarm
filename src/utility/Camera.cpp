@@ -27,47 +27,37 @@ const Quad<int>& Camera::getBounds() const {
   return bounds;
 }
 
-void Camera::translate(int x, int y) {
-  this->bounds.x_1 += x;
-  this->bounds.y_1 += y;
-  this->bounds.x_2 += x;
-  this->bounds.y_2 += y;
-}
-
-void Camera::pan(int x, int y) {
-  if (x < outer_bounds.x_1) {
-    x = outer_bounds.x_1;
-  } else if (x + this->bounds.getWidth() > outer_bounds.x_2) {
-    x = outer_bounds.x_2 - this->bounds.getWidth();
+void Camera::pan(Vec2<int> pos_to) {
+  if (pos_to.x < outer_bounds.x_1) {
+    pos_to.x = outer_bounds.x_1;
+  } else if (pos_to.x + this->bounds.getWidth() > outer_bounds.x_2) {
+    pos_to.x = outer_bounds.x_2 - this->bounds.getWidth();
   }
 
-  if (y < outer_bounds.y_1) {
-    y = outer_bounds.y_1;
-  } else if (y + this->bounds.getHeight() > outer_bounds.y_2) {
-    y = outer_bounds.y_2 - this->bounds.getHeight();
+  if (pos_to.y < outer_bounds.y_1) {
+    pos_to.y = outer_bounds.y_1;
+  } else if (pos_to.y + this->bounds.getHeight() > outer_bounds.y_2) {
+    pos_to.y = outer_bounds.y_2 - this->bounds.getHeight();
   }
 
   int prev_w = this->bounds.getWidth();
   int prev_h = this->bounds.getHeight();
 
-  this->bounds.x_1 = x;
-  this->bounds.y_1 = y;
-  this->bounds.x_2 = x + prev_w;
-  this->bounds.y_2 = y + prev_h;
+  this->bounds.x_1 = pos_to.x;
+  this->bounds.y_1 = pos_to.y;
+  this->bounds.x_2 = pos_to.x + prev_w;
+  this->bounds.y_2 = pos_to.y + prev_h;
 }
 
-int Camera::getWidth() const {
-  return this->bounds.getWidth();
+Vec2<int> Camera::getSize() const {
+  return Vec2<int>(this->bounds.getWidth(), this->bounds.getHeight());
 };
 
-int Camera::getHeight() const {
-  return this->bounds.getHeight();
+Vec2<int> Camera::getPosition() const {
+  return Vec2<int>(this->bounds.x_1, this->bounds.y_1);
 };
 
-int Camera::getX() const {
-  return this->bounds.x_1;
-};
-
-int Camera::getY() const {
-  return this->bounds.y_1;
+Vec2<int> Camera::getCenter() const {
+  return Vec2<int>(this->bounds.x_1 + this->bounds.getWidth() / 2,
+                   this->bounds.y_1 + this->bounds.getHeight() / 2);
 };

@@ -3,10 +3,11 @@
 
 #include "Item.h"
 #include "Sprite.h"
+#include "utility/Vec2.h"
 
 class MapItem : public Sprite {
  public:
-  MapItem(int x, int y, std::shared_ptr<Item> itemPtr);
+  MapItem(Vec2<int> position, std::shared_ptr<Item> itemPtr);
   ~MapItem() final = default;
 
   void draw(const Camera& camera) const override;

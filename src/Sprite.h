@@ -5,27 +5,26 @@
 #include <string>
 
 #include "utility/Camera.h"
+#include "utility/Vec2.h"
 
 constexpr unsigned int MAX_SPRITES = 1000000;
 
 class Sprite {
  public:
   Sprite();
-  Sprite(int x, int y, int z);
+  Sprite(Vec2<int> pos, int z);
+
   virtual ~Sprite() = default;
 
   virtual void draw(const Camera& camera) const = 0;
 
   // Get position
-  int getX() const { return this->x; }
-  int getY() const { return this->y; }
-  int getZ() const { return this->z; }
-
-  unsigned int getSpriteId() const { return this->id; }
+  Vec2<int> getPosition() const;
+  int getZ() const;
+  unsigned int getSpriteId() const;
 
  protected:
-  int x;
-  int y;
+  Vec2<int> pos;
   int z;
 
  private:

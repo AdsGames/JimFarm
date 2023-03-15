@@ -4,7 +4,8 @@ asw::Font ItemStack::pixelart = nullptr;
 
 ItemStack::ItemStack() : ItemStack(nullptr, 0) {}
 
-ItemStack::ItemStack(std::shared_ptr<Item> item, int quantity) : item(item), quantity(quantity) {
+ItemStack::ItemStack(std::shared_ptr<Item> item, int quantity)
+    : item(item), quantity(quantity) {
   if (!pixelart) {
     pixelart = asw::assets::loadFont("assets/fonts/pixelart.ttf", 8);
   }
@@ -42,17 +43,17 @@ void ItemStack::clear() {
   remove(this->quantity);
 }
 
-void ItemStack::draw(int x, int y) const {
+void ItemStack::draw(Vec2<int> position) const {
   if (item == nullptr) {
     return;
   }
 
-  item->draw(x, y);
+  item->draw(position);
 
   if (quantity > 1) {
-    asw::draw::textCenter(pixelart, std::to_string(quantity), x + 13, y + 9,
-                          asw::util::makeColor(0, 0, 0));
-    asw::draw::textCenter(pixelart, std::to_string(quantity), x + 12, y + 8,
-                          asw::util::makeColor(255, 255, 255));
+    asw::draw::textCenter(pixelart, std::to_string(quantity), position.x + 13,
+                          position.y + 9, asw::util::makeColor(0, 0, 0));
+    asw::draw::textCenter(pixelart, std::to_string(quantity), position.x + 12,
+                          position.y + 8, asw::util::makeColor(255, 255, 255));
   }
 }

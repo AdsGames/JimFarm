@@ -10,15 +10,15 @@ const int SLOT_SIZE = 16;
 
 class UiSlot : public UiElement {
  public:
-  UiSlot(int x, int y);
-  UiSlot(int x, int y, std::shared_ptr<ItemStack> stk);
+  explicit UiSlot(Vec2<int> pos);
+  UiSlot(Vec2<int> pos, std::shared_ptr<ItemStack> stk);
   ~UiSlot() final = default;
 
   void bindStack(std::shared_ptr<ItemStack> stk);
 
   std::shared_ptr<ItemStack> getStack() const;
 
-  void draw(int parent_x, int parent_y) override;
+  void draw(Vec2<int> parent_pos) override;
 
  private:
   std::shared_ptr<ItemStack> stkptr{nullptr};

@@ -28,7 +28,7 @@ void Graphics::draw(const Camera& camera) const {
   auto& camera_bounds = camera.getBounds();
 
   for (auto const& [_index, sprite] : sprites) {
-    if (sprite && camera_bounds.contains(sprite->getX(), sprite->getY())) {
+    if (sprite && camera_bounds.contains(sprite->getPosition())) {
       sorted_sprites.insert(sprite);
     }
   }
