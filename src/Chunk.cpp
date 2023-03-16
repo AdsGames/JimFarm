@@ -106,9 +106,6 @@ void Chunk::placeItemAt(std::shared_ptr<Item> item, Vec2<int> position) {
     return;
   }
 
-  std::cout << "Placing item at " << position.x << "," << position.y
-            << std::endl;
-
   // Annoying to deal with 2 coordinate systems
   auto newMapItem = std::make_shared<MapItem>(position * TILE_SIZE, item);
 
