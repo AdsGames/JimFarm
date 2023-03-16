@@ -13,36 +13,30 @@ TileType::TileType(unsigned char width,
 // Draw tile
 void TileType::draw(int x, int y, unsigned char meta) {
   int image_index = 0;
+  auto h_px = image_h * 16;
+  auto w_px = image_w * 16;
+  auto i_x_px = image_cord_x * 16;
+  auto i_y_px = image_cord_y * 16;
 
   if (image_type == "meta_map" || image_type == "animated") {
-    image_index = static_cast<int>(floor((num_images / 256.0) * meta));
+    image_index = num_images / 256 * meta;
+    i_x_px += (image_index % sheet_width) * 16;
+    i_y_px += (image_index / sheet_width) * 16;
+
   } else if (image_type == "meta_map_2" || image_type == "dynamic") {
     image_index = meta % num_images;
+    i_x_px += (image_index % sheet_width) * 16;
+    i_y_px += (image_index / sheet_width) * 16;
   }
 
-  // // Split up those images
-  // if (image_type == "dynamic" || image_type == "meta_map" ||
-  //     image_type == "meta_map_2" || image_type == "animated") {
-  //   auto i = image_index % sheet_width;
-  //   auto t = static_cast<unsigned char>(floor(image_index / sheet_width));
+  asw::draw::stretchSpriteBlit(sprite_sheet, i_x_px, i_y_px, w_px, h_px, x,
+                               y - h_px + 16, w_px, h_px);
 
-  //   asw::draw::stretchSpriteBlit(sprite_sheet, image_cord_x * 16 + i * 16,
-  //                                image_cord_y * 16 + t * 16, image_w * 16,
-  //                                image_h * 16, x, y - ((image_h * 16) - 16),
-  //                                image_w * 16, image_h * 16);
-
+  // if (images[image_index]) {
+  //   asw::draw::sprite(images[image_index], x, y - ((image_h * 16) - 16));
   // } else {
-  //   asw::draw::stretchSpriteBlit(
-  //       sprite_sheet, image_cord_x * 16, image_cord_y * 16, image_w * 16,
-  //       image_h * 16, x, y - ((image_h * 16) - 16), image_w * 16, image_h *
-  //       16);
+  //   asw::draw::rectFill(x, y, 16, 16, asw::util::makeColor(0, 200, 0));
   // }
-
-  if (images[image_index]) {
-    asw::draw::sprite(images[image_index], x, y - ((image_h * 16) - 16));
-  } else {
-    asw::draw::rectFill(x, y, 16, 16, asw::util::makeColor(0, 200, 0));
-  }
 }
 
 // Give a sprite sheet to this tile

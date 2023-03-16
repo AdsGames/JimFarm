@@ -17,7 +17,7 @@
 constexpr int VIEWPORT_WIDTH = 240 * 2;
 constexpr int VIEWPORT_HEIGHT = 160 * 2;
 constexpr float VIEWPORT_MAX_ZOOM = 4.0f;
-constexpr float VIEWPORT_MIN_ZOOM = 0.5f;
+constexpr float VIEWPORT_MIN_ZOOM = 0.25f;
 
 class World {
  public:
