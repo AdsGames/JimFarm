@@ -18,16 +18,13 @@ jobs:
           fetch-depth: 0
           submodules: "recursive"
 
-      - uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev libsdl2-gfx-dev
-          version: 1.0
-
       - name: Install sonar-scanner and build-wrapper
         uses: sonarsource/sonarcloud-github-c-cpp@v1
 
       - name: Run build-wrapper
         run: |
+          sudo apt update
+          sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev libsdl2-gfx-dev
           cmake .
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} make
 
