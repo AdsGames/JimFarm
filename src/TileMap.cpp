@@ -172,8 +172,8 @@ void TileMap::tick(const Camera& camera) const {
 // Generate map
 void TileMap::generateMap() {
   // Base map
-  width = 2;
-  height = 2;
+  width = 8;
+  height = 8;
 
   // Generating chunk
   std::cout << "Generating World (" << width << "," << height << ")...  ";

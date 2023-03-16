@@ -20,6 +20,24 @@ void TileType::draw(int x, int y, unsigned char meta) {
     image_index = meta % num_images;
   }
 
+  // // Split up those images
+  // if (image_type == "dynamic" || image_type == "meta_map" ||
+  //     image_type == "meta_map_2" || image_type == "animated") {
+  //   auto i = image_index % sheet_width;
+  //   auto t = static_cast<unsigned char>(floor(image_index / sheet_width));
+
+  //   asw::draw::stretchSpriteBlit(sprite_sheet, image_cord_x * 16 + i * 16,
+  //                                image_cord_y * 16 + t * 16, image_w * 16,
+  //                                image_h * 16, x, y - ((image_h * 16) - 16),
+  //                                image_w * 16, image_h * 16);
+
+  // } else {
+  //   asw::draw::stretchSpriteBlit(
+  //       sprite_sheet, image_cord_x * 16, image_cord_y * 16, image_w * 16,
+  //       image_h * 16, x, y - ((image_h * 16) - 16), image_w * 16, image_h *
+  //       16);
+  // }
+
   if (images[image_index]) {
     asw::draw::sprite(images[image_index], x, y - ((image_h * 16) - 16));
   } else {
