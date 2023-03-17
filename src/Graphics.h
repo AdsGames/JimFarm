@@ -10,15 +10,19 @@
 #include "utility/Camera.h"
 
 struct SpriteCmp {
-  bool operator()(const std::shared_ptr<Sprite>& a,
-                  const std::shared_ptr<Sprite>& b) const {
-    if (a->getZ() != b->getZ()) {
-      return a->getZ() < b->getZ();
+  bool operator()(const std::weak_ptr<Sprite>& a,
+                  const std::weak_ptr<Sprite>& b) const {
+    if (a.expired() || b.expired()) {
+      return false;
     }
-    if (a->getPosition().y != b->getPosition().y) {
-      return a->getPosition().y < b->getPosition().y;
+
+    if (a.lock()->getZ() != b.lock()->getZ()) {
+      return a.lock()->getZ() < b.lock()->getZ();
     }
-    return a->getSpriteId() < b->getSpriteId();
+    if (a.lock()->getPosition().y != b.lock()->getPosition().y) {
+      return a.lock()->getPosition().y < b.lock()->getPosition().y;
+    }
+    return a.lock()->getSpriteId() < b.lock()->getSpriteId();
   }
 };
 
@@ -34,9 +38,12 @@ class Graphics {
   // Draw managed sprites
   void draw(const Camera& camera) const;
 
+  // Prune dead sprites
+  void prune();
+
  private:
   // Drawable
-  std::map<unsigned int, std::shared_ptr<Sprite>> sprites{};
+  std::map<unsigned int, std::weak_ptr<Sprite>> sprites{};
 
   bool needs_sorting = false;
 
