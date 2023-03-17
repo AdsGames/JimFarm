@@ -4,51 +4,21 @@
 #include "utility/Tools.h"
 
 // Ctor for tile
-Tile::Tile(char id, int x, int y, int z, unsigned char meta)
-    : Sprite(x, y, z),
-      meta(meta),
-      tile_pointer(TileTypeManager::getTileById(id)) {}
+Tile::Tile(const std::string& id, Vec2<int> pos, int z, unsigned char meta)
+    : Sprite(pos, z), meta(meta), tile_pointer(TileTypeManager::getTile(id)) {}
 
-// Gets size
-int Tile::getWidth() const {
-  return tile_pointer.getWidth();
-}
-
-int Tile::getHeight() const {
-  return tile_pointer.getHeight();
-}
-
-int Tile::getTileX() const {
-  return x / TILE_SIZE;
-}
-
-int Tile::getTileY() const {
-  return y / TILE_SIZE;
+Vec2<int> Tile::getTilePosition() const {
+  return pos / TILE_SIZE;
 }
 
 // Draw tile to screen
 void Tile::draw(const Camera& camera) const {
-  if (x >= camera.getX() - tile_pointer.getWidth() &&
-      x <= camera.getX() + camera.getWidth() + tile_pointer.getWidth() &&
-      y >= camera.getY() - tile_pointer.getHeight() &&
-      y <= camera.getY() + camera.getHeight() + tile_pointer.getHeight()) {
-    tile_pointer.draw(x - camera.getX(), y - camera.getY(), getMeta());
-  }
+  tile_pointer.draw(pos.x - camera.getPosition().x,
+                    pos.y - camera.getPosition().y, getMeta());
 }
 
-// Is this type solid?
-bool Tile::isSolid() const {
-  return tile_pointer.getAttribute();
-}
-
-// Modify ID
-unsigned char Tile::getId() const {
-  return tile_pointer.getId();
-}
-
-// Get name of tile
-std::string Tile::getName() const {
-  return tile_pointer.getName();
+const TileType& Tile::getType() const {
+  return tile_pointer;
 }
 
 // Access and set meta data byte

@@ -3,15 +3,13 @@
 
 #include <memory>
 
-#include "State.h"
-
 #include "Character.h"
+#include "State.h"
 #include "World.h"
 
 class Game : public State {
  public:
   Game();
-  ~Game() final = default;
 
   void update(StateEngine* engine) override;
   void draw() override;

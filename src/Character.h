@@ -12,8 +12,8 @@
 
 #include "manager/InterfaceTypeManager.h"
 #include "manager/interface_defs.h"
-
 #include "ui/UiController.h"
+#include "utility/Vec2.h"
 
 const int HOTBAR_SIZE = 8;
 
@@ -23,7 +23,6 @@ class CharacterForeground : public Sprite {
  public:
   explicit CharacterForeground(Character* charPtr);
 
-  ~CharacterForeground() final = default;
 
   void draw(const Camera& camera) const override;
 
@@ -38,17 +37,18 @@ class Character : public Sprite {
   // Ctor and dtor
   Character();
 
-  ~Character() final = default;
 
   // Load images and samples
   void loadData();
 
   // Position character
-  void setPosition(int x, int y);
+  void setPosition(Vec2<int> pos);
 
   // Draw
   void draw(const Camera& camera) const override;
   void drawInventory() const;
+
+  std::shared_ptr<Item> getSelectedItem() const;
 
   // Update
   void update(World& world);
@@ -77,8 +77,7 @@ class Character : public Sprite {
   int selected_item{0};
 
   // What tile you are over
-  int indicator_x{0};
-  int indicator_y{0};
+  Vec2<int> indicator_pos{};
 
   // Movement
   char direction{1};

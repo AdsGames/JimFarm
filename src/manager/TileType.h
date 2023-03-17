@@ -10,20 +10,28 @@
 #include <asw/asw.h>
 #include <array>
 #include <string>
+#include <vector>
+
+struct TileTypeDrop {
+  std::string item_id;
+  std::string tool_id;
+  unsigned char amount;
+};
 
 class TileType {
  public:
+  TileType() = default;
   TileType(unsigned char width,
            unsigned char height,
-           unsigned char id,
+           const std::string& id,
            const std::string& name,
            unsigned char attribute = 0);
 
   // Get type
-  unsigned char getId() const { return id; }
+  const std::string& getId() const { return id; }
 
   // Get name
-  std::string getName() const { return name; }
+  const std::string& getName() const { return name; }
 
   // Get type
   unsigned char getAttribute() const { return attribute; }
@@ -49,32 +57,38 @@ class TileType {
                     unsigned char imageWidth,
                     unsigned char imageHeight);
 
+  // Set drops
+  void addDrop(const TileTypeDrop& drop);
+
+  // Get drops
+  const std::vector<TileTypeDrop>& getDrops() const { return drops; }
+
   std::string getImageType() const { return this->image_type; }
 
  private:
-  unsigned char id;
+  std::string id{};
 
-  unsigned char width;
-  unsigned char height;
+  unsigned char width{};
+  unsigned char height{};
 
-  std::string name;
-  unsigned char attribute;
+  std::string name{""};
+  unsigned char attribute{};
 
-  unsigned char num_images = 0;
+  unsigned char num_images{0};
 
-  std::string image_type = "";
-  unsigned char sheet_width = 1;
-  unsigned char sheet_height = 1;
+  std::string image_type{""};
+  unsigned char sheet_width{1};
+  unsigned char sheet_height{1};
 
-  unsigned char image_cord_x = 0;
-  unsigned char image_cord_y = 0;
+  unsigned char image_cord_x{0};
+  unsigned char image_cord_y{0};
 
-  unsigned char image_h = 1;
-  unsigned char image_w = 1;
+  unsigned char image_h{1};
+  unsigned char image_w{1};
 
-  asw::Texture sprite_sheet = nullptr;
+  asw::Texture sprite_sheet{nullptr};
 
-  std::array<asw::Texture, 16> images{};
+  std::vector<TileTypeDrop> drops{};
 };
 
 #endif  // TILE_TYPE_H

@@ -1,11 +1,14 @@
 #ifndef SRC_UTILITY_QUAD_H_
 #define SRC_UTILITY_QUAD_H_
 
+#include "./Vec2.h"
+
 template <typename T>
 class Quad {
  public:
-  bool contains(T x, T y) const {
-    return x >= x_1 && x <= x_2 && y >= y_1 && y <= y_2;
+  bool contains(const Vec2<T>& position) const {
+    return position.x >= x_1 && position.x <= x_2 && position.y >= y_1 &&
+           position.y <= y_2;
   }
 
   bool intersects(const Quad& other) const {

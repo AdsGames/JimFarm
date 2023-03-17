@@ -20,7 +20,7 @@ class Messenger {
 
   size_t messageCount() const;
 
-  void draw(int x, int y);
+  void draw(int x, int y) const;
   void setColors(asw::Color font, asw::Color background);
 
   void pushMessage(const std::string& message);

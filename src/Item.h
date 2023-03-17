@@ -4,27 +4,22 @@
 #include <string>
 
 #include "manager/TileType.h"
-
-const int MAX_ITEM_META = 255;
+#include "utility/Vec2.h"
 
 class Item {
  public:
   // Ctor and Dtor
-  Item(char id, unsigned char meta = 0);
+  Item(const std::string& id, unsigned char meta = 0);
 
   // Draw to screen
-  void draw(int x, int y) const;
-
-  // Modify ID
-  unsigned char getId() const;
-
-  // Get the name of item
-  std::string getName() const;
+  void draw(Vec2<int> position) const;
 
   // Access and set meta data byte
   void setMeta(unsigned char meta);
   void changeMeta(unsigned char amt);
   unsigned char getMeta() const;
+
+  const TileType& getType() const;
 
  private:
   // Metadata info

@@ -9,15 +9,15 @@
 #include "Item.h"
 #include "MapItem.h"
 #include "Messenger.h"
-#include "utility/Camera.h"
-
 #include "TileMap.h"
+#include "utility/Camera.h"
+#include "utility/Vec2.h"
 
 // Viewport
 constexpr int VIEWPORT_WIDTH = 240 * 2;
 constexpr int VIEWPORT_HEIGHT = 160 * 2;
 constexpr float VIEWPORT_MAX_ZOOM = 4.0f;
-constexpr float VIEWPORT_MIN_ZOOM = 0.5f;
+constexpr float VIEWPORT_MIN_ZOOM = 0.25f;
 
 class World {
  public:
@@ -29,7 +29,7 @@ class World {
   void loadImages();
 
   // Interact with
-  void interact(int inter_x, int inter_y, std::shared_ptr<Item> inHand);
+  void interact(Vec2<int> inter_pos, std::shared_ptr<Item> in_hand);
 
   // Map
   void update();

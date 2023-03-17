@@ -14,6 +14,7 @@ A massive procedurally generated world in which you can set up a farm and collec
 ## Setup
 
 ### Dependencies
+
 To pull the submodules, run the following command:
 
 ```bash
@@ -23,19 +24,19 @@ git submodule update --init --recursive
 ### Windows (MSYS2)
 
 ```bash
-pacman -S mingw-w64-i686-gcc-libs mingw-w64-i686-SDL2 mingw-w64-i686-SDL2_mixer mingw-w64-i686-SDL2_image mingw-w64-i686-SDL2_ttf mingw-w64-i686-SDL2_gfx
+pacman -S mingw-w64-i686-gcc-libs mingw-w64-i686-SDL2 mingw-w64-i686-SDL2_mixer mingw-w64-i686-SDL2_image mingw-w64-i686-SDL2_ttf
 ```
 
 ### Mac OS
 
 ```bash
-brew install sdl2 sdl2_image sdl2_gfx sdl2_ttf sdl2_mixer
+brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer
 ```
 
 ### Linux
 
 ```bash
-sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev libsdl2-gfx-dev
+sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
 ```
 
 ### Build

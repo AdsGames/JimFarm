@@ -1,6 +1,6 @@
 [
   {
-    "id": 0,
+    "id": "tile:grass",
     "name": "Grass",
     "width": 1,
     "height": 1,
@@ -16,7 +16,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 1,
+    "id": "tile:water",
     "name": "Water",
     "width": 1,
     "height": 1,
@@ -32,7 +32,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 2,
+    "id": "tile:soil",
     "name": "Soil",
     "width": 1,
     "height": 1,
@@ -48,7 +48,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 3,
+    "id": "tile:well",
     "name": "Well",
     "width": 1,
     "height": 1,
@@ -64,7 +64,7 @@
     "attribute": "SOLID"
   },
   {
-    "id": 4,
+    "id": "tile:dense_grass",
     "name": "Dense Grass",
     "width": 1,
     "height": 1,
@@ -80,7 +80,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 5,
+    "id": "tile:tree",
     "name": "Tree",
     "width": 1,
     "height": 1,
@@ -93,10 +93,17 @@
       "height": 2,
       "width": 1
     },
-    "attribute": "SOLID"
+    "attribute": "SOLID",
+    "drops": [
+      {
+        "id": "item:wood",
+        "amount": 1,
+        "tool": "item:axe"
+      }
+    ]
   },
   {
-    "id": 6,
+    "id": "tile:bush",
     "name": "Bush",
     "width": 1,
     "height": 1,
@@ -112,7 +119,7 @@
     "attribute": "SOLID"
   },
   {
-    "id": 7,
+    "id": "tile:well_path",
     "name": "Well Path",
     "width": 1,
     "height": 1,
@@ -128,7 +135,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 8,
+    "id": "tile:fence",
     "name": "Fence",
     "width": 1,
     "height": 1,
@@ -144,7 +151,7 @@
     "attribute": "SOLID"
   },
   {
-    "id": 9,
+    "id": "tile:fence_door",
     "name": "Fence Door",
     "width": 1,
     "height": 1,
@@ -160,7 +167,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 11,
+    "id": "tile:stump",
     "name": "Stump",
     "width": 1,
     "height": 1,
@@ -176,7 +183,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 18,
+    "id": "tile:plowed_soil",
     "name": "Plowed soil",
     "width": 1,
     "height": 1,
@@ -192,7 +199,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 19,
+    "id": "tile:store_path",
     "name": "Store path",
     "width": 1,
     "height": 1,
@@ -208,7 +215,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 20,
+    "id": "tile:path",
     "name": "Path",
     "width": 1,
     "height": 1,
@@ -224,7 +231,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 30,
+    "id": "tile:berry",
     "name": "Berry",
     "width": 1,
     "height": 1,
@@ -240,7 +247,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 31,
+    "id": "tile:tomato",
     "name": "Tomato",
     "width": 1,
     "height": 1,
@@ -256,7 +263,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 32,
+    "id": "tile:carrot",
     "name": "Carrot",
     "width": 1,
     "height": 1,
@@ -272,7 +279,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 33,
+    "id": "tile:lavender",
     "name": "Lavender",
     "width": 1,
     "height": 1,
@@ -288,7 +295,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 59,
+    "id": "tile:patchy_grass",
     "name": "Patchy Grass",
     "width": 1,
     "height": 1,
@@ -304,7 +311,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 60,
+    "id": "tile:store",
     "name": "Store",
     "width": 3,
     "height": 1,
@@ -320,7 +327,7 @@
     "attribute": "SOLID"
   },
   {
-    "id": 61,
+    "id": "tile:barn",
     "name": "Barn",
     "width": 3,
     "height": 2,
@@ -336,7 +343,7 @@
     "attribute": "SOLID"
   },
   {
-    "id": 62,
+    "id": "tile:goat",
     "name": "Goat",
     "width": 1,
     "height": 1,
@@ -352,7 +359,7 @@
     "attribute": "SOLID"
   },
   {
-    "id": 63,
+    "id": "tile:underwater_soil",
     "name": "Underwater Soil",
     "width": 1,
     "height": 1,
@@ -368,7 +375,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 64,
+    "id": "tile:snow",
     "name": "Snow",
     "width": 1,
     "height": 1,
@@ -384,7 +391,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 65,
+    "id": "tile:sand",
     "name": "Sand",
     "width": 1,
     "height": 1,
@@ -400,7 +407,7 @@
     "attribute": "NON_SOLID"
   },
   {
-    "id": 66,
+    "id": "tile:wood_wall",
     "name": "Wood Wall",
     "width": 1,
     "height": 1,
@@ -416,7 +423,7 @@
     "attribute": "SOLID"
   },
   {
-    "id": 67,
+    "id": "tile:stone_wall",
     "name": "Stone Wall",
     "width": 1,
     "height": 1,
@@ -432,7 +439,7 @@
     "attribute": "SOLID"
   },
   {
-    "id": 68,
+    "id": "tile:stone",
     "name": "Stone",
     "width": 1,
     "height": 1,

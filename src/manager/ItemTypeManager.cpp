@@ -7,7 +7,7 @@
 #include "../Tile.h"
 #include "../utility/Tools.h"
 
-std::vector<TileType> ItemTypeManager::item_defs;
+std::map<std::string, TileType> ItemTypeManager::item_defs;
 
 asw::Texture ItemTypeManager::sprite_sheet_items = nullptr;
 
@@ -19,22 +19,18 @@ int ItemTypeManager::loadItems(const std::string& path) {
     return 1;
   }
 
-  // Create buffer
-  nlohmann::json doc = nlohmann::json::parse(file);
-
   // Parse data
-  for (auto const& item : doc) {
+  for (auto const& item : nlohmann::json::parse(file)) {
     // Read from json
     std::string name = item["name"];
-    int image_x = item["image_x"];
-    int image_y = item["image_y"];
-    unsigned char id = item["id"];
+    unsigned char image_x = item["image_x"];
+    unsigned char image_y = item["image_y"];
+    std::string id = item["id"];
 
     // Create item, set variables and add it to the item list
-    auto tile_type = TileType(1, 1, id, name, 0);
-    tile_type.setSpriteSheet(sprite_sheet_items);
-    tile_type.setImageType("", 1, 1, image_x, image_y, 1, 1);
-    item_defs.push_back(tile_type);
+    item_defs[id] = TileType(1, 1, id, name, 0);
+    item_defs[id].setSpriteSheet(sprite_sheet_items);
+    item_defs[id].setImageType("", 1, 1, image_x, image_y, 1, 1);
   }
 
   // Close
@@ -43,13 +39,10 @@ int ItemTypeManager::loadItems(const std::string& path) {
 }
 
 // Returns item at ID
-TileType& ItemTypeManager::getItemById(int tileID) {
-  for (auto& item : item_defs) {
-    if (item.getId() == tileID) {
-      return item;
-    }
+TileType& ItemTypeManager::getItem(const std::string& id) {
+  if (!item_defs.contains(id)) {
+    throw std::runtime_error("Item not found");
   }
 
-  // Throw error if not found
-  throw std::runtime_error("Item not found");
+  return item_defs[id];
 }

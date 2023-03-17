@@ -11,7 +11,7 @@
 const int NON_SOLID = 0;
 const int SOLID = 1;
 
-std::vector<TileType> TileTypeManager::tile_defs;
+std::map<std::string, TileType> TileTypeManager::tile_defs{};
 
 asw::Texture TileTypeManager::sprite_sheet_tiles = nullptr;
 
@@ -32,7 +32,7 @@ int TileTypeManager::loadTiles(const std::string& path) {
     std::string name = tile["name"];
 
     // ID value
-    int id = tile["id"];
+    std::string id = tile["id"];
 
     // Spritesheet coordinates
     unsigned char image_x = tile["image"]["x"];
@@ -50,16 +50,26 @@ int TileTypeManager::loadTiles(const std::string& path) {
     std::string image_type = tile["image"]["type"];
 
     // Get attrubite
-    int attrubite = NON_SOLID;
-    if (tile["attribute"] == "SOLID")
-      attrubite = SOLID;
+    unsigned char attribute = NON_SOLID;
+    if (tile["attribute"] == "SOLID") {
+      attribute = SOLID;
+    }
 
     // Create tile, set variables and add it to the tile list
-    auto tile_type = TileType(width * 16, height * 16, id, name, attrubite);
-    tile_type.setSpriteSheet(sprite_sheet_tiles);
-    tile_type.setImageType(image_type, sheet_width, sheet_height, image_x,
-                           image_y, image_w, image_h);
-    tile_defs.push_back(tile_type);
+    tile_defs[id] = TileType(width * 16, height * 16, id, name, attribute);
+    tile_defs[id].setSpriteSheet(sprite_sheet_tiles);
+    tile_defs[id].setImageType(image_type, sheet_width, sheet_height, image_x,
+                               image_y, image_w, image_h);
+
+    if (tile.contains(std::string{"drops"}) && tile["drops"].is_array()) {
+      for (auto& [_idx, drop] : tile["drops"].items()) {
+        auto drop_id = drop["id"].get<std::string>();
+        auto drop_amount = drop["amount"].get<unsigned char>();
+        auto drop_tool = drop["tool"].get<std::string>();
+
+        tile_defs[id].addDrop({drop_id, drop_tool, drop_amount});
+      }
+    }
   }
 
   // Close
@@ -68,13 +78,10 @@ int TileTypeManager::loadTiles(const std::string& path) {
 }
 
 // Returns tile at ID
-TileType& TileTypeManager::getTileById(int tileID) {
-  for (auto& tile : tile_defs) {
-    if (tile.getId() == tileID) {
-      return tile;
-    }
+TileType& TileTypeManager::getTile(const std::string& id) {
+  if (!tile_defs.contains(id)) {
+    throw std::runtime_error("Tile not found with id: " + id + ".");
   }
 
-  // Throw error if tile not found
-  throw std::runtime_error("Tile not found");
+  return tile_defs[id];
 }

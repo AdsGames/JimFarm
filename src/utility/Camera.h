@@ -2,6 +2,7 @@
 #define SRC_UTILITY_CAMERA_H_
 
 #include "Quad.h"
+#include "Vec2.h"
 
 class Camera {
  public:
@@ -11,14 +12,12 @@ class Camera {
   void setZoom(float zoom);
   float getZoom() const;
 
-  void translate(int x, int y);
-  void pan(int x, int y);
+  void pan(Vec2<int> pos_to);
 
-  int getWidth() const;
-  int getHeight() const;
+  Vec2<int> getSize() const;
 
-  int getX() const;
-  int getY() const;
+  Vec2<int> getPosition() const;
+  Vec2<int> getCenter() const;
 
   const Quad<int>& getBounds() const;
 

@@ -2,11 +2,11 @@
 #define SRC_MENU_H_
 
 #include <asw/asw.h>
+
 #include <vector>
 
-#include "State.h"
-
 #include "Character.h"
+#include "State.h"
 #include "Tile.h"
 
 enum class MenuState {
@@ -19,7 +19,6 @@ enum class MenuState {
 class Menu : public State {
  public:
   Menu();
-  ~Menu() final = default;
 
   void draw() override;
 

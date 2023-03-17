@@ -7,8 +7,8 @@
 #ifndef TILE_TYPE_MANAGER_H
 #define TILE_TYPE_MANAGER_H
 
+#include <map>
 #include <string>
-#include <vector>
 
 #include "../ui/UiController.h"
 #include "TileType.h"
@@ -19,13 +19,13 @@ class TileTypeManager {
   static int loadTiles(const std::string& path);
 
   // Allows communication
-  static TileType& getTileById(int tileID);
+  static TileType& getTile(const std::string& id);
 
   static asw::Texture sprite_sheet_tiles;
   static asw::Texture sprite_sheet_items;
 
  private:
-  static std::vector<TileType> tile_defs;
+  static std::map<std::string, TileType> tile_defs;
 };
 
 #endif  // TILE_TYPE_MANAGER_H

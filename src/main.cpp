@@ -1,31 +1,40 @@
 #include <asw/asw.h>
+
+#include <array>
 #include <chrono>
-#include <memory>
+#include <numeric>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #include <emscripten/html5.h>
 #endif
 
-#include "World.h"
-
 #include "State.h"
+#include "World.h"
 
 // Images
 using namespace std::chrono_literals;
 using namespace std::chrono;
 constexpr nanoseconds timestep(16ms);
+constexpr nanoseconds fps_count(100ms);
+
+// State engine
+StateEngine game_state;
+
+asw::Font font = nullptr;
 
 // Setup game
 void setup() {
   // Load allegro library
   asw::core::init(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, 2);
+
+  font = asw::assets::loadFont("assets/fonts/pixelart.ttf", 12);
 }
 
 /*********************
  *   Update logic
  *********************/
-void update(StateEngine& game_state) {
+void update() {
   // Update core
   asw::core::update();
 
@@ -41,12 +50,15 @@ void update(StateEngine& game_state) {
 /*********************
  *  Draw to screen
  *********************/
-void draw(StateEngine& game_state) {
+void draw(int fps) {
   // Clear screen
   asw::draw::clearColor(asw::util::makeColor(0, 0, 0, 255));
 
   // Draw game state
   game_state.draw();
+
+  asw::draw::text(font, "FPS: " + std::to_string(fps), 0, 0,
+                  asw::util::makeColor(255, 255, 255));
 
   // Update screen
   SDL_RenderPresent(asw::display::renderer);
@@ -56,17 +68,14 @@ void draw(StateEngine& game_state) {
 #ifdef __EMSCRIPTEN__
 void loop() {
   update();
-  draw();
+  draw(0);
 }
 #endif
 
-// Main function*/
+// Main function
 int main(int argc, char* argv[]) {
   // Setup basic functionality
   setup();
-
-  // State engine
-  StateEngine game_state;
 
   // Set the current state ID
   game_state.setNextState(ProgramState::MENU);
@@ -76,20 +85,45 @@ int main(int argc, char* argv[]) {
 #else
 
   using clock = high_resolution_clock;
-  nanoseconds lag(0ns);
-  auto time_start = clock::now();
+  nanoseconds accumulator(0ns);
+  auto current_time = clock::now();
+
+  // FPS
+  auto frame_acc = 0ns;
+  auto frame_buff = std::array<int, 10>();
+  auto frame_buff_index = 0;
+  auto frames = 0;
+  auto fps = 0;
 
   while (!asw::core::exit) {
-    auto delta_time = clock::now() - time_start;
-    time_start = clock::now();
-    lag += duration_cast<nanoseconds>(delta_time);
+    auto new_time = clock::now();
+    auto delta_time = new_time - current_time;
+    current_time = new_time;
 
-    while (lag >= timestep) {
-      lag -= timestep;
-      update(game_state);
+    accumulator += duration_cast<nanoseconds>(delta_time);
+
+    // FPS calculation
+    frame_acc += duration_cast<nanoseconds>(delta_time);
+
+    // Calculate FPS every 100ms
+    if (frame_acc >= fps_count) {
+      frame_buff[frame_buff_index] = frames;
+      frame_buff_index = (frame_buff_index + 1) % frame_buff.size();
+      frames = 0;
+      frame_acc -= fps_count;
+
+      fps = std::accumulate(std::begin(frame_buff), std::end(frame_buff), 0);
+      fps = fps * (1s / fps_count) / frame_buff.size();
     }
 
-    draw(game_state);
+    while (accumulator >= timestep) {
+      accumulator -= timestep;
+      update();
+    }
+
+    frames += 1;
+
+    draw(fps);
   }
 #endif
 

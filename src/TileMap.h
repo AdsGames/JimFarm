@@ -10,6 +10,7 @@
 #include "Chunk.h"
 #include "Item.h"
 #include "Tile.h"
+#include "utility/Vec2.h"
 
 class TileMap {
  public:
@@ -20,40 +21,35 @@ class TileMap {
   /**
    * @brief Get the Biome at tile position x, y
    *
-   * @param x Tile x position in tile coordinates
-   * @param y Tile y position in tile coordinates
+   * @param pos Position in tile coordinates
    * @return std::string Biome name
    */
-  std::string getBiomeAt(int x, int y);
+  std::string getBiomeAt(Vec2<int> pos);
 
   /**
    * @brief Get the Temperature at tile position x, y
    *
-   * @param x Tile x position in tile coordinates
-   * @param y Tile y position in tile coordinates
+   * @param pos Position in tile coordinates
    * @return char Temperature
    */
-  char getTemperatureAt(int x, int y);
+  char getTemperatureAt(Vec2<int> pos);
 
   /**
    * @brief Get the Tile position and layer
    *
-   * @param x Tile x position in tile coordinates
-   * @param y Tile y position in tile coordinates
+   * @param pos Position in tile coordinates
    * @param layer Tile layer (z)
    * @return std::shared_ptr<Tile> Tile, if found
    */
-  std::shared_ptr<Tile> getTileAt(int x, int y, int layer);
+  std::shared_ptr<Tile> getTileAt(Vec2<int> pos, int layer);
 
   void placeTile(std::shared_ptr<Tile> tile);
-  void replaceTile(std::shared_ptr<Tile> tile_old,
-                   std::shared_ptr<Tile> tile_new);
   void removeTile(std::shared_ptr<Tile> tile);
-  bool isSolidAt(int x, int y);
+  bool isSolidAt(Vec2<int> pos);
 
   // Items
-  std::shared_ptr<MapItem> getItemAt(int x, int y);
-  void placeItemAt(std::shared_ptr<Item> item, int x, int y);
+  std::shared_ptr<MapItem> getItemAt(Vec2<int> pos);
+  void placeItemAt(std::shared_ptr<Item> item, Vec2<int> pos);
   void removeItem(std::shared_ptr<MapItem> item);
 
   // Update
@@ -67,15 +63,14 @@ class TileMap {
   /**
    * @brief Get the Chunk at position x, y
    *
-   * @param x X in tile coordinates
-   * @param y Y in tile coordinates
+   * @param pos Chunk position in chunk coordinates
    * @return std::shared_ptr<Chunk> Chunk, if found
    */
-  std::shared_ptr<Chunk> getChunkAt(int x, int y);
+  std::shared_ptr<Chunk> getChunkAt(Vec2<int> pos);
 
   // Bitmasks
   void updateBitMask(std::shared_ptr<Tile> tile);
-  void updateBitmaskSurround(int x, int y, int z);
+  void updateBitmaskSurround(Vec2<int> pos, int z);
 
   // Size
   int width{1};

@@ -21,13 +21,12 @@ size_t Messenger::messageCount() const {
   return msgs.size();
 }
 
-void Messenger::draw(int x, int y) {
+void Messenger::draw(int x, int y) const {
   int offset = 0;
-  auto num_messages = messageCount();
   auto font_size = asw::util::getTextSize(pixelart, " ");
 
-  for (auto i = num_messages - 1; i > -1; i--) {
-    asw::draw::text(pixelart, ">" + msgs.at(i), x, y + offset, font_color);
+  for (const auto& i : msgs) {
+    asw::draw::text(pixelart, ">" + i, x, y + offset, font_color);
 
     if (top_down) {
       offset += font_size.y + padding;

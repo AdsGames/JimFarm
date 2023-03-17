@@ -1,16 +1,12 @@
 #include "UiController.h"
+
+#include "../utility/Tools.h"
 #include "UiLabel.h"
 #include "UiSlot.h"
 
-#include "../manager/item_defs.h"
-#include "../utility/Tools.h"
-
-#include <math.h>
-
 std::shared_ptr<ItemStack> UiController::mouse_item = nullptr;
 
-UiController::UiController(int width, int height)
-    : width(width), height(height) {
+UiController::UiController(Vec2<int> size) : size(size) {
   // Create inventory
   this->inv = std::make_shared<Inventory>();
 
@@ -42,16 +38,17 @@ void UiController::draw() {
   auto screenSize = asw::display::getLogicalSize();
 
   // Caulculate x and y
-  x = (screenSize.x - width) / 2;
-  y = (screenSize.y - height) / 2;
+  position = (Vec2<int>(screenSize.x, screenSize.y) - size) / 2;
 
   // Background
-  asw::draw::rectFill(x, y, width, height, asw::util::makeColor(128, 128, 128));
-  asw::draw::rect(x, y, width, height, asw::util::makeColor(64, 64, 64));
+  asw::draw::rectFill(position.x, position.y, size.x, size.y,
+                      asw::util::makeColor(128, 128, 128));
+  asw::draw::rect(position.x, position.y, size.x, size.y,
+                  asw::util::makeColor(64, 64, 64));
 
   // Draw elements
   for (auto const& element : elements) {
-    element->draw(x, y);
+    element->draw(position);
   }
 
   // Cursor
@@ -60,17 +57,14 @@ void UiController::draw() {
 
   // Item, if holding
   if (mouse_item && mouse_item->getItem()) {
-    mouse_item->draw(asw::input::mouse.x, asw::input::mouse.y);
+    mouse_item->draw(Vec2<int>(asw::input::mouse.x, asw::input::mouse.y));
   }
 }
 
 void UiController::update() {
   if (asw::input::mouse.pressed[1] || asw::input::mouse.pressed[3]) {
-    int trans_x = asw::input::mouse.x;
-    int trans_y = asw::input::mouse.y;
-
     // Element at position
-    auto elem = elementAt(trans_x, trans_y);
+    auto elem = elementAt(Vec2<int>(asw::input::mouse.x, asw::input::mouse.y));
 
     // Check if move
     if (elem == nullptr) {
@@ -95,7 +89,8 @@ void UiController::update() {
       } else if (item && !(stack->getItem())) {
         stack->setItem(item, mouse_item->getQuantity());
         mouse_item->clear();
-      } else if (item && stack->getItem()->getId() == item->getId()) {
+      } else if (item && stack->getItem()->getType().getId() ==
+                             item->getType().getId()) {
         stack->add(mouse_item->getQuantity());
         mouse_item->clear();
       }
@@ -107,7 +102,8 @@ void UiController::update() {
       } else if (item && !(stack->getItem())) {
         stack->setItem(item, 1);
         mouse_item->remove(1);
-      } else if (item && stack->getItem()->getId() == item->getId()) {
+      } else if (item && stack->getItem()->getType().getId() ==
+                             item->getType().getId()) {
         stack->add(1);
         mouse_item->remove(1);
       }
@@ -115,15 +111,16 @@ void UiController::update() {
   }
 }
 
-std::shared_ptr<UiElement> UiController::elementAt(int at_x, int at_y) {
-  int trans_x = at_x - this->x;
-  int trans_y = at_y - this->y;
+std::shared_ptr<UiElement> UiController::elementAt(Vec2<int> at_pos) const {
+  int trans_x = at_pos.x - this->position.x;
+  int trans_y = at_pos.y - this->position.y;
 
   for (auto const& element : elements) {
-    if (element->getX() < trans_x &&
-        element->getX() + element->getWidth() > trans_x &&
-        element->getY() < trans_y &&
-        element->getY() + element->getHeight() > trans_y) {
+    auto el_pos = element->getPosition();
+    auto el_size = element->getSize();
+
+    if (el_pos.x < trans_x && el_pos.x + el_size.x > trans_x &&
+        el_pos.y < trans_y && el_pos.y + el_size.y > trans_y) {
       return element;
     }
   }

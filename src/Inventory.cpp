@@ -3,8 +3,9 @@
 // Push item to contents (if it fits)
 bool Inventory::addItem(std::shared_ptr<Item> item, int quantity) {
   // Null item
-  if (item == nullptr)
+  if (item == nullptr) {
     return false;
+  }
 
   // Stack
   auto stk = findStack(item);
@@ -56,7 +57,7 @@ std::shared_ptr<ItemStack> Inventory::findStack(
     std::shared_ptr<Item> item) const {
   for (auto const& content : contents) {
     if (content && content->getItem()) {
-      if (content->getItem()->getId() == item->getId()) {
+      if (content->getItem()->getType().getId() == item->getType().getId()) {
         return content;
       }
     }
