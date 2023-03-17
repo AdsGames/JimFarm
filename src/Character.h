@@ -23,7 +23,6 @@ class CharacterForeground : public Sprite {
  public:
   explicit CharacterForeground(Character* charPtr);
 
-  ~CharacterForeground() final = default;
 
   void draw(const Camera& camera) const override;
 
@@ -38,7 +37,6 @@ class Character : public Sprite {
   // Ctor and dtor
   Character();
 
-  ~Character() final = default;
 
   // Load images and samples
   void loadData();

@@ -88,8 +88,6 @@ class TileType {
 
   asw::Texture sprite_sheet{nullptr};
 
-  std::array<asw::Texture, 16> images{};
-
   std::vector<TileTypeDrop> drops{};
 };
 

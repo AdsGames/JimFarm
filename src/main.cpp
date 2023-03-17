@@ -18,6 +18,9 @@ using namespace std::chrono;
 constexpr nanoseconds timestep(16ms);
 constexpr nanoseconds fps_count(100ms);
 
+// State engine
+StateEngine game_state;
+
 asw::Font font = nullptr;
 
 // Setup game
@@ -31,7 +34,7 @@ void setup() {
 /*********************
  *   Update logic
  *********************/
-void update(StateEngine& game_state) {
+void update() {
   // Update core
   asw::core::update();
 
@@ -47,7 +50,7 @@ void update(StateEngine& game_state) {
 /*********************
  *  Draw to screen
  *********************/
-void draw(StateEngine& game_state, int fps) {
+void draw(int fps) {
   // Clear screen
   asw::draw::clearColor(asw::util::makeColor(0, 0, 0, 255));
 
@@ -65,7 +68,7 @@ void draw(StateEngine& game_state, int fps) {
 #ifdef __EMSCRIPTEN__
 void loop() {
   update();
-  draw();
+  draw(0);
 }
 #endif
 
@@ -73,9 +76,6 @@ void loop() {
 int main(int argc, char* argv[]) {
   // Setup basic functionality
   setup();
-
-  // State engine
-  StateEngine game_state;
 
   // Set the current state ID
   game_state.setNextState(ProgramState::MENU);
@@ -118,12 +118,12 @@ int main(int argc, char* argv[]) {
 
     while (accumulator >= timestep) {
       accumulator -= timestep;
-      update(game_state);
+      update();
     }
 
     frames += 1;
 
-    draw(game_state, fps);
+    draw(fps);
   }
 #endif
 

@@ -19,7 +19,6 @@ enum class MenuState {
 class Menu : public State {
  public:
   Menu();
-  ~Menu() final = default;
 
   void draw() override;
 

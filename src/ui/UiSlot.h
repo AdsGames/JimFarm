@@ -12,7 +12,6 @@ class UiSlot : public UiElement {
  public:
   explicit UiSlot(Vec2<int> pos);
   UiSlot(Vec2<int> pos, std::shared_ptr<ItemStack> stk);
-  ~UiSlot() final = default;
 
   void bindStack(std::shared_ptr<ItemStack> stk);
 

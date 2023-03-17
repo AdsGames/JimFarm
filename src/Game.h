@@ -10,7 +10,6 @@
 class Game : public State {
  public:
   Game();
-  ~Game() final = default;
 
   void update(StateEngine* engine) override;
   void draw() override;

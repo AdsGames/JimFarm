@@ -16,7 +16,7 @@ constexpr int TILE_SIZE = 16;
 class Tile : public Sprite {
  public:
   Tile(const std::string& id, Vec2<int> pos, int z, unsigned char meta = 0);
-  ~Tile() final = default;
+  virtual ~Tile() = default;
 
   Vec2<int> getTilePosition() const;
 

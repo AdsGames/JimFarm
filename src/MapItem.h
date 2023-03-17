@@ -8,7 +8,6 @@
 class MapItem : public Sprite {
  public:
   MapItem(Vec2<int> position, std::shared_ptr<Item> itemPtr);
-  ~MapItem() final = default;
 
   void draw(const Camera& camera) const override;
 
