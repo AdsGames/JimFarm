@@ -43,7 +43,7 @@ class TileType {
   unsigned char getHeight() const { return height; }
 
   // Draw
-  void draw(int x, int y, unsigned char meta = 0);
+  void draw(int x, int y, unsigned char meta = 0) const;
 
   // Set sprite sheet
   void setSpriteSheet(asw::Texture spriteSheet);

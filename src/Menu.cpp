@@ -38,7 +38,7 @@ void Menu::draw() {
     asw::draw::stretchSprite(options_image, 0, 0, screenSize.x, screenSize.y);
     drawSlider(90, 50, music_volume, "Music Volume");
     asw::draw::stretchSpriteBlit(options_indicator, 9 * (coin_frame / 5), 0, 9,
-                                 9, 60, 102 - (indicator_location * 22), 18,
+                                 9, 60, 102 - (settings_indicator * 22), 18,
                                  18);
   }
 }
@@ -57,20 +57,20 @@ void Menu::drawSlider(int x, int y, int value, const std::string& title) const {
 
 void Menu::update(StateEngine* engine) {
   tick++;
+
   if (state == MenuState::MAIN_MENU) {
     if ((asw::input::keyboard.down[SDL_SCANCODE_SPACE] ||
          asw::input::keyboard.down[SDL_SCANCODE_LCTRL] ||
          asw::input::keyboard.down[SDL_SCANCODE_RETURN]) &&
         tick > 10) {
       tick = 0;
+
       if (indicator_location == 4) {
         asw::sound::play(blip);
         setNextState(engine, ProgramState::GAME);
-        return;
       } else if (indicator_location == 3) {
-        asw::sound::play(blip);
         state = MenuState::OPTIONS;
-        indicator_location = 1;
+        asw::sound::play(blip);
       } else if (indicator_location == 2) {
         state = MenuState::HELP;
         asw::sound::play(blip);
@@ -79,7 +79,6 @@ void Menu::update(StateEngine* engine) {
         asw::sound::play(blip);
       } else if (indicator_location == 0) {
         setNextState(engine, ProgramState::EXIT);
-        return;
       }
     }
 
@@ -88,50 +87,46 @@ void Menu::update(StateEngine* engine) {
       tick = 0;
       indicator_location--;
     }
+
     if (asw::input::keyboard.down[SDL_SCANCODE_UP] && tick > 10) {
       asw::sound::play(blip);
       tick = 0;
       indicator_location++;
     }
+
     if (indicator_location > 4) {
       indicator_location = 0;
     }
+
     if (indicator_location < 0) {
       indicator_location = 4;
     }
   }
+
   if (state == MenuState::OPTIONS) {
-    if (asw::input::keyboard.down[SDL_SCANCODE_DOWN] && tick > 10) {
+    if (asw::input::keyboard.pressed[SDL_SCANCODE_DOWN] &&
+        settings_indicator > 1) {
       asw::sound::play(blip);
-      tick = 0;
-      indicator_location--;
+      settings_indicator--;
     }
-    if (asw::input::keyboard.down[SDL_SCANCODE_UP] && tick > 10) {
+
+    if (asw::input::keyboard.pressed[SDL_SCANCODE_UP] &&
+        settings_indicator < 1) {
       asw::sound::play(blip);
-      tick = 0;
-      indicator_location++;
+      settings_indicator++;
     }
-    if (asw::input::keyboard.down[SDL_SCANCODE_RIGHT] && tick > 1) {
-      if (indicator_location == 1) {
-        // asw::sound::play(blip,255,125,1000,0);
-        tick = 0;
-        music_volume++;
-      }
+
+    if (asw::input::keyboard.down[SDL_SCANCODE_RIGHT] &&
+        settings_indicator == 1 && music_volume < 100) {
+      music_volume++;
     }
-    if (asw::input::keyboard.down[SDL_SCANCODE_LEFT] && tick > 1) {
-      if (indicator_location == 1) {
-        // asw::sound::play(blip,255,125,1000,0);
-        tick = 0;
-        music_volume--;
-      }
-    }
-    if (music_volume > 100) {
-      music_volume = 100;
-    }
-    if (music_volume < 0) {
-      music_volume = 0;
+
+    if (asw::input::keyboard.down[SDL_SCANCODE_LEFT] &&
+        settings_indicator == 1 && music_volume > 0) {
+      music_volume--;
     }
   }
+
   // Coin spin
   if (!coin_direction) {
     coin_frame++;
@@ -147,13 +142,11 @@ void Menu::update(StateEngine* engine) {
     coin_direction = false;
   }
 
-  if ((state == MenuState::HELP || state == MenuState::STORY) &&
+  if ((state == MenuState::HELP || state == MenuState::STORY ||
+       state == MenuState::OPTIONS) &&
       (asw::input::keyboard.down[SDL_SCANCODE_SPACE] ||
        asw::input::keyboard.down[SDL_SCANCODE_LCTRL] ||
-       asw::input::keyboard.down[SDL_SCANCODE_UP] ||
-       asw::input::keyboard.down[SDL_SCANCODE_DOWN] ||
-       asw::input::keyboard.down[SDL_SCANCODE_LEFT] ||
-       asw::input::keyboard.down[SDL_SCANCODE_RIGHT]) &&
+       asw::input::keyboard.down[SDL_SCANCODE_M]) &&
       tick > 10) {
     asw::sound::play(blip);
     tick = 0;

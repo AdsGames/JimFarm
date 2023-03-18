@@ -24,12 +24,12 @@ class UiController {
  private:
   std::shared_ptr<UiElement> elementAt(Vec2<int> pos) const;
 
-  std::shared_ptr<Inventory> inv;
+  std::shared_ptr<Inventory> inv{nullptr};
 
-  Vec2<int> size;
-  Vec2<int> position;
+  Vec2<int> size{0, 0};
+  Vec2<int> position{0, 0};
 
-  std::vector<std::shared_ptr<UiElement>> elements;
+  std::vector<std::shared_ptr<UiElement>> elements{};
 
   static std::shared_ptr<ItemStack> mouse_item;
 

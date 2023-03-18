@@ -1,7 +1,5 @@
 #include "Character.h"
 
-#include <math.h>
-
 #include "Graphics.h"
 #include "manager/TileTypeManager.h"
 #include "utility/Tools.h"

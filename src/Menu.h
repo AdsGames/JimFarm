@@ -31,6 +31,7 @@ class Menu : public State {
   int coin_frame{0};
   bool coin_direction{false};
   int indicator_location{4};
+  int settings_indicator{1};
   int music_volume{100};
 
   // Fonts
