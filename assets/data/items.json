@@ -1,0 +1,170 @@
+[
+  {
+    "id": "item:hand",
+    "name": "hand",
+    "image_x": 0,
+    "image_y": 0,
+    "value": 0
+  },
+  {
+    "id": "item:hoe",
+    "name": "hoe",
+    "image_x": 3,
+    "image_y": 1,
+    "value": 10
+  },
+  {
+    "id": "item:scythe",
+    "name": "scythe",
+    "image_x": 0,
+    "image_y": 1,
+    "value": 20
+  },
+  {
+    "id": "item:watering_can",
+    "name": "watering can",
+    "image_x": 2,
+    "image_y": 1,
+    "value": 20
+  },
+  {
+    "id": "item:axe",
+    "name": "axe",
+    "image_x": 4,
+    "image_y": 1,
+    "value": 20
+  },
+  {
+    "id": "item:shovel",
+    "name": "shovel",
+    "image_x": 1,
+    "image_y": 1,
+    "value": 20
+  },
+  {
+    "id": "item:chicken",
+    "name": "chicken",
+    "image_x": 3,
+    "image_y": 0,
+    "value": 30
+  },
+  {
+    "id": "item:egg",
+    "name": "egg",
+    "image_x": 1,
+    "image_y": 0,
+    "value": 2
+  },
+  {
+    "id": "item:berry_seed",
+    "name": "berry seed",
+    "image_x": 0,
+    "image_y": 2,
+    "value": 1
+  },
+  {
+    "id": "item:berry",
+    "name": "berry",
+    "image_x": 0,
+    "image_y": 3,
+    "value": 2
+  },
+  {
+    "id": "item:tomato_seed",
+    "name": "tomato seed",
+    "image_x": 1,
+    "image_y": 2,
+    "value": 2
+  },
+  {
+    "id": "item:tomato",
+    "name": "tomato",
+    "image_x": 1,
+    "image_y": 3,
+    "value": 5
+  },
+  {
+    "id": "item:carrot_seed",
+    "name": "carrot seed",
+    "image_x": 2,
+    "image_y": 2,
+    "value": 5
+  },
+  {
+    "id": "item:carrot",
+    "name": "carrot",
+    "image_x": 2,
+    "image_y": 3,
+    "value": 15
+  },
+  {
+    "id": "item:lavender_seed",
+    "name": "lavender seed",
+    "image_x": 3,
+    "image_y": 2,
+    "value": 15
+  },
+  {
+    "id": "item:lavender",
+    "name": "lavender",
+    "image_x": 3,
+    "image_y": 3,
+    "value": 25
+  },
+  {
+    "id": "item:stick",
+    "name": "stick",
+    "image_x": 2,
+    "image_y": 0,
+    "value": 1
+  },
+  {
+    "id": "item:wood",
+    "name": "wood",
+    "image_x": 4,
+    "image_y": 0,
+    "value": 1
+  },
+  {
+    "id": "item:hay",
+    "name": "hay",
+    "image_x": 5,
+    "image_y": 0,
+    "value": 1
+  },
+  {
+    "id": "item:stone",
+    "name": "stone",
+    "image_x": 6,
+    "image_y": 0,
+    "value": 1
+  },
+  {
+    "id": "item:sapling",
+    "name": "sapling",
+    "image_x": 7,
+    "image_y": 0,
+    "value": 1
+  },
+  {
+    "id": "item:plank",
+    "name": "plank",
+    "image_x": 5,
+    "image_y": 1,
+    "value": 1
+  },
+  {
+    "id": "item:grass",
+    "name": "grass",
+    "image_x": 6,
+    "image_y": 1,
+    "value": 1
+  },
+  {
+    "id": "item:sand",
+    "name": "sand",
+    "image_x": 7,
+    "image_y": 1,
+    "value": 1
+  }
+]

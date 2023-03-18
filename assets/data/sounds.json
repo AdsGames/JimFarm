@@ -1,0 +1,74 @@
+[
+  {
+    "id": 0,
+    "name": "error",
+    "file": "error.wav",
+    "volume": 255,
+    "panning": 128,
+    "frequency": 1000,
+    "frequency_rand": 0
+  },
+  {
+    "id": 1,
+    "name": "egg",
+    "file": "egg.wav",
+    "volume": 255,
+    "panning": 128,
+    "frequency": 1000,
+    "frequency_rand": 0
+  },
+  {
+    "id": 2,
+    "name": "hoe",
+    "file": "hoe.wav",
+    "volume": 255,
+    "panning": 128,
+    "frequency": 1000,
+    "frequency_rand": 0
+  },
+  {
+    "id": 3,
+    "name": "axe",
+    "file": "cut_axe.wav",
+    "volume": 255,
+    "panning": 128,
+    "frequency": 1000,
+    "frequency_rand": 0
+  },
+  {
+    "id": 4,
+    "name": "scythe",
+    "file": "cut_scythe.wav",
+    "volume": 255,
+    "panning": 128,
+    "frequency": 1000,
+    "frequency_rand": 0
+  },
+  {
+    "id": 5,
+    "name": "shovel",
+    "file": "dig.wav",
+    "volume": 255,
+    "panning": 128,
+    "frequency": 1000,
+    "frequency_rand": 0
+  },
+  {
+    "id": 6,
+    "name": "water fill",
+    "file": "water_fill.wav",
+    "volume": 255,
+    "panning": 128,
+    "frequency": 1000,
+    "frequency_rand": 0
+  },
+  {
+    "id": 7,
+    "name": "water pour",
+    "file": "water_pour.wav",
+    "volume": 255,
+    "panning": 128,
+    "frequency": 1000,
+    "frequency_rand": 0
+  }
+]
