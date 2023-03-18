@@ -14,7 +14,7 @@ Vec2<int> Sprite::getPosition() const {
   return this->pos;
 }
 
-int Sprite::getZ() const {
+float Sprite::getZ() const {
   return this->z;
 }
 

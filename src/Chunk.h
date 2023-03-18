@@ -10,12 +10,12 @@
 #include "Tile.h"
 #include "utility/Vec2.h"
 
-constexpr int CHUNK_SIZE = 16;
-constexpr int CHUNK_LAYERS = 3;
+constexpr unsigned int CHUNK_SIZE = 16;
+constexpr unsigned int CHUNK_LAYERS = 3;
 
-constexpr int LAYER_BACKGROUND = 0;
-constexpr int LAYER_MIDGROUND = 1;
-constexpr int LAYER_FOREGROUND = 2;
+constexpr unsigned int LAYER_BACKGROUND = 0;
+constexpr unsigned int LAYER_MIDGROUND = 1;
+constexpr unsigned int LAYER_FOREGROUND = 2;
 
 class Chunk {
  public:

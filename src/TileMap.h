@@ -56,7 +56,7 @@ class TileMap {
   void tick(const Camera& camera) const;
 
   // Loading
-  void generateMap();
+  void generateMap(Vec2<unsigned int> size);
   void clearMap();
 
  private:
@@ -73,8 +73,7 @@ class TileMap {
   void updateBitmaskSurround(Vec2<int> pos, int z);
 
   // Size
-  int width{1};
-  int height{1};
+  Vec2<unsigned int> size{0, 0};
 
   // Chunks
   std::vector<std::vector<std::shared_ptr<Chunk>>> chunks;

@@ -26,25 +26,6 @@ class Vec2 {
   Vec2() : x(0), y(0) {}
 
   /**
-   * @brief Construct a new Vec 2 object from another Vec2 object
-   *
-   * @param other The other Vec2 object
-   */
-  Vec2(const Vec2& other) : x(other.x), y(other.y) {}
-
-  /**
-   * @brief Copy assignment operator
-   *
-   * @param other The other Vec2 object
-   * @return Vec2&
-   */
-  Vec2& operator=(const Vec2& other) {
-    x = other.x;
-    y = other.y;
-    return *this;
-  }
-
-  /**
    * @brief Addition assignment operator
    *
    * @param other The other Vec2 object

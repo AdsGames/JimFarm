@@ -2,6 +2,7 @@
 
 #include <array>
 #include <chrono>
+#include <iostream>
 #include <numeric>
 
 #ifdef __EMSCRIPTEN__
@@ -27,6 +28,8 @@ asw::Font font = nullptr;
 void setup() {
   // Load allegro library
   asw::core::init(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, 2);
+
+  asw::core::print_info();
 
   font = asw::assets::loadFont("assets/fonts/pixelart.ttf", 12);
 }
@@ -74,6 +77,10 @@ void loop() {
 
 // Main function
 int main(int argc, char* argv[]) {
+  // Required for mac compatibility
+  (void)argc;
+  (void)argv;
+
   // Setup basic functionality
   setup();
 

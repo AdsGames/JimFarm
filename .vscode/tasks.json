@@ -9,7 +9,7 @@
       "detail": "Run and build jim farm",
       "command": "cmake --build . && cd build && ./JimFarm",
       "windows": {
-        "command": "make -j24 && cd build && JimFarm.exe"
+        "command": "cmake --build . && cd build && JimFarm.exe"
       },
       "group": "build",
       "problemMatcher": "$gcc"

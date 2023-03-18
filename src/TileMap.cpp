@@ -12,11 +12,11 @@ const std::array<std::pair<int, int>, 4> TileMap::BITMASK_DIRECTIONS = {
 
 // Size
 int TileMap::getWidth() const {
-  return width * CHUNK_SIZE;
+  return size.x * CHUNK_SIZE;
 }
 
 int TileMap::getHeight() const {
-  return height * CHUNK_SIZE;
+  return size.y * CHUNK_SIZE;
 }
 
 // Chunk lookup
@@ -24,11 +24,11 @@ std::shared_ptr<Chunk> TileMap::getChunkAt(Vec2<int> pos) {
   auto offset_x = pos.x / CHUNK_SIZE;
   auto offset_y = pos.y / CHUNK_SIZE;
 
-  if (offset_y < 0 || offset_y >= (signed)chunks.size()) {
+  if (offset_y >= chunks.size()) {
     return nullptr;
   }
 
-  if (offset_x < 0 || offset_x >= (signed)chunks[offset_y].size()) {
+  if (offset_x >= chunks[offset_y].size()) {
     return nullptr;
   }
 
@@ -156,10 +156,14 @@ void TileMap::tick(const Camera& camera) const {
 
   for (auto const& y_chunks : chunks) {
     for (auto const& chunk : y_chunks) {
-      if (bounds.x_2 >= (chunk->getXIndex()) * CHUNK_SIZE * TILE_SIZE &&
-          bounds.x_1 <= (chunk->getXIndex() + 1) * CHUNK_SIZE * TILE_SIZE &&
-          bounds.y_2 >= (chunk->getYIndex()) * CHUNK_SIZE * TILE_SIZE &&
-          bounds.y_1 <= (chunk->getYIndex() + 1) * CHUNK_SIZE * TILE_SIZE) {
+      if (static_cast<unsigned int>(bounds.x_2) >=
+              (chunk->getXIndex()) * CHUNK_SIZE * TILE_SIZE &&
+          static_cast<unsigned int>(bounds.x_1) <=
+              (chunk->getXIndex() + 1) * CHUNK_SIZE * TILE_SIZE &&
+          static_cast<unsigned int>(bounds.y_2) >=
+              (chunk->getYIndex()) * CHUNK_SIZE * TILE_SIZE &&
+          static_cast<unsigned int>(bounds.y_1) <=
+              (chunk->getYIndex() + 1) * CHUNK_SIZE * TILE_SIZE) {
         chunk->setDrawEnabled(true);
         chunk->tick();
       } else {
@@ -170,23 +174,21 @@ void TileMap::tick(const Camera& camera) const {
 }
 
 // Generate map
-void TileMap::generateMap() {
-  // Base map
-  width = 8;
-  height = 8;
+void TileMap::generateMap(Vec2<unsigned int> size) {
+  this->size = size;
 
   // Generating chunk
-  std::cout << "Generating World (" << width << "," << height << ")...  ";
+  std::cout << "Generating World (" << size.x << "," << size.y << ")...  ";
 
   // Create some chunks
   Chunk::seed = random(-10000, 10000);
 
-  for (unsigned int t = 0; t < (unsigned)height; t++) {
+  for (unsigned int t = 0; t < size.y; t++) {
     if (chunks.size() <= t) {
       chunks.emplace_back();
     }
 
-    for (int i = 0; i < width; i++) {
+    for (unsigned int i = 0; i < size.x; i++) {
       chunks[t].push_back(std::make_shared<Chunk>(i, t));
     }
   }
@@ -196,9 +198,9 @@ void TileMap::generateMap() {
   std::cout << "Updating bitmasks...  ";
 
   // Update masks
-  for (int x = 0; x < width * CHUNK_SIZE; x++) {
-    for (int y = 0; y < height * CHUNK_SIZE; y++) {
-      for (int z = 0; z < CHUNK_LAYERS; z++) {
+  for (unsigned int x = 0; x < size.x * CHUNK_SIZE; x++) {
+    for (unsigned int y = 0; y < size.y * CHUNK_SIZE; y++) {
+      for (unsigned int z = 0; z < CHUNK_LAYERS; z++) {
         updateBitMask(getTileAt(Vec2<int>(x, y), z));
       }
     }

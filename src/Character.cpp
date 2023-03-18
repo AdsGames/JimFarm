@@ -7,7 +7,7 @@
 // Top of head
 CharacterForeground::CharacterForeground(Character* charPtr)
     : Sprite(), char_ptr(charPtr) {
-  this->z = 5;
+  this->z = 2.5f;
 }
 
 void CharacterForeground::draw(const Camera& camera) const {
@@ -26,9 +26,9 @@ void CharacterForeground::update() {
 
 // Ctor for character
 Character::Character() : Sprite() {
-  this->z = 2;
+  this->z = 1.5f;
   c_fore = std::make_shared<CharacterForeground>(this);
-  Graphics::Instance()->add(c_fore);
+  Graphics::Instance()->add(c_fore, true);
 }
 
 // Set image

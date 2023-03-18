@@ -15,7 +15,7 @@ Game::Game() {
   jim = std::make_shared<Character>();
   jim->setPosition(Vec2<int>(15, 15) * TILE_SIZE);
   jim->loadData();
-  Graphics::Instance()->add(jim);
+  Graphics::Instance()->add(jim, true);
 }
 
 void Game::update(StateEngine* engine) {
