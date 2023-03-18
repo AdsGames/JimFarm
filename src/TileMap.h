@@ -56,7 +56,7 @@ class TileMap {
   void tick(const Camera& camera) const;
 
   // Loading
-  void generateMap();
+  void generateMap(Vec2<unsigned int> size);
   void clearMap();
 
  private:

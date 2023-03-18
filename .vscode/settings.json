@@ -93,7 +93,8 @@
     "__tuple": "cpp",
     "ios": "cpp",
     "locale": "cpp",
-    "stack": "cpp"
+    "stack": "cpp",
+    "span": "cpp"
   },
   "sonarlint.pathToCompileCommands": "${workspaceFolder}/compile_commands.json"
 }

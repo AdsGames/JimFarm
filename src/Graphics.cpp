@@ -1,7 +1,6 @@
 #include "Graphics.h"
 
 #include <algorithm>
-#include <iostream>
 
 std::shared_ptr<Graphics> Graphics::instance = nullptr;
 
@@ -17,6 +16,7 @@ std::shared_ptr<Graphics> Graphics::Instance() {
 // Add sprites
 void Graphics::add(std::shared_ptr<Sprite> sprite) {
   sprites[sprite->getSpriteId()] = sprite;
+  sorted_sprites.insert(sprite);
 }
 
 // Remove sprites
@@ -27,13 +27,17 @@ void Graphics::remove(std::shared_ptr<Sprite> sprite) {
 void Graphics::prune() {
   std::erase_if(sprites,
                 [](const auto& sprite) { return sprite.second.expired(); });
+
+  std::erase_if(sorted_sprites, [this](const auto& sprite) {
+    return sprite.expired() ||
+           !this->sprites.contains(sprite.lock()->getSpriteId());
+  });
 }
 
 void Graphics::draw(const Camera& camera) const {
-  auto sorted_sprites = std::set<std::weak_ptr<Sprite>, SpriteCmp>{};
   auto& camera_bounds = camera.getBounds();
 
-  for (auto const& [index, sprite] : sprites) {
+  for (auto const& sprite : sorted_sprites) {
     if (sprite.expired()) {
       continue;
     }
@@ -42,11 +46,7 @@ void Graphics::draw(const Camera& camera) const {
     Quad<int> quad(spr_pos.x, spr_pos.y, spr_pos.x + 64, spr_pos.y + 64);
 
     if (camera_bounds.intersects(quad)) {
-      sorted_sprites.insert(sprite);
+      sprite.lock()->draw(camera);
     }
-  }
-
-  for (auto const& sprite : sorted_sprites) {
-    sprite.lock()->draw(camera);
   }
 }

@@ -1,10 +1,10 @@
 #ifndef SRC_GRAPHICS_H_
 #define SRC_GRAPHICS_H_
 
-#include <map>
 #include <memory>
 #include <set>
 #include <string>
+#include <unordered_map>
 
 #include "Sprite.h"
 #include "utility/Camera.h"
@@ -13,7 +13,7 @@ struct SpriteCmp {
   bool operator()(const std::weak_ptr<Sprite>& a,
                   const std::weak_ptr<Sprite>& b) const {
     if (a.expired() || b.expired()) {
-      return false;
+      return true;
     }
 
     if (a.lock()->getZ() != b.lock()->getZ()) {
@@ -43,9 +43,8 @@ class Graphics {
 
  private:
   // Drawable
-  std::map<unsigned int, std::weak_ptr<Sprite>> sprites{};
-
-  bool needs_sorting = false;
+  std::unordered_map<unsigned int, std::weak_ptr<Sprite>> sprites{};
+  std::set<std::weak_ptr<Sprite>, SpriteCmp> sorted_sprites{};
 
   // Single instance
   static std::shared_ptr<Graphics> instance;

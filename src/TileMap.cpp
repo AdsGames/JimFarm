@@ -170,23 +170,19 @@ void TileMap::tick(const Camera& camera) const {
 }
 
 // Generate map
-void TileMap::generateMap() {
-  // Base map
-  width = 8;
-  height = 8;
-
+void TileMap::generateMap(Vec2<unsigned int> size) {
   // Generating chunk
-  std::cout << "Generating World (" << width << "," << height << ")...  ";
+  std::cout << "Generating World (" << size.x << "," << size.y << ")...  ";
 
   // Create some chunks
   Chunk::seed = random(-10000, 10000);
 
-  for (unsigned int t = 0; t < (unsigned)height; t++) {
+  for (unsigned int t = 0; t < size.y; t++) {
     if (chunks.size() <= t) {
       chunks.emplace_back();
     }
 
-    for (int i = 0; i < width; i++) {
+    for (int i = 0; i < size.x; i++) {
       chunks[t].push_back(std::make_shared<Chunk>(i, t));
     }
   }
@@ -196,8 +192,8 @@ void TileMap::generateMap() {
   std::cout << "Updating bitmasks...  ";
 
   // Update masks
-  for (int x = 0; x < width * CHUNK_SIZE; x++) {
-    for (int y = 0; y < height * CHUNK_SIZE; y++) {
+  for (int x = 0; x < size.x * CHUNK_SIZE; x++) {
+    for (int y = 0; y < size.y * CHUNK_SIZE; y++) {
       for (int z = 0; z < CHUNK_LAYERS; z++) {
         updateBitMask(getTileAt(Vec2<int>(x, y), z));
       }
