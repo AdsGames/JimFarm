@@ -5,6 +5,7 @@
 
 #include "Game.h"
 #include "GameMenu.h"
+#include "Graphics.h"
 #include "Menu.h"
 
 /*****************
@@ -20,6 +21,8 @@ void StateEngine::draw() {
 
 // Update
 void StateEngine::update() {
+  Graphics::Instance()->prune();
+
   if (state) {
     state->update(this);
   }

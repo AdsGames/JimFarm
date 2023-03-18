@@ -26,7 +26,6 @@ class Chunk {
    * @param index_y - Chunk y index in chunk coordinates
    */
   Chunk(int index_x, int index_y);
-  ~Chunk();
 
   int getXIndex() const;
   int getYIndex() const;

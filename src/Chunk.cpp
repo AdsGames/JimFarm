@@ -13,18 +13,6 @@ Chunk::Chunk(int index_x, int index_y) : index_x(index_x), index_y(index_y) {
   generate();
 }
 
-Chunk::~Chunk() {
-  for (auto const& tile : tiles) {
-    if (tile) {
-      Graphics::Instance()->remove(tile);
-    }
-  }
-
-  for (auto const& item : items) {
-    Graphics::Instance()->remove(item);
-  }
-}
-
 int Chunk::getXIndex() const {
   return index_x;
 }

@@ -1,6 +1,7 @@
 #include "Graphics.h"
 
 #include <algorithm>
+#include <iostream>
 
 std::shared_ptr<Graphics> Graphics::instance = nullptr;
 
@@ -23,20 +24,29 @@ void Graphics::remove(std::shared_ptr<Sprite> sprite) {
   sprites.erase(sprite->getSpriteId());
 }
 
+void Graphics::prune() {
+  std::erase_if(sprites,
+                [](const auto& sprite) { return sprite.second.expired(); });
+}
+
 void Graphics::draw(const Camera& camera) const {
-  auto sorted_sprites = std::set<std::shared_ptr<Sprite>, SpriteCmp>{};
+  auto sorted_sprites = std::set<std::weak_ptr<Sprite>, SpriteCmp>{};
   auto& camera_bounds = camera.getBounds();
 
-  for (auto const& [_index, sprite] : sprites) {
-    auto spr_pos = sprite->getPosition();
+  for (auto const& [index, sprite] : sprites) {
+    if (sprite.expired()) {
+      continue;
+    }
+
+    auto spr_pos = sprite.lock()->getPosition();
     Quad<int> quad(spr_pos.x, spr_pos.y, spr_pos.x + 64, spr_pos.y + 64);
 
-    if (sprite && camera_bounds.intersects(quad)) {
+    if (camera_bounds.intersects(quad)) {
       sorted_sprites.insert(sprite);
     }
   }
 
   for (auto const& sprite : sorted_sprites) {
-    sprite->draw(camera);
+    sprite.lock()->draw(camera);
   }
 }
