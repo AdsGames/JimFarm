@@ -116,7 +116,7 @@ void World::loadImages() {
 
   overlay_buffer = asw::assets::createTexture(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
-  tile_map.generateMap(Vec2<unsigned int>(7, 7));
+  tile_map.generateMap(Vec2<unsigned int>(8, 8));
 
   resetCamera();
 }
@@ -304,7 +304,7 @@ void World::update() {
   // Regen map
   if (asw::input::keyboard.pressed[SDL_SCANCODE_R]) {
     tile_map.clearMap();
-    tile_map.generateMap(Vec2<unsigned int>(7, 7));
+    tile_map.generateMap(Vec2<unsigned int>(8, 8));
   }
 
   // One game tick (20x second, 50ms)

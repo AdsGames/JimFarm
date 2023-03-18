@@ -13,7 +13,7 @@ struct SpriteCmp {
   bool operator()(const std::weak_ptr<Sprite>& a,
                   const std::weak_ptr<Sprite>& b) const {
     if (a.expired() || b.expired()) {
-      return true;
+      return a.lock() < b.lock();
     }
 
     if (a.lock()->getZ() != b.lock()->getZ()) {
@@ -32,7 +32,7 @@ class Graphics {
   static std::shared_ptr<Graphics> Instance();
 
   // Add and remove sprites
-  void add(std::shared_ptr<Sprite> sprite);
+  void add(std::shared_ptr<Sprite> sprite, bool dynamic = false);
   void remove(std::shared_ptr<Sprite> sprite);
 
   // Draw managed sprites
@@ -44,6 +44,7 @@ class Graphics {
  private:
   // Drawable
   std::unordered_map<unsigned int, std::weak_ptr<Sprite>> sprites{};
+  std::set<unsigned int> dynamic_sprites{};
   std::set<std::weak_ptr<Sprite>, SpriteCmp> sorted_sprites{};
 
   // Single instance

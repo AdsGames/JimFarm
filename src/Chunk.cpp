@@ -143,9 +143,9 @@ void Chunk::setDrawEnabled(bool enabled) {
 
 void Chunk::tick() {
   // Tiles
-  for (int i = 0; i < CHUNK_SIZE; i++) {
-    for (int t = 0; t < CHUNK_SIZE; t++) {
-      const auto idx = Vec2<int>(i, t);
+  for (unsigned i = 0; i < CHUNK_SIZE; i++) {
+    for (unsigned t = 0; t < CHUNK_SIZE; t++) {
+      const auto idx = Vec2<int>(static_cast<int>(i), static_cast<int>(t));
       const auto i_pos =
           Vec2<int>(i + index_x * CHUNK_SIZE, t + index_y * CHUNK_SIZE);
 
@@ -215,8 +215,8 @@ void Chunk::tick() {
 void Chunk::generate() {
   this->generateBiome();
 
-  for (int i = 0; i < CHUNK_SIZE; i++) {
-    for (int t = 0; t < CHUNK_SIZE; t++) {
+  for (unsigned int i = 0; i < CHUNK_SIZE; i++) {
+    for (unsigned int t = 0; t < CHUNK_SIZE; t++) {
       const auto idx = Vec2<int>(i, t);
 
       const auto i_pos = idx + Vec2<int>(index_x, index_y) * CHUNK_SIZE;
@@ -406,8 +406,8 @@ void Chunk::generateBiome() {
   auto rain_size = static_cast<float>(Chunk::seed % 477);
   auto height_size = static_cast<float>(Chunk::seed);
 
-  for (int i = 0; i < CHUNK_SIZE; i++) {
-    for (int t = 0; t < CHUNK_SIZE; t++) {
+  for (unsigned int i = 0; i < CHUNK_SIZE; i++) {
+    for (unsigned int t = 0; t < CHUNK_SIZE; t++) {
       auto pos_2 = this->getTileIndex(Vec2<int>(i, t), 0);
       auto fractal_x = static_cast<float>(i + index_x * CHUNK_SIZE) / 100.0f;
       auto fractal_y = static_cast<float>(t + index_y * CHUNK_SIZE) / 100.0f;

@@ -20,12 +20,12 @@ class Sprite {
 
   // Get position
   Vec2<int> getPosition() const;
-  int getZ() const;
+  float getZ() const;
   unsigned int getSpriteId() const;
 
  protected:
   Vec2<int> pos;
-  int z;
+  float z;
 
  private:
   const int id = Sprite::next_id;

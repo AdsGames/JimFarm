@@ -77,6 +77,10 @@ void loop() {
 
 // Main function
 int main(int argc, char* argv[]) {
+  // Required for mac compatibility
+  (void)argc;
+  (void)argv;
+
   // Setup basic functionality
   setup();
 
