@@ -23,7 +23,6 @@ class CharacterForeground : public Sprite {
  public:
   explicit CharacterForeground(Character* charPtr);
 
-
   void draw(const Camera& camera) const override;
 
   void update();
@@ -36,7 +35,6 @@ class Character : public Sprite {
  public:
   // Ctor and dtor
   Character();
-
 
   // Load images and samples
   void loadData();
@@ -61,7 +59,7 @@ class Character : public Sprite {
   int attached_ui{-1};
 
   // Inventory UI
-  UiController& inventory_ui{
+  UiController inventory_ui{
       InterfaceTypeManager::getInterfaceById(INTERFACE_INVENTORY)};
 
   // UI open

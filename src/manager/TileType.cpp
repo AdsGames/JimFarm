@@ -11,7 +11,7 @@ TileType::TileType(unsigned char width,
     : id(id), width(width), height(height), name(name), attribute(attribute) {}
 
 // Draw tile
-void TileType::draw(int x, int y, unsigned char meta) {
+void TileType::draw(int x, int y, unsigned char meta) const {
   int image_index = 0;
   auto h_px = image_h * 16;
   auto w_px = image_w * 16;

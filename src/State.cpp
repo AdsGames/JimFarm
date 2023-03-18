@@ -44,11 +44,6 @@ void StateEngine::changeState() {
     return;
   }
 
-  // Delete the current state
-  if (state) {
-    state.release();
-  }
-
   // Change the state
   switch (nextState) {
     case ProgramState::GAME:
@@ -58,10 +53,6 @@ void StateEngine::changeState() {
     case ProgramState::MENU:
       state = std::make_unique<Menu>();
       std::cout << "Switched state to main menu." << std::endl;
-      break;
-    case ProgramState::OPTIONS:
-      // states.push_back(std::make_unique<Options>());
-      std::cout << "Switched state to options." << std::endl;
       break;
     case ProgramState::GAME_MENU:
       state = std::make_unique<GameMenu>();

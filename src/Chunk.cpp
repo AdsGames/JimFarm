@@ -164,7 +164,7 @@ void Chunk::tick() {
       auto offset = this->getTileIndex(idx, LAYER_FOREGROUND);
 
       // Current tile
-      auto& current = tiles[offset];
+      const auto& current = tiles[offset];
 
       if (!current) {
         continue;

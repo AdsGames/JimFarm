@@ -19,7 +19,7 @@
 class State;
 
 // Game states
-enum class ProgramState { NONE, EXIT, MENU, GAME, GAME_MENU, OPTIONS };
+enum class ProgramState { NONE, EXIT, MENU, GAME, GAME_MENU };
 
 /*****************
  * STATE ENGINE
