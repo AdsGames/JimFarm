@@ -7,12 +7,20 @@
       "label": "Build",
       "type": "shell",
       "detail": "Run and build jim farm",
-      "command": "cmake --build . && cd build && ./JimFarm",
+      "command": "cd build && cmake --build . && cd bin && ./JimFarm",
       "windows": {
-        "command": "cmake --build . && cd build && JimFarm.exe"
+        "command": "cd build && cmake --build . && cd bin && JimFarm.exe"
       },
       "group": "build",
-      "problemMatcher": "$gcc"
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Configure",
+      "type": "shell",
+      "detail": "Run and build jim farm",
+      "command": "rm -rf build && mkdir build && cd build && cmake ..",
+      "group": "none",
+      "problemMatcher": []
     }
   ]
 }

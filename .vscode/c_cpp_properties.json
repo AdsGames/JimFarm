@@ -2,9 +2,9 @@
   "configurations": [
     {
       "name": "Win32",
-      "includePath": ["${default}", "${workspaceFolder}/lib/asw/include"],
+      "includePath": ["${default}"],
       "defines": ["_DEBUG", "UNICODE", "_UNICODE"],
-      "compileCommands": "${workspaceFolder}/compile_commands.json",
+      "compileCommands": "${workspaceFolder}/build/compile_commands.json",
       "configurationProvider": "ms-vscode.cmake-tools"
     }
   ],
