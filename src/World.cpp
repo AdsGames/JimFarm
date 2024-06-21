@@ -34,6 +34,7 @@ void World::resetCamera() {
   };
 
   camera = Camera(bounds, outer_bounds);
+  camera.setZoom(2.0f);
 }
 
 /*
@@ -77,6 +78,15 @@ void World::draw() {
   SDL_SetTextureBlendMode(overlay_buffer.get(), SDL_BLENDMODE_BLEND);
 
   asw::draw::sprite(overlay_buffer, 0, 0);
+
+  // Draw hud
+  if (hud.isOpen()) {
+    SDL_SetRenderTarget(asw::display::renderer, nullptr);
+    SDL_SetRenderDrawBlendMode(asw::display::renderer, SDL_BLENDMODE_BLEND);
+    asw::draw::rectFill(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT,
+                        asw::util::makeColor(0, 0, 0, 64));
+    hud.draw();
+  }
 
   // Message system
   map_messages.draw(5, 145);
@@ -301,6 +311,9 @@ void World::interact(Vec2<int> inter_pos, std::shared_ptr<Item> inHand) {
 
 // Update tile map
 void World::update() {
+  // Update hud
+  hud.update();
+
   // Regen map
   if (asw::input::keyboard.pressed[SDL_SCANCODE_R]) {
     tile_map.clearMap();

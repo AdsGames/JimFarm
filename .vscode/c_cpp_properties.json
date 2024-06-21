@@ -2,10 +2,11 @@
   "configurations": [
     {
       "name": "Win32",
-      "includePath": ["${default}", "${workspaceFolder}/lib/asw/include"],
-      "defines": ["_DEBUG", "UNICODE", "_UNICODE"],
-      "compileCommands": "${workspaceFolder}/compile_commands.json",
-      "configurationProvider": "ms-vscode.cmake-tools"
+      "includePath": ["${workspaceFolder}/**"],
+      "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "cppStandard": "c++23",
+      "cStandard": "c11"
     }
   ],
   "version": 4

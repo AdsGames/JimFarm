@@ -113,13 +113,6 @@ void Character::drawInventory() const {
       stack->draw(Vec2<int>(18 * i + 1 + draw_x, 1 + draw_y));
     }
   }
-
-  // Draw UI
-  if (ui_open && attached_ui != -1) {
-    auto& attached_ui_instance =
-        InterfaceTypeManager::getInterfaceById(attached_ui);
-    attached_ui_instance.draw();
-  }
 }
 
 std::shared_ptr<Item> Character::getSelectedItem() const {
@@ -140,36 +133,6 @@ void Character::update(World& world) {
   // Indicator
   indicator_pos =
       Vec2<int>(relative_x - (relative_x % 16), relative_y - (relative_y % 16));
-
-  // Open UI
-  if (asw::input::keyboard.pressed[SDL_SCANCODE_E]) {
-    if (ui_open) {
-      ui_open = false;
-      attached_ui = -1;
-    } else {
-      ui_open = true;
-      attached_ui = 0;
-    }
-  }
-
-  if (asw::input::keyboard.pressed[SDL_SCANCODE_G]) {
-    if (ui_open) {
-      ui_open = false;
-      attached_ui = -1;
-    } else {
-      ui_open = true;
-      attached_ui = 1;
-    }
-  }
-
-  // UI Open
-  if (ui_open && attached_ui != -1) {
-    // Update UI
-    auto& attached_ui_instance =
-        InterfaceTypeManager::getInterfaceById(attached_ui);
-    attached_ui_instance.update();
-    return;
-  }
 
   // Oh
   // Snap
@@ -264,8 +227,7 @@ void Character::update(World& world) {
   }
 
   // Drop
-  if (asw::input::keyboard.pressed[SDL_SCANCODE_F] ||
-      asw::input::mouse.pressed[3]) {
+  if (asw::input::keyboard.pressed[SDL_SCANCODE_F]) {
     std::shared_ptr<Item> itemInHand = nullptr;
     if (inventory_ui.getInventory()->getStack(selected_item)->getItem()) {
       itemInHand =

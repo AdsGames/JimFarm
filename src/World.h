@@ -10,12 +10,13 @@
 #include "MapItem.h"
 #include "Messenger.h"
 #include "TileMap.h"
+#include "ui/Hud.h"
 #include "utility/Camera.h"
 #include "utility/Vec2.h"
 
 // Viewport
-constexpr int VIEWPORT_WIDTH = 240 * 2;
-constexpr int VIEWPORT_HEIGHT = 160 * 2;
+constexpr int VIEWPORT_WIDTH = 240 * 4;
+constexpr int VIEWPORT_HEIGHT = 160 * 4;
 constexpr float VIEWPORT_MAX_ZOOM = 4.0f;
 constexpr float VIEWPORT_MIN_ZOOM = 0.25f;
 
@@ -60,6 +61,9 @@ class World {
 
   // Messager
   Messenger map_messages{Messenger(1, false, -4)};
+
+  // Hud
+  Hud hud{};
 };
 
 #endif  // SRC_WORLD_H_

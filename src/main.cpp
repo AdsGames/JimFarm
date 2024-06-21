@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
   setup();
 
   // Set the current state ID
-  game_state.setNextState(ProgramState::MENU);
+  game_state.setNextState(ProgramState::GAME);
 
 #ifdef __EMSCRIPTEN__
   emscripten_set_main_loop(loop, 0, 1);

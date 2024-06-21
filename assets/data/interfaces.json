@@ -6,41 +6,41 @@
     "height": 100,
     "labels": [{ "text": "INVENTORY", "x": 5, "y": 0 }],
     "slots": [
-      { "x": 5, "y": 80 },
-      { "x": 25, "y": 80 },
-      { "x": 45, "y": 80 },
-      { "x": 65, "y": 80 },
-      { "x": 85, "y": 80 },
-      { "x": 105, "y": 80 },
-      { "x": 125, "y": 80 },
-      { "x": 145, "y": 80 },
+      { "x": 5, "y": 80, "type": "input" },
+      { "x": 25, "y": 80, "type": "input" },
+      { "x": 45, "y": 80, "type": "input" },
+      { "x": 65, "y": 80, "type": "input" },
+      { "x": 85, "y": 80, "type": "input" },
+      { "x": 105, "y": 80, "type": "input" },
+      { "x": 125, "y": 80, "type": "input" },
+      { "x": 145, "y": 80, "type": "input" },
 
-      { "x": 5, "y": 15 },
-      { "x": 25, "y": 15 },
-      { "x": 45, "y": 15 },
-      { "x": 65, "y": 15 },
-      { "x": 85, "y": 15 },
-      { "x": 105, "y": 15 },
-      { "x": 125, "y": 15 },
-      { "x": 145, "y": 15 },
+      { "x": 5, "y": 15, "type": "input" },
+      { "x": 25, "y": 15, "type": "input" },
+      { "x": 45, "y": 15, "type": "input" },
+      { "x": 65, "y": 15, "type": "input" },
+      { "x": 85, "y": 15, "type": "input" },
+      { "x": 105, "y": 15, "type": "input" },
+      { "x": 125, "y": 15, "type": "input" },
+      { "x": 145, "y": 15, "type": "input" },
 
-      { "x": 5, "y": 35 },
-      { "x": 25, "y": 35 },
-      { "x": 45, "y": 35 },
-      { "x": 65, "y": 35 },
-      { "x": 85, "y": 35 },
-      { "x": 105, "y": 35 },
-      { "x": 125, "y": 35 },
-      { "x": 145, "y": 35 },
+      { "x": 5, "y": 35, "type": "input" },
+      { "x": 25, "y": 35, "type": "input" },
+      { "x": 45, "y": 35, "type": "input" },
+      { "x": 65, "y": 35, "type": "input" },
+      { "x": 85, "y": 35, "type": "input" },
+      { "x": 105, "y": 35, "type": "input" },
+      { "x": 125, "y": 35, "type": "input" },
+      { "x": 145, "y": 35, "type": "input" },
 
-      { "x": 5, "y": 55 },
-      { "x": 25, "y": 55 },
-      { "x": 45, "y": 55 },
-      { "x": 65, "y": 55 },
-      { "x": 85, "y": 55 },
-      { "x": 105, "y": 55 },
-      { "x": 125, "y": 55 },
-      { "x": 145, "y": 55 }
+      { "x": 5, "y": 55, "type": "input" },
+      { "x": 25, "y": 55, "type": "input" },
+      { "x": 45, "y": 55, "type": "input" },
+      { "x": 65, "y": 55, "type": "input" },
+      { "x": 85, "y": 55, "type": "input" },
+      { "x": 105, "y": 55, "type": "input" },
+      { "x": 125, "y": 55, "type": "input" },
+      { "x": 145, "y": 55, "type": "input" }
     ]
   },
   {
@@ -48,26 +48,39 @@
     "name": "furnace",
     "width": 100,
     "height": 60,
-    "labels": [
-      {
-        "text": "FURNACE",
-        "x": 5,
-        "y": 0
-      }
-    ],
+    "labels": [{ "text": "FURNACE", "x": 5, "y": 0 }],
     "slots": [
+      { "x": 5, "y": 15, "type": "input", "filter": "smeltable" },
+      { "x": 5, "y": 35, "type": "input", "filter": "fuel" },
+      { "x": 35, "y": 25, "type": "output" }
+    ],
+    "recipes": [
       {
-        "x": 5,
-        "y": 15
-      },
-      {
-        "x": 5,
-        "y": 35
-      },
-      {
-        "x": 35,
-        "y": 25
+        "input": [{ "slot_id": 0, "item_id": "item:stone" }],
+        "output": [{ "slot_id": 2, "item_id": "item:sand" }]
       }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "crafting",
+    "width": 100,
+    "height": 75,
+    "labels": [{ "text": "CRAFTING", "x": 5, "y": 0 }],
+    "slots": [
+      { "x": 5, "y": 15, "type": "input" },
+      { "x": 25, "y": 15, "type": "input" },
+      { "x": 45, "y": 15, "type": "input" },
+
+      { "x": 5, "y": 35, "type": "input" },
+      { "x": 25, "y": 35, "type": "input" },
+      { "x": 45, "y": 35, "type": "input" },
+
+      { "x": 5, "y": 55, "type": "input" },
+      { "x": 25, "y": 55, "type": "input" },
+      { "x": 45, "y": 55, "type": "input" },
+
+      { "x": 70, "y": 35, "type": "output" }
     ]
   }
 ]

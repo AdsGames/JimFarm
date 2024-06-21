@@ -1,26 +1,36 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.25)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(DOWNLOAD_EXTRACT_TIMESTAMP ON)
 
 include(FetchContent)
 
 project(JimFarm)
 
 # Source code
-file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/lib/*.cpp)
-file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h ${CMAKE_CURRENT_SOURCE_DIR}/lib/*.h)
+file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -Werror)
 
-FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
-FetchContent_MakeAvailable(json)
+FetchContent_Declare(
+  json 
+  URL 
+  https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+)
+FetchContent_Declare(
+  asw
+  GIT_REPOSITORY https://github.com/adsGames/asw.git
+  GIT_TAG        v0.4.1
+)
 
-add_subdirectory(lib/asw)
+FetchContent_MakeAvailable(json)
+FetchContent_MakeAvailable(asw)
 
 # Find libs
 if(NOT EMSCRIPTEN)

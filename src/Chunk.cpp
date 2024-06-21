@@ -4,8 +4,8 @@
 #include <sstream>
 
 #include "Graphics.h"
-#include "SimplexNoise.h"
 #include "utility/Tools.h"
+#include "vendor/SimplexNoise.h"
 
 int Chunk::seed = 0;
 
@@ -318,7 +318,6 @@ void Chunk::generate() {
         if (random(0, 5) == 0) {
           tiles[pos_3_foreground] = std::make_shared<Tile>(
               "tile:dense_grass", t_pos, LAYER_FOREGROUND, 1);
-
         } else if (random(0, 10) == 0) {
           tiles[pos_3_foreground] =
               std::make_shared<Tile>("tile:bush", t_pos, LAYER_FOREGROUND, 1);

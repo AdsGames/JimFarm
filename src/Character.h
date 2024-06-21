@@ -11,7 +11,6 @@
 #include "World.h"
 
 #include "manager/InterfaceTypeManager.h"
-#include "manager/interface_defs.h"
 #include "ui/UiController.h"
 #include "utility/Vec2.h"
 
@@ -55,15 +54,9 @@ class Character : public Sprite {
   // Character foreground
   std::shared_ptr<CharacterForeground> c_fore{nullptr};
 
-  // Attached UI
-  int attached_ui{-1};
-
   // Inventory UI
   UiController inventory_ui{
-      InterfaceTypeManager::getInterfaceById(INTERFACE_INVENTORY)};
-
-  // UI open
-  bool ui_open{false};
+      InterfaceTypeManager::getInterfaceByName("inventory")};
 
   // Directions
   enum directions { DIR_DOWN = 1, DIR_UP = 2, DIR_RIGHT = 3, DIR_LEFT = 4 };

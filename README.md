@@ -42,13 +42,17 @@ sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
 ### Build
 
 ```bash
-cmake .
+mkdir build
+cd build
+cmake ..
 make
 ```
 
 ### Build Emscripten
 
 ```bash
-emcmake cmake .
+mkdir build
+cd build
+emcmake cmake ..
 make
 ```

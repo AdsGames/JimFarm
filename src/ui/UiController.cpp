@@ -6,7 +6,8 @@
 
 std::shared_ptr<ItemStack> UiController::mouse_item = nullptr;
 
-UiController::UiController(Vec2<int> size) : size(size) {
+UiController::UiController(const std::string& name, Vec2<int> size)
+    : name(name), size(size) {
   // Create inventory
   this->inv = std::make_shared<Inventory>();
 
@@ -14,6 +15,10 @@ UiController::UiController(Vec2<int> size) : size(size) {
   if (!mouse_item) {
     mouse_item = std::make_shared<ItemStack>();
   }
+
+  // Caulculate initial x and y
+  auto screenSize = asw::display::getLogicalSize();
+  position = (Vec2<int>(screenSize.x, screenSize.y) - size) / 2;
 }
 
 void UiController::addElement(std::shared_ptr<UiElement> element) {
@@ -35,10 +40,9 @@ std::shared_ptr<Inventory> UiController::getInventory() const {
 }
 
 void UiController::draw() {
-  auto screenSize = asw::display::getLogicalSize();
-
-  // Caulculate x and y
-  position = (Vec2<int>(screenSize.x, screenSize.y) - size) / 2;
+  // Drag box
+  asw::draw::rectFill(position.x, position.y - DRAG_BOX_HEIGHT, size.x,
+                      DRAG_BOX_HEIGHT, asw::util::makeColor(64, 64, 64));
 
   // Background
   asw::draw::rectFill(position.x, position.y, size.x, size.y,
@@ -62,7 +66,7 @@ void UiController::draw() {
 }
 
 void UiController::update() {
-  if (asw::input::mouse.pressed[1] || asw::input::mouse.pressed[3]) {
+  if (asw::input::mouse.pressed[1] || asw::input::mouse.down[3]) {
     // Element at position
     auto elem = elementAt(Vec2<int>(asw::input::mouse.x, asw::input::mouse.y));
 
@@ -83,31 +87,66 @@ void UiController::update() {
     auto stack = slt->getStack();
 
     if (asw::input::mouse.pressed[1]) {
+      // Pick up item
       if (!item && stack->getItem()) {
         mouse_item->setItem(stack->getItem(), stack->getQuantity());
         stack->clear();
-      } else if (item && !(stack->getItem())) {
+      }
+      // Place item
+      else if (item && !stack->getItem() && slt->getType() == "input") {
         stack->setItem(item, mouse_item->getQuantity());
         mouse_item->clear();
-      } else if (item && stack->getItem()->getType().getId() ==
-                             item->getType().getId()) {
+      }
+      // Add to stack
+      else if (item && stack->getItem() &&
+               stack->getItem()->getType().getId() == item->getType().getId() &&
+               slt->getType() == "input") {
         stack->add(mouse_item->getQuantity());
         mouse_item->clear();
       }
     } else if (asw::input::mouse.pressed[3]) {
-      if (!item && stack->getItem()) {
+      // Split stack
+      if (!item && stack->getItem() && stack->getQuantity() > 1) {
         auto mouse_qty = static_cast<int>(ceil(stack->getQuantity() / 2.0));
         mouse_item->setItem(stack->getItem(), mouse_qty);
         stack->remove(mouse_qty);
-      } else if (item && !(stack->getItem())) {
-        stack->setItem(item, 1);
-        mouse_item->remove(1);
-      } else if (item && stack->getItem()->getType().getId() ==
-                             item->getType().getId()) {
+      }
+      // Stack one
+      else if (item && stack->getItem() &&
+               stack->getItem()->getType().getId() == item->getType().getId()) {
         stack->add(1);
         mouse_item->remove(1);
       }
+    } else if (asw::input::mouse.down[3]) {
+      // Remove one
+      if (item && !stack->getItem()) {
+        stack->setItem(item, 1);
+        mouse_item->remove(1);
+      }
     }
+  }
+
+  // Drag window
+  if (asw::input::mouse.down[1]) {
+    // Start drag condition
+    if (asw::input::mouse.x > position.x &&
+        asw::input::mouse.x < position.x + size.x &&
+        asw::input::mouse.y > position.y - DRAG_BOX_HEIGHT &&
+        asw::input::mouse.y < position.y) {
+      dragging = true;
+    }
+  } else {
+    dragging = false;
+  }
+
+  // Update position
+  if (dragging) {
+    position.x = std::max(std::min(asw::input::mouse.x - size.x / 2,
+                                   asw::display::getLogicalSize().x - size.x),
+                          0);
+    position.y = std::max(std::min(asw::input::mouse.y + DRAG_BOX_HEIGHT / 2,
+                                   asw::display::getLogicalSize().y - size.y),
+                          0);
   }
 }
 
@@ -126,4 +165,8 @@ std::shared_ptr<UiElement> UiController::elementAt(Vec2<int> at_pos) const {
   }
 
   return nullptr;
+}
+
+std::string& UiController::getName() {
+  return name;
 }
