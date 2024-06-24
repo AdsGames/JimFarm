@@ -34,6 +34,15 @@ void Tile::changeMeta(unsigned char amt) {
   this->meta += amt;
 }
 
+void Tile::damage(unsigned char amt) {
+  if (amt >= this->hitpoints) {
+    this->hitpoints = 0;
+    return;
+  }
+
+  this->hitpoints -= amt;
+}
+
 // Get image type
 bool Tile::needsBitmask() const {
   return this->tile_pointer.getImageType() == "dynamic";

@@ -13,7 +13,8 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
+    "attribute": "NON_SOLID",
+    "behaviours": []
   },
   {
     "id": "tile:water",
@@ -94,13 +95,7 @@
       "width": 1
     },
     "attribute": "SOLID",
-    "drops": [
-      {
-        "id": "item:wood",
-        "amount": 1,
-        "tool": "item:axe"
-      }
-    ]
+    "behaviours": ["behaviour:tree"]
   },
   {
     "id": "tile:bush",

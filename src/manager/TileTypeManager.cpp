@@ -7,6 +7,7 @@
 
 #include "../Tile.h"
 #include "../utility/Tools.h"
+#include "BehaviourTypeManager.h"
 
 const int NON_SOLID = 0;
 const int SOLID = 1;
@@ -61,13 +62,16 @@ int TileTypeManager::loadTiles(const std::string& path) {
     tile_defs[id].setImageType(image_type, sheet_width, sheet_height, image_x,
                                image_y, image_w, image_h);
 
-    if (tile.contains(std::string{"drops"}) && tile["drops"].is_array()) {
-      for (auto& [_idx, drop] : tile["drops"].items()) {
-        auto drop_id = drop["id"].get<std::string>();
-        auto drop_amount = drop["amount"].get<unsigned char>();
-        auto drop_tool = drop["tool"].get<std::string>();
+    // Add behaviours
+    if (tile.contains("behaviours")) {
+      for (const std::string behaviour : tile["behaviours"]) {
+        auto b = BehaviourTypeManager::getBehaviour(behaviour);
 
-        tile_defs[id].addDrop({drop_id, drop_tool, drop_amount});
+        if (b != nullptr) {
+          tile_defs[id].attachBehaviour(b);
+        } else {
+          throw std::runtime_error("Behaviour not found with id: " + behaviour);
+        }
       }
     }
   }

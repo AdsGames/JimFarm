@@ -58,6 +58,6 @@ void TileType::setImageType(const std::string& type,
   num_images = sheet_width * sheet_height;
 }
 
-void TileType::addDrop(const TileTypeDrop& drop) {
-  drops.emplace_back(drop);
+void TileType::attachBehaviour(std::shared_ptr<TileBehaviour> behaviour) {
+  behaviours.push_back(behaviour);
 }

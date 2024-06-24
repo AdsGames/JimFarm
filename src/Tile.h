@@ -31,12 +31,17 @@ class Tile : public Sprite {
 
   void changeMeta(unsigned char amt);
 
+  void damage(unsigned char amt);
+
   // Get image type
   bool needsBitmask() const;
 
  private:
   // Metadata info
   unsigned char meta;
+
+  // Hitpoints
+  unsigned char hitpoints{255};
 
   // Ptr to tile type
   TileType& tile_pointer;

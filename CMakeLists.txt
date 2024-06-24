@@ -20,8 +20,13 @@ target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -Werror)
 
 FetchContent_Declare(
   json 
-  URL 
-  https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG        v3.11.3
+)
+FetchContent_Declare(
+  sol2
+  GIT_REPOSITORY https://github.com/ThePhD/sol2.git
+  GIT_TAG        v3.3.0
 )
 FetchContent_Declare(
   asw
@@ -29,8 +34,7 @@ FetchContent_Declare(
   GIT_TAG        v0.4.1
 )
 
-FetchContent_MakeAvailable(json)
-FetchContent_MakeAvailable(asw)
+FetchContent_MakeAvailable(json asw sol2)
 
 # Find libs
 if(NOT EMSCRIPTEN)

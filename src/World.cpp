@@ -1,8 +1,10 @@
 #include "World.h"
 
 #include <iostream>
+// #include <sol/sol.hpp>
 
 #include "Graphics.h"
+#include "manager/BehaviourTypeManager.h"
 #include "manager/InterfaceTypeManager.h"
 #include "manager/ItemTypeManager.h"
 #include "manager/SoundManager.h"
@@ -98,6 +100,8 @@ void World::loadImages() {
       asw::assets::loadTexture("assets/images/tiles.png");
   ItemTypeManager::sprite_sheet_items =
       asw::assets::loadTexture("assets/images/items.png");
+
+  BehaviourTypeManager::loadBehaviours();
 
   std::cout << "Loading assets/data/tiles.json" << std::endl;
   if (TileTypeManager::loadTiles("assets/data/tiles.json")) {
