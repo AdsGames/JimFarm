@@ -7,8 +7,8 @@
 
 class Item {
  public:
-  // Ctor and Dtor
-  Item(const std::string& id, unsigned char meta = 0);
+  // Ctor and Dtor, negative meta uses the item's start meta
+  explicit Item(const std::string& id, int meta = -1);
 
   // Draw to screen
   void draw(const asw::Vec2i& position) const;

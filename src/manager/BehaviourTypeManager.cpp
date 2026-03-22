@@ -1,26 +1,43 @@
 #include "BehaviourTypeManager.h"
 
-#include <fstream>
-
+#include "../behaviours/BuildingBehaviours.h"
+#include "../behaviours/FarmBehaviours.h"
 #include "../behaviours/TileBehaviour.h"
 #include "../behaviours/TreeTileBehaviour.h"
 
-std::map<std::string, std::shared_ptr<TileBehaviour>, std::less<>>
-    BehaviourTypeManager::behaviour_defs;
+std::map<std::string, BehaviourTypeManager::Factory, std::less<>>
+    BehaviourTypeManager::factories;
+
+namespace {
+template <typename T>
+BehaviourTypeManager::Factory make() {
+  return [](const nlohmann::json& params) {
+    return std::make_shared<T>(params);
+  };
+}
+}  // namespace
 
 int BehaviourTypeManager::loadBehaviours() {
-  behaviour_defs.clear();
-  behaviour_defs.insert(
-      std::make_pair("behaviour:tree", std::make_shared<TreeBehaviour>()));
+  factories.clear();
+  factories["behaviour:tree"] = make<TreeBehaviour>();
+  factories["behaviour:crop"] = make<CropBehaviour>();
+  factories["behaviour:transform"] = make<TransformBehaviour>();
+  factories["behaviour:animal"] = make<AnimalBehaviour>();
+  factories["behaviour:forage"] = make<ForageBehaviour>();
+  factories["behaviour:shop"] = make<ShopBehaviour>();
+  factories["behaviour:bed"] = make<BedBehaviour>();
+  factories["behaviour:campfire"] = make<CampfireBehaviour>();
 
   return 0;
 }
 
-std::shared_ptr<TileBehaviour> BehaviourTypeManager::getBehaviour(
-    const std::string& id) {
-  if (!behaviour_defs.contains(id)) {
-    return nullptr;
+std::shared_ptr<TileBehaviour> BehaviourTypeManager::create(
+    const std::string& id,
+    const nlohmann::json& params) {
+  auto found = factories.find(id);
+  if (found == factories.end()) {
+    throw std::runtime_error("Behaviour not found with id: " + id);
   }
 
-  return behaviour_defs[id];
+  return found->second(params);
 }

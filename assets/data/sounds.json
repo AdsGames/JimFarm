@@ -70,5 +70,32 @@
     "panning": 0.5,
     "frequency": 1000,
     "frequency_rand": 0
+  },
+  {
+    "id": 8,
+    "name": "buy",
+    "file": "buy.wav",
+    "volume": 1.0,
+    "panning": 0.5,
+    "frequency": 1000,
+    "frequency_rand": 0
+  },
+  {
+    "id": 9,
+    "name": "sell",
+    "file": "sell.wav",
+    "volume": 1.0,
+    "panning": 0.5,
+    "frequency": 1000,
+    "frequency_rand": 0
+  },
+  {
+    "id": 10,
+    "name": "pickup",
+    "file": "pickup.wav",
+    "volume": 0.6,
+    "panning": 0.5,
+    "frequency": 1000,
+    "frequency_rand": 0
   }
 ]

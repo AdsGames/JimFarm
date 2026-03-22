@@ -3,8 +3,10 @@
 #include "manager/ItemTypeManager.h"
 
 // Ctor for item
-Item::Item(const std::string& id, unsigned char meta)
-    : meta(meta), item_pointer(ItemTypeManager::getItem(id)) {}
+Item::Item(const std::string& id, int meta)
+    : meta(meta >= 0 ? static_cast<unsigned char>(meta)
+                     : ItemTypeManager::getInfo(id).start_meta),
+      item_pointer(ItemTypeManager::getItem(id)) {}
 
 // Draw item to screen
 void Item::draw(const asw::Vec2i& position) const {

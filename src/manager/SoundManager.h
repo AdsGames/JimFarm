@@ -9,6 +9,7 @@
 #define SOUND_MANAGER_H
 
 #include <asw/asw.h>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -46,9 +47,13 @@ class SoundManager {
   // Play sample
   static void play(unsigned int sound_id);
 
+  // Play sample by name from sounds.json
+  static void play(const std::string& name);
+
  private:
   // List of sounds
   static std::vector<SampleWrapper> sound_defs;
+  static std::map<std::string, unsigned int> sound_names;
 };
 
 #endif  // SOUND_MANAGER_H

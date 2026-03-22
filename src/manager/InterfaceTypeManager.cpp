@@ -17,6 +17,8 @@ int InterfaceTypeManager::loadInterfaces(const std::string& path) {
     return 1;
   }
 
+  ui_defs.clear();
+
   // Create buffer
   nlohmann::json doc = nlohmann::json::parse(file);
 
@@ -33,7 +35,7 @@ int InterfaceTypeManager::loadInterfaces(const std::string& path) {
     auto controller = UiController(name, asw::Vec2i(width, height));
 
     // Labels
-    for (auto const& label : interface["labels"]) {
+    for (auto const& label : interface.value("labels", nlohmann::json::array())) {
       std::string text = label["text"];
       int x = label["x"];
       int y = label["y"];
@@ -41,11 +43,13 @@ int InterfaceTypeManager::loadInterfaces(const std::string& path) {
     }
 
     // Slots
-    for (auto const& slot : interface["slots"]) {
+    for (auto const& slot : interface.value("slots", nlohmann::json::array())) {
       int x = slot["x"];
       int y = slot["y"];
-      std::string type = slot["type"];
-      controller.addElement(std::make_shared<UiSlot>(asw::Vec2i(x, y), type));
+      const auto type = slotTypeFromName(slot["type"]);
+      std::string item_id = slot.value("item_id", "");
+      controller.addElement(
+          std::make_shared<UiSlot>(asw::Vec2i(x, y), type, item_id));
     }
 
     // Push to controllers

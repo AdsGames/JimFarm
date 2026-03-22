@@ -4,132 +4,619 @@
     "name": "hand",
     "image_x": 0,
     "image_y": 0,
-    "value": 0
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:water"],
+        "thirst": 35,
+        "sound": "water fill",
+        "message": "You drink the water"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:well_path"],
+        "thirst": 40,
+        "sound": "water fill",
+        "message": "You drink from the well"
+      }
+    ]
   },
   {
     "id": "item:hoe",
     "name": "hoe",
     "image_x": 3,
     "image_y": 1,
-    "value": 10
+    "value": 10,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:grass", "tile:soil", "tile:patchy_grass"],
+        "requires_empty": ["foreground"],
+        "replace": "tile:plowed_soil",
+        "sound": "hoe",
+        "energy": 2,
+        "area": 0
+      }
+    ]
+  },
+  {
+    "id": "item:hoe_gold",
+    "name": "golden hoe",
+    "image_x": 3,
+    "image_y": 1,
+    "tint": [255, 215, 70],
+    "price": 500,
+    "value": 150,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:grass", "tile:soil", "tile:patchy_grass"],
+        "requires_empty": ["foreground"],
+        "replace": "tile:plowed_soil",
+        "sound": "hoe",
+        "energy": 6,
+        "area": 1
+      }
+    ]
   },
   {
     "id": "item:scythe",
     "name": "scythe",
     "image_x": 0,
     "image_y": 1,
-    "value": 20
+    "value": 20,
+    "attack": 1,
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:dense_grass"],
+        "replace": null,
+        "drops": ["item:hay"],
+        "sound": "scythe",
+        "energy": 1
+      }
+    ]
   },
   {
     "id": "item:watering_can",
     "name": "watering can",
     "image_x": 2,
     "image_y": 1,
-    "value": 20
+    "value": 20,
+    "start_meta": 10,
+    "food": {
+      "thirst": 20,
+      "uses_meta": true
+    },
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:water"],
+        "set_meta": 10,
+        "sound": "water fill",
+        "message": "Watering can filled"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:well_path"],
+        "set_meta": 10,
+        "sound": "water fill",
+        "message": "Watering can filled"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:plowed_soil"],
+        "min_meta": 1,
+        "replace": "tile:watered_soil",
+        "add_meta": -1,
+        "sound": "water pour",
+        "energy": 1,
+        "area": 0
+      },
+      {
+        "max_meta": 0,
+        "fail": true,
+        "message": "Out of water, fill up at the well"
+      }
+    ]
+  },
+  {
+    "id": "item:watering_can_gold",
+    "name": "golden can",
+    "image_x": 2,
+    "image_y": 1,
+    "tint": [255, 215, 70],
+    "price": 500,
+    "value": 150,
+    "start_meta": 30,
+    "food": {
+      "thirst": 20,
+      "uses_meta": true
+    },
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:water"],
+        "set_meta": 30,
+        "sound": "water fill",
+        "message": "Watering can filled"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:well_path"],
+        "set_meta": 30,
+        "sound": "water fill",
+        "message": "Watering can filled"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:plowed_soil"],
+        "min_meta": 1,
+        "replace": "tile:watered_soil",
+        "add_meta": -1,
+        "sound": "water pour",
+        "energy": 1,
+        "area": 1
+      },
+      {
+        "max_meta": 0,
+        "fail": true,
+        "message": "Out of water, fill up at the well"
+      }
+    ]
   },
   {
     "id": "item:axe",
     "name": "axe",
     "image_x": 4,
     "image_y": 1,
-    "value": 20
+    "value": 20,
+    "attack": 1,
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:stump"],
+        "replace": null,
+        "drops": ["item:wood"],
+        "sound": "axe",
+        "energy": 3
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:wood_wall"],
+        "replace": null,
+        "drops": ["item:wood"],
+        "sound": "axe",
+        "energy": 2
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:fence", "tile:fence_door"],
+        "replace": null,
+        "drops": ["item:stick"],
+        "sound": "axe",
+        "energy": 1
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:campfire_out"],
+        "replace": null,
+        "drops": ["item:campfire"],
+        "sound": "axe",
+        "energy": 1
+      }
+    ]
   },
   {
     "id": "item:shovel",
     "name": "shovel",
     "image_x": 1,
     "image_y": 1,
-    "value": 20
+    "value": 20,
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:bush", "tile:stump", "tile:sapling"],
+        "replace": null,
+        "sound": "shovel",
+        "energy": 2
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:stone_wall"],
+        "replace": null,
+        "drops": ["item:stone"],
+        "sound": "shovel",
+        "energy": 4
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:grass"],
+        "requires_empty": ["foreground"],
+        "replace": null,
+        "drops": ["item:grass"],
+        "sound": "shovel",
+        "energy": 2
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:sand"],
+        "requires_empty": ["foreground"],
+        "replace": null,
+        "drops": ["item:sand"],
+        "sound": "shovel",
+        "energy": 2
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:plowed_soil", "tile:watered_soil"],
+        "requires_empty": ["foreground"],
+        "replace": null,
+        "sound": "shovel",
+        "energy": 1
+      }
+    ]
+  },
+  {
+    "id": "item:spear",
+    "name": "spear",
+    "sheet": "placeholders",
+    "image_x": 4,
+    "image_y": 0,
+    "value": 15,
+    "attack": 3
   },
   {
     "id": "item:chicken",
     "name": "chicken",
     "image_x": 3,
     "image_y": 0,
-    "value": 30
+    "price": 60,
+    "value": 30,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:chicken",
+          "layer": "foreground",
+          "meta": 0
+        },
+        "consume": true,
+        "sound": "shovel"
+      }
+    ]
   },
   {
     "id": "item:egg",
     "name": "egg",
     "image_x": 1,
     "image_y": 0,
-    "value": 2
+    "value": 8,
+    "food": {
+      "hunger": 6,
+      "health": -2
+    },
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:campfire"],
+        "consume": true,
+        "sound": "egg",
+        "message": "Cooked!",
+        "give": ["item:cooked_egg"]
+      }
+    ]
+  },
+  {
+    "id": "item:cooked_egg",
+    "name": "cooked egg",
+    "sheet": "placeholders",
+    "image_x": 7,
+    "image_y": 0,
+    "value": 15,
+    "food": {
+      "hunger": 25,
+      "health": 5
+    }
   },
   {
     "id": "item:berry_seed",
     "name": "berry seed",
     "image_x": 0,
     "image_y": 2,
-    "value": 1
+    "price": 5,
+    "value": 1,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:plowed_soil", "tile:watered_soil"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:berry",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "sound": "shovel"
+      },
+      {
+        "fail": true,
+        "message": "Plant seeds in tilled soil"
+      }
+    ]
   },
   {
     "id": "item:berry",
     "name": "berry",
     "image_x": 0,
     "image_y": 3,
-    "value": 2
+    "value": 4,
+    "food": {
+      "hunger": 8,
+      "thirst": 3
+    }
   },
   {
     "id": "item:tomato_seed",
     "name": "tomato seed",
     "image_x": 1,
     "image_y": 2,
-    "value": 2
+    "price": 12,
+    "value": 2,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:plowed_soil", "tile:watered_soil"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:tomato",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "sound": "shovel"
+      },
+      {
+        "fail": true,
+        "message": "Plant seeds in tilled soil"
+      }
+    ]
   },
   {
     "id": "item:tomato",
     "name": "tomato",
     "image_x": 1,
     "image_y": 3,
-    "value": 5
+    "value": 18,
+    "food": {
+      "hunger": 12,
+      "thirst": 6
+    }
   },
   {
     "id": "item:carrot_seed",
     "name": "carrot seed",
     "image_x": 2,
     "image_y": 2,
-    "value": 5
+    "price": 15,
+    "value": 3,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:plowed_soil", "tile:watered_soil"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:carrot",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "sound": "shovel"
+      },
+      {
+        "fail": true,
+        "message": "Plant seeds in tilled soil"
+      }
+    ]
   },
   {
     "id": "item:carrot",
     "name": "carrot",
     "image_x": 2,
     "image_y": 3,
-    "value": 15
+    "value": 30,
+    "food": {
+      "hunger": 12
+    },
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:campfire"],
+        "consume": true,
+        "sound": "egg",
+        "message": "Cooked!",
+        "give": ["item:roast_carrot"]
+      }
+    ]
+  },
+  {
+    "id": "item:roast_carrot",
+    "name": "roast carrot",
+    "sheet": "placeholders",
+    "image_x": 13,
+    "image_y": 0,
+    "value": 40,
+    "food": {
+      "hunger": 22,
+      "health": 3
+    }
   },
   {
     "id": "item:lavender_seed",
     "name": "lavender seed",
     "image_x": 3,
     "image_y": 2,
-    "value": 15
+    "price": 30,
+    "value": 5,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:plowed_soil", "tile:watered_soil"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:lavender",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "sound": "shovel"
+      },
+      {
+        "fail": true,
+        "message": "Plant seeds in tilled soil"
+      }
+    ]
   },
   {
     "id": "item:lavender",
     "name": "lavender",
     "image_x": 3,
     "image_y": 3,
-    "value": 25
+    "value": 80
+  },
+  {
+    "id": "item:stew",
+    "name": "stew",
+    "sheet": "placeholders",
+    "image_x": 8,
+    "image_y": 0,
+    "value": 70,
+    "food": {
+      "hunger": 45,
+      "thirst": 10,
+      "health": 10,
+      "warmth": 30
+    }
+  },
+  {
+    "id": "item:bandage",
+    "name": "herbal bandage",
+    "sheet": "placeholders",
+    "image_x": 11,
+    "image_y": 0,
+    "price": 40,
+    "value": 20,
+    "food": {
+      "health": 35
+    }
+  },
+  {
+    "id": "item:pelt",
+    "name": "wolf pelt",
+    "sheet": "placeholders",
+    "image_x": 5,
+    "image_y": 0,
+    "value": 40
+  },
+  {
+    "id": "item:coat",
+    "name": "fur coat",
+    "sheet": "placeholders",
+    "image_x": 6,
+    "image_y": 0,
+    "value": 120,
+    "carry_warmth": 12
+  },
+  {
+    "id": "item:campfire",
+    "name": "campfire kit",
+    "sheet": "placeholders",
+    "image_x": 9,
+    "image_y": 0,
+    "value": 5,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:campfire",
+          "layer": "foreground",
+          "meta": 120
+        },
+        "consume": true,
+        "sound": "shovel"
+      }
+    ]
+  },
+  {
+    "id": "item:gate",
+    "name": "gate",
+    "sheet": "placeholders",
+    "image_x": 10,
+    "image_y": 0,
+    "value": 4,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:fence_door",
+          "layer": "foreground",
+          "meta": 0
+        },
+        "consume": true,
+        "sound": "shovel"
+      }
+    ]
   },
   {
     "id": "item:stick",
     "name": "stick",
     "image_x": 2,
     "image_y": 0,
-    "value": 1
+    "value": 1,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:fence",
+          "layer": "foreground",
+          "meta": 0
+        },
+        "consume": true,
+        "sound": "shovel"
+      }
+    ]
   },
   {
     "id": "item:wood",
     "name": "wood",
     "image_x": 4,
     "image_y": 0,
-    "value": 1
+    "value": 2,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:wood_wall",
+          "layer": "foreground",
+          "meta": 0
+        },
+        "consume": true,
+        "sound": "shovel"
+      }
+    ]
   },
   {
     "id": "item:hay",
     "name": "hay",
     "image_x": 5,
     "image_y": 0,
+    "price": 3,
     "value": 1
   },
   {
@@ -137,34 +624,81 @@
     "name": "stone",
     "image_x": 6,
     "image_y": 0,
-    "value": 1
+    "value": 2,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:stone_wall",
+          "layer": "foreground",
+          "meta": 0
+        },
+        "consume": true,
+        "sound": "shovel"
+      }
+    ]
   },
   {
     "id": "item:sapling",
     "name": "sapling",
     "image_x": 7,
     "image_y": 0,
-    "value": 1
+    "value": 3,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:grass", "tile:soil", "tile:snow"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:sapling",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "sound": "shovel"
+      }
+    ]
   },
   {
     "id": "item:plank",
     "name": "plank",
     "image_x": 5,
     "image_y": 1,
-    "value": 1
+    "value": 3
   },
   {
     "id": "item:grass",
     "name": "grass",
     "image_x": 6,
     "image_y": 1,
-    "value": 1
+    "value": 1,
+    "actions": [
+      {
+        "layer": "midground",
+        "empty": true,
+        "requires_present": ["background"],
+        "replace": "tile:grass",
+        "consume": true,
+        "sound": "shovel"
+      }
+    ]
   },
   {
     "id": "item:sand",
     "name": "sand",
     "image_x": 7,
     "image_y": 1,
-    "value": 1
+    "value": 1,
+    "actions": [
+      {
+        "layer": "midground",
+        "empty": true,
+        "requires_present": ["background"],
+        "replace": "tile:sand",
+        "consume": true,
+        "sound": "shovel"
+      }
+    ]
   }
 ]

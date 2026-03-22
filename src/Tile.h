@@ -35,6 +35,8 @@ class Tile : public Sprite {
 
   void damage(unsigned char amt);
 
+  unsigned char getHitpoints() const { return hitpoints; }
+
   // Get image type
   bool needsBitmask() const;
 

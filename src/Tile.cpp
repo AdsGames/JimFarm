@@ -48,5 +48,5 @@ void Tile::damage(unsigned char amt) {
 
 // Get image type
 bool Tile::needsBitmask() const {
-  return this->tile_pointer.getImageType() == "dynamic";
+  return this->tile_pointer.getImageType() == ImageType::Dynamic;
 }

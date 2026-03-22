@@ -12,26 +12,39 @@ TileType::TileType(unsigned char width,
 
 // Draw tile
 void TileType::draw(int x, int y, unsigned char meta) const {
+  if (image_type == ImageType::None) {
+    return;
+  }
+
   int image_index = 0;
   auto h_px = image_h * 16;
   auto w_px = image_w * 16;
   auto i_x_px = image_cord_x * 16;
   auto i_y_px = image_cord_y * 16;
 
-  if (image_type == "meta_map" || image_type == "animated") {
-    image_index = num_images / 256 * meta;
+  if (image_type == ImageType::MetaMap || image_type == ImageType::Animated) {
+    image_index = num_images * meta / 256;
     i_x_px += (image_index % sheet_width) * 16;
     i_y_px += (image_index / sheet_width) * 16;
 
-  } else if (image_type == "meta_map_2" || image_type == "dynamic") {
+  } else if (image_type == ImageType::MetaMap2 ||
+             image_type == ImageType::Dynamic) {
     image_index = meta % num_images;
     i_x_px += (image_index % sheet_width) * 16;
     i_y_px += (image_index / sheet_width) * 16;
   }
 
+  if (has_tint) {
+    asw::draw::set_tint(sprite_sheet, tint);
+  }
+
   asw::draw::stretch_sprite_blit(sprite_sheet,
                                  asw::Quadf(i_x_px, i_y_px, w_px, h_px),
                                  asw::Quadf(x, y - h_px + 16, w_px, h_px));
+
+  if (has_tint) {
+    asw::draw::set_tint(sprite_sheet, asw::color::white);
+  }
 }
 
 // Give a sprite sheet to this tile
@@ -48,7 +61,19 @@ void TileType::setImageType(const std::string& type,
                             unsigned char image_width,
                             unsigned char image_height) {
   // Default, dynamic or animated
-  image_type = type;
+  if (type == "meta_map") {
+    image_type = ImageType::MetaMap;
+  } else if (type == "meta_map_2") {
+    image_type = ImageType::MetaMap2;
+  } else if (type == "animated") {
+    image_type = ImageType::Animated;
+  } else if (type == "dynamic") {
+    image_type = ImageType::Dynamic;
+  } else if (type == "none") {
+    image_type = ImageType::None;
+  } else {
+    image_type = ImageType::Static;
+  }
   sheet_width = sheet_w;
   sheet_height = sheet_h;
   image_w = image_width;

@@ -8,7 +8,8 @@ UiElement::UiElement(const asw::Vec2i& pos)
 UiElement::UiElement(const asw::Vec2i& pos, const asw::Vec2i& size)
     : pos(pos), size(size) {
   if (font == nullptr) {
-    font = asw::assets::load_font("assets/fonts/pixelart.ttf", 8);
+    font = asw::assets::load_font("assets/fonts/pixelart.ttf", 8,
+                                  asw::FontStyle::Pixel);
   }
 }
 

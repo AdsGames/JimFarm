@@ -95,7 +95,15 @@
       "width": 1
     },
     "attribute": "SOLID",
-    "behaviours": ["behaviour:tree"]
+    "behaviours": [
+      {
+        "id": "behaviour:tree",
+        "tools": ["item:axe"],
+        "hits": 3,
+        "energy": 4,
+        "sapling_chance": 0.3
+      }
+    ]
   },
   {
     "id": "tile:bush",
@@ -111,7 +119,16 @@
       "height": 2,
       "width": 1
     },
-    "attribute": "SOLID"
+    "attribute": "SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:forage",
+        "yield": "item:berry",
+        "yield_min": 1,
+        "yield_max": 3,
+        "regrow": 3
+      }
+    ]
   },
   {
     "id": "tile:well_path",
@@ -175,7 +192,14 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
+    "attribute": "NON_SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:transform",
+        "into": "",
+        "days": 7
+      }
+    ]
   },
   {
     "id": "tile:plowed_soil",
@@ -191,7 +215,16 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
+    "attribute": "NON_SOLID",
+    "bitmask_group": "farmland",
+    "behaviours": [
+      {
+        "id": "behaviour:transform",
+        "into": "tile:grass",
+        "chance": 0.05,
+        "requires_empty_above": true
+      }
+    ]
   },
   {
     "id": "tile:store_path",
@@ -239,7 +272,20 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
+    "attribute": "NON_SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:crop",
+        "days": 3,
+        "regrow": 2,
+        "yield": "item:berry",
+        "yield_min": 1,
+        "yield_max": 2,
+        "seasons": ["Spring", "Summer"],
+        "min_temp": -20,
+        "max_temp": 64
+      }
+    ]
   },
   {
     "id": "tile:tomato",
@@ -255,7 +301,20 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
+    "attribute": "NON_SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:crop",
+        "days": 5,
+        "regrow": 3,
+        "yield": "item:tomato",
+        "yield_min": 1,
+        "yield_max": 3,
+        "seasons": ["Summer", "Fall"],
+        "min_temp": -5,
+        "max_temp": 64
+      }
+    ]
   },
   {
     "id": "tile:carrot",
@@ -271,7 +330,20 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
+    "attribute": "NON_SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:crop",
+        "days": 4,
+        "regrow": 0,
+        "yield": "item:carrot",
+        "yield_min": 1,
+        "yield_max": 2,
+        "seasons": ["Spring", "Fall"],
+        "min_temp": -40,
+        "max_temp": 40
+      }
+    ]
   },
   {
     "id": "tile:lavender",
@@ -287,7 +359,20 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
+    "attribute": "NON_SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:crop",
+        "days": 6,
+        "regrow": 0,
+        "yield": "item:lavender",
+        "yield_min": 1,
+        "yield_max": 2,
+        "seasons": ["Summer", "Fall"],
+        "min_temp": 8,
+        "max_temp": 64
+      }
+    ]
   },
   {
     "id": "tile:patchy_grass",
@@ -319,7 +404,8 @@
       "height": 2,
       "width": 3
     },
-    "attribute": "SOLID"
+    "attribute": "SOLID",
+    "behaviours": ["behaviour:shop"]
   },
   {
     "id": "tile:barn",
@@ -335,7 +421,8 @@
       "height": 4,
       "width": 3
     },
-    "attribute": "SOLID"
+    "attribute": "SOLID",
+    "behaviours": ["behaviour:bed"]
   },
   {
     "id": "tile:goat",
@@ -448,5 +535,146 @@
       "width": 1
     },
     "attribute": "SOLID"
+  },
+  {
+    "id": "tile:watered_soil",
+    "name": "Watered Soil",
+    "width": 1,
+    "height": 1,
+    "image": {
+      "type": "dynamic",
+      "spritesheet_width": 4,
+      "spritesheet_height": 4,
+      "x": 12,
+      "y": 4,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "NON_SOLID",
+    "tint": [140, 110, 110],
+    "bitmask_group": "farmland",
+    "behaviours": [
+      {
+        "id": "behaviour:transform",
+        "into": "tile:plowed_soil"
+      }
+    ]
+  },
+  {
+    "id": "tile:structure_part",
+    "name": "Building",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "none",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 12,
+      "y": 0,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "SOLID"
+  },
+  {
+    "id": "tile:chicken",
+    "name": "Chicken",
+    "width": 1,
+    "height": 1,
+    "sheet": "items",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 3,
+      "y": 0,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:animal",
+        "name": "chicken",
+        "product": "item:egg",
+        "food": ["item:hay", "item:berry_seed", "item:berry"],
+        "pickup": "item:chicken",
+        "wander": 0.02,
+        "leave_days": 3
+      }
+    ]
+  },
+  {
+    "id": "tile:campfire",
+    "name": "Campfire",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 0,
+      "y": 0,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:campfire",
+        "lit": true
+      }
+    ]
+  },
+  {
+    "id": "tile:campfire_out",
+    "name": "Cold Campfire",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 1,
+      "y": 0,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:campfire",
+        "lit": false
+      }
+    ]
+  },
+  {
+    "id": "tile:sapling",
+    "name": "Sapling",
+    "width": 1,
+    "height": 1,
+    "sheet": "items",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 7,
+      "y": 0,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "NON_SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:transform",
+        "into": "tile:tree",
+        "days": 5,
+        "meta_min": 0,
+        "meta_max": 1
+      }
+    ]
   }
 ]

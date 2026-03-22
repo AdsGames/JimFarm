@@ -1,10 +1,18 @@
 #include "UiController.h"
 
 #include <cmath>
+#include <format>
 
+#include "../GameState.h"
+#include "../manager/InterfaceTypeManager.h"
+#include "../manager/ItemTypeManager.h"
+#include "../manager/RecipeManager.h"
+#include "../manager/SoundManager.h"
 #include "../utility/Tools.h"
 #include "UiLabel.h"
+#include "UiScale.h"
 #include "UiSlot.h"
+#include "Tooltip.h"
 
 std::shared_ptr<ItemStack> UiController::mouse_item = nullptr;
 
@@ -19,8 +27,7 @@ UiController::UiController(const std::string& name, const asw::Vec2i& size)
   }
 
   // Caulculate initial x and y
-  auto screenSize = asw::display::get_logical_size();
-  position = (asw::Vec2i(screenSize.x, screenSize.y) - size) / 2;
+  position = (getUiSize() - size) / 2;
 }
 
 void UiController::addElement(std::shared_ptr<UiElement> element) {
@@ -41,8 +48,8 @@ std::shared_ptr<Inventory> UiController::getInventory() const {
   return inv;
 }
 
-void UiController::draw() {
-  const auto mouse = asw::input::get_mouse();
+void UiController::draw(const GameState& state) {
+  const auto mouse_pos = getUiMouse();
 
   // Drag box
   asw::draw::rect_fill(asw::Quadf(position.x, position.y - DRAG_BOX_HEIGHT,
@@ -57,25 +64,40 @@ void UiController::draw() {
 
   // Draw elements
   for (auto const& element : elements) {
-    element->draw(position);
+    element->draw(position, state);
+  }
+
+  // Tooltip for the slot under the cursor
+  if (!isHoldingItem()) {
+    auto slot = std::dynamic_pointer_cast<UiSlot>(elementAt(mouse_pos));
+    if (slot && slot->getStack() && slot->getStack()->getItem()) {
+      const bool store_stock = slot->getType() == SlotType::Buy;
+      Tooltip::setItem(*slot->getStack()->getItem(),
+                       store_stock ? ItemTypeManager::getInfo(slot->getItemId())
+                                         .price
+                                   : 0);
+    }
   }
 
   // Cursor
-  asw::draw::rect_fill(asw::Quadf(mouse.position.x, mouse.position.y, 2, 2),
+  asw::draw::rect_fill(asw::Quadf(mouse_pos.x, mouse_pos.y, 2, 2),
                        asw::Color(255, 255, 255));
 
   // Item, if holding
   if (mouse_item && mouse_item->getItem()) {
-    mouse_item->draw(asw::Vec2i(mouse.position.x, mouse.position.y));
+    mouse_item->draw(mouse_pos);
   }
 }
 
-void UiController::update() {
+void UiController::update(GameState& state) {
   const auto& mouse = asw::input::get_mouse();
+  const auto mouse_pos = getUiMouse();
+
+  updateRecipeOutput();
 
   if (mouse.pressed[1] || mouse.down[3]) {
     // Element at position
-    auto elem = elementAt(asw::Vec2i(mouse.position.x, mouse.position.y));
+    auto elem = elementAt(mouse_pos);
     // Check if move
     if (elem == nullptr) {
       return;
@@ -91,6 +113,34 @@ void UiController::update() {
 
     auto item = mouse_item->getItem();
     auto stack = slt->getStack();
+    const auto type = slt->getType();
+
+    // Special slots only react to a fresh click
+    if (type != SlotType::Input) {
+      if (!mouse.pressed[1] && !mouse.pressed[3]) {
+        return;
+      }
+
+      switch (type) {
+        case SlotType::Buy:
+          clickBuy(*slt, state);
+          break;
+        case SlotType::Sell:
+          clickSell(mouse.pressed[1], state);
+          break;
+        case SlotType::Order:
+          clickOrder(state);
+          break;
+        case SlotType::Output:
+          if (mouse.pressed[1]) {
+            clickOutput();
+          }
+          break;
+        case SlotType::Input:
+          break;
+      }
+      return;
+    }
 
     if (mouse.pressed[1]) {
       // Pick up item
@@ -99,14 +149,13 @@ void UiController::update() {
         stack->clear();
       }
       // Place item
-      else if (item && !stack->getItem() && slt->getType() == "input") {
+      else if (item && !stack->getItem()) {
         stack->setItem(item, mouse_item->getQuantity());
         mouse_item->clear();
       }
       // Add to stack
       else if (item && stack->getItem() &&
-               stack->getItem()->getType().getId() == item->getType().getId() &&
-               slt->getType() == "input") {
+               stack->getItem()->getType().getId() == item->getType().getId()) {
         stack->add(mouse_item->getQuantity());
         mouse_item->clear();
       }
@@ -135,10 +184,10 @@ void UiController::update() {
   // Drag window
   if (mouse.down[1]) {
     // Start drag condition
-    if (mouse.position.x > position.x &&
-        mouse.position.x < position.x + size.x &&
-        mouse.position.y > position.y - DRAG_BOX_HEIGHT &&
-        mouse.position.y < position.y) {
+    if (mouse_pos.x > position.x &&
+        mouse_pos.x < position.x + size.x &&
+        mouse_pos.y > position.y - DRAG_BOX_HEIGHT &&
+        mouse_pos.y < position.y) {
       dragging = true;
     }
   } else {
@@ -148,12 +197,12 @@ void UiController::update() {
   // Update position
   if (dragging) {
     position.x =
-        std::max(std::min(static_cast<int>(mouse.position.x) - size.x / 2,
-                          asw::display::get_logical_size().x - size.x),
+        std::max(std::min(mouse_pos.x - size.x / 2,
+                          getUiSize().x - size.x),
                  0);
     position.y = std::max(
-        std::min(static_cast<int>(mouse.position.y) + DRAG_BOX_HEIGHT / 2,
-                 asw::display::get_logical_size().y - size.y),
+        std::min(mouse_pos.y + DRAG_BOX_HEIGHT / 2,
+                 getUiSize().y - size.y),
         0);
   }
 }
@@ -178,4 +227,164 @@ std::shared_ptr<UiElement> UiController::elementAt(
 
 std::string& UiController::getName() {
   return name;
+}
+
+std::vector<std::shared_ptr<ItemStack>> UiController::stacksOfType(
+    SlotType type) const {
+  std::vector<std::shared_ptr<ItemStack>> stacks;
+  for (auto const& element : elements) {
+    auto slot = std::dynamic_pointer_cast<UiSlot>(element);
+    if (slot && slot->getType() == type) {
+      stacks.push_back(slot->getStack());
+    }
+  }
+  return stacks;
+}
+
+void UiController::updateRecipeOutput() {
+  auto outputs = stacksOfType(SlotType::Output);
+  if (outputs.empty()) {
+    return;
+  }
+
+  auto output = outputs.front();
+  const auto* recipe = RecipeManager::match(name, stacksOfType(SlotType::Input));
+
+  if (!recipe) {
+    output->clear();
+    return;
+  }
+
+  // Preview what the inputs make
+  if (!output->getItem() ||
+      output->getItem()->getType().getId() != recipe->output ||
+      output->getQuantity() != recipe->count) {
+    output->setItem(std::make_shared<Item>(recipe->output), recipe->count);
+  }
+}
+
+bool UiController::clickOutput() {
+  const auto inputs = stacksOfType(SlotType::Input);
+  const auto* recipe = RecipeManager::match(name, inputs);
+  if (!recipe) {
+    return false;
+  }
+
+  auto item = mouse_item->getItem();
+  if (!item) {
+    mouse_item->setItem(std::make_shared<Item>(recipe->output), recipe->count);
+  } else if (item->getType().getId() == recipe->output) {
+    mouse_item->add(recipe->count);
+  } else {
+    return false;
+  }
+
+  RecipeManager::consume(*recipe, inputs);
+  SoundManager::play("shovel");
+  updateRecipeOutput();
+  return true;
+}
+
+bool UiController::clickBuy(const UiSlot& slot, GameState& state) {
+  const auto& id = slot.getItemId();
+  if (id.empty()) {
+    return false;
+  }
+
+  const int price = ItemTypeManager::getInfo(id).price;
+  const auto name = ItemTypeManager::getItem(id).getName();
+
+  if (!state.spend(price)) {
+    state.notify("Not enough coins for " + name);
+    SoundManager::play("error");
+    return false;
+  }
+
+  auto& inventory =
+      *InterfaceTypeManager::getInterfaceByName("inventory").getInventory();
+
+  if (!inventory.addItem(std::make_shared<Item>(id), 1)) {
+    state.refund(price);
+    state.notify("Your bag is full");
+    SoundManager::play("error");
+    return false;
+  }
+
+  state.notify(std::format("Bought {} for ${}", name, price));
+  SoundManager::play("buy");
+  return true;
+}
+
+bool UiController::clickSell(bool sell_all, GameState& state) {
+  auto item = mouse_item->getItem();
+  if (!item) {
+    state.notify("Drop items here to sell them");
+    return false;
+  }
+
+  const int value = ItemTypeManager::getInfo(item->getType().getId()).value;
+  if (value <= 0) {
+    state.notify("The store will not buy that");
+    SoundManager::play("error");
+    return false;
+  }
+
+  const int quantity = sell_all ? mouse_item->getQuantity() : 1;
+  state.earn(value * quantity);
+  state.items_sold += quantity;
+  state.notify(std::format("Sold {} {} for ${}", quantity,
+                           item->getType().getName(), value * quantity));
+  mouse_item->remove(quantity);
+  SoundManager::play("sell");
+  return true;
+}
+
+bool UiController::clickOrder(GameState& state) {
+  auto& order = state.order;
+  auto item = mouse_item->getItem();
+
+  if (!order.active) {
+    state.notify("No order today, come back tomorrow");
+    return false;
+  }
+
+  const auto wanted = ItemTypeManager::getItem(order.item_id).getName();
+
+  if (!item || item->getType().getId() != order.item_id) {
+    state.notify(std::format("Order: {} {} for ${}, due day {}",
+                             order.quantity - order.delivered, wanted,
+                             order.reward, order.deadline));
+    return false;
+  }
+
+  const int given =
+      std::min(mouse_item->getQuantity(), order.quantity - order.delivered);
+  mouse_item->remove(given);
+  order.delivered += given;
+  SoundManager::play("sell");
+
+  if (order.delivered >= order.quantity) {
+    order.active = false;
+    state.earn(order.reward);
+    state.notify(std::format("Order complete! +${}", order.reward));
+  } else {
+    state.notify(std::format("Delivered {} {}, {} to go", given, wanted,
+                             order.quantity - order.delivered));
+  }
+
+  return true;
+}
+
+bool UiController::isHoldingItem() {
+  return mouse_item && mouse_item->getItem();
+}
+
+void UiController::returnMouseItem(Inventory& inventory) {
+  if (!mouse_item || !mouse_item->getItem()) {
+    return;
+  }
+
+  if (inventory.addItem(mouse_item->getItem(), mouse_item->getQuantity())) {
+    mouse_item->clear();
+  }
 }

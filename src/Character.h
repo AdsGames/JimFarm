@@ -37,12 +37,15 @@ class Character : public Sprite {
   // Load images and samples
   void loadData();
 
+  // Tools and seeds for a new game
+  void giveStarterItems();
+
   // Position character
   void setPosition(const asw::Vec2i& pos);
 
   // Draw
   void draw(const Camera& camera) const override;
-  void drawInventory() const;
+  void drawInventory(const asw::Vec2i& screen_size) const;
 
   std::shared_ptr<Item> getSelectedItem() const;
 
@@ -70,6 +73,7 @@ class Character : public Sprite {
   asw::Vec2i indicator_pos{};
 
   // Movement
+  int move_speed{2};
   char direction{1};
   bool moving{false};
   bool sound_step{false};

@@ -3,13 +3,15 @@
 
 #include <asw/asw.h>
 
+class GameState;
+
 class UiElement {
  public:
   explicit UiElement(const asw::Vec2i& pos);
   explicit UiElement(const asw::Vec2i& pos, const asw::Vec2i& size);
   virtual ~UiElement() = default;
 
-  virtual void draw(const asw::Vec2i& parent_pos) = 0;
+  virtual void draw(const asw::Vec2i& parent_pos, const GameState& state) = 0;
 
   const asw::Vec2i& getPosition() const;
   const asw::Vec2i& getSize() const;

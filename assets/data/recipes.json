@@ -1,0 +1,98 @@
+[
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:wood": 1
+    },
+    "output": "item:plank",
+    "count": 4
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:plank": 2
+    },
+    "output": "item:stick",
+    "count": 4
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:stick": 3,
+      "item:wood": 1
+    },
+    "output": "item:campfire",
+    "count": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:plank": 3
+    },
+    "output": "item:gate",
+    "count": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:stick": 2,
+      "item:stone": 1
+    },
+    "output": "item:spear",
+    "count": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:pelt": 3
+    },
+    "output": "item:coat",
+    "count": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:hay": 2,
+      "item:lavender": 1
+    },
+    "output": "item:bandage",
+    "count": 1
+  },
+  {
+    "station": "furnace",
+    "inputs": {
+      "item:egg": 1,
+      "item:wood": 1
+    },
+    "output": "item:cooked_egg",
+    "count": 1
+  },
+  {
+    "station": "furnace",
+    "inputs": {
+      "item:carrot": 1,
+      "item:tomato": 1,
+      "item:wood": 1
+    },
+    "output": "item:stew",
+    "count": 1
+  },
+  {
+    "station": "furnace",
+    "inputs": {
+      "item:carrot": 2,
+      "item:wood": 1
+    },
+    "output": "item:roast_carrot",
+    "count": 2
+  },
+  {
+    "station": "furnace",
+    "inputs": {
+      "item:sand": 2,
+      "item:wood": 1
+    },
+    "output": "item:stone",
+    "count": 1
+  }
+]

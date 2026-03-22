@@ -10,7 +10,7 @@ class UiLabel : public UiElement {
  public:
   UiLabel(const asw::Vec2i& pos, const std::string& text);
 
-  void draw(const asw::Vec2i& parent_pos) override;
+  void draw(const asw::Vec2i& parent_pos, const GameState& state) override;
   std::string text;
 };
 

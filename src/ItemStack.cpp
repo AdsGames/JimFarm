@@ -7,7 +7,8 @@ ItemStack::ItemStack() : ItemStack(nullptr, 0) {}
 ItemStack::ItemStack(std::shared_ptr<Item> item, int quantity)
     : item(item), quantity(quantity) {
   if (!pixelart) {
-    pixelart = asw::assets::load_font("assets/fonts/pixelart.ttf", 8);
+    pixelart = asw::assets::load_font("assets/fonts/pixelart.ttf", 8,
+                                      asw::FontStyle::Pixel);
   }
 }
 
@@ -51,11 +52,13 @@ void ItemStack::draw(const asw::Vec2i& position) const {
   item->draw(position);
 
   if (quantity > 1) {
-    asw::draw::text(pixelart, std::to_string(quantity),
-                    asw::Vec2f(position.x + 13, position.y + 9),
-                    asw::Color(0, 0, 0), asw::TextJustify::Center);
-    asw::draw::text(pixelart, std::to_string(quantity),
-                    asw::Vec2f(position.x + 12, position.y + 8),
-                    asw::Color(255, 255, 255), asw::TextJustify::Center);
+    // Centre on a whole pixel, justify centre can land on a half pixel
+    const auto text = std::to_string(quantity);
+    const int x = position.x + 12 - asw::util::get_text_size(pixelart, text).x / 2;
+
+    asw::draw::text(pixelart, text, asw::Vec2f(x + 1, position.y + 9),
+                    asw::Color(0, 0, 0));
+    asw::draw::text(pixelart, text, asw::Vec2f(x, position.y + 8),
+                    asw::Color(255, 255, 255));
   }
 }

@@ -1,5 +1,6 @@
 #include "Menu.h"
 
+#include "SaveManager.h"
 #include "utility/Tools.h"
 
 void Menu::init() {
@@ -22,6 +23,8 @@ void Menu::init() {
 
   // Load fonts
   pixelart = asw::assets::load_font("assets/fonts/pixelart.ttf", 12);
+
+  has_save = SaveManager::exists();
 }
 
 void Menu::draw() {
@@ -34,6 +37,12 @@ void Menu::draw() {
     asw::draw::stretch_sprite_blit(
         coin_flip, asw::Quadf(9 * (coin_frame / 5), 0, 9, 9),
         asw::Quadf(374, 294 - (indicator_location * 22), 18, 18) * 2.0F);
+
+    if (has_save) {
+      asw::draw::text(pixelart, "BEGIN continues your farm, N starts over",
+                      asw::Vec2f(16, screenSize.y - 24),
+                      asw::Color(255, 255, 255));
+    }
   } else if (state == MenuState::HELP) {
     asw::draw::stretch_sprite(help_image,
                               asw::Quadf(0, 0, screenSize.x, screenSize.y));
@@ -73,6 +82,8 @@ void Menu::update(float dt) {
         asw::input::get_key_down(asw::input::Key::Return)) {
       if (indicator_location == 4) {
         asw::sound::play(blip);
+        pending_game_action = SaveManager::exists() ? GameAction::Continue
+                                                    : GameAction::NewGame;
         manager.set_next_scene(ProgramState::GAME);
       } else if (indicator_location == 3) {
         state = MenuState::OPTIONS;
@@ -89,6 +100,14 @@ void Menu::update(float dt) {
       } else if (indicator_location == 0) {
         asw::core::exit();
       }
+    }
+
+    // Start over even when a save exists
+    if (asw::input::get_key_down(asw::input::Key::N)) {
+      asw::sound::play(blip);
+      pending_game_action = GameAction::NewGame;
+      manager.set_next_scene(ProgramState::GAME);
+      return;
     }
 
     if (asw::input::get_key_down(asw::input::Key::Down)) {
