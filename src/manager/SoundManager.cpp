@@ -8,8 +8,8 @@
 
 // CTOR for sample wrapper
 SampleWrapper::SampleWrapper(asw::Sample sample_ptr,
-                             int vol,
-                             unsigned char pan,
+                             float vol,
+                             float pan,
                              int freq,
                              int freq_rand,
                              bool loop)
@@ -43,12 +43,12 @@ int SoundManager::load(const std::string& path) {
     std::string asset_file = "assets/sfx/";
     asset_file += sound["file"];
 
-    int volume = sound["volume"];
-    unsigned char panning = sound["panning"];
+    float volume = sound["volume"];
+    float panning = sound["panning"];
     int frequency = sound["frequency"];
     int frequency_rand = sound["frequency_rand"];
 
-    asw::Sample tempSample = asw::assets::loadSample(asset_file);
+    asw::Sample tempSample = asw::assets::load_sample(asset_file);
     auto tempWrapper = SampleWrapper(tempSample, volume, panning, frequency,
                                      frequency_rand, false);
     sound_defs.push_back(tempWrapper);

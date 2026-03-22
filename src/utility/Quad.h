@@ -1,12 +1,12 @@
 #ifndef SRC_UTILITY_QUAD_H_
 #define SRC_UTILITY_QUAD_H_
 
-#include "./Vec2.h"
+#include <asw/asw.h>
 
 template <typename T>
 class Quad {
  public:
-  bool contains(const Vec2<T>& position) const {
+  bool contains(const asw::Vec2<T>& position) const {
     return position.x >= x_1 && position.x <= x_2 && position.y >= y_1 &&
            position.y <= y_2;
   }

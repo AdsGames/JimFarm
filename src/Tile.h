@@ -7,7 +7,6 @@
 #include "Sprite.h"
 #include "manager/TileType.h"
 #include "utility/Camera.h"
-#include "utility/Vec2.h"
 
 constexpr int MAX_TILE_META = 255;
 
@@ -15,9 +14,12 @@ constexpr int TILE_SIZE = 16;
 
 class Tile : public Sprite {
  public:
-  Tile(const std::string& id, Vec2<int> pos, int z, unsigned char meta = 0);
+  Tile(const std::string& id,
+       const asw::Vec2i& pos,
+       int z,
+       unsigned char meta = 0);
 
-  Vec2<int> getTilePosition() const;
+  const asw::Vec2i getTilePosition() const;
 
   // Drawing
   void draw(const Camera& camera) const override;

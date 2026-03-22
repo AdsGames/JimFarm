@@ -20,15 +20,15 @@
 class SampleWrapper {
  public:
   SampleWrapper(asw::Sample sample_ptr = nullptr,
-                int vol = 255,
-                unsigned char pan = 128,
+                float vol = 1.0f,
+                float pan = 0.5f,
                 int freq = 1000,
                 int freq_rand = 0,
                 bool loop = false);
 
   asw::Sample sample_ptr;
-  int vol;
-  unsigned char pan;
+  float vol;
+  float pan;
   int freq;
   int freq_rand;
   bool loop;

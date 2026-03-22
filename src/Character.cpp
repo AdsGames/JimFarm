@@ -14,10 +14,11 @@ void CharacterForeground::draw(const Camera& camera) const {
   auto animation_frame =
       static_cast<int>(floor(char_ptr->ani_ticker / 4.0f)) * 16;
 
-  asw::draw::stretchSpriteBlit(char_ptr->image, animation_frame,
-                               (char_ptr->direction - 1) * 20, 16, 8,
-                               pos.x - camera.getPosition().x,
-                               pos.y - camera.getPosition().y - 8, 16, 8);
+  asw::draw::stretch_sprite_blit(
+      char_ptr->image,
+      asw::Quadf(animation_frame, (char_ptr->direction - 1) * 20, 16, 8),
+      asw::Quadf(pos.x - camera.getPosition().x,
+                 pos.y - camera.getPosition().y - 8, 16, 8));
 }
 
 void CharacterForeground::update() {
@@ -34,19 +35,19 @@ Character::Character() : Sprite() {
 // Set image
 void Character::loadData() {
   // Images
-  image = asw::assets::loadTexture("assets/images/character_1.png");
-  inventory_gui = asw::assets::loadTexture("assets/images/GUI_INVENTORY.png");
-  indicator = asw::assets::loadTexture("assets/images/indicator.png");
-  coin = asw::assets::loadTexture("assets/images/coin.png");
+  image = asw::assets::load_texture("assets/images/character_1.png");
+  inventory_gui = asw::assets::load_texture("assets/images/GUI_INVENTORY.png");
+  indicator = asw::assets::load_texture("assets/images/indicator.png");
+  coin = asw::assets::load_texture("assets/images/coin.png");
 
   // Sounds
-  pickup = asw::assets::loadSample("assets/sfx/pickup.wav");
-  drop = asw::assets::loadSample("assets/sfx/drop.wav");
-  step[0] = asw::assets::loadSample("assets/sfx/step_1.wav");
-  step[1] = asw::assets::loadSample("assets/sfx/step_2.wav");
+  pickup = asw::assets::load_sample("assets/sfx/pickup.wav");
+  drop = asw::assets::load_sample("assets/sfx/drop.wav");
+  step[0] = asw::assets::load_sample("assets/sfx/step_1.wav");
+  step[1] = asw::assets::load_sample("assets/sfx/step_2.wav");
 
   // Load fonts
-  pixelart = asw::assets::loadFont("assets/fonts/pixelart.ttf", 12);
+  pixelart = asw::assets::load_font("assets/fonts/pixelart.ttf", 12);
 
   inventory_ui.getInventory()->addItem(std::make_shared<Item>("item:axe"), 1);
   inventory_ui.getInventory()->addItem(std::make_shared<Item>("item:scythe"),
@@ -60,29 +61,33 @@ void Character::loadData() {
       std::make_shared<Item>("item:watering_can"), 1);
 }
 
-void Character::setPosition(Vec2<int> pos) {
+void Character::setPosition(const asw::Vec2i& pos) {
   this->pos = pos;
 }
 
 // Draw character to screen
 void Character::draw(const Camera& camera) const {
-  const auto cursor_x = static_cast<int>(
-      static_cast<float>(asw::input::mouse.x) / camera.getZoom());
-  const auto cursor_y = static_cast<int>(
-      static_cast<float>(asw::input::mouse.y) / camera.getZoom());
+  const auto& mouse = asw::input::get_mouse();
+
+  const auto cursor_x =
+      static_cast<int>(static_cast<float>(mouse.position.x) / camera.getZoom());
+  const auto cursor_y =
+      static_cast<int>(static_cast<float>(mouse.position.y) / camera.getZoom());
 
   // Cursor
-  asw::draw::rectFill(cursor_x, cursor_y, 2, 2,
-                      asw::util::makeColor(255, 255, 255));
+  asw::draw::rect_fill(asw::Quadf(cursor_x, cursor_y, 2, 2),
+                       asw::Color(255, 255, 255));
 
   // Only item if hands arent empty
-  asw::draw::sprite(indicator, indicator_pos.x - camera.getPosition().x,
-                    indicator_pos.y - camera.getPosition().y);
+  asw::draw::sprite(indicator,
+                    asw::Vec2f(indicator_pos.x - camera.getPosition().x,
+                               indicator_pos.y - camera.getPosition().y));
 
   // Draw frame
-  asw::draw::stretchSpriteBlit(image, ani_ticker / 4 * 16, (direction - 1) * 20,
-                               16, 20, pos.x - camera.getPosition().x,
-                               pos.y - camera.getPosition().y - 8, 16, 20);
+  asw::draw::stretch_sprite_blit(
+      image, asw::Quadf(ani_ticker / 4 * 16, (direction - 1) * 20, 16, 20),
+      asw::Quadf(pos.x - camera.getPosition().x,
+                 pos.y - camera.getPosition().y - 8, 16, 20));
 
   // Selected item
   if (inventory_ui.getInventory()->getStack(selected_item)->getItem()) {
@@ -95,22 +100,22 @@ void Character::draw(const Camera& camera) const {
 
 // Update player
 void Character::drawInventory() const {
-  auto screen_size = asw::display::getLogicalSize();
+  auto screen_size = asw::display::get_logical_size();
   const int draw_x = (screen_size.x - HOTBAR_SIZE * 18) / 2;
   const int draw_y = screen_size.y - 20;
 
   // Draw items
   for (int i = 0; i < HOTBAR_SIZE; i++) {
-    asw::draw::sprite(inventory_gui, 18 * i + draw_x, draw_y);
+    asw::draw::sprite(inventory_gui, asw::Vec2f(18 * i + draw_x, draw_y));
 
     if (i == selected_item) {
-      asw::draw::sprite(indicator, 18 * i + 1 + draw_x, 1 + draw_y);
+      asw::draw::sprite(indicator, asw::Vec2f(18 * i + 1 + draw_x, 1 + draw_y));
     }
 
     auto stack = inventory_ui.getInventory()->getStack(i);
 
     if (stack) {
-      stack->draw(Vec2<int>(18 * i + 1 + draw_x, 1 + draw_y));
+      stack->draw(asw::Vec2i(18 * i + 1 + draw_x, 1 + draw_y));
     }
   }
 }
@@ -121,18 +126,20 @@ std::shared_ptr<Item> Character::getSelectedItem() const {
 
 // Update player
 void Character::update(World& world) {
-  auto relative_x = static_cast<int>(static_cast<float>(asw::input::mouse.x) /
+  const auto& mouse = asw::input::get_mouse();
+
+  auto relative_x = static_cast<int>(static_cast<float>(mouse.position.x) /
                                      world.getCamera().getZoom()) +
                     world.getCamera().getPosition().x;
-  auto relative_y = static_cast<int>(static_cast<float>(asw::input::mouse.y) /
+  auto relative_y = static_cast<int>(static_cast<float>(mouse.position.y) /
                                      world.getCamera().getZoom()) +
                     world.getCamera().getPosition().y;
 
   auto tile_index = pos / TILE_SIZE;
 
   // Indicator
-  indicator_pos =
-      Vec2<int>(relative_x - (relative_x % 16), relative_y - (relative_y % 16));
+  indicator_pos = asw::Vec2i(relative_x - (relative_x % 16),
+                             relative_y - (relative_y % 16));
 
   // Oh
   // Snap
@@ -141,10 +148,10 @@ void Character::update(World& world) {
   }
 
   // Selector
-  if (asw::input::keyboard.pressed[SDL_SCANCODE_Z] || asw::input::mouse.z > 0) {
+  if (asw::input::get_key_down(asw::input::Key::Z) || mouse.z > 0) {
     selected_item = (selected_item + (HOTBAR_SIZE - 1)) % HOTBAR_SIZE;
   }
-  if (asw::input::keyboard.pressed[SDL_SCANCODE_X] || asw::input::mouse.z < 0) {
+  if (asw::input::get_key_down(asw::input::Key::X) || mouse.z < 0) {
     selected_item = (selected_item + 1) % HOTBAR_SIZE;
   }
 
@@ -152,37 +159,37 @@ void Character::update(World& world) {
   // Move
   if (!moving) {
     // Up
-    if (asw::input::keyboard.down[SDL_SCANCODE_UP] ||
-        asw::input::keyboard.down[SDL_SCANCODE_W]) {
+    if (asw::input::get_key(asw::input::Key::Up) ||
+        asw::input::get_key(asw::input::Key::W)) {
       direction = DIR_UP;
-      if (!world.getMap().isSolidAt(tile_index + Vec2<int>(0, -1))) {
+      if (!world.getMap().isSolidAt(tile_index + asw::Vec2i(0, -1))) {
         moving = true;
         sound_step = !sound_step;
       }
     }
     // Down
-    else if (asw::input::keyboard.down[SDL_SCANCODE_DOWN] ||
-             asw::input::keyboard.down[SDL_SCANCODE_S]) {
+    else if (asw::input::get_key(asw::input::Key::Down) ||
+             asw::input::get_key(asw::input::Key::S)) {
       direction = DIR_DOWN;
-      if (!world.getMap().isSolidAt(tile_index + Vec2<int>(0, 1))) {
+      if (!world.getMap().isSolidAt(tile_index + asw::Vec2i(0, 1))) {
         moving = true;
         sound_step = !sound_step;
       }
     }
     // Left
-    else if (asw::input::keyboard.down[SDL_SCANCODE_LEFT] ||
-             asw::input::keyboard.down[SDL_SCANCODE_A]) {
+    else if (asw::input::get_key(asw::input::Key::Left) ||
+             asw::input::get_key(asw::input::Key::A)) {
       direction = DIR_LEFT;
-      if (!world.getMap().isSolidAt(tile_index + Vec2<int>(-1, 0))) {
+      if (!world.getMap().isSolidAt(tile_index + asw::Vec2i(-1, 0))) {
         moving = true;
         sound_step = !sound_step;
       }
     }
     // Right
-    else if (asw::input::keyboard.down[SDL_SCANCODE_RIGHT] ||
-             asw::input::keyboard.down[SDL_SCANCODE_D]) {
+    else if (asw::input::get_key(asw::input::Key::Right) ||
+             asw::input::get_key(asw::input::Key::D)) {
       direction = DIR_RIGHT;
-      if (!world.getMap().isSolidAt(tile_index + Vec2<int>(1, 0))) {
+      if (!world.getMap().isSolidAt(tile_index + asw::Vec2i(1, 0))) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -190,7 +197,7 @@ void Character::update(World& world) {
 
     // Walk sounds
     if (moving) {
-      asw::sound::play(step[sound_step], 50, 125);
+      asw::sound::play(step[sound_step], 0.2F);
     }
   }
 
@@ -227,7 +234,7 @@ void Character::update(World& world) {
   }
 
   // Drop
-  if (asw::input::keyboard.pressed[SDL_SCANCODE_F]) {
+  if (asw::input::get_key_down(asw::input::Key::F)) {
     std::shared_ptr<Item> itemInHand = nullptr;
     if (inventory_ui.getInventory()->getStack(selected_item)->getItem()) {
       itemInHand =
@@ -243,8 +250,8 @@ void Character::update(World& world) {
   }
 
   // Interact with map
-  if ((asw::input::keyboard.pressed[SDL_SCANCODE_SPACE] ||
-       asw::input::mouse.pressed[1]) &&
+  if ((asw::input::get_key_down(asw::input::Key::Space) ||
+       asw::input::get_mouse_button_down(asw::input::MouseButton::Left)) &&
       inventory_ui.getInventory()->getStack(selected_item)->getItem()) {
     world.interact(
         indicator_pos,

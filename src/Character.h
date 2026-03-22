@@ -12,7 +12,6 @@
 
 #include "manager/InterfaceTypeManager.h"
 #include "ui/UiController.h"
-#include "utility/Vec2.h"
 
 const int HOTBAR_SIZE = 8;
 
@@ -39,7 +38,7 @@ class Character : public Sprite {
   void loadData();
 
   // Position character
-  void setPosition(Vec2<int> pos);
+  void setPosition(const asw::Vec2i& pos);
 
   // Draw
   void draw(const Camera& camera) const override;
@@ -68,7 +67,7 @@ class Character : public Sprite {
   int selected_item{0};
 
   // What tile you are over
-  Vec2<int> indicator_pos{};
+  asw::Vec2i indicator_pos{};
 
   // Movement
   char direction{1};

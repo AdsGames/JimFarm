@@ -25,17 +25,17 @@ void Hud::update() {
     ui.update();
   }
 
-  if (asw::input::keyboard.pressed[SDL_SCANCODE_E]) {
+  if (asw::input::get_key_down(asw::input::Key::E)) {
     this->toggleUiController(
         "inventory", InterfaceTypeManager::getInterfaceByName("inventory"));
   }
 
-  if (asw::input::keyboard.pressed[SDL_SCANCODE_Q]) {
+  if (asw::input::get_key_down(asw::input::Key::Q)) {
     this->toggleUiController(
         "crafting", InterfaceTypeManager::getInterfaceByName("crafting"));
   }
 
-  if (asw::input::keyboard.pressed[SDL_SCANCODE_G]) {
+  if (asw::input::get_key_down(asw::input::Key::G)) {
     this->toggleUiController(
         "furnace", InterfaceTypeManager::getInterfaceByName("furnace"));
   }

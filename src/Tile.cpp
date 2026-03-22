@@ -4,10 +4,13 @@
 #include "utility/Tools.h"
 
 // Ctor for tile
-Tile::Tile(const std::string& id, Vec2<int> pos, int z, unsigned char meta)
+Tile::Tile(const std::string& id,
+           const asw::Vec2i& pos,
+           int z,
+           unsigned char meta)
     : Sprite(pos, z), meta(meta), tile_pointer(TileTypeManager::getTile(id)) {}
 
-Vec2<int> Tile::getTilePosition() const {
+const asw::Vec2i Tile::getTilePosition() const {
   return pos / TILE_SIZE;
 }
 

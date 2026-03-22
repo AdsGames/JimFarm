@@ -11,13 +11,13 @@ const int SLOT_SIZE = 16;
 
 class UiSlot : public UiElement {
  public:
-  UiSlot(Vec2<int> pos, std::string type = "");
+  UiSlot(const asw::Vec2i& pos, std::string type = "");
 
   void bindStack(std::shared_ptr<ItemStack> stk);
 
   std::shared_ptr<ItemStack> getStack() const;
 
-  void draw(Vec2<int> parent_pos) override;
+  void draw(const asw::Vec2i& parent_pos) override;
 
   const std::string& getType() const;
 

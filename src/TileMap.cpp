@@ -20,7 +20,7 @@ int TileMap::getHeight() const {
 }
 
 // Chunk lookup
-std::shared_ptr<Chunk> TileMap::getChunkAt(Vec2<int> pos) {
+std::shared_ptr<Chunk> TileMap::getChunkAt(const asw::Vec2i& pos) {
   auto offset_x = pos.x / CHUNK_SIZE;
   auto offset_y = pos.y / CHUNK_SIZE;
 
@@ -35,7 +35,7 @@ std::shared_ptr<Chunk> TileMap::getChunkAt(Vec2<int> pos) {
   return chunks.at(offset_y).at(offset_x);
 }
 
-std::string TileMap::getBiomeAt(Vec2<int> pos) {
+std::string TileMap::getBiomeAt(const asw::Vec2i& pos) {
   auto chunk = getChunkAt(pos);
 
   if (!chunk) {
@@ -44,7 +44,7 @@ std::string TileMap::getBiomeAt(Vec2<int> pos) {
   return chunk->getBiomeAt(pos % CHUNK_SIZE);
 }
 
-char TileMap::getTemperatureAt(Vec2<int> pos) {
+char TileMap::getTemperatureAt(const asw::Vec2i& pos) {
   auto chunk = getChunkAt(pos);
 
   if (!chunk) {
@@ -55,7 +55,7 @@ char TileMap::getTemperatureAt(Vec2<int> pos) {
 }
 
 // Get tile at position
-std::shared_ptr<Tile> TileMap::getTileAt(Vec2<int> pos, int layer) {
+std::shared_ptr<Tile> TileMap::getTileAt(const asw::Vec2i& pos, int layer) {
   auto chunk = getChunkAt(pos);
 
   if (!chunk) {
@@ -103,13 +103,13 @@ void TileMap::removeTile(std::shared_ptr<Tile> tile) {
 }
 
 // Check for solid tile
-bool TileMap::isSolidAt(Vec2<int> pos) {
+bool TileMap::isSolidAt(const asw::Vec2i& pos) {
   auto tile = getTileAt(pos, LAYER_FOREGROUND);
   return tile && tile->getType().getAttribute();
 }
 
 // Get item at position
-std::shared_ptr<MapItem> TileMap::getItemAt(Vec2<int> pos) {
+std::shared_ptr<MapItem> TileMap::getItemAt(const asw::Vec2i& pos) {
   auto chunk = getChunkAt(pos);
 
   if (!chunk) {
@@ -120,7 +120,7 @@ std::shared_ptr<MapItem> TileMap::getItemAt(Vec2<int> pos) {
 }
 
 // Place item on map
-void TileMap::placeItemAt(std::shared_ptr<Item> item, Vec2<int> pos) {
+void TileMap::placeItemAt(std::shared_ptr<Item> item, const asw::Vec2i& pos) {
   if (!item) {
     throw std::runtime_error("Can not place item, item is null");
   }
@@ -140,8 +140,7 @@ void TileMap::removeItem(std::shared_ptr<MapItem> item) {
     throw std::runtime_error("Can not remove item, item is null");
   }
 
-  auto chunk =
-      getChunkAt(item->getPosition() / Vec2<int>(TILE_SIZE, TILE_SIZE));
+  auto chunk = getChunkAt(item->getPosition() / TILE_SIZE);
 
   if (!chunk) {
     throw std::runtime_error("Can not place tile, chunk is null");
@@ -174,11 +173,11 @@ void TileMap::tick(const Camera& camera) const {
 }
 
 // Generate map
-void TileMap::generateMap(Vec2<unsigned int> size) {
+void TileMap::generateMap(const asw::Vec2<unsigned int>& size) {
   this->size = size;
 
   // Generating chunk
-  std::cout << "Generating World (" << size.x << "," << size.y << ")...  ";
+  asw::log::info("Generating World ({}, {})...  ", size.x, size.y);
 
   // Create some chunks
   Chunk::seed = random(-10000, 10000);
@@ -194,19 +193,19 @@ void TileMap::generateMap(Vec2<unsigned int> size) {
   }
 
   // Generating chunk
-  std::cout << "done." << std::endl;
-  std::cout << "Updating bitmasks...  ";
+  asw::log::info("done.");
+  asw::log::info("Updating bitmasks...  ");
 
   // Update masks
   for (unsigned int x = 0; x < size.x * CHUNK_SIZE; x++) {
     for (unsigned int y = 0; y < size.y * CHUNK_SIZE; y++) {
       for (unsigned int z = 0; z < CHUNK_LAYERS; z++) {
-        updateBitMask(getTileAt(Vec2<int>(x, y), z));
+        updateBitMask(getTileAt(asw::Vec2i(x, y), z));
       }
     }
   }
 
-  std::cout << "done." << std::endl;
+  asw::log::info("done.");
 }
 
 // Clear map
@@ -225,8 +224,8 @@ void TileMap::updateBitMask(std::shared_ptr<Tile> tile) {
   for (unsigned char i = 0; i < 4; i++) {
     const auto& [first, second] = TileMap::BITMASK_DIRECTIONS[i];
 
-    auto current = getTileAt(tile->getTilePosition() + Vec2<int>(first, second),
-                             tile->getZ());
+    auto current = getTileAt(
+        tile->getTilePosition() + asw::Vec2i(first, second), tile->getZ());
 
     if (current && current->getType().getId() == tile->getType().getId()) {
       mask += static_cast<unsigned char>(pow(2, i));
@@ -237,10 +236,10 @@ void TileMap::updateBitMask(std::shared_ptr<Tile> tile) {
 }
 
 // Update bitmask (and neighbours)
-void TileMap::updateBitmaskSurround(Vec2<int> pos, int z) {
-  updateBitMask(getTileAt(pos + Vec2<int>(0, 0), z));
-  updateBitMask(getTileAt(pos + Vec2<int>(0, -1), z));
-  updateBitMask(getTileAt(pos + Vec2<int>(0, 1), z));
-  updateBitMask(getTileAt(pos + Vec2<int>(-1, 0), z));
-  updateBitMask(getTileAt(pos + Vec2<int>(1, 0), z));
+void TileMap::updateBitmaskSurround(const asw::Vec2i& pos, int z) {
+  updateBitMask(getTileAt(pos + asw::Vec2i(0, 0), z));
+  updateBitMask(getTileAt(pos + asw::Vec2i(0, -1), z));
+  updateBitMask(getTileAt(pos + asw::Vec2i(0, 1), z));
+  updateBitMask(getTileAt(pos + asw::Vec2i(-1, 0), z));
+  updateBitMask(getTileAt(pos + asw::Vec2i(1, 0), z));
 }

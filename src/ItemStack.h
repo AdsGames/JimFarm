@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "Item.h"
-#include "utility/Vec2.h"
 
 class ItemStack {
  public:
@@ -22,7 +21,7 @@ class ItemStack {
   void add(int quantity);
   void clear();
 
-  void draw(Vec2<int> position) const;
+  void draw(const asw::Vec2i& position) const;
 
  private:
   std::shared_ptr<Item> item = nullptr;

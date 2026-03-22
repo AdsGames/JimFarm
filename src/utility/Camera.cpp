@@ -27,7 +27,8 @@ const Quad<int>& Camera::getBounds() const {
   return bounds;
 }
 
-void Camera::pan(Vec2<int> pos_to) {
+void Camera::pan(const asw::Vec2i& _pos_to) {
+  auto pos_to = _pos_to;
   if (pos_to.x < outer_bounds.x_1) {
     pos_to.x = outer_bounds.x_1;
   } else if (pos_to.x + this->bounds.getWidth() > outer_bounds.x_2) {
@@ -49,15 +50,15 @@ void Camera::pan(Vec2<int> pos_to) {
   this->bounds.y_2 = pos_to.y + prev_h;
 }
 
-Vec2<int> Camera::getSize() const {
-  return Vec2<int>(this->bounds.getWidth(), this->bounds.getHeight());
+const asw::Vec2i Camera::getSize() const {
+  return asw::Vec2i(this->bounds.getWidth(), this->bounds.getHeight());
 };
 
-Vec2<int> Camera::getPosition() const {
-  return Vec2<int>(this->bounds.x_1, this->bounds.y_1);
+const asw::Vec2i Camera::getPosition() const {
+  return asw::Vec2i(this->bounds.x_1, this->bounds.y_1);
 };
 
-Vec2<int> Camera::getCenter() const {
-  return Vec2<int>(this->bounds.x_1 + this->bounds.getWidth() / 2,
-                   this->bounds.y_1 + this->bounds.getHeight() / 2);
+const asw::Vec2i Camera::getCenter() const {
+  return asw::Vec2i(this->bounds.x_1 + this->bounds.getWidth() / 2,
+                    this->bounds.y_1 + this->bounds.getHeight() / 2);
 };

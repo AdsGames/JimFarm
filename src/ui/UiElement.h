@@ -3,25 +3,23 @@
 
 #include <asw/asw.h>
 
-#include "../utility/Vec2.h"
-
 class UiElement {
  public:
-  explicit UiElement(Vec2<int> pos);
-  explicit UiElement(Vec2<int> pos, Vec2<int> size);
+  explicit UiElement(const asw::Vec2i& pos);
+  explicit UiElement(const asw::Vec2i& pos, const asw::Vec2i& size);
   virtual ~UiElement() = default;
 
-  virtual void draw(Vec2<int> parent_pos) = 0;
+  virtual void draw(const asw::Vec2i& parent_pos) = 0;
 
-  Vec2<int> getPosition() const;
-  Vec2<int> getSize() const;
+  const asw::Vec2i& getPosition() const;
+  const asw::Vec2i& getSize() const;
 
  protected:
   static asw::Font font;
 
  private:
-  Vec2<int> pos;
-  Vec2<int> size;
+  asw::Vec2i pos;
+  asw::Vec2i size;
 };
 
 #endif  // SRC_UI_UI_ELEMENT_H_

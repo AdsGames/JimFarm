@@ -16,7 +16,6 @@
  * TILE MAP *
  ************/
 World::World() {
-  ticker.start();
   resetCamera();
 }
 
@@ -45,48 +44,49 @@ void World::resetCamera() {
 // Draw bottom tiles
 void World::draw() {
   // Clear buffer
-  SDL_SetRenderTarget(asw::display::renderer, map_buffer.get());
+  SDL_SetRenderTarget(asw::display::get_renderer(), map_buffer.get());
 
   // Drawable
   Graphics::Instance()->draw(camera);
 
-  SDL_SetRenderTarget(asw::display::renderer, nullptr);
+  SDL_SetRenderTarget(asw::display::get_renderer(), nullptr);
 
   SDL_SetTextureBlendMode(map_buffer.get(), SDL_BLENDMODE_BLEND);
 
   // Draw buffer
-  asw::draw::stretchSpriteBlit(map_buffer, 0, 0, camera.getSize().x,
-                               camera.getSize().y, 0, 0, VIEWPORT_WIDTH,
-                               VIEWPORT_HEIGHT);
+  asw::draw::stretch_sprite_blit(
+      map_buffer, asw::Quadf(0, 0, camera.getSize().x, camera.getSize().y),
+      asw::Quadf(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT));
 
   // Draw temperature indicator
   const char temp = tile_map.getTemperatureAt(camera.getCenter());
   const char r_val = (temp > 0) ? (temp / 2) : 0;
   const char b_val = (temp < 0) ? (temp / 2 * -1) : 0;
 
-  SDL_SetRenderTarget(asw::display::renderer, overlay_buffer.get());
+  SDL_SetRenderTarget(asw::display::get_renderer(), overlay_buffer.get());
 
   if (r_val > 0) {
-    asw::draw::rectFill(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT,
-                        asw::util::makeColor(255, 0, 0, r_val));
+    asw::draw::rect_fill(asw::Quadf(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT),
+                         asw::Color(255, 0, 0, r_val));
   }
   if (b_val > 0) {
-    asw::draw::rectFill(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT,
-                        asw::util::makeColor(0, 0, 255, b_val));
+    asw::draw::rect_fill(asw::Quadf(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT),
+                         asw::Color(0, 0, 255, b_val));
   }
 
-  SDL_SetRenderTarget(asw::display::renderer, nullptr);
+  SDL_SetRenderTarget(asw::display::get_renderer(), nullptr);
 
   SDL_SetTextureBlendMode(overlay_buffer.get(), SDL_BLENDMODE_BLEND);
 
-  asw::draw::sprite(overlay_buffer, 0, 0);
+  asw::draw::sprite(overlay_buffer, asw::Vec2f(0, 0));
 
   // Draw hud
   if (hud.isOpen()) {
-    SDL_SetRenderTarget(asw::display::renderer, nullptr);
-    SDL_SetRenderDrawBlendMode(asw::display::renderer, SDL_BLENDMODE_BLEND);
-    asw::draw::rectFill(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT,
-                        asw::util::makeColor(0, 0, 0, 64));
+    SDL_SetRenderTarget(asw::display::get_renderer(), nullptr);
+    SDL_SetRenderDrawBlendMode(asw::display::get_renderer(),
+                               SDL_BLENDMODE_BLEND);
+    asw::draw::rect_fill(asw::Quadf(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT),
+                         asw::Color(0, 0, 0, 64));
     hud.draw();
   }
 
@@ -97,40 +97,40 @@ void World::draw() {
 // Load images
 void World::loadImages() {
   TileTypeManager::sprite_sheet_tiles =
-      asw::assets::loadTexture("assets/images/tiles.png");
+      asw::assets::load_texture("assets/images/tiles.png");
   ItemTypeManager::sprite_sheet_items =
-      asw::assets::loadTexture("assets/images/items.png");
+      asw::assets::load_texture("assets/images/items.png");
 
   BehaviourTypeManager::loadBehaviours();
 
-  std::cout << "Loading assets/data/tiles.json" << std::endl;
+  asw::log::info("Loading assets/data/tiles.json");
   if (TileTypeManager::loadTiles("assets/data/tiles.json")) {
-    asw::util::abortOnError("Could not load assets/data/tiles.json");
+    asw::util::abort_on_error("Could not load assets/data/tiles.json");
   }
 
-  std::cout << "Loading assets/data/items.json" << std::endl;
+  asw::log::info("Loading assets/data/items.json");
   if (ItemTypeManager::loadItems("assets/data/items.json")) {
-    asw::util::abortOnError("Could not load assets/data/items.json");
+    asw::util::abort_on_error("Could not load assets/data/items.json");
   }
 
-  std::cout << "Loading assets/data/interfaces.json" << std::endl;
+  asw::log::info("Loading assets/data/interfaces.json");
   if (InterfaceTypeManager::loadInterfaces("assets/data/interfaces.json")) {
-    asw::util::abortOnError("Could not load assets/data/interfaces.json");
+    asw::util::abort_on_error("Could not load assets/data/interfaces.json");
   }
 
-  std::cout << "Loading assets/data/sounds.json" << std::endl;
+  asw::log::info("Loading assets/data/sounds.json");
   if (SoundManager::load("assets/data/sounds.json")) {
-    asw::util::abortOnError("Could not load assets/data/sounds.json");
+    asw::util::abort_on_error("Could not load assets/data/sounds.json");
   }
 
   // Create map buffer
-  map_buffer = asw::assets::createTexture(
+  map_buffer = asw::assets::create_texture(
       static_cast<int>(VIEWPORT_WIDTH * VIEWPORT_MAX_ZOOM),
       static_cast<int>(VIEWPORT_HEIGHT * VIEWPORT_MAX_ZOOM));
 
-  overlay_buffer = asw::assets::createTexture(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+  overlay_buffer = asw::assets::create_texture(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
-  tile_map.generateMap(Vec2<unsigned int>(8, 8));
+  tile_map.generateMap(asw::Vec2<unsigned int>(8, 8));
 
   resetCamera();
 }
@@ -139,7 +139,8 @@ void World::loadImages() {
  * MAP
  */
 // Interact with
-void World::interact(Vec2<int> inter_pos, std::shared_ptr<Item> inHand) {
+void World::interact(const asw::Vec2i& inter_pos,
+                     std::shared_ptr<Item> inHand) {
   auto tile_pos = inter_pos / TILE_SIZE;
 
   std::shared_ptr<Tile> tile_f = tile_map.getTileAt(tile_pos, LAYER_FOREGROUND);
@@ -314,20 +315,20 @@ void World::interact(Vec2<int> inter_pos, std::shared_ptr<Item> inHand) {
 }
 
 // Update tile map
-void World::update() {
+void World::update(float dt) {
   // Update hud
   hud.update();
 
   // Regen map
-  if (asw::input::keyboard.pressed[SDL_SCANCODE_R]) {
+  if (asw::input::get_key_down(asw::input::Key::R)) {
     tile_map.clearMap();
-    tile_map.generateMap(Vec2<unsigned int>(8, 8));
+    tile_map.generateMap(asw::Vec2<unsigned int>(8, 8));
   }
 
   // One game tick (20x second, 50ms)
-  auto tickTime = ticker.getElapsedTime<std::chrono::milliseconds>();
-  if (tickTime >= 50) {
-    ticker.reset();
+  ticker += dt;
+  if (ticker >= 0.050F) {
+    ticker -= 0.050F;
 
     // Update tile map
     tile_map.tick(camera);
@@ -336,12 +337,12 @@ void World::update() {
   // Zooming
   const auto zoom = camera.getZoom();
 
-  if (asw::input::keyboard.pressed[SDL_SCANCODE_KP_PLUS] &&
+  if (asw::input::get_key_down(asw::input::Key::KpPlus) &&
       zoom < VIEWPORT_MAX_ZOOM) {
     camera.setZoom(zoom * 2.0f);
   }
 
-  if (asw::input::keyboard.pressed[SDL_SCANCODE_KP_MINUS] &&
+  if (asw::input::get_key_down(asw::input::Key::KpMinus) &&
       zoom > VIEWPORT_MIN_ZOOM) {
     camera.setZoom(zoom * 0.5f);
   }

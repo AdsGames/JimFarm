@@ -32,8 +32,8 @@ class Messenger {
 
   int padding{5};
 
-  asw::Color font_color{asw::util::makeColor(255, 255, 255)};
-  asw::Color bg_color{asw::util::makeColor(0, 0, 0, 0)};
+  asw::Color font_color{asw::Color(255, 255, 255)};
+  asw::Color bg_color{asw::Color(0, 0, 0, 0)};
 
   std::vector<std::string> msgs{};
 

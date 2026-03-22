@@ -2,18 +2,18 @@
 
 #include "utility/Tools.h"
 
-GameMenu::GameMenu() {
-  image_menu = asw::assets::loadTexture("assets/images/game_menu.png");
+void GameMenu::init() {
+  image_menu = asw::assets::load_texture("assets/images/game_menu.png");
 }
 
-void GameMenu::update(StateEngine* engine) {
+void GameMenu::update(float dt) {
   // Change cursor location
-  if (asw::input::keyboard.pressed[SDL_SCANCODE_DOWN]) {
+  if (asw::input::get_key_down(asw::input::Key::Down)) {
     indicator_position++;
     if (indicator_position > 2) {
       indicator_position = 0;
     }
-  } else if (asw::input::keyboard.pressed[SDL_SCANCODE_UP]) {
+  } else if (asw::input::get_key_down(asw::input::Key::Up)) {
     indicator_position--;
     if (indicator_position < 0) {
       indicator_position = 2;
@@ -21,11 +21,11 @@ void GameMenu::update(StateEngine* engine) {
   }
 
   // Select
-  if (asw::input::keyboard.down[SDL_SCANCODE_SPACE] ||
-      asw::input::keyboard.down[SDL_SCANCODE_RETURN]) {
+  if (asw::input::get_key(asw::input::Key::Space) ||
+      asw::input::get_key(asw::input::Key::Return)) {
     // Menu
     if (indicator_position == 0) {
-      setNextState(engine, ProgramState::MENU);
+      manager.set_next_scene(ProgramState::MENU);
     }
     // Save
     else if (indicator_position == 1) {
@@ -33,16 +33,16 @@ void GameMenu::update(StateEngine* engine) {
     }
     // Exit
     else {
-      setNextState(engine, ProgramState::GAME);
+      manager.set_next_scene(ProgramState::GAME);
     }
   }
 }
 
 // Draw menu
 void GameMenu::draw() {
-  asw::draw::sprite(image_menu, 0, 0);
-  asw::draw::rectFill(84, 58 + (indicator_position * 17), 9, 9,
-                      asw::util::makeColor(0, 0, 0));
-  asw::draw::rectFill(136, 58 + (indicator_position * 17), 9, 9,
-                      asw::util::makeColor(0, 0, 0));
+  asw::draw::sprite(image_menu, asw::Vec2f(0, 0));
+  asw::draw::rect_fill(asw::Quadf(84, 58 + (indicator_position * 17), 9, 9),
+                       asw::color::black);
+  asw::draw::rect_fill(asw::Quadf(136, 58 + (indicator_position * 17), 9, 9),
+                       asw::color::black);
 }

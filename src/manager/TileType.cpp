@@ -29,8 +29,9 @@ void TileType::draw(int x, int y, unsigned char meta) const {
     i_y_px += (image_index / sheet_width) * 16;
   }
 
-  asw::draw::stretchSpriteBlit(sprite_sheet, i_x_px, i_y_px, w_px, h_px, x,
-                               y - h_px + 16, w_px, h_px);
+  asw::draw::stretch_sprite_blit(sprite_sheet,
+                                 asw::Quadf(i_x_px, i_y_px, w_px, h_px),
+                                 asw::Quadf(x, y - h_px + 16, w_px, h_px));
 }
 
 // Give a sprite sheet to this tile

@@ -21,7 +21,7 @@ int Chunk::getYIndex() const {
   return index_y;
 }
 
-std::string Chunk::getBiomeAt(Vec2<int> position) const {
+std::string Chunk::getBiomeAt(const asw::Vec2i& position) const {
   auto offset = this->getTileIndex(position, 0);
 
   if (offset >= tiles.size()) {
@@ -36,7 +36,7 @@ std::string Chunk::getBiomeAt(Vec2<int> position) const {
   return stream.str();
 }
 
-char Chunk::getTemperatureAt(Vec2<int> position) const {
+char Chunk::getTemperatureAt(const asw::Vec2i& position) const {
   auto offset = this->getTileIndex(position, 0);
 
   if (offset >= tiles.size()) {
@@ -46,24 +46,27 @@ char Chunk::getTemperatureAt(Vec2<int> position) const {
   return temperature[offset];
 }
 
-std::shared_ptr<Tile> Chunk::getTileAt(Vec2<int> position, int z) const {
+std::shared_ptr<Tile> Chunk::getTileAt(const asw::Vec2i& position,
+                                       int z) const {
   auto offset = this->getTileIndex(position, z);
 
   if (offset >= tiles.size()) {
-    std::cout << "Tile out of bounds: " << position.x << ", " << position.y
-              << ", " << z << std::endl;
+    asw::log::warn("Tile out of bounds: {}, {}, {}, {}", position.x, position.y,
+                   z, offset);
     return nullptr;
   }
 
   return tiles[offset];
 }
 
-void Chunk::setTileAt(Vec2<int> position, int z, std::shared_ptr<Tile> tile) {
+void Chunk::setTileAt(const asw::Vec2i& position,
+                      int z,
+                      std::shared_ptr<Tile> tile) {
   auto offset = this->getTileIndex(position, z);
 
   if (offset >= tiles.size()) {
-    std::cout << "Tile out of bounds: " << position.x << ", " << position.y
-              << ", " << z << std::endl;
+    asw::log::warn("Tile out of bounds: {}, {}, {}, {}", position.x, position.y,
+                   z, offset);
     return;
   }
 
@@ -79,7 +82,7 @@ void Chunk::setTileAt(Vec2<int> position, int z, std::shared_ptr<Tile> tile) {
 }
 
 // Get item at position
-std::shared_ptr<MapItem> Chunk::getItemAt(Vec2<int> position) const {
+std::shared_ptr<MapItem> Chunk::getItemAt(const asw::Vec2i& position) const {
   for (auto const& i : items) {
     if (i->getPosition() == position * TILE_SIZE) {
       return i;
@@ -89,7 +92,8 @@ std::shared_ptr<MapItem> Chunk::getItemAt(Vec2<int> position) const {
 }
 
 // Place item on map
-void Chunk::placeItemAt(std::shared_ptr<Item> item, Vec2<int> position) {
+void Chunk::placeItemAt(std::shared_ptr<Item> item,
+                        const asw::Vec2i& position) {
   if (!item) {
     return;
   }
@@ -145,9 +149,9 @@ void Chunk::tick() {
   // Tiles
   for (unsigned i = 0; i < CHUNK_SIZE; i++) {
     for (unsigned t = 0; t < CHUNK_SIZE; t++) {
-      const auto idx = Vec2<int>(static_cast<int>(i), static_cast<int>(t));
+      const auto idx = asw::Vec2i(static_cast<int>(i), static_cast<int>(t));
       const auto i_pos =
-          Vec2<int>(i + index_x * CHUNK_SIZE, t + index_y * CHUNK_SIZE);
+          asw::Vec2i(i + index_x * CHUNK_SIZE, t + index_y * CHUNK_SIZE);
 
       auto offset = this->getTileIndex(idx, LAYER_FOREGROUND);
 
@@ -217,9 +221,9 @@ void Chunk::generate() {
 
   for (unsigned int i = 0; i < CHUNK_SIZE; i++) {
     for (unsigned int t = 0; t < CHUNK_SIZE; t++) {
-      const auto idx = Vec2<int>(i, t);
+      const auto idx = asw::Vec2i(i, t);
 
-      const auto i_pos = idx + Vec2<int>(index_x, index_y) * CHUNK_SIZE;
+      const auto i_pos = idx + asw::Vec2i(index_x, index_y) * CHUNK_SIZE;
 
       const auto t_pos = i_pos * TILE_SIZE;
 
@@ -407,7 +411,7 @@ void Chunk::generateBiome() {
 
   for (unsigned int i = 0; i < CHUNK_SIZE; i++) {
     for (unsigned int t = 0; t < CHUNK_SIZE; t++) {
-      auto pos_2 = this->getTileIndex(Vec2<int>(i, t), 0);
+      auto pos_2 = this->getTileIndex(asw::Vec2i(i, t), 0);
       auto fractal_x = static_cast<float>(i + index_x * CHUNK_SIZE) / 100.0f;
       auto fractal_y = static_cast<float>(t + index_y * CHUNK_SIZE) / 100.0f;
 
@@ -426,6 +430,6 @@ void Chunk::generateBiome() {
   }
 }
 
-size_t Chunk::getTileIndex(Vec2<int> pos, unsigned int z) const {
+size_t Chunk::getTileIndex(const asw::Vec2i& pos, unsigned int z) const {
   return pos.x + pos.y * CHUNK_SIZE + z * CHUNK_SIZE * CHUNK_SIZE;
 }

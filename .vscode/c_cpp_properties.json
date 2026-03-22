@@ -3,7 +3,7 @@
     {
       "name": "Win32",
       "includePath": ["${workspaceFolder}/**"],
-      "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+      "compileCommands": "${workspaceFolder}/build/debug/compile_commands.json",
       "configurationProvider": "ms-vscode.cmake-tools",
       "cppStandard": "c++23",
       "cStandard": "c11"

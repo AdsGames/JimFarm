@@ -10,7 +10,6 @@
 #include "Chunk.h"
 #include "Item.h"
 #include "Tile.h"
-#include "utility/Vec2.h"
 
 class TileMap {
  public:
@@ -24,7 +23,7 @@ class TileMap {
    * @param pos Position in tile coordinates
    * @return std::string Biome name
    */
-  std::string getBiomeAt(Vec2<int> pos);
+  std::string getBiomeAt(const asw::Vec2i& pos);
 
   /**
    * @brief Get the Temperature at tile position x, y
@@ -32,7 +31,7 @@ class TileMap {
    * @param pos Position in tile coordinates
    * @return char Temperature
    */
-  char getTemperatureAt(Vec2<int> pos);
+  char getTemperatureAt(const asw::Vec2i& pos);
 
   /**
    * @brief Get the Tile position and layer
@@ -41,22 +40,22 @@ class TileMap {
    * @param layer Tile layer (z)
    * @return std::shared_ptr<Tile> Tile, if found
    */
-  std::shared_ptr<Tile> getTileAt(Vec2<int> pos, int layer);
+  std::shared_ptr<Tile> getTileAt(const asw::Vec2i& pos, int layer);
 
   void placeTile(std::shared_ptr<Tile> tile);
   void removeTile(std::shared_ptr<Tile> tile);
-  bool isSolidAt(Vec2<int> pos);
+  bool isSolidAt(const asw::Vec2i& pos);
 
   // Items
-  std::shared_ptr<MapItem> getItemAt(Vec2<int> pos);
-  void placeItemAt(std::shared_ptr<Item> item, Vec2<int> pos);
+  std::shared_ptr<MapItem> getItemAt(const asw::Vec2i& pos);
+  void placeItemAt(std::shared_ptr<Item> item, const asw::Vec2i& pos);
   void removeItem(std::shared_ptr<MapItem> item);
 
   // Update
   void tick(const Camera& camera) const;
 
   // Loading
-  void generateMap(Vec2<unsigned int> size);
+  void generateMap(const asw::Vec2<unsigned int>& size);
   void clearMap();
 
  private:
@@ -66,14 +65,14 @@ class TileMap {
    * @param pos Chunk position in chunk coordinates
    * @return std::shared_ptr<Chunk> Chunk, if found
    */
-  std::shared_ptr<Chunk> getChunkAt(Vec2<int> pos);
+  std::shared_ptr<Chunk> getChunkAt(const asw::Vec2i& pos);
 
   // Bitmasks
   void updateBitMask(std::shared_ptr<Tile> tile);
-  void updateBitmaskSurround(Vec2<int> pos, int z);
+  void updateBitmaskSurround(const asw::Vec2i& pos, int z);
 
   // Size
-  Vec2<unsigned int> size{0, 0};
+  asw::Vec2<unsigned int> size{0, 0};
 
   // Chunks
   std::vector<std::vector<std::shared_ptr<Chunk>>> chunks;

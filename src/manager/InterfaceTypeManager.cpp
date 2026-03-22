@@ -6,7 +6,6 @@
 
 #include "../ui/UiLabel.h"
 #include "../ui/UiSlot.h"
-#include "../utility/Vec2.h"
 
 std::vector<UiController> InterfaceTypeManager::ui_defs;
 
@@ -31,14 +30,14 @@ int InterfaceTypeManager::loadInterfaces(const std::string& path) {
     int height = interface["height"];
 
     // Create ui controller
-    auto controller = UiController(name, Vec2<int>(width, height));
+    auto controller = UiController(name, asw::Vec2i(width, height));
 
     // Labels
     for (auto const& label : interface["labels"]) {
       std::string text = label["text"];
       int x = label["x"];
       int y = label["y"];
-      controller.addElement(std::make_shared<UiLabel>(Vec2<int>(x, y), text));
+      controller.addElement(std::make_shared<UiLabel>(asw::Vec2i(x, y), text));
     }
 
     // Slots
@@ -46,7 +45,7 @@ int InterfaceTypeManager::loadInterfaces(const std::string& path) {
       int x = slot["x"];
       int y = slot["y"];
       std::string type = slot["type"];
-      controller.addElement(std::make_shared<UiSlot>(Vec2<int>(x, y), type));
+      controller.addElement(std::make_shared<UiSlot>(asw::Vec2i(x, y), type));
     }
 
     // Push to controllers
