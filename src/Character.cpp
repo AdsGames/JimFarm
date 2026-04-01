@@ -27,7 +27,7 @@ void CharacterForeground::update() {
 
 // Ctor for character
 Character::Character() : Sprite() {
-  this->z = 1.5f;
+  this->z = 2.0f;
   c_fore = std::make_shared<CharacterForeground>(this);
   Graphics::Instance()->add(c_fore, true);
 }

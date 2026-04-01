@@ -40,9 +40,10 @@ void GameMenu::update(float dt) {
 
 // Draw menu
 void GameMenu::draw() {
-  asw::draw::sprite(image_menu, asw::Vec2f(0, 0));
-  asw::draw::rect_fill(asw::Quadf(84, 58 + (indicator_position * 17), 9, 9),
+  asw::draw::stretch_sprite(image_menu, asw::Quadf(0, 0, 240 * 4, 160 * 4));
+  asw::draw::rect_fill(asw::Quadf(84, 58 + (indicator_position * 17), 9, 9) * 4,
                        asw::color::black);
-  asw::draw::rect_fill(asw::Quadf(136, 58 + (indicator_position * 17), 9, 9),
-                       asw::color::black);
+  asw::draw::rect_fill(
+      asw::Quadf(136, 58 + (indicator_position * 17), 9, 9) * 4,
+      asw::color::black);
 }

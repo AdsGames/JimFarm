@@ -11,6 +11,6 @@
 #define SRC_STATE_H_
 
 // Game states
-enum class ProgramState { NONE, EXIT, MENU, GAME, GAME_MENU };
+enum class ProgramState { NONE, MENU, GAME, GAME_MENU };
 
 #endif  // SRC_STATE_H_

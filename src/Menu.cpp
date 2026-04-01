@@ -33,7 +33,7 @@ void Menu::draw() {
   if (state == MenuState::MAIN_MENU) {
     asw::draw::stretch_sprite_blit(
         coin_flip, asw::Quadf(9 * (coin_frame / 5), 0, 9, 9),
-        asw::Quadf(374, 294 - (indicator_location * 22), 18, 18));
+        asw::Quadf(374, 294 - (indicator_location * 22), 18, 18) * 2.0F);
   } else if (state == MenuState::HELP) {
     asw::draw::stretch_sprite(help_image,
                               asw::Quadf(0, 0, screenSize.x, screenSize.y));
@@ -65,41 +65,39 @@ void Menu::drawSlider(int x, int y, int value, const std::string& title) const {
 }
 
 void Menu::update(float dt) {
-  tick++;
+  tick_timer += dt;
 
   if (state == MenuState::MAIN_MENU) {
-    if ((asw::input::get_key(asw::input::Key::Space) ||
-         asw::input::get_key(asw::input::Key::LCtrl) ||
-         asw::input::get_key(asw::input::Key::Return)) &&
-        tick > 10) {
-      tick = 0;
-
+    if (asw::input::get_key_down(asw::input::Key::Space) ||
+        asw::input::get_key_down(asw::input::Key::LCtrl) ||
+        asw::input::get_key_down(asw::input::Key::Return)) {
       if (indicator_location == 4) {
         asw::sound::play(blip);
         manager.set_next_scene(ProgramState::GAME);
       } else if (indicator_location == 3) {
         state = MenuState::OPTIONS;
         asw::sound::play(blip);
+        return;
       } else if (indicator_location == 2) {
         state = MenuState::HELP;
         asw::sound::play(blip);
+        return;
       } else if (indicator_location == 1) {
         state = MenuState::STORY;
         asw::sound::play(blip);
+        return;
       } else if (indicator_location == 0) {
-        manager.set_next_scene(ProgramState::EXIT);
+        asw::core::exit();
       }
     }
 
-    if (asw::input::get_key(asw::input::Key::Down) && tick > 10) {
+    if (asw::input::get_key_down(asw::input::Key::Down)) {
       asw::sound::play(blip);
-      tick = 0;
       indicator_location--;
     }
 
-    if (asw::input::get_key(asw::input::Key::Up) && tick > 10) {
+    if (asw::input::get_key_down(asw::input::Key::Up)) {
       asw::sound::play(blip);
-      tick = 0;
       indicator_location++;
     }
 
@@ -153,12 +151,10 @@ void Menu::update(float dt) {
 
   if ((state == MenuState::HELP || state == MenuState::STORY ||
        state == MenuState::OPTIONS) &&
-      (asw::input::get_key(asw::input::Key::Space) ||
-       asw::input::get_key(asw::input::Key::LCtrl) ||
-       asw::input::get_key(asw::input::Key::M)) &&
-      tick > 10) {
+      (asw::input::get_key_down(asw::input::Key::Space) ||
+       asw::input::get_key_down(asw::input::Key::LCtrl) ||
+       asw::input::get_key_down(asw::input::Key::M))) {
     asw::sound::play(blip);
-    tick = 0;
     state = MenuState::MAIN_MENU;
   }
 }

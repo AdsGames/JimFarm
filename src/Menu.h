@@ -29,7 +29,7 @@ class Menu : public asw::scene::Scene<ProgramState> {
  private:
   void drawSlider(int x, int y, int value, const std::string& title) const;
 
-  int tick{0};
+  float tick_timer{0};
   int coin_frame{0};
   bool coin_direction{false};
   int indicator_location{4};

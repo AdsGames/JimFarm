@@ -316,6 +316,9 @@ void World::interact(const asw::Vec2i& inter_pos,
 
 // Update tile map
 void World::update(float dt) {
+  // Re-sort dynamic sprites (character position changes each frame)
+  Graphics::Instance()->prune();
+
   // Update hud
   hud.update();
 
