@@ -4,6 +4,7 @@
 #include "manager/TileTypeManager.h"
 #include "ui/Tooltip.h"
 #include "ui/UiScale.h"
+#include "utility/Shadow.h"
 #include "utility/Tools.h"
 
 // Top of head
@@ -86,7 +87,10 @@ void Character::draw(const Camera& camera) const {
                     asw::Vec2f(indicator_pos.x - camera.getPosition().x,
                                indicator_pos.y - camera.getPosition().y));
 
-  // Draw frame
+  // Shadow at the feet, then the frame
+  shadow::draw(pos.x - camera.getPosition().x + 8.0F,
+               pos.y - camera.getPosition().y + 11.0F, 11.0F);
+
   asw::draw::stretch_sprite_blit(
       image, asw::Quadf(ani_ticker / 4 * 16, (direction - 1) * 20, 16, 20),
       asw::Quadf(pos.x - camera.getPosition().x,

@@ -55,6 +55,7 @@ bool CropBehaviour::onInteract(World& world,
     world.dropItems(yield, tile_pos, random(yield_min, yield_max));
     world.getState().crops_harvested++;
     SoundManager::play("scythe");
+    world.burstParticles("grass", tile_pos);
 
     if (regrow > 0 && regrow < days) {
       tile->setMeta(
@@ -196,6 +197,7 @@ bool AnimalBehaviour::onInteract(World& world,
     held.remove(1);
     tile->setMeta(makeMeta(true, 0));
     SoundManager::play("egg");
+    world.burstParticles("feathers", tile->getTilePosition());
     world.getState().notify("Fed the " + name);
     return true;
   }
@@ -284,6 +286,7 @@ bool ForageBehaviour::onInteract(World& world,
   world.dropItems(yield, tile->getTilePosition(), random(yield_min, yield_max));
   tile->setMeta(static_cast<unsigned char>(regrow));
   SoundManager::play("scythe");
+  world.burstParticles("leaves", tile->getTilePosition());
   return true;
 }
 

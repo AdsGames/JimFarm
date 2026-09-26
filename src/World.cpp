@@ -65,11 +65,6 @@ constexpr float FIRE_STRENGTH = 0.9F;
 // Share of the fire light also added straight onto the screen at night
 constexpr float FIRE_GLOW = 0.35F;
 
-// Smooth scaling, asw textures default to nearest
-void setLinearScaling(const asw::Texture& texture) {
-  SDL_SetTextureScaleMode(texture.get(), SDL_SCALEMODE_LINEAR);
-}
-
 float smoothstep(float edge_0, float edge_1, float value) {
   const float t = std::clamp((value - edge_0) / (edge_1 - edge_0), 0.0F, 1.0F);
   return t * t * (3.0F - 2.0F * t);
@@ -111,33 +106,10 @@ float flickerClock() {
 
 // White circle, opaque in the middle and clear at the edge
 asw::Texture makeLightGradient() {
-  auto texture =
-      asw::assets::create_texture(LIGHT_GRADIENT_SIZE, LIGHT_GRADIENT_SIZE);
-
-  asw::display::set_render_target(texture);
-  asw::display::set_blend_mode(asw::BlendMode::None);
-  asw::display::clear(asw::Color(255, 255, 255, 0));
-
-  const float half = LIGHT_GRADIENT_SIZE / 2.0F;
-  for (int y = 0; y < LIGHT_GRADIENT_SIZE; y++) {
-    for (int x = 0; x < LIGHT_GRADIENT_SIZE; x++) {
-      const float distance =
-          std::hypot(x + 0.5F - half, y + 0.5F - half) / half;
-      const float strength = smoothstep(1.0F, 0.0F, distance);
-      if (strength <= 0.0F) {
-        continue;
-      }
-
-      asw::draw::point(asw::Vec2f(x, y),
-                       asw::Color(255, 255, 255,
-                                  static_cast<uint8_t>(strength * 255.0F)));
-    }
-  }
-
-  asw::display::reset_render_target();
-  asw::display::set_blend_mode(asw::BlendMode::Blend);
+  auto texture = asw::assets::create_radial_gradient(
+      LIGHT_GRADIENT_SIZE, asw::Color(255, 255, 255, 255),
+      asw::Color(255, 255, 255, 0));
   asw::draw::set_blend_mode(texture, asw::BlendMode::Add);
-  setLinearScaling(texture);
   return texture;
 }
 
@@ -239,7 +211,7 @@ void World::ensureBuffers() {
     light_buffer = asw::assets::create_texture(VIEWPORT_WIDTH / LIGHT_SCALE,
                                                VIEWPORT_HEIGHT / LIGHT_SCALE);
     asw::draw::set_blend_mode(light_buffer, asw::BlendMode::Modulate);
-    setLinearScaling(light_buffer);
+    asw::draw::set_scale_mode(light_buffer, asw::ScaleMode::Linear);
   }
 
   if (!light_gradient) {
@@ -414,6 +386,7 @@ void World::draw() {
 
   // Drawable
   Graphics::Instance().draw(camera);
+  action_particles.draw(camera);
   floating_texts.draw(font, camera);
 
   asw::display::reset_render_target();
@@ -795,6 +768,7 @@ void World::interact(const asw::Vec2i& inter_pos,
       // Stack or meta may run out part way through an area
       if (actionMatches(action, cell, held)) {
         applyAction(action, cell, held);
+        burstParticles(action.particles, cell);
       }
     }
 
@@ -885,6 +859,14 @@ void World::update(float dt, const asw::Vec2i& player_pos) {
 
   updateCreatures(dt, player_pos);
   floating_texts.update(dt);
+  action_particles.update(dt);
+
+  // Coins fly from the player whenever money comes in
+  const int total_earned = state.getTotalEarned();
+  if (last_total_earned >= 0 && total_earned > last_total_earned) {
+    burstParticles("coins", player_tile);
+  }
+  last_total_earned = total_earned;
   updateWeather(dt);
 
   // End of day
@@ -1084,6 +1066,8 @@ void World::clearCreatures() {
   }
   creatures.clear();
   floating_texts.clear();
+  action_particles.clear();
+  last_total_earned = -1;
 }
 
 /*
@@ -1366,6 +1350,13 @@ void World::giveItem(const std::string& id, int count) {
   if (!playerInventory().addItem(std::make_shared<Item>(id), count)) {
     dropItems(id, player_tile, count);
   }
+}
+
+void World::burstParticles(const std::string& preset,
+                           const asw::Vec2i& tile_pos) {
+  action_particles.burst(preset,
+                         asw::Vec2f(tile_pos.x * TILE_SIZE + TILE_SIZE / 2.0F,
+                                    tile_pos.y * TILE_SIZE + TILE_SIZE / 2.0F));
 }
 
 void World::countEvent(const std::string& name, int amount) {

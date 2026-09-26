@@ -9,6 +9,7 @@
         "layer": "foreground",
         "tiles": ["tile:water"],
         "thirst": 35,
+        "particles": "water",
         "sound": "water fill",
         "message": "You drink the water"
       },
@@ -16,6 +17,7 @@
         "layer": "midground",
         "tiles": ["tile:well_path"],
         "thirst": 40,
+        "particles": "water",
         "sound": "water fill",
         "message": "You drink from the well"
       }
@@ -34,6 +36,7 @@
         "tiles": ["tile:grass", "tile:soil", "tile:patchy_grass"],
         "requires_empty": ["foreground"],
         "replace": "tile:plowed_soil",
+        "particles": "dirt",
         "sound": "hoe",
         "energy": 2,
         "area": 0
@@ -55,6 +58,7 @@
         "tiles": ["tile:grass", "tile:soil", "tile:patchy_grass"],
         "requires_empty": ["foreground"],
         "replace": "tile:plowed_soil",
+        "particles": "dirt",
         "sound": "hoe",
         "energy": 6,
         "area": 1
@@ -75,6 +79,7 @@
         "tiles": ["tile:dense_grass"],
         "replace": null,
         "drops": ["item:hay"],
+        "particles": "grass",
         "sound": "scythe",
         "energy": 1
       }
@@ -97,6 +102,7 @@
         "layer": "foreground",
         "tiles": ["tile:water"],
         "set_meta": 10,
+        "particles": "water",
         "sound": "water fill",
         "message": "Watering can filled"
       },
@@ -104,6 +110,7 @@
         "layer": "midground",
         "tiles": ["tile:well_path"],
         "set_meta": 10,
+        "particles": "water",
         "sound": "water fill",
         "message": "Watering can filled"
       },
@@ -113,6 +120,7 @@
         "min_meta": 1,
         "replace": "tile:watered_soil",
         "add_meta": -1,
+        "particles": "water",
         "sound": "water pour",
         "energy": 1,
         "area": 0
@@ -143,6 +151,7 @@
         "layer": "foreground",
         "tiles": ["tile:water"],
         "set_meta": 30,
+        "particles": "water",
         "sound": "water fill",
         "message": "Watering can filled"
       },
@@ -150,6 +159,7 @@
         "layer": "midground",
         "tiles": ["tile:well_path"],
         "set_meta": 30,
+        "particles": "water",
         "sound": "water fill",
         "message": "Watering can filled"
       },
@@ -159,6 +169,7 @@
         "min_meta": 1,
         "replace": "tile:watered_soil",
         "add_meta": -1,
+        "particles": "water",
         "sound": "water pour",
         "energy": 1,
         "area": 1
@@ -184,6 +195,7 @@
         "tiles": ["tile:stump"],
         "replace": null,
         "drops": ["item:wood"],
+        "particles": "wood",
         "sound": "axe",
         "energy": 3
       },
@@ -192,6 +204,7 @@
         "tiles": ["tile:wood_wall"],
         "replace": null,
         "drops": ["item:wood"],
+        "particles": "wood",
         "sound": "axe",
         "energy": 2
       },
@@ -200,6 +213,7 @@
         "tiles": ["tile:fence", "tile:fence_door"],
         "replace": null,
         "drops": ["item:stick"],
+        "particles": "wood",
         "sound": "axe",
         "energy": 1
       },
@@ -208,6 +222,7 @@
         "tiles": ["tile:campfire_out"],
         "replace": null,
         "drops": ["item:campfire"],
+        "particles": "wood",
         "sound": "axe",
         "energy": 1
       }
@@ -225,6 +240,7 @@
         "layer": "foreground",
         "tiles": ["tile:bush", "tile:stump", "tile:sapling"],
         "replace": null,
+        "particles": "dirt",
         "sound": "shovel",
         "energy": 2
       },
@@ -233,6 +249,7 @@
         "tiles": ["tile:stone_wall"],
         "replace": null,
         "drops": ["item:stone"],
+        "particles": "dirt",
         "sound": "shovel",
         "energy": 4
       },
@@ -242,6 +259,7 @@
         "requires_empty": ["foreground"],
         "replace": null,
         "drops": ["item:grass"],
+        "particles": "dirt",
         "sound": "shovel",
         "energy": 2
       },
@@ -251,6 +269,7 @@
         "requires_empty": ["foreground"],
         "replace": null,
         "drops": ["item:sand"],
+        "particles": "dirt",
         "sound": "shovel",
         "energy": 2
       },
@@ -259,6 +278,7 @@
         "tiles": ["tile:plowed_soil", "tile:watered_soil"],
         "requires_empty": ["foreground"],
         "replace": null,
+        "particles": "dirt",
         "sound": "shovel",
         "energy": 1
       }
@@ -293,6 +313,7 @@
           "meta": 0
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -349,6 +370,7 @@
           "layer": "foreground"
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       },
       {
@@ -386,6 +408,7 @@
           "layer": "foreground"
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       },
       {
@@ -423,6 +446,7 @@
           "layer": "foreground"
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       },
       {
@@ -482,6 +506,7 @@
           "layer": "foreground"
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       },
       {
@@ -563,6 +588,7 @@
           "meta": 120
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -586,6 +612,7 @@
           "meta": 0
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -608,6 +635,7 @@
           "meta": 0
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -630,6 +658,7 @@
           "meta": 0
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -661,6 +690,7 @@
           "meta": 0
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -682,6 +712,7 @@
           "layer": "foreground"
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -708,6 +739,7 @@
         "requires_present": ["background"],
         "replace": "tile:grass",
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -726,6 +758,7 @@
         "requires_present": ["background"],
         "replace": "tile:sand",
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]

@@ -56,6 +56,9 @@ struct ItemAction {
   int add_meta{0};
   std::string sound{};
   std::string message{};
+
+  // Particle preset burst on each changed tile, see ActionParticles.cpp
+  std::string particles{};
   float energy{0.0F};
 
   // Apply to every matching tile within this radius

@@ -27,6 +27,7 @@ bool TreeBehaviour::onInteract(World& world,
   }
 
   SoundManager::play("axe");
+  world.burstParticles("wood", tile->getTilePosition());
 
   // Each hit takes a share of the tree's hitpoints
   tile->damage(static_cast<unsigned char>(255 / hits + 1));
@@ -37,6 +38,7 @@ bool TreeBehaviour::onInteract(World& world,
   // Cut down tree
   const auto tile_pos = tile->getTilePosition();
   world.getMap().replaceTile(tile, "tile:stump");
+  world.burstParticles("leaves", tile_pos);
   world.dropItems("item:stick", tile_pos, 2);
   world.dropItems("item:wood", tile_pos, 2);
 

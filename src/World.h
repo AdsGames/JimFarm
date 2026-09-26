@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 
+#include "ActionParticles.h"
 #include "Creature.h"
 #include "FloatingText.h"
 #include "GameState.h"
@@ -125,6 +126,9 @@ class World {
   // Counts shown in the end of day summary
   void countEvent(const std::string& name, int amount = 1);
 
+  // Particle burst on a tile, preset names are in ActionParticles.cpp
+  void burstParticles(const std::string& preset, const asw::Vec2i& tile_pos);
+
   // Lights, registered by campfires each tick
   void addLight(const asw::Vec2i& tile_pos);
   bool nearLitCampfire(const asw::Vec2i& tile_pos, int radius) const;
@@ -235,6 +239,12 @@ class World {
 
   // Damage numbers over creatures
   FloatingTexts floating_texts{};
+
+  // Dirt, water, chips and coins from player actions
+  ActionParticles action_particles{};
+
+  // Total earned last tick, coins burst when it goes up, -1 until known
+  int last_total_earned{-1};
 
   // Lit campfires seen this tick
   std::vector<asw::Vec2i> lights{};

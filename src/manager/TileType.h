@@ -62,6 +62,9 @@ class TileType {
   void setSway(bool value) { sway = value; }
   bool isSway() const { return sway; }
 
+  // Shadow width in pixels under the tile, 0 for none
+  void setShadow(int width) { shadow_width = width; }
+
   // Update shared season tint and wind clock, call once per frame
   static void updateEnvironment(float dt, const GameState& state);
 
@@ -136,6 +139,7 @@ class TileType {
 
   bool seasonal{false};
   bool sway{false};
+  int shadow_width{0};
 
   // Shared environment for all tile types
   static asw::Color season_tint;

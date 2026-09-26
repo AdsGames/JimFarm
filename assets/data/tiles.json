@@ -51,6 +51,7 @@
   },
   {
     "id": "tile:well",
+    "shadow": 14,
     "name": "Well",
     "width": 1,
     "height": 1,
@@ -85,6 +86,7 @@
   },
   {
     "id": "tile:tree",
+    "shadow": 14,
     "name": "Tree",
     "width": 1,
     "height": 1,
@@ -112,6 +114,7 @@
   },
   {
     "id": "tile:bush",
+    "shadow": 12,
     "name": "Bush",
     "width": 1,
     "height": 1,
@@ -442,6 +445,7 @@
   },
   {
     "id": "tile:goat",
+    "shadow": 12,
     "name": "Goat",
     "width": 1,
     "height": 1,
@@ -595,6 +599,7 @@
   },
   {
     "id": "tile:chicken",
+    "shadow": 9,
     "name": "Chicken",
     "width": 1,
     "height": 1,
@@ -669,6 +674,7 @@
   },
   {
     "id": "tile:sapling",
+    "shadow": 7,
     "name": "Sapling",
     "width": 1,
     "height": 1,
