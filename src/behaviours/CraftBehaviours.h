@@ -54,6 +54,9 @@ class BreakableBehaviour : public TileBehaviour {
   std::string into{};
   std::string sound{"axe"};
 
+  // Particle preset burst on each hit, see ActionParticles.cpp
+  std::string particles{};
+
   // Shown when a tool that is not strong enough is used
   std::string hint{};
 };

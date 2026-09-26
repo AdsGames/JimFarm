@@ -203,6 +203,7 @@
         "tiles": ["tile:workbench"],
         "replace": null,
         "drops": ["item:workbench"],
+        "particles": "wood",
         "sound": "axe",
         "energy": 1,
         "verb": "Pick up"
@@ -212,6 +213,7 @@
         "tiles": ["tile:bed"],
         "replace": null,
         "drops": ["item:bed"],
+        "particles": "wood",
         "sound": "axe",
         "energy": 1,
         "verb": "Pick up"
@@ -221,6 +223,7 @@
         "tiles": ["tile:door", "tile:door_open"],
         "replace": null,
         "drops": ["item:door"],
+        "particles": "wood",
         "sound": "axe",
         "energy": 1,
         "verb": "Pick up"
@@ -230,6 +233,7 @@
         "tiles": ["tile:scarecrow"],
         "replace": null,
         "drops": ["item:scarecrow"],
+        "particles": "wood",
         "sound": "axe",
         "energy": 1,
         "verb": "Pick up"
@@ -239,6 +243,7 @@
         "tiles": ["tile:hopper"],
         "replace": null,
         "drops": ["item:hopper"],
+        "particles": "wood",
         "sound": "axe",
         "energy": 1,
         "verb": "Pick up"
@@ -301,6 +306,7 @@
         "tiles": ["tile:plank_floor"],
         "replace": null,
         "drops": ["item:plank_floor"],
+        "particles": "dirt",
         "sound": "shovel",
         "energy": 1,
         "verb": "Pick up"
@@ -310,6 +316,7 @@
         "tiles": ["tile:brick_floor"],
         "replace": null,
         "drops": ["item:brick_floor"],
+        "particles": "dirt",
         "sound": "shovel",
         "energy": 1,
         "verb": "Pick up"
@@ -319,6 +326,7 @@
         "tiles": ["tile:clay"],
         "replace": null,
         "drops": ["item:clay"],
+        "particles": "dirt",
         "sound": "shovel",
         "energy": 2,
         "requires_empty": ["foreground"],
@@ -431,6 +439,7 @@
         "layer": "foreground",
         "tiles": ["tile:campfire"],
         "consume": true,
+        "particles": "smoke",
         "sound": "egg",
         "message": "Cooked!",
         "give": ["item:cooked_egg"]
@@ -570,6 +579,7 @@
         "layer": "foreground",
         "tiles": ["tile:campfire"],
         "consume": true,
+        "particles": "smoke",
         "sound": "egg",
         "message": "Cooked!",
         "give": ["item:roast_carrot"]
@@ -882,6 +892,7 @@
         "layer": "foreground",
         "tiles": ["tile:campfire"],
         "consume": true,
+        "particles": "smoke",
         "sound": "egg",
         "message": "Cooked!",
         "give": ["item:cooked_meat"]
@@ -970,6 +981,7 @@
         "layer": "foreground",
         "tiles": ["tile:campfire"],
         "consume": true,
+        "particles": "smoke",
         "sound": "egg",
         "message": "Cooked!",
         "give": ["item:cooked_clam"]
@@ -1015,6 +1027,7 @@
           "layer": "foreground"
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -1083,6 +1096,7 @@
         "tiles": ["tile:stone_wall"],
         "replace": null,
         "drops": ["item:stone"],
+        "particles": "stone",
         "sound": "shovel",
         "energy": 2,
         "verb": "Mine"
@@ -1092,6 +1106,7 @@
         "tiles": ["tile:brick_wall"],
         "replace": null,
         "drops": ["item:brick"],
+        "particles": "stone",
         "sound": "shovel",
         "energy": 2,
         "verb": "Mine"
@@ -1101,6 +1116,7 @@
         "tiles": ["tile:window"],
         "replace": null,
         "drops": ["item:window"],
+        "particles": "stone",
         "sound": "shovel",
         "energy": 1,
         "verb": "Pick up"
@@ -1110,6 +1126,7 @@
         "tiles": ["tile:kiln"],
         "replace": null,
         "drops": ["item:kiln"],
+        "particles": "stone",
         "sound": "shovel",
         "energy": 2,
         "verb": "Pick up"
@@ -1119,6 +1136,7 @@
         "tiles": ["tile:stone_workbench"],
         "replace": null,
         "drops": ["item:stone_workbench"],
+        "particles": "stone",
         "sound": "shovel",
         "energy": 2,
         "verb": "Pick up"
@@ -1128,6 +1146,7 @@
         "tiles": ["tile:sprinkler"],
         "replace": null,
         "drops": ["item:sprinkler"],
+        "particles": "stone",
         "sound": "shovel",
         "energy": 1,
         "verb": "Pick up"
@@ -1137,6 +1156,7 @@
         "tiles": ["tile:iron_sprinkler"],
         "replace": null,
         "drops": ["item:iron_sprinkler"],
+        "particles": "stone",
         "sound": "shovel",
         "energy": 1,
         "verb": "Pick up"
@@ -1211,6 +1231,7 @@
         "tiles": ["tile:grass", "tile:soil", "tile:patchy_grass"],
         "requires_empty": ["foreground"],
         "replace": "tile:plowed_soil",
+        "particles": "dirt",
         "sound": "hoe",
         "energy": 5,
         "area": 1,
@@ -1232,6 +1253,7 @@
         "tiles": ["tile:grass", "tile:soil", "tile:patchy_grass"],
         "requires_empty": ["foreground"],
         "replace": "tile:plowed_soil",
+        "particles": "dirt",
         "sound": "hoe",
         "energy": 10,
         "area": 2,
@@ -1257,6 +1279,7 @@
         "layer": "foreground",
         "tiles": ["tile:water"],
         "set_meta": 20,
+        "particles": "water",
         "sound": "water fill",
         "message": "Watering can filled"
       },
@@ -1264,6 +1287,7 @@
         "layer": "midground",
         "tiles": ["tile:well_path"],
         "set_meta": 20,
+        "particles": "water",
         "sound": "water fill",
         "message": "Watering can filled"
       },
@@ -1273,6 +1297,7 @@
         "min_meta": 1,
         "replace": "tile:watered_soil",
         "add_meta": -1,
+        "particles": "water",
         "sound": "water pour",
         "energy": 1,
         "area": 1,
@@ -1303,6 +1328,7 @@
         "layer": "foreground",
         "tiles": ["tile:water"],
         "set_meta": 40,
+        "particles": "water",
         "sound": "water fill",
         "message": "Watering can filled"
       },
@@ -1310,6 +1336,7 @@
         "layer": "midground",
         "tiles": ["tile:well_path"],
         "set_meta": 40,
+        "particles": "water",
         "sound": "water fill",
         "message": "Watering can filled"
       },
@@ -1319,6 +1346,7 @@
         "min_meta": 1,
         "replace": "tile:watered_soil",
         "add_meta": -1,
+        "particles": "water",
         "sound": "water pour",
         "energy": 1,
         "area": 2,
@@ -1349,6 +1377,7 @@
           "layer": "foreground"
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -1371,6 +1400,7 @@
           "layer": "foreground"
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -1393,6 +1423,7 @@
           "layer": "foreground"
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -1415,6 +1446,7 @@
           "layer": "foreground"
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -1437,6 +1469,7 @@
           "layer": "foreground"
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -1459,6 +1492,7 @@
           "layer": "foreground"
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -1478,6 +1512,7 @@
         "requires_empty": ["foreground"],
         "replace": "tile:plank_floor",
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       },
       {
@@ -1486,6 +1521,7 @@
         "requires_present": ["background"],
         "replace": "tile:plank_floor",
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -1505,6 +1541,7 @@
         "requires_empty": ["foreground"],
         "replace": "tile:brick_floor",
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       },
       {
@@ -1513,6 +1550,7 @@
         "requires_present": ["background"],
         "replace": "tile:brick_floor",
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -1535,6 +1573,7 @@
           "layer": "foreground"
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -1558,6 +1597,7 @@
           "layer": "foreground"
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -1580,6 +1620,7 @@
           "layer": "foreground"
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]
@@ -1602,6 +1643,7 @@
           "layer": "foreground"
         },
         "consume": true,
+        "particles": "dirt",
         "sound": "shovel"
       }
     ]

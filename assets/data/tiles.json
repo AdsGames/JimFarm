@@ -544,6 +544,7 @@
   },
   {
     "id": "tile:stone",
+    "shadow": 13,
     "name": "Stone",
     "width": 1,
     "height": 1,
@@ -630,6 +631,7 @@
   },
   {
     "id": "tile:campfire",
+    "shadow": 10,
     "name": "Campfire",
     "width": 1,
     "height": 1,
@@ -653,6 +655,7 @@
   },
   {
     "id": "tile:campfire_out",
+    "shadow": 10,
     "name": "Cold Campfire",
     "width": 1,
     "height": 1,
@@ -705,6 +708,7 @@
   },
   {
     "id": "tile:mushroom",
+    "shadow": 6,
     "name": "Mushroom",
     "width": 1,
     "height": 1,
@@ -731,6 +735,7 @@
   },
   {
     "id": "tile:herb",
+    "shadow": 6,
     "name": "Wild Herb",
     "width": 1,
     "height": 1,
@@ -812,6 +817,7 @@
   },
   {
     "id": "tile:cactus",
+    "shadow": 10,
     "name": "Cactus",
     "width": 1,
     "height": 1,
@@ -855,6 +861,7 @@
   },
   {
     "id": "tile:copper_ore",
+    "shadow": 13,
     "name": "Copper Ore",
     "width": 1,
     "height": 1,
@@ -879,6 +886,7 @@
           "item:copper_ore": [1, 2],
           "item:stone": [0, 1]
         },
+        "particles": "stone",
         "sound": "shovel",
         "hint": "Needs a pickaxe"
       }
@@ -886,6 +894,7 @@
   },
   {
     "id": "tile:iron_ore",
+    "shadow": 13,
     "name": "Iron Ore",
     "width": 1,
     "height": 1,
@@ -910,6 +919,7 @@
           "item:iron_ore": [1, 2],
           "item:stone": [0, 1]
         },
+        "particles": "stone",
         "sound": "shovel",
         "hint": "Needs a copper pickaxe or better"
       }
@@ -917,6 +927,7 @@
   },
   {
     "id": "tile:workbench",
+    "shadow": 14,
     "name": "Workbench",
     "width": 1,
     "height": 1,
@@ -941,6 +952,7 @@
   },
   {
     "id": "tile:stone_workbench",
+    "shadow": 14,
     "name": "Stone Workbench",
     "width": 1,
     "height": 1,
@@ -965,6 +977,7 @@
   },
   {
     "id": "tile:kiln",
+    "shadow": 14,
     "name": "Kiln",
     "width": 1,
     "height": 1,
@@ -989,6 +1002,7 @@
   },
   {
     "id": "tile:bed",
+    "shadow": 14,
     "name": "Bed",
     "width": 1,
     "height": 1,
@@ -1101,6 +1115,7 @@
   },
   {
     "id": "tile:sprinkler",
+    "shadow": 8,
     "name": "Sprinkler",
     "width": 1,
     "height": 1,
@@ -1124,6 +1139,7 @@
   },
   {
     "id": "tile:iron_sprinkler",
+    "shadow": 8,
     "name": "Iron Sprinkler",
     "width": 1,
     "height": 1,
@@ -1148,6 +1164,7 @@
   },
   {
     "id": "tile:scarecrow",
+    "shadow": 10,
     "name": "Scarecrow",
     "width": 1,
     "height": 1,
@@ -1171,6 +1188,7 @@
   },
   {
     "id": "tile:hopper",
+    "shadow": 12,
     "name": "Egg Hopper",
     "width": 1,
     "height": 1,

@@ -42,6 +42,7 @@ BreakableBehaviour::BreakableBehaviour(const nlohmann::json& params)
       energy(params.value("energy", 3.0F)),
       into(params.value("into", "")),
       sound(params.value("sound", "axe")),
+      particles(params.value("particles", "")),
       hint(params.value("hint", "")) {
   const auto drop_list = params.value("drops", nlohmann::json::object());
   for (auto const& [id, range] : drop_list.items()) {
@@ -94,6 +95,7 @@ bool BreakableBehaviour::onUse(World& world,
   }
 
   SoundManager::play(sound);
+  world.burstParticles(particles, tile->getTilePosition());
 
   const float power = std::max(1.0F, info.power);
   tile->damage(static_cast<unsigned char>(

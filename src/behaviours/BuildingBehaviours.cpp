@@ -124,6 +124,7 @@ bool CampfireBehaviour::addFuel(World& world,
   }
 
   SoundManager::play("shovel");
+  world.burstParticles("sparks", tile->getTilePosition());
   return true;
 }
 
