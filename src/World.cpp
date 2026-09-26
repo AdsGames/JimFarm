@@ -141,6 +141,9 @@ asw::Texture makeLightGradient() {
   return texture;
 }
 
+// Seconds a rain splash stays on screen
+constexpr float SPLASH_LIFE = 0.3F;
+
 float clampStat(float value) {
   return std::clamp(value, 0.0F, MAX_STAT);
 }
@@ -441,14 +444,40 @@ void World::draw() {
   drawLighting();
 
   // Rain and snow
+  asw::display::set_blend_mode(asw::BlendMode::Blend);
+
+  // Light fog while raining, slowly pulsing
+  if (state.getWeather() == Weather::Rain) {
+    const float pulse = 0.5F + 0.5F * std::sin(weather_time * 0.35F);
+    const auto fog_alpha = static_cast<unsigned char>(20.0F + 14.0F * pulse);
+    asw::draw::rect_fill(asw::Quadf(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT),
+                         asw::Color(170, 185, 205, fog_alpha));
+  }
+
   for (auto const& p : particles) {
-    if (state.getWeather() == Weather::Rain) {
-      asw::draw::line(p.pos, asw::Vec2f(p.pos.x - 3, p.pos.y + 9),
-                      asw::Color(160, 180, 255, 160));
-    } else if (state.getWeather() == Weather::Snow) {
-      asw::draw::rect_fill(asw::Quadf(p.pos.x, p.pos.y, 3, 3),
+    if (!p.snow) {
+      // Streak slants with the wind, 0.3 px across per px down
+      asw::draw::line(p.pos,
+                      asw::Vec2f(p.pos.x - p.length * 0.3F, p.pos.y + p.length),
+                      asw::Color(160, 180, 255, p.alpha));
+    } else {
+      asw::draw::rect_fill(asw::Quadf(p.pos.x, p.pos.y, p.size, p.size),
                            asw::Color(255, 255, 255, 200));
     }
+  }
+
+  // Splashes, a ring that grows and fades with two droplets
+  for (auto const& s : splashes) {
+    const float t = 1.0F - s.life / SPLASH_LIFE;
+    const auto alpha = static_cast<unsigned char>(150.0F * (1.0F - t));
+    const asw::Color color(170, 190, 255, alpha);
+    const float spread = 1.0F + 4.0F * t;
+
+    asw::draw::circle(s.pos, spread, color);
+    asw::draw::point(
+        asw::Vec2f(s.pos.x - spread - 1.0F, s.pos.y - 2.0F - 3.0F * t), color);
+    asw::draw::point(
+        asw::Vec2f(s.pos.x + spread + 1.0F, s.pos.y - 2.0F - 3.0F * t), color);
   }
 
   // Dim map while hud is open, hud itself is drawn in the ui pass
@@ -1053,26 +1082,74 @@ void World::updateWeather(float dt) {
   const bool raining = state.getWeather() == Weather::Rain;
   const bool snowing = state.getWeather() == Weather::Snow;
 
+  weather_time += dt;
+
+  // Age splashes, they finish even after the rain stops
+  for (auto& s : splashes) {
+    s.life -= dt;
+  }
+  std::erase_if(splashes, [](const Splash& s) { return s.life <= 0.0F; });
+
+  // Drop particles left over from other weather
+  std::erase_if(particles,
+                [snowing](const Particle& p) { return p.snow != snowing; });
+
   if (!raining && !snowing) {
     particles.clear();
     return;
   }
 
-  const size_t count = raining ? 180 : 120;
+  // New particle, anywhere on screen or just above it
+  const auto respawn = [snowing](Particle& p, bool on_screen) {
+    p.snow = snowing;
+
+    if (snowing) {
+      p.speed = static_cast<float>(random(25, 80));
+      p.size = static_cast<float>(random(1, 3));
+      p.phase = static_cast<float>(random(0, 628)) / 100.0F;
+    } else {
+      p.speed = static_cast<float>(random(350, 520));
+      p.length = static_cast<float>(random(5, 14));
+      p.alpha = static_cast<unsigned char>(random(80, 190));
+      p.land_y =
+          static_cast<float>(random(VIEWPORT_HEIGHT / 5, VIEWPORT_HEIGHT + 10));
+    }
+
+    const float top = on_screen && !snowing ? p.land_y : VIEWPORT_HEIGHT;
+    p.pos = asw::Vec2f(
+        static_cast<float>(random(0, VIEWPORT_WIDTH + 100)),
+        on_screen ? static_cast<float>(random(0, static_cast<int>(top)))
+                  : -static_cast<float>(random(10, 40)));
+  };
+
+  const size_t count = raining ? 220 : 140;
   while (particles.size() < count) {
-    particles.push_back(
-        {asw::Vec2f(static_cast<float>(random(0, VIEWPORT_WIDTH)),
-                    static_cast<float>(random(0, VIEWPORT_HEIGHT))),
-         static_cast<float>(raining ? random(350, 500) : random(30, 70))});
+    Particle p{asw::Vec2f(0.0F, 0.0F), 0.0F};
+    respawn(p, true);
+    particles.push_back(p);
   }
+
+  constexpr size_t MAX_SPLASHES = 120;
 
   for (auto& p : particles) {
     p.pos.y += p.speed * dt;
-    p.pos.x -= p.speed * dt * (raining ? 0.3F : 0.1F);
 
-    if (p.pos.y > VIEWPORT_HEIGHT || p.pos.x < 0) {
-      p.pos = asw::Vec2f(static_cast<float>(random(0, VIEWPORT_WIDTH + 100)),
-                         -10.0F);
+    if (snowing) {
+      // Drift with the wind and sway on the flake's own phase
+      p.pos.x -= p.speed * dt * 0.1F;
+      p.pos.x += std::sin(weather_time * 1.6F + p.phase) * 18.0F * dt;
+    } else {
+      p.pos.x -= p.speed * dt * 0.3F;
+    }
+
+    if (!snowing && p.pos.y >= p.land_y) {
+      if (splashes.size() < MAX_SPLASHES) {
+        splashes.push_back({asw::Vec2f(p.pos.x, p.land_y), SPLASH_LIFE});
+      }
+      respawn(p, false);
+    } else if (p.pos.y > VIEWPORT_HEIGHT || p.pos.x < -20.0F ||
+               p.pos.x > VIEWPORT_WIDTH + 120.0F) {
+      respawn(p, false);
     }
   }
 }
