@@ -6,6 +6,7 @@
 #include <cmath>
 
 #include "../GameState.h"
+#include "../utility/Shadow.h"
 
 namespace {
 // Multiply colours per season, index matches Season
@@ -20,9 +21,9 @@ const std::array<asw::Color, SEASONS_PER_YEAR> SEASON_TINTS{
 constexpr float SEASON_BLEND_DAYS = 2.0F;
 
 // Wind sway
-constexpr float SWAY_SPEED = 1.8F;
-constexpr float SWAY_PHASE_PER_TILE = 0.7F;
-constexpr float SWAY_AMPLITUDE = 1.6F;
+constexpr float SWAY_SPEED = 1.1F;
+constexpr float SWAY_PHASE_PER_TILE = 0.35F;
+constexpr float SWAY_AMPLITUDE = 1.0F;
 
 unsigned char lerp(unsigned char a, unsigned char b, float t) {
   return static_cast<unsigned char>(std::lround(a + (b - a) * t));
@@ -100,6 +101,12 @@ void TileType::draw(int x, int y, unsigned char meta, int tile_x) const {
                          multiply(color.b, season_tint.b));
     }
     asw::draw::set_tint(sprite_sheet, color);
+  }
+
+  // Shadow on the ground under the base of the tile
+  if (shadow_width > 0) {
+    shadow::draw(static_cast<float>(x + w_px / 2), static_cast<float>(y + 14),
+                 static_cast<float>(shadow_width));
   }
 
   // Wind sway, whole pixels to keep the art crisp

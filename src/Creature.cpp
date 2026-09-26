@@ -6,6 +6,7 @@
 #include "manager/SoundManager.h"
 #include "manager/TileTypeManager.h"
 #include "utility/Anim.h"
+#include "utility/Shadow.h"
 #include "utility/Tools.h"
 
 asw::Texture Creature::sheet{nullptr};
@@ -91,6 +92,9 @@ void Creature::draw(const Camera& camera) const {
   const auto dest =
       asw::Quadf(pos.x - camera.getPosition().x,
                  pos.y - camera.getPosition().y + bob, TILE_SIZE, TILE_SIZE);
+
+  shadow::draw(pos.x - camera.getPosition().x + TILE_SIZE / 2.0F,
+               pos.y - camera.getPosition().y + TILE_SIZE - 2.0F, 12.0F);
 
   // Hit flash, white then red. Tint only darkens, so the white half draws
   // the sprite again additively to brighten it.

@@ -85,6 +85,7 @@ int TileTypeManager::loadTiles(const std::string& path) {
     tile_defs[id].setSeasonal(tile.value("seasonal", false));
     tile_defs[id].setSway(tile.value("sway", false));
     tile_defs[id].setEncloses(tile.value("encloses", false));
+    tile_defs[id].setShadow(tile.value("shadow", 0));
 
     if (tile.contains("bitmask_group")) {
       tile_defs[id].setBitmaskGroup(tile["bitmask_group"]);

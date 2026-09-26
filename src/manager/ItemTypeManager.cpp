@@ -72,6 +72,7 @@ ItemAction parseAction(const nlohmann::json& data) {
   action.add_meta = data.value("add_meta", 0);
   action.sound = data.value("sound", "");
   action.message = data.value("message", "");
+  action.particles = data.value("particles", "");
   action.energy = data.value("energy", 0.0F);
   action.area = data.value("area", 0);
   action.hunger = data.value("hunger", 0.0F);
