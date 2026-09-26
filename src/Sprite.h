@@ -17,6 +17,10 @@ class Sprite {
 
   virtual void draw(const Camera& camera) const = 0;
 
+  // World pixel area the sprite may draw into, used to cull off screen
+  // sprites. The default is generous for characters, creatures and items.
+  virtual Quad<int> getDrawBounds() const;
+
   // Get position
   const asw::Vec2i& getPosition() const;
   float getZ() const;

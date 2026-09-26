@@ -81,10 +81,7 @@ void Graphics::draw(const Camera& camera) const {
       continue;
     }
 
-    auto spr_pos = sprite->getPosition();
-    Quad<int> quad(spr_pos.x, spr_pos.y, spr_pos.x + 64, spr_pos.y + 64);
-
-    if (camera_bounds.intersects(quad)) {
+    if (camera_bounds.intersects(sprite->getDrawBounds())) {
       sprite->draw(camera);
     }
   }

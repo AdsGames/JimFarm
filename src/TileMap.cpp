@@ -255,13 +255,17 @@ std::vector<std::shared_ptr<Tile>> TileMap::collectTiles(
 void TileMap::tick(const Camera& camera, World& world) {
   const auto& bounds = camera.getBounds();
 
+  // Tiles can draw outside their chunk (the barn is 3 wide and 4 tall), so
+  // chunks just off screen still draw
+  constexpr int MARGIN = 4 * TILE_SIZE;
+
   // Chunks near the camera are drawn and ticked
   for (auto const& y_chunks : chunks) {
     for (auto const& chunk : y_chunks) {
-      const int x_1 = chunk->getXIndex() * CHUNK_SIZE * TILE_SIZE;
-      const int y_1 = chunk->getYIndex() * CHUNK_SIZE * TILE_SIZE;
-      const int x_2 = x_1 + CHUNK_SIZE * TILE_SIZE;
-      const int y_2 = y_1 + CHUNK_SIZE * TILE_SIZE;
+      const int x_1 = chunk->getXIndex() * CHUNK_SIZE * TILE_SIZE - MARGIN;
+      const int y_1 = chunk->getYIndex() * CHUNK_SIZE * TILE_SIZE - MARGIN;
+      const int x_2 = x_1 + CHUNK_SIZE * TILE_SIZE + MARGIN * 2;
+      const int y_2 = y_1 + CHUNK_SIZE * TILE_SIZE + MARGIN * 2;
 
       chunk->setDrawEnabled(bounds.x_2 >= x_1 && bounds.x_1 <= x_2 &&
                             bounds.y_2 >= y_1 && bounds.y_1 <= y_2);

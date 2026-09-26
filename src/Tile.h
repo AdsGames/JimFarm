@@ -24,6 +24,9 @@ class Tile : public Sprite {
   // Drawing
   void draw(const Camera& camera) const override;
 
+  // Tall and wide images draw up and right from the base tile
+  Quad<int> getDrawBounds() const override;
+
   const TileType& getType() const;
 
   // Access and set meta data byte

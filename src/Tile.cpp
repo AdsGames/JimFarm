@@ -25,6 +25,15 @@ void Tile::draw(const Camera& camera) const {
                     pos.x / TILE_SIZE);
 }
 
+Quad<int> Tile::getDrawBounds() const {
+  // A little extra for wind sway, animal bob and the shadow below
+  constexpr int SLACK = 4;
+  const int width = tile_pointer.getImageWidth() * TILE_SIZE;
+  const int height = tile_pointer.getImageHeight() * TILE_SIZE;
+  return {pos.x - SLACK, pos.y + TILE_SIZE - height - SLACK,
+          pos.x + width + SLACK, pos.y + TILE_SIZE + SLACK};
+}
+
 const TileType& Tile::getType() const {
   return tile_pointer;
 }
