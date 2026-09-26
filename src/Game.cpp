@@ -15,10 +15,6 @@
 #include "ui/UiScale.h"
 #include "utility/Tools.h"
 
-namespace {
-constexpr size_t RECIPES_PER_PAGE = 24;
-}  // namespace
-
 void Game::init() {
   const auto action = std::exchange(pending_game_action, GameAction::Resume);
 
@@ -79,7 +75,8 @@ void Game::update(float dt) {
     return;
   }
 
-  // Update world
+  // Update world, windows under the recipe book ignore clicks
+  farm_world.getHud().setBlocked(recipe_book.isOpen());
   farm_world.update(dt, jim->getPosition());
 
   // Sleeping and fainting send jim home
@@ -95,27 +92,39 @@ void Game::update(float dt) {
 
   if (asw::input::get_key_down(asw::input::Key::H)) {
     show_help = !show_help;
-    recipe_page = -1;
+    recipe_book.close();
   }
 
-  // Each press turns the page, closing after the last
+  // Recipe book opens at the station in use
   if (asw::input::get_key_down(asw::input::Key::R)) {
     show_help = false;
-    const int pages = static_cast<int>(
-        (recipeLines().size() + RECIPES_PER_PAGE - 1) / RECIPES_PER_PAGE);
-    recipe_page = recipe_page + 1 >= pages ? -1 : recipe_page + 1;
+    if (recipe_book.isOpen()) {
+      recipe_book.close();
+    } else {
+      auto& hud = farm_world.getHud();
+      const auto& state = farm_world.getState();
+      int tab = RecipeBook::tabForStation("", 0);
+      for (const auto* window : {"crafting", "furnace", "kiln"}) {
+        if (hud.isOpen(window)) {
+          tab = RecipeBook::tabForStation(window, state.crafting_tier);
+        }
+      }
+      recipe_book.open(tab);
+    }
+  } else {
+    recipe_book.update();
   }
 
-  // Update character
-  if (!farm_world.isSummaryOpen()) {
+  // Update character, the open book takes the input
+  if (!farm_world.isSummaryOpen() && !recipe_book.isOpen()) {
     jim->update(farm_world);
   }
 
   // Close windows, else go to menu
   if (asw::input::get_key_down(asw::input::Key::Escape)) {
-    if (show_help || recipe_page >= 0) {
+    if (show_help || recipe_book.isOpen()) {
       show_help = false;
-      recipe_page = -1;
+      recipe_book.close();
     } else if (farm_world.getHud().isOpen()) {
       farm_world.getHud().closeAll();
     } else {
@@ -130,7 +139,7 @@ void Game::drawHelp(const asw::Vec2i& ui_size) const {
       "WASD / Arrows  move        Click / Space  use item",
       "1-8 / Z X / wheel  select   C / Right click  eat, drink",
       "F  drop       E  bag       Q  crafting      G  furnace",
-      "R  recipe book, press again for the next page",
+      "R  recipe book, click tabs or 1-5, A D turn pages",
       "Empty hand: harvest, forage, pick up chickens, drink",
       "Click a bed to sleep, the store to trade",
       "Click a workbench or kiln to craft with it",
@@ -154,80 +163,6 @@ void Game::drawHelp(const asw::Vec2i& ui_size) const {
   }
 }
 
-std::vector<std::string> Game::recipeLines() const {
-  const auto& known = farm_world.getState().known_items;
-  std::vector<std::string> lines;
-  int hidden = 0;
-
-  // Stations in the order the player gets them
-  const std::array<std::string, 5> order = {
-      "Hand", "Workbench", "Stone workbench", "Furnace", "Kiln"};
-
-  for (auto const& station : order) {
-    for (auto const& recipe : RecipeManager::getRecipes()) {
-      if (RecipeManager::stationName(recipe) != station) {
-        continue;
-      }
-
-      // Shown once the player has held one of the inputs
-      if (std::ranges::none_of(recipe.inputs, [&](auto const& input) {
-            return known.contains(input.first);
-          })) {
-        hidden++;
-        continue;
-      }
-
-      std::string inputs;
-      for (auto const& [id, quantity] : recipe.inputs) {
-        inputs += std::format("{}{} {}", inputs.empty() ? "" : " + ", quantity,
-                              ItemTypeManager::getItem(id).getName());
-      }
-
-      lines.push_back(std::format(
-          "{}: {} -> {} {}", station, inputs, recipe.count,
-          ItemTypeManager::getItem(recipe.output).getName()));
-    }
-  }
-
-  if (hidden > 0) {
-    lines.push_back(std::format(
-        "{} more to discover, pick up new things to learn them", hidden));
-  }
-
-  return lines;
-}
-
-void Game::drawRecipes(const asw::Vec2i& ui_size) const {
-  const auto all = recipeLines();
-  const int pages = static_cast<int>(
-      (all.size() + RECIPES_PER_PAGE - 1) / RECIPES_PER_PAGE);
-
-  std::vector<std::string> lines = {
-      std::format("RECIPES  page {}/{}  (R next, Esc close)", recipe_page + 1,
-                  pages),
-      ""};
-
-  const auto first = static_cast<size_t>(recipe_page * RECIPES_PER_PAGE);
-  for (size_t i = first; i < all.size() && i < first + RECIPES_PER_PAGE; i++) {
-    lines.push_back(all[i]);
-  }
-
-  const int width = std::min(ui_size.x - 8, 440);
-  const int height = static_cast<int>(lines.size()) * 10 + 12;
-  const int x = (ui_size.x - width) / 2;
-  const int y = std::max(4, (ui_size.y - height) / 2);
-
-  asw::draw::rect_fill(asw::Quadf(x, y, width, height),
-                       asw::Color(35, 28, 20, 235));
-  asw::draw::rect(asw::Quadf(x, y, width, height), asw::Color(200, 170, 110));
-
-  for (size_t i = 0; i < lines.size(); i++) {
-    asw::draw::text(font, lines[i],
-                    asw::Vec2f(x + 8, y + 6 + static_cast<int>(i) * 10),
-                    asw::Color(255, 255, 255));
-  }
-}
-
 void Game::draw() {
   // Draw map
   farm_world.draw();
@@ -241,6 +176,7 @@ void Game::draw() {
   farm_world.drawStatus(ui_size);
   farm_world.getHud().draw(farm_world.getState());
   jim->drawInventory(ui_size);
+  recipe_book.draw(farm_world.getState(), ui_size);
   Tooltip::draw(ui_size);
   farm_world.drawSummary(ui_size);
 
@@ -248,9 +184,7 @@ void Game::draw() {
     drawHelp(ui_size);
   }
 
-  if (recipe_page >= 0) {
-    drawRecipes(ui_size);
-  }
+
 
   asw::display::reset_render_target();
 

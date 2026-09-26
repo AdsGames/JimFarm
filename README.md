@@ -37,7 +37,7 @@ recipe book (R) as you pick up new things.
 | 1-8, Z / X, mouse wheel | Select hotbar slot             |
 | F                       | Drop item                      |
 | E / Q / G               | Bag / crafting / furnace       |
-| R                       | Recipe book, next page         |
+| R                       | Recipe book (1-5 tabs, A D)    |
 | H                       | Controls and recipes           |
 | + / -                   | Zoom                           |
 | Esc                     | Close windows, pause menu      |

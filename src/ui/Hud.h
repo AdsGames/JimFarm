@@ -24,6 +24,9 @@ class Hud {
   void closeAll();
 
   bool isOpen() const { return ui_controllers.size() > 0; }
+
+  // Ignore input, e.g. while the recipe book is on top
+  void setBlocked(bool value) { blocked = value; }
   bool isOpen(const std::string& name) const {
     return ui_controllers.contains(name);
   }
@@ -33,6 +36,8 @@ class Hud {
   void returnMouseItem();
 
   std::map<std::string, UiController> ui_controllers;
+
+  bool blocked{false};
 };
 
 #endif  // HUD_H_

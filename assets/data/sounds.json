@@ -97,5 +97,14 @@
     "panning": 0.5,
     "frequency": 1000,
     "frequency_rand": 0
+  },
+  {
+    "id": 11,
+    "name": "page",
+    "file": "blip.wav",
+    "volume": 0.5,
+    "panning": 0.5,
+    "frequency": 1000,
+    "frequency_rand": 0
   }
 ]

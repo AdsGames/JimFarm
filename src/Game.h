@@ -9,6 +9,7 @@
 #include "Character.h"
 #include "State.h"
 #include "World.h"
+#include "ui/RecipeBook.h"
 
 class Game : public asw::scene::Scene<ProgramState> {
  public:
@@ -25,10 +26,6 @@ class Game : public asw::scene::Scene<ProgramState> {
   // Controls overlay
   void drawHelp(const asw::Vec2i& ui_size) const;
 
-  // Known recipes, a page at a time
-  void drawRecipes(const asw::Vec2i& ui_size) const;
-  std::vector<std::string> recipeLines() const;
-
   World farm_world{};
   std::shared_ptr<Character> jim = nullptr;
 
@@ -42,8 +39,7 @@ class Game : public asw::scene::Scene<ProgramState> {
 
   bool show_help{false};
 
-  // Recipe book page, -1 when closed
-  int recipe_page{-1};
+  RecipeBook recipe_book{};
 };
 
 #endif  // SRC_GAME_H_

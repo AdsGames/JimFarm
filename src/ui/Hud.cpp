@@ -51,6 +51,10 @@ void Hud::returnMouseItem() {
 }
 
 void Hud::update(GameState& state) {
+  if (blocked) {
+    return;
+  }
+
   for (auto& [_, ui] : ui_controllers) {
     ui.update(state);
   }
