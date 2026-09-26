@@ -38,6 +38,26 @@ constexpr int CAMPFIRE_RADIUS = 4;
 struct Particle {
   asw::Vec2f pos;
   float speed;
+
+  // Snow flake, otherwise rain drop
+  bool snow{false};
+
+  // Rain drop streak length and alpha
+  float length{9.0F};
+  unsigned char alpha{160};
+
+  // Screen y where a rain drop lands and splashes
+  float land_y{0.0F};
+
+  // Snow flake size in pixels and sway phase in radians
+  float size{3.0F};
+  float phase{0.0F};
+};
+
+// Short lived rain splash
+struct Splash {
+  asw::Vec2f pos;
+  float life;
 };
 
 class World {
@@ -214,6 +234,10 @@ class World {
 
   // Weather particles in screen space
   std::vector<Particle> particles{};
+  std::vector<Splash> splashes{};
+
+  // Seconds of weather animation, drives snow sway and fog pulse
+  float weather_time{0.0F};
 
   // Player position
   asw::Vec2i player_tile{0, 0};
