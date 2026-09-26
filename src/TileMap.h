@@ -90,8 +90,11 @@ class TileMap {
   // Update chunks near the camera, runs ticking behaviours
   void tick(const Camera& camera, World& world);
 
-  // Run day end behaviours on every tile
+  // Run day end, then morning behaviours on every tile
   void dayEnd(World& world);
+
+  // Changes each time a wall, window or door is placed or removed
+  unsigned int getEnclosureVersion() const { return enclosure_version; }
 
   // Swap every tile of one type for another (e.g. rain waters soil)
   void replaceAll(const std::string& from, const std::string& to);
@@ -122,6 +125,9 @@ class TileMap {
 
   // Size
   asw::Vec2<unsigned int> size{0, 0};
+
+  // See getEnclosureVersion
+  unsigned int enclosure_version{0};
 
   // Chunks
   std::vector<std::vector<std::shared_ptr<Chunk>>> chunks;

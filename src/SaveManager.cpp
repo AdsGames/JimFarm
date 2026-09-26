@@ -18,8 +18,8 @@ namespace {
 constexpr int SAVE_VERSION = 1;
 
 // Windows whose contents are saved
-constexpr std::array<const char*, 3> SAVED_INVENTORIES = {
-    "inventory", "crafting", "furnace"};
+constexpr std::array<const char*, 4> SAVED_INVENTORIES = {
+    "inventory", "crafting", "furnace", "kiln"};
 
 nlohmann::json inventoryToJson(Inventory& inventory) {
   auto stacks = nlohmann::json::array();

@@ -180,6 +180,9 @@ void Chunk::generate() {
         if (random(0, 30) == 0) {
           tiles[pos_3_foreground] =
               std::make_shared<Tile>("tile:tree", t_pos, LAYER_FOREGROUND, 2);
+        } else if (random(0, 60) == 0) {
+          tiles[pos_3_foreground] =
+              std::make_shared<Tile>("tile:mushroom", t_pos, LAYER_FOREGROUND);
         }
       }
       // Forested tundra
@@ -191,6 +194,9 @@ void Chunk::generate() {
         if (random(0, 3) == 0) {
           tiles[pos_3_foreground] = std::make_shared<Tile>(
               "tile:tree", t_pos, LAYER_FOREGROUND, random(1, 2));
+        } else if (random(0, 25) == 0) {
+          tiles[pos_3_foreground] =
+              std::make_shared<Tile>("tile:mushroom", t_pos, LAYER_FOREGROUND);
         }
       }
       // Forest
@@ -205,6 +211,9 @@ void Chunk::generate() {
         } else if (random(0, 40) == 0) {
           tiles[pos_3_foreground] =
               std::make_shared<Tile>("tile:bush", t_pos, LAYER_FOREGROUND, 0);
+        } else if (random(0, 70) == 0) {
+          tiles[pos_3_foreground] =
+              std::make_shared<Tile>("tile:mushroom", t_pos, LAYER_FOREGROUND);
         }
       }
       // Dense forest
@@ -241,6 +250,9 @@ void Chunk::generate() {
         if (random(0, 8) == 0) {
           tiles[pos_3_foreground] = std::make_shared<Tile>(
               "tile:dense_grass", t_pos, LAYER_FOREGROUND, random(0, 3));
+        } else if (random(0, 40) == 0) {
+          tiles[pos_3_foreground] =
+              std::make_shared<Tile>("tile:herb", t_pos, LAYER_FOREGROUND);
         }
       }
       // Grassy wasteland
@@ -252,6 +264,9 @@ void Chunk::generate() {
         if (random(0, 1) == 0) {
           tiles[pos_3_foreground] = std::make_shared<Tile>(
               "tile:dense_grass", t_pos, LAYER_FOREGROUND, random(0, 3));
+        } else if (random(0, 40) == 0) {
+          tiles[pos_3_foreground] =
+              std::make_shared<Tile>("tile:herb", t_pos, LAYER_FOREGROUND);
         }
       }
       // Savana
@@ -277,6 +292,10 @@ void Chunk::generate() {
             std::make_shared<Tile>("tile:soil", t_pos, LAYER_BACKGROUND);
         tiles[pos_3_midground] =
             std::make_shared<Tile>("tile:sand", t_pos, LAYER_MIDGROUND);
+        if (random(0, 25) == 0) {
+          tiles[pos_3_foreground] =
+              std::make_shared<Tile>("tile:cactus", t_pos, LAYER_FOREGROUND);
+        }
       }
 
       // Water deep
@@ -316,10 +335,24 @@ void Chunk::generate() {
         setTileAt(idx, LAYER_FOREGROUND,
                   std::make_shared<Tile>("tile:dense_grass", t_pos,
                                          LAYER_FOREGROUND));
-        if (random(0, 100) == 0) {
+        // Reeds, clams and clay by the water
+        const int roll = random(0, 99);
+        if (roll == 0) {
           setTileAt(
               idx, LAYER_FOREGROUND,
               std::make_shared<Tile>("tile:chicken", t_pos, LAYER_FOREGROUND));
+        } else if (roll < 14) {
+          setTileAt(
+              idx, LAYER_FOREGROUND,
+              std::make_shared<Tile>("tile:reeds", t_pos, LAYER_FOREGROUND));
+        } else if (roll < 18) {
+          setTileAt(
+              idx, LAYER_FOREGROUND,
+              std::make_shared<Tile>("tile:clam", t_pos, LAYER_FOREGROUND));
+        } else if (roll < 28) {
+          setTileAt(idx, LAYER_MIDGROUND,
+                    std::make_shared<Tile>("tile:clay", t_pos, LAYER_MIDGROUND));
+          setTileAt(idx, LAYER_FOREGROUND, nullptr);
         }
       }
       // Stone
@@ -333,6 +366,15 @@ void Chunk::generate() {
             idx, LAYER_FOREGROUND,
             std::make_shared<Tile>("tile:stone_wall", t_pos, LAYER_FOREGROUND,
                                    (height[pos_2] - 32) / 6));
+
+        // Ore in rock, iron mostly where it is cold
+        if (random(0, 9) == 0) {
+          const bool iron = temperature[pos_2] < 0 || random(0, 5) == 0;
+          setTileAt(idx, LAYER_FOREGROUND,
+                    std::make_shared<Tile>(
+                        iron ? "tile:iron_ore" : "tile:copper_ore", t_pos,
+                        LAYER_FOREGROUND));
+        }
       }
     }
   }

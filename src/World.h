@@ -3,6 +3,7 @@
 
 #include <asw/asw.h>
 
+#include <functional>
 #include <map>
 #include <memory>
 #include <string>
@@ -34,6 +35,9 @@ constexpr int INTERACT_RANGE = 3;
 
 // Campfires warm and scare wolves within this many tiles
 constexpr int CAMPFIRE_RADIUS = 4;
+
+// Largest room, bigger enclosed areas count as outdoors
+constexpr int MAX_ROOM_TILES = 80;
 
 // Weather particle
 struct Particle {
@@ -135,6 +139,21 @@ class World {
   // Stores
   void openShop();
 
+  // Crafting station window (crafting, kiln) at a tier
+  void openStation(const std::string& window, int tier);
+
+  // Would the held item's rules do something to this tile
+  bool itemCanUse(const ItemStack& held, const asw::Vec2i& tile_pos);
+
+  // First foreground tile within radius (square) that match accepts
+  std::shared_ptr<Tile> findTileNear(
+      const asw::Vec2i& tile_pos,
+      int radius,
+      const std::function<bool(const std::shared_ptr<Tile>&)>& match);
+
+  // Rooms: floor space closed in by walls, windows and a door
+  bool isIndoors(const asw::Vec2i& tile_pos) const;
+
   // Tile the player stands on, used so animals do not walk into them
   const asw::Vec2i& getPlayerTile() const { return player_tile; }
 
@@ -187,8 +206,12 @@ class World {
   // Survival stats over elapsed game minutes
   void updateSurvival(float minutes);
 
-  // Wolves
+  // Wolves at night, deer and rabbits by day
   void updateCreatures(float dt, const asw::Vec2i& player_pos);
+  void spawnWildlife();
+
+  // Open ground a creature can appear on, out of sight of the player
+  bool findSpawnTile(asw::Vec2i& at);
 
   // Store order
   void updateOrder();
@@ -198,6 +221,14 @@ class World {
 
   // Night and campfire light
   void drawLighting();
+
+  // Rooms
+  void updateRooms();
+  int roomAt(const asw::Vec2i& tile_pos) const;
+  void drawRoofs();
+
+  // Show recipes for items the player picks up
+  void updateDiscovery();
 
   // Tile map
   TileMap tile_map;
@@ -232,6 +263,7 @@ class World {
   // Wolves and other creatures
   std::vector<std::shared_ptr<Creature>> creatures{};
   float spawn_timer{0.0F};
+  float wildlife_timer{0.0F};
 
   // Damage numbers over creatures
   FloatingTexts floating_texts{};
@@ -248,6 +280,14 @@ class World {
 
   // Player position
   asw::Vec2i player_tile{0, 0};
+
+  // Room id per tile (x + y * width), 0 outdoors
+  std::vector<int> rooms{};
+  unsigned int rooms_version{0};
+  bool rooms_ready{false};
+
+  // First discovery pass after a new game or load is silent
+  bool discovery_primed{false};
 
   // Day summary
   std::map<std::string, int> day_events{};

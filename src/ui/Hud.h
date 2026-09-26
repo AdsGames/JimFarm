@@ -24,6 +24,9 @@ class Hud {
   void closeAll();
 
   bool isOpen() const { return ui_controllers.size() > 0; }
+  bool isOpen(const std::string& name) const {
+    return ui_controllers.contains(name);
+  }
 
  private:
   // Return items held on the mouse once no windows are open

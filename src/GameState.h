@@ -3,6 +3,7 @@
 
 #include <asw/asw.h>
 #include <nlohmann/json.hpp>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -103,6 +104,12 @@ class GameState {
 
   // Set by a bed, handled by the world
   bool sleep_requested{false};
+
+  // Tier of the crafting window, set by the station that opened it
+  int crafting_tier{0};
+
+  // Items the player has held, recipes using them are shown
+  std::set<std::string> known_items{};
 
   // Lifetime stats for summaries
   int crops_harvested{0};

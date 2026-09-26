@@ -97,6 +97,9 @@ struct ItemInfo {
   // Damage dealt to creatures
   int attack{0};
 
+  // Tool strength, trees and rocks take fewer hits. 0 for non tools.
+  float power{0.0F};
+
   // Starting meta for new items (e.g. full watering can)
   unsigned char start_meta{0};
 

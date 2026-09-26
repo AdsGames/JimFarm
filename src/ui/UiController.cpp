@@ -65,6 +65,14 @@ void UiController::draw(const GameState& state) {
   // Draw elements
   for (auto const& element : elements) {
     element->draw(position, state);
+
+    // Recipe needs a better station, grey it out
+    auto slot = std::dynamic_pointer_cast<UiSlot>(element);
+    if (output_locked && slot && slot->getType() == SlotType::Output) {
+      const auto at = position + slot->getPosition();
+      asw::draw::rect_fill(asw::Quadf(at.x, at.y, SLOT_SIZE, SLOT_SIZE),
+                           asw::Color(120, 30, 30, 150));
+    }
   }
 
   // Tooltip for the slot under the cursor
@@ -93,7 +101,7 @@ void UiController::update(GameState& state) {
   const auto& mouse = asw::input::get_mouse();
   const auto mouse_pos = getUiMouse();
 
-  updateRecipeOutput();
+  updateRecipeOutput(state);
 
   if (mouse.pressed[1] || mouse.down[3]) {
     // Element at position
@@ -133,7 +141,7 @@ void UiController::update(GameState& state) {
           break;
         case SlotType::Output:
           if (mouse.pressed[1]) {
-            clickOutput();
+            clickOutput(state);
           }
           break;
         case SlotType::Input:
@@ -241,14 +249,22 @@ std::vector<std::shared_ptr<ItemStack>> UiController::stacksOfType(
   return stacks;
 }
 
-void UiController::updateRecipeOutput() {
+void UiController::updateRecipeOutput(const GameState& state) {
   auto outputs = stacksOfType(SlotType::Output);
   if (outputs.empty()) {
     return;
   }
 
   auto output = outputs.front();
-  const auto* recipe = RecipeManager::match(name, stacksOfType(SlotType::Input));
+  const auto inputs = stacksOfType(SlotType::Input);
+  const auto* recipe = RecipeManager::match(name, inputs, state.crafting_tier);
+
+  // Show what a better station would make, locked
+  output_locked = false;
+  if (!recipe) {
+    recipe = RecipeManager::needsTier(name, inputs, state.crafting_tier);
+    output_locked = recipe != nullptr;
+  }
 
   if (!recipe) {
     output->clear();
@@ -263,10 +279,15 @@ void UiController::updateRecipeOutput() {
   }
 }
 
-bool UiController::clickOutput() {
+bool UiController::clickOutput(GameState& state) {
   const auto inputs = stacksOfType(SlotType::Input);
-  const auto* recipe = RecipeManager::match(name, inputs);
+  const auto* recipe = RecipeManager::match(name, inputs, state.crafting_tier);
   if (!recipe) {
+    if (const auto* locked =
+            RecipeManager::needsTier(name, inputs, state.crafting_tier)) {
+      state.notify("Needs a " + RecipeManager::stationName(*locked));
+      SoundManager::play("error");
+    }
     return false;
   }
 
@@ -281,7 +302,7 @@ bool UiController::clickOutput() {
 
   RecipeManager::consume(*recipe, inputs);
   SoundManager::play("shovel");
-  updateRecipeOutput();
+  updateRecipeOutput(state);
   return true;
 }
 

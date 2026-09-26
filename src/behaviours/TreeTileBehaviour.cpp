@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "../World.h"
+#include "../manager/ItemTypeManager.h"
 #include "../manager/SoundManager.h"
 #include "../utility/Tools.h"
 
@@ -28,8 +29,11 @@ bool TreeBehaviour::onInteract(World& world,
 
   SoundManager::play("axe");
 
-  // Each hit takes a share of the tree's hitpoints
-  tile->damage(static_cast<unsigned char>(255 / hits + 1));
+  // Each hit takes a share of the tree's hitpoints, better axes take more
+  const float power =
+      std::max(1.0F, ItemTypeManager::getInfo(item->getType().getId()).power);
+  tile->damage(static_cast<unsigned char>(
+      std::min(255.0F, (255.0F / hits + 1.0F) * power)));
   if (tile->getHitpoints() > 0) {
     return true;
   }

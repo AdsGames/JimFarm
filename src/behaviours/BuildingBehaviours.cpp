@@ -29,9 +29,20 @@ bool ShopBehaviour::onInteract(World& world,
 bool BedBehaviour::onInteract(World& world,
                               const std::shared_ptr<Tile>& tile,
                               ItemStack& held) {
-  (void)tile;
-  (void)held;
-  world.getState().sleep_requested = true;
+  // Tools pick the bed up
+  if (world.itemCanUse(held, tile->getTilePosition())) {
+    return false;
+  }
+
+  // Wake up next to the last bed slept in
+  auto& state = world.getState();
+  const auto home = world.openTileNear(tile->getTilePosition());
+  if (home != state.home) {
+    state.home = home;
+    state.notify("You will wake up here");
+  }
+
+  state.sleep_requested = true;
   return true;
 }
 

@@ -116,6 +116,7 @@ int ItemTypeManager::loadItems(const std::string& path) {
     info.price = item.value("price", 0);
     info.value = item.value("value", 0);
     info.attack = item.value("attack", 0);
+    info.power = item.value("power", 0.0F);
     info.carry_warmth = item.value("carry_warmth", 0.0F);
     info.start_meta = item.value("start_meta", 0);
 
@@ -133,6 +134,13 @@ int ItemTypeManager::loadItems(const std::string& path) {
       for (const auto& action : item["actions"]) {
         info.actions.push_back(parseAction(action));
       }
+    }
+
+    // Then another item's rules, e.g. an upgraded axe
+    if (item.contains("actions_from")) {
+      const auto& inherited = getInfo(item["actions_from"]).actions;
+      info.actions.insert(info.actions.end(), inherited.begin(),
+                          inherited.end());
     }
 
     item_info[id] = info;

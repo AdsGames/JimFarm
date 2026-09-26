@@ -92,6 +92,10 @@ class TileType {
     has_tint = true;
   }
 
+  // Walls, windows and doors make rooms
+  void setEncloses(bool value) { encloses = value; }
+  bool getEncloses() const { return encloses; }
+
   // Living tiles (animals) bob gently when drawn
   void setBobs(bool value) { bobs = value; }
   bool getBobs() const { return bobs; }
@@ -131,6 +135,7 @@ class TileType {
   bool has_tint{false};
 
   bool bobs{false};
+  bool encloses{false};
 
   std::string bitmask_group{};
 

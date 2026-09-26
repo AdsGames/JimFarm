@@ -17,6 +17,18 @@ Stay alive: eat (C or right click), drink at water or the well, and stay warm.
 Wolves hunt you and your chickens at night. Lit campfires keep them away and
 warm you. Fences keep them out.
 
+Explore: each biome has its own finds. Mushrooms grow in cold forests, herbs
+in dry grassland, cactus fruit in the desert, and reeds, clams and clay on the
+shore. Rock hides copper ore, and iron ore where it is cold. Hunt deer and
+rabbits by day for meat and hide.
+
+Build: craft a workbench by hand, then a pickaxe and a kiln at the workbench.
+The kiln makes glass, bricks and ingots. Ingots upgrade your tools, and a stone
+workbench makes iron tools. Walls, windows and a door make a warm room that
+wolves can not enter. A bed sets where you wake up. Sprinklers water crops,
+scarecrows keep crows away and hoppers collect eggs. New recipes appear in the
+recipe book (R) as you pick up new things.
+
 | Key                     | Action                         |
 | ----------------------- | ------------------------------ |
 | WASD / arrows           | Move                           |
@@ -25,6 +37,7 @@ warm you. Fences keep them out.
 | 1-8, Z / X, mouse wheel | Select hotbar slot             |
 | F                       | Drop item                      |
 | E / Q / G               | Bag / crafting / furnace       |
+| R                       | Recipe book, next page         |
 | H                       | Controls and recipes           |
 | + / -                   | Zoom                           |
 | Esc                     | Close windows, pause menu      |
@@ -33,9 +46,14 @@ warm you. Fences keep them out.
 
 Game content is data in `assets/data/`:
 
-- `tiles.json`: tiles and their `behaviours` (crop, animal, campfire, shop, bed, ...)
-- `items.json`: prices, food, and `actions`, the rules for what an item does to a tile
-- `recipes.json`: crafting and furnace recipes
+- `tiles.json`: tiles and their `behaviours` (crop, animal, campfire, shop, bed,
+  station, breakable, sprinkler, scarecrow, hopper, ...). `encloses` marks walls
+  and doors that make rooms
+- `items.json`: prices, food, and `actions`, the rules for what an item does to
+  a tile. `power` makes a tool break trees and rock faster, `actions_from`
+  reuses another item's rules
+- `recipes.json`: crafting, furnace and kiln recipes. `tier` 1 needs a
+  workbench, 2 a stone workbench
 - `interfaces.json`: windows, including the store stock
 
 Placeholder art is in `assets/images/placeholders.png`. Run

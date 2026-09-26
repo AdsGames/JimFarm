@@ -19,6 +19,31 @@ constexpr float BITE_RANGE = 13.0F;
 constexpr float BITE_DAMAGE = 12.0F;
 constexpr float BITE_COOLDOWN = 1.5F;
 constexpr int PREY_RANGE = 8;
+
+// Grazers run once the player is this close, and leave when far away
+constexpr float SHY_TILES = 5.0F;
+constexpr float ROAM_TILES = 32.0F;
+
+// Per kind stats
+struct KindInfo {
+  int hp;
+  float flee_speed;
+  float wander_speed;
+  int sprite_x;
+  int sprite_y;
+};
+
+KindInfo infoOf(CreatureKind kind) {
+  switch (kind) {
+    case CreatureKind::Deer:
+      return {4, 62.0F, 14.0F, 0, 1};
+    case CreatureKind::Rabbit:
+      return {1, 78.0F, 20.0F, 2, 1};
+    case CreatureKind::Wolf:
+      break;
+  }
+  return {3, FLEE_SPEED, WANDER_SPEED, 2, 0};
+}
 constexpr float HIT_FLASH = 0.15F;
 
 float length(const asw::Vec2f& v) {
@@ -42,9 +67,11 @@ void Creature::loadImages() {
   sheet = TileTypeManager::getSheet("placeholders");
 }
 
-Creature::Creature(const asw::Vec2i& pos)
+Creature::Creature(const asw::Vec2i& pos, CreatureKind kind)
     : Sprite(pos, 2),
-      fpos(static_cast<float>(pos.x), static_cast<float>(pos.y)) {}
+      kind(kind),
+      fpos(static_cast<float>(pos.x), static_cast<float>(pos.y)),
+      hp(infoOf(kind).hp) {}
 
 asw::Vec2i Creature::getTile() const {
   return asw::Vec2i((pos.x + TILE_SIZE / 2) / TILE_SIZE,
@@ -57,8 +84,10 @@ void Creature::draw(const Camera& camera) const {
   const int bob =
       moving ? anim::walkBob(getSpriteId()) : anim::idleBob(getSpriteId());
 
-  const auto source =
-      asw::Quadf((2 + frame) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE);
+  const auto info = infoOf(kind);
+  const auto source = asw::Quadf((info.sprite_x + frame) * TILE_SIZE,
+                                 info.sprite_y * TILE_SIZE, TILE_SIZE,
+                                 TILE_SIZE);
   const auto dest =
       asw::Quadf(pos.x - camera.getPosition().x,
                  pos.y - camera.getPosition().y + bob, TILE_SIZE, TILE_SIZE);
@@ -96,9 +125,10 @@ bool Creature::blocked(World& world, const asw::Vec2f& at) const {
     return true;
   }
 
-  // Wolves do not swim
+  // Animals do not swim or open doors
   const auto top = map.getTileAt(tile, LAYER_FOREGROUND);
-  return top && top->getType().getId() == "tile:water";
+  return top && (top->getType().getId() == "tile:water" ||
+                 top->getType().getEncloses());
 }
 
 bool Creature::move(World& world, const asw::Vec2f& delta) {
@@ -146,16 +176,14 @@ bool Creature::findPrey(World& world, asw::Vec2i& prey) const {
 }
 
 void Creature::update(World& world, const asw::Vec2i& player_pos, float dt) {
-  auto& state = world.getState();
-
   attack_cooldown -= dt;
   flee_timer -= dt;
   hurt_timer -= dt;
   anim += dt;
   moving = false;
 
-  // Leave at dawn
-  if (!state.isNight()) {
+  // Wolves leave at dawn, grazers at night
+  if (world.getState().isNight() != isHostile()) {
     leaving = true;
   }
 
@@ -166,12 +194,26 @@ void Creature::update(World& world, const asw::Vec2i& player_pos, float dt) {
 
   // Leaving, run from the player until out of sight
   if (leaving) {
-    move(world, normalize(to_player) * -FLEE_SPEED * dt);
+    move(world, normalize(to_player) * -infoOf(kind).flee_speed * dt);
     if (player_distance > SIGHT_TILES * 2 * TILE_SIZE) {
       gone = true;
     }
     return;
   }
+
+  if (isHostile()) {
+    updateHunter(world, to_player, dt);
+  } else {
+    updateGrazer(world, to_player, dt);
+  }
+}
+
+void Creature::updateHunter(World& world,
+                            const asw::Vec2f& to_player,
+                            float dt) {
+  auto& state = world.getState();
+  const auto me = centre(pos);
+  const float player_distance = length(to_player);
 
   // Afraid of fire and recently hurt
   if (flee_timer > 0.0F || world.nearLitCampfire(getTile(), CAMPFIRE_RADIUS)) {
@@ -217,20 +259,50 @@ void Creature::update(World& world, const asw::Vec2i& player_pos, float dt) {
     }
   }
 
-  // Wander
+  wander(world, WANDER_SPEED, dt);
+}
+
+void Creature::updateGrazer(World& world,
+                            const asw::Vec2f& to_player,
+                            float dt) {
+  const float player_distance = length(to_player);
+  const auto info = infoOf(kind);
+
+  // Wandered too far from the player, gone for good
+  if (player_distance > ROAM_TILES * TILE_SIZE) {
+    gone = true;
+    return;
+  }
+
+  // Bolt from the player, and for a while after being hit
+  if (flee_timer > 0.0F || player_distance < SHY_TILES * TILE_SIZE) {
+    move(world, normalize(to_player) * -info.flee_speed * dt);
+    return;
+  }
+
+  wander(world, info.wander_speed, dt);
+}
+
+void Creature::wander(World& world, float speed, float dt) {
   wander_timer -= dt;
   if (wander_timer <= 0.0F) {
     wander_timer = static_cast<float>(random(1, 3));
-    wander_dir = normalize(asw::Vec2f(static_cast<float>(random(-10, 10)),
-                                      static_cast<float>(random(-10, 10))));
+
+    // Grazers often stop to eat
+    if (!isHostile() && random(0, 2) == 0) {
+      wander_dir = asw::Vec2f(0, 0);
+    } else {
+      wander_dir = normalize(asw::Vec2f(static_cast<float>(random(-10, 10)),
+                                        static_cast<float>(random(-10, 10))));
+    }
   }
-  move(world, wander_dir * WANDER_SPEED * dt);
+  move(world, wander_dir * speed * dt);
 }
 
 bool Creature::hit(World& world, int damage, const asw::Vec2i& from) {
   hp -= damage;
   hurt_timer = HIT_FLASH;
-  flee_timer = 0.8F;
+  flee_timer = isHostile() ? 0.8F : 4.0F;
 
   // Knock back
   const auto me = centre(pos);

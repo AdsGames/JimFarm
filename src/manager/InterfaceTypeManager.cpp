@@ -36,10 +36,11 @@ int InterfaceTypeManager::loadInterfaces(const std::string& path) {
 
     // Labels
     for (auto const& label : interface.value("labels", nlohmann::json::array())) {
-      std::string text = label["text"];
+      std::string text = label.value("text", "");
       int x = label["x"];
       int y = label["y"];
-      controller.addElement(std::make_shared<UiLabel>(asw::Vec2i(x, y), text));
+      controller.addElement(std::make_shared<UiLabel>(
+          asw::Vec2i(x, y), text, label.value("station", false)));
     }
 
     // Slots

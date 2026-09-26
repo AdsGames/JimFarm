@@ -1,6 +1,7 @@
 #include "RecipeManager.h"
 
 #include <algorithm>
+#include <cctype>
 #include <fstream>
 #include <nlohmann/json.hpp>
 
@@ -20,6 +21,7 @@ int RecipeManager::loadRecipes(const std::string& path) {
     recipe.inputs = data["inputs"].get<std::map<std::string, int>>();
     recipe.output = data["output"];
     recipe.count = data.value("count", 1);
+    recipe.tier = data.value("tier", TIER_HAND);
     recipes.push_back(recipe);
   }
 
@@ -28,7 +30,8 @@ int RecipeManager::loadRecipes(const std::string& path) {
 
 const Recipe* RecipeManager::match(
     const std::string& station,
-    const std::vector<std::shared_ptr<ItemStack>>& stacks) {
+    const std::vector<std::shared_ptr<ItemStack>>& stacks,
+    int tier) {
   // Total of each item type in the input slots
   std::map<std::string, int> totals;
   for (auto const& stack : stacks) {
@@ -42,7 +45,8 @@ const Recipe* RecipeManager::match(
   }
 
   for (auto const& recipe : recipes) {
-    if (recipe.station != station || recipe.inputs.size() != totals.size()) {
+    if (recipe.station != station || recipe.tier > tier ||
+        recipe.inputs.size() != totals.size()) {
       continue;
     }
 
@@ -78,5 +82,33 @@ void RecipeManager::consume(
         left -= taken;
       }
     }
+  }
+}
+
+const Recipe* RecipeManager::needsTier(
+    const std::string& station,
+    const std::vector<std::shared_ptr<ItemStack>>& stacks,
+    int tier) {
+  if (match(station, stacks, tier)) {
+    return nullptr;
+  }
+
+  return match(station, stacks, TIER_STONE_WORKBENCH);
+}
+
+std::string RecipeManager::stationName(const Recipe& recipe) {
+  if (recipe.station != "crafting") {
+    std::string name = recipe.station;
+    name[0] = static_cast<char>(std::toupper(name[0]));
+    return name;
+  }
+
+  switch (recipe.tier) {
+    case TIER_HAND:
+      return "Hand";
+    case TIER_WORKBENCH:
+      return "Workbench";
+    default:
+      return "Stone workbench";
   }
 }

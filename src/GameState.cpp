@@ -159,6 +159,7 @@ nlohmann::json GameState::toJson() const {
       {"crops_harvested", crops_harvested},
       {"items_sold", items_sold},
       {"wolves_defeated", wolves_defeated},
+      {"known_items", known_items},
       {"order",
        {{"item_id", order.item_id},
         {"quantity", order.quantity},
@@ -188,6 +189,7 @@ void GameState::fromJson(const nlohmann::json& data) {
   crops_harvested = data.value("crops_harvested", 0);
   items_sold = data.value("items_sold", 0);
   wolves_defeated = data.value("wolves_defeated", 0);
+  known_items = data.value("known_items", std::set<std::string>{});
 
   if (data.contains("home")) {
     home = asw::Vec2i(data["home"][0], data["home"][1]);

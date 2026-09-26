@@ -40,6 +40,14 @@ constexpr float WARNING_LEVEL = 25.0F;
 
 constexpr int FIRST_WOLF_DAY = 2;
 constexpr int MAX_WOLVES = 6;
+constexpr int MAX_WILDLIFE = 4;
+
+// Rooms are warm and dry
+constexpr float INDOOR_WARMTH = 12.0F;
+
+// Roof sprite in the placeholder sheet
+constexpr int ROOF_X = 4;
+constexpr int ROOF_Y = 1;
 
 // Light gradient texture size in pixels
 constexpr int LIGHT_GRADIENT_SIZE = 64;
@@ -262,9 +270,12 @@ void World::resetSession() {
   warp_requested = false;
   save_requested = false;
 
-  for (const auto* name : {"inventory", "crafting", "furnace"}) {
+  for (const auto* name : {"inventory", "crafting", "furnace", "kiln"}) {
     InterfaceTypeManager::getInterfaceByName(name).getInventory()->empty();
   }
+
+  rooms_ready = false;
+  discovery_primed = false;
 }
 
 void World::newGame() {
@@ -414,6 +425,7 @@ void World::draw() {
 
   // Drawable
   Graphics::Instance().draw(camera);
+  drawRoofs();
   floating_texts.draw(font, camera);
 
   asw::display::reset_render_target();
@@ -702,9 +714,23 @@ bool World::attackAt(const asw::Vec2i& tile_pos, ItemStack& held) {
                        asw::Color(255, 220, 90));
 
     if (creature->hit(*this, attack, player_tile * TILE_SIZE)) {
-      dropItems("item:pelt", creature->getTile());
-      state.wolves_defeated++;
-      state.notify("Wolf defeated!");
+      const auto at = creature->getTile();
+      switch (creature->getKind()) {
+        case CreatureKind::Wolf:
+          dropItems("item:pelt", at);
+          state.wolves_defeated++;
+          state.notify("Wolf defeated!");
+          break;
+        case CreatureKind::Deer:
+          dropItems("item:meat", at, 2);
+          dropItems("item:hide", at);
+          state.notify("You hunted a deer");
+          break;
+        case CreatureKind::Rabbit:
+          dropItems("item:meat", at);
+          state.notify("You caught a rabbit");
+          break;
+      }
     }
 
     return true;
@@ -868,6 +894,14 @@ void World::update(float dt, const asw::Vec2i& player_pos) {
   // Update hud
   hud.update(state);
 
+  // Crafting by hand unless a station opened the window
+  if (!hud.isOpen("crafting")) {
+    state.crafting_tier = TIER_HAND;
+  }
+
+  updateRooms();
+  updateDiscovery();
+
   // Clock
   const float before = state.getMinutes();
   const bool out_of_time = state.advanceClock(dt);
@@ -955,6 +989,10 @@ float World::ambientTemperature(const asw::Vec2i& tile_pos) const {
     temperature += 18.0F;
   }
 
+  if (isIndoors(tile_pos)) {
+    temperature += INDOOR_WARMTH;
+  }
+
   // Best warm item carried (e.g. coat)
   float carried = 0.0F;
   auto& inventory = playerInventory();
@@ -1035,7 +1073,17 @@ void World::updateCreatures(float dt, const asw::Vec2i& player_pos) {
     return false;
   });
 
-  if (!state.isNight() || state.absoluteDay() < FIRST_WOLF_DAY) {
+  // Deer and rabbits by day
+  if (!state.isNight()) {
+    wildlife_timer -= dt;
+    if (wildlife_timer <= 0.0F) {
+      wildlife_timer = static_cast<float>(random(6, 12));
+      spawnWildlife();
+    }
+    return;
+  }
+
+  if (state.absoluteDay() < FIRST_WOLF_DAY) {
     return;
   }
 
@@ -1048,34 +1096,72 @@ void World::updateCreatures(float dt, const asw::Vec2i& player_pos) {
   const int max_wolves =
       std::min(MAX_WOLVES, 1 + state.absoluteDay() / DAYS_PER_SEASON * 2 +
                                state.absoluteDay() / 5);
-  if (static_cast<int>(creatures.size()) >= max_wolves) {
+  const auto wolves = std::ranges::count_if(
+      creatures, [](auto const& creature) { return creature->isHostile(); });
+  if (wolves >= max_wolves) {
     return;
   }
 
+  asw::Vec2i at;
+  if (findSpawnTile(at) && !nearLitCampfire(at, CAMPFIRE_RADIUS)) {
+    auto wolf = std::make_shared<Creature>(at * TILE_SIZE);
+    creatures.push_back(wolf);
+    Graphics::Instance().add(wolf, true);
+  }
+}
+
+bool World::findSpawnTile(asw::Vec2i& at) {
   // Try a few spots out of sight
   for (int attempt = 0; attempt < 10; attempt++) {
     const float angle = static_cast<float>(random(0, 359)) * 3.14159F / 180.0F;
     const float distance = static_cast<float>(random(12, 18));
-    const auto at =
-        player_tile + asw::Vec2i(static_cast<int>(std::cos(angle) * distance),
-                                 static_cast<int>(std::sin(angle) * distance));
+    at = player_tile + asw::Vec2i(static_cast<int>(std::cos(angle) * distance),
+                                  static_cast<int>(std::sin(angle) * distance));
 
     if (!tile_map.inBounds(at) || tile_map.isSolidAt(at) ||
-        !tile_map.getTileAt(at, LAYER_MIDGROUND) ||
-        nearLitCampfire(at, CAMPFIRE_RADIUS)) {
+        !tile_map.getTileAt(at, LAYER_MIDGROUND) || isIndoors(at)) {
       continue;
     }
 
     const auto top = tile_map.getTileAt(at, LAYER_FOREGROUND);
-    if (top && top->getType().getId() == "tile:water") {
+    if (top && (top->getType().getId() == "tile:water" ||
+                top->getType().getEncloses())) {
       continue;
     }
 
-    auto wolf = std::make_shared<Creature>(at * TILE_SIZE);
-    creatures.push_back(wolf);
-    Graphics::Instance().add(wolf, true);
-    break;
+    return true;
   }
+
+  return false;
+}
+
+void World::spawnWildlife() {
+  const auto grazers = std::ranges::count_if(
+      creatures, [](auto const& creature) { return !creature->isHostile(); });
+  if (grazers >= MAX_WILDLIFE) {
+    return;
+  }
+
+  asw::Vec2i at;
+  if (!findSpawnTile(at)) {
+    return;
+  }
+
+  // Deer live in woods, rabbits on open grass
+  const bool woods = findTileNear(at, 2, [](const std::shared_ptr<Tile>& t) {
+                       return t->getType().getId() == "tile:tree";
+                     }) != nullptr;
+  const auto ground = tile_map.getTileAt(at, LAYER_MIDGROUND);
+  const bool grass = ground && ground->getType().getId() == "tile:grass";
+
+  if (!woods && !grass) {
+    return;
+  }
+
+  auto animal = std::make_shared<Creature>(
+      at * TILE_SIZE, woods ? CreatureKind::Deer : CreatureKind::Rabbit);
+  creatures.push_back(animal);
+  Graphics::Instance().add(animal, true);
 }
 
 void World::clearCreatures() {
@@ -1381,6 +1467,242 @@ bool World::nearLitCampfire(const asw::Vec2i& tile_pos, int radius) const {
     return std::abs(light.x - tile_pos.x) <= radius &&
            std::abs(light.y - tile_pos.y) <= radius;
   });
+}
+
+void World::openStation(const std::string& window, int tier) {
+  hud.open(window, 0.15F);
+  hud.open("inventory", 0.8F);
+  state.crafting_tier = tier;
+}
+
+bool World::itemCanUse(const ItemStack& held, const asw::Vec2i& tile_pos) {
+  const auto item = held.getItem();
+  if (!item) {
+    return false;
+  }
+
+  return std::ranges::any_of(
+      ItemTypeManager::getInfo(item->getType().getId()).actions,
+      [&](const ItemAction& action) {
+        return !action.fail && action.layer >= 0 &&
+               actionMatches(action, tile_pos, held);
+      });
+}
+
+std::shared_ptr<Tile> World::findTileNear(
+    const asw::Vec2i& tile_pos,
+    int radius,
+    const std::function<bool(const std::shared_ptr<Tile>&)>& match) {
+  for (int dx = -radius; dx <= radius; dx++) {
+    for (int dy = -radius; dy <= radius; dy++) {
+      auto tile = tile_map.getTileAt(tile_pos + asw::Vec2i(dx, dy),
+                                     LAYER_FOREGROUND);
+      if (tile && match(tile)) {
+        return tile;
+      }
+    }
+  }
+
+  return nullptr;
+}
+
+/*
+ * ROOMS
+ */
+int World::roomAt(const asw::Vec2i& tile_pos) const {
+  if (!tile_map.inBounds(tile_pos) || rooms.empty()) {
+    return 0;
+  }
+
+  return rooms[tile_pos.x + tile_pos.y * tile_map.getWidth()];
+}
+
+bool World::isIndoors(const asw::Vec2i& tile_pos) const {
+  return roomAt(tile_pos) > 0;
+}
+
+void World::updateRooms() {
+  // Only after a wall, window or door changed
+  if (rooms_ready && rooms_version == tile_map.getEnclosureVersion()) {
+    return;
+  }
+  rooms_ready = true;
+  rooms_version = tile_map.getEnclosureVersion();
+
+  const int width = tile_map.getWidth();
+  const int height = tile_map.getHeight();
+  rooms.assign(static_cast<size_t>(width * height), 0);
+
+  auto encloses = [&](const asw::Vec2i& at) {
+    const auto tile = tile_map.getTileAt(at, LAYER_FOREGROUND);
+    return tile && tile->getType().getEncloses();
+  };
+
+  const std::array<asw::Vec2i, 4> around = {
+      asw::Vec2i(0, -1), asw::Vec2i(1, 0), asw::Vec2i(0, 1), asw::Vec2i(-1, 0)};
+
+  int next_room = 1;
+
+  // Rooms start next to a door, a fill that escapes is outdoors
+  for (int x = 0; x < width; x++) {
+    for (int y = 0; y < height; y++) {
+      const auto door = tile_map.getTileAt(asw::Vec2i(x, y), LAYER_FOREGROUND);
+      if (!door || door->getType().getId() != "tile:door") {
+        continue;
+      }
+
+      for (auto const& step : around) {
+        const auto start = asw::Vec2i(x, y) + step;
+        if (!tile_map.inBounds(start) || encloses(start) || roomAt(start)) {
+          continue;
+        }
+
+        std::vector<asw::Vec2i> filled{start};
+        std::vector<bool> seen(static_cast<size_t>(width * height), false);
+        seen[start.x + start.y * width] = true;
+        bool closed = true;
+
+        for (size_t i = 0; i < filled.size() && closed; i++) {
+          for (auto const& next_step : around) {
+            const auto next = filled[i] + next_step;
+            if (!tile_map.inBounds(next)) {
+              closed = false;
+              break;
+            }
+
+            const auto index = static_cast<size_t>(next.x + next.y * width);
+            if (seen[index] || encloses(next)) {
+              continue;
+            }
+
+            seen[index] = true;
+            filled.push_back(next);
+            if (filled.size() > MAX_ROOM_TILES) {
+              closed = false;
+              break;
+            }
+          }
+        }
+
+        if (!closed) {
+          continue;
+        }
+
+        for (auto const& at : filled) {
+          rooms[at.x + at.y * width] = next_room;
+        }
+        next_room++;
+      }
+    }
+  }
+}
+
+void World::drawRoofs() {
+  if (rooms.empty()) {
+    return;
+  }
+
+  const auto sheet = TileTypeManager::getSheet("placeholders");
+  const auto cam = camera.getPosition();
+  const auto& bounds = camera.getBounds();
+  const int inside = roomAt(player_tile);
+
+  const int x_1 = std::max(0, bounds.x_1 / TILE_SIZE - 1);
+  const int y_1 = std::max(0, bounds.y_1 / TILE_SIZE - 1);
+  const int x_2 = std::min(tile_map.getWidth() - 1, bounds.x_2 / TILE_SIZE + 1);
+  const int y_2 =
+      std::min(tile_map.getHeight() - 1, bounds.y_2 / TILE_SIZE + 1);
+
+  // Covers the room and its walls, hidden while the player is inside
+  auto covered = [&](int x, int y) {
+    const int own = roomAt(asw::Vec2i(x, y));
+    if (own > 0) {
+      return own != inside;
+    }
+
+    const auto wall = tile_map.getTileAt(asw::Vec2i(x, y), LAYER_FOREGROUND);
+    if (!wall || !wall->getType().getEncloses()) {
+      return false;
+    }
+
+    for (int dx = -1; dx <= 1; dx++) {
+      for (int dy = -1; dy <= 1; dy++) {
+        const int room = roomAt(asw::Vec2i(x + dx, y + dy));
+        if (room > 0 && room != inside) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  for (int x = x_1; x <= x_2; x++) {
+    for (int y = y_1; y <= y_2; y++) {
+      if (!covered(x, y)) {
+        continue;
+      }
+
+      asw::draw::stretch_sprite_blit(
+          sheet,
+          asw::Quadf(ROOF_X * TILE_SIZE, ROOF_Y * TILE_SIZE, TILE_SIZE,
+                     TILE_SIZE),
+          asw::Quadf(x * TILE_SIZE - cam.x, y * TILE_SIZE - cam.y - TILE_SIZE,
+                     TILE_SIZE, TILE_SIZE));
+    }
+  }
+}
+
+/*
+ * RECIPE DISCOVERY
+ */
+void World::updateDiscovery() {
+  auto& inventory = playerInventory();
+  std::vector<std::string> found;
+
+  for (int i = 0; i < inventory.getSize(); i++) {
+    const auto item = inventory.getStack(i)->getItem();
+    if (item && !state.known_items.contains(item->getType().getId())) {
+      found.push_back(item->getType().getId());
+    }
+  }
+
+  if (found.empty()) {
+    discovery_primed = true;
+    return;
+  }
+
+  auto visible = [&](const Recipe& recipe) {
+    return std::ranges::any_of(recipe.inputs, [&](auto const& input) {
+      return state.known_items.contains(input.first);
+    });
+  };
+
+  std::vector<const Recipe*> hidden;
+  for (auto const& recipe : RecipeManager::getRecipes()) {
+    if (!visible(recipe)) {
+      hidden.push_back(&recipe);
+    }
+  }
+
+  state.known_items.insert(found.begin(), found.end());
+
+  // Starting items and loaded saves do not announce recipes
+  if (!discovery_primed) {
+    discovery_primed = true;
+    return;
+  }
+
+  int learned = 0;
+  for (auto const* recipe : hidden) {
+    if (visible(*recipe)) {
+      learned++;
+    }
+  }
+
+  if (learned > 0) {
+    state.notify(std::format("{} new recipe{}! Press R to see them", learned,
+                             learned == 1 ? "" : "s"));
+  }
 }
 
 void World::openShop() {

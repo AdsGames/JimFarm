@@ -27,7 +27,8 @@
   {
     "station": "crafting",
     "inputs": {
-      "item:plank": 3
+      "item:plank": 2,
+      "item:stick": 2
     },
     "output": "item:gate",
     "count": 1
@@ -59,6 +60,228 @@
     "count": 1
   },
   {
+    "station": "crafting",
+    "inputs": {
+      "item:herb": 2,
+      "item:reed": 1
+    },
+    "output": "item:bandage",
+    "count": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:plank": 4,
+      "item:wood": 2
+    },
+    "output": "item:workbench",
+    "count": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:stick": 2,
+      "item:stone": 3,
+      "item:plank": 1
+    },
+    "output": "item:pickaxe",
+    "count": 1,
+    "tier": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:stone": 6,
+      "item:clay": 2
+    },
+    "output": "item:kiln",
+    "count": 1,
+    "tier": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:plank": 3,
+      "item:hide": 1,
+      "item:hay": 2
+    },
+    "output": "item:bed",
+    "count": 1,
+    "tier": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:plank": 4,
+      "item:copper_ingot": 1
+    },
+    "output": "item:door",
+    "count": 1,
+    "tier": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:glass": 2,
+      "item:plank": 1
+    },
+    "output": "item:window",
+    "count": 2,
+    "tier": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:plank": 2,
+      "item:hay": 1
+    },
+    "output": "item:plank_floor",
+    "count": 4,
+    "tier": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:stick": 3,
+      "item:hay": 3
+    },
+    "output": "item:scarecrow",
+    "count": 1,
+    "tier": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:plank": 3,
+      "item:stick": 2,
+      "item:copper_ingot": 1
+    },
+    "output": "item:hopper",
+    "count": 1,
+    "tier": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:copper_ingot": 2,
+      "item:glass": 1
+    },
+    "output": "item:sprinkler",
+    "count": 1,
+    "tier": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:axe": 1,
+      "item:copper_ingot": 2
+    },
+    "output": "item:copper_axe",
+    "count": 1,
+    "tier": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:hoe": 1,
+      "item:copper_ingot": 2
+    },
+    "output": "item:copper_hoe",
+    "count": 1,
+    "tier": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:watering_can": 1,
+      "item:copper_ingot": 3
+    },
+    "output": "item:copper_can",
+    "count": 1,
+    "tier": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:pickaxe": 1,
+      "item:copper_ingot": 2
+    },
+    "output": "item:copper_pickaxe",
+    "count": 1,
+    "tier": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:workbench": 1,
+      "item:stone": 6,
+      "item:copper_ingot": 2
+    },
+    "output": "item:stone_workbench",
+    "count": 1,
+    "tier": 1
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:copper_axe": 1,
+      "item:iron_ingot": 2
+    },
+    "output": "item:iron_axe",
+    "count": 1,
+    "tier": 2
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:copper_hoe": 1,
+      "item:iron_ingot": 2
+    },
+    "output": "item:iron_hoe",
+    "count": 1,
+    "tier": 2
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:copper_can": 1,
+      "item:iron_ingot": 3
+    },
+    "output": "item:iron_can",
+    "count": 1,
+    "tier": 2
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:copper_pickaxe": 1,
+      "item:iron_ingot": 2
+    },
+    "output": "item:iron_pickaxe",
+    "count": 1,
+    "tier": 2
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:sprinkler": 1,
+      "item:iron_ingot": 2
+    },
+    "output": "item:iron_sprinkler",
+    "count": 1,
+    "tier": 2
+  },
+  {
+    "station": "crafting",
+    "inputs": {
+      "item:brick": 2,
+      "item:sand": 1
+    },
+    "output": "item:brick_floor",
+    "count": 4,
+    "tier": 2
+  },
+  {
     "station": "furnace",
     "inputs": {
       "item:egg": 1,
@@ -80,6 +303,16 @@
   {
     "station": "furnace",
     "inputs": {
+      "item:mushroom": 2,
+      "item:meat": 1,
+      "item:wood": 1
+    },
+    "output": "item:stew",
+    "count": 1
+  },
+  {
+    "station": "furnace",
+    "inputs": {
       "item:carrot": 2,
       "item:wood": 1
     },
@@ -89,10 +322,64 @@
   {
     "station": "furnace",
     "inputs": {
+      "item:meat": 1,
+      "item:wood": 1
+    },
+    "output": "item:cooked_meat",
+    "count": 1
+  },
+  {
+    "station": "furnace",
+    "inputs": {
+      "item:clam": 1,
+      "item:wood": 1
+    },
+    "output": "item:cooked_clam",
+    "count": 1
+  },
+  {
+    "station": "furnace",
+    "inputs": {
       "item:sand": 2,
       "item:wood": 1
     },
     "output": "item:stone",
+    "count": 1
+  },
+  {
+    "station": "kiln",
+    "inputs": {
+      "item:sand": 2,
+      "item:wood": 1
+    },
+    "output": "item:glass",
+    "count": 1
+  },
+  {
+    "station": "kiln",
+    "inputs": {
+      "item:clay": 1,
+      "item:wood": 1
+    },
+    "output": "item:brick",
+    "count": 2
+  },
+  {
+    "station": "kiln",
+    "inputs": {
+      "item:copper_ore": 2,
+      "item:wood": 1
+    },
+    "output": "item:copper_ingot",
+    "count": 1
+  },
+  {
+    "station": "kiln",
+    "inputs": {
+      "item:iron_ore": 2,
+      "item:wood": 2
+    },
+    "output": "item:iron_ingot",
     "count": 1
   }
 ]

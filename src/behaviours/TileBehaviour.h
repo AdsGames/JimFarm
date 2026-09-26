@@ -35,6 +35,13 @@ class TileBehaviour {
     (void)tile;
   }
 
+  // Called for every tile after all day end behaviours ran, e.g. sprinklers
+  // water soil after it dried
+  virtual void onMorning(World& world, const std::shared_ptr<Tile>& tile) {
+    (void)world;
+    (void)tile;
+  }
+
   // Only ticking behaviours are visited every tick
   virtual bool ticks() const { return false; }
 };

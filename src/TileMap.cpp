@@ -90,6 +90,10 @@ void TileMap::placeTile(std::shared_ptr<Tile> tile) {
 
   chunk->setTileAt(tile->getTilePosition() % CHUNK_SIZE, tile->getZ(), tile);
 
+  if (tile->getType().getEncloses()) {
+    enclosure_version++;
+  }
+
   updateBitmaskSurround(tile->getTilePosition(), tile->getZ());
 }
 
@@ -109,6 +113,10 @@ void TileMap::removeTile(std::shared_ptr<Tile> tile) {
   auto old_z = tile->getZ();
 
   chunk->setTileAt(tile->getTilePosition() % CHUNK_SIZE, tile->getZ(), nullptr);
+
+  if (tile->getType().getEncloses()) {
+    enclosure_version++;
+  }
 
   updateBitmaskSurround(old_pos, old_z);
 }
@@ -276,16 +284,25 @@ void TileMap::tick(const Camera& camera, World& world) {
 }
 
 void TileMap::dayEnd(World& world) {
-  for (auto const& tile : collectTiles(false, false)) {
-    if (getTileAt(tile->getTilePosition(), static_cast<int>(tile->getZ())) !=
-        tile) {
-      continue;
-    }
+  auto run = [&](auto&& call) {
+    for (auto const& tile : collectTiles(false, false)) {
+      if (getTileAt(tile->getTilePosition(), static_cast<int>(tile->getZ())) !=
+          tile) {
+        continue;
+      }
 
-    for (auto const& behaviour : tile->getType().getBehaviours()) {
-      behaviour->onDayEnd(world, tile);
+      for (auto const& behaviour : tile->getType().getBehaviours()) {
+        call(*behaviour, tile);
+      }
     }
-  }
+  };
+
+  run([&](TileBehaviour& behaviour, const std::shared_ptr<Tile>& tile) {
+    behaviour.onDayEnd(world, tile);
+  });
+  run([&](TileBehaviour& behaviour, const std::shared_ptr<Tile>& tile) {
+    behaviour.onMorning(world, tile);
+  });
 }
 
 void TileMap::replaceAll(const std::string& from, const std::string& to) {
@@ -354,6 +371,7 @@ void TileMap::generateMap(const asw::Vec2<unsigned int>& size) {
 // Clear map
 void TileMap::clearMap() {
   chunks.clear();
+  enclosure_version++;
 }
 
 // Update bitmask

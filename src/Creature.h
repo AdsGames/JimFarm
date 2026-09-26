@@ -7,11 +7,18 @@
 
 class World;
 
-// Hostile night creature (wolf). Hunts the player and their chickens,
-// keeps away from campfires and leaves at dawn.
+enum class CreatureKind { Wolf, Deer, Rabbit };
+
+// Wolves hunt the player and their chickens at night, keep away from
+// campfires and leave at dawn. Deer and rabbits roam by day and run from the
+// player.
 class Creature : public Sprite {
  public:
-  explicit Creature(const asw::Vec2i& pos);
+  explicit Creature(const asw::Vec2i& pos,
+                    CreatureKind kind = CreatureKind::Wolf);
+
+  CreatureKind getKind() const { return kind; }
+  bool isHostile() const { return kind == CreatureKind::Wolf; }
 
   void draw(const Camera& camera) const override;
 
@@ -35,6 +42,14 @@ class Creature : public Sprite {
 
   // Nearest chicken within range, or false
   bool findPrey(World& world, asw::Vec2i& prey) const;
+
+  // Wolf hunting, and deer and rabbits grazing
+  void updateHunter(World& world, const asw::Vec2f& to_player, float dt);
+  void updateGrazer(World& world, const asw::Vec2f& to_player, float dt);
+
+  void wander(World& world, float speed, float dt);
+
+  CreatureKind kind{CreatureKind::Wolf};
 
   asw::Vec2f fpos{};
   asw::Vec2f wander_dir{};

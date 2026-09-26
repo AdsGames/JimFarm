@@ -5,6 +5,7 @@
 #include <format>
 
 #include "../World.h"
+#include "CraftBehaviours.h"
 #include "../manager/SoundManager.h"
 #include "../utility/Tools.h"
 
@@ -15,6 +16,32 @@ bool contains(const std::vector<std::string>& list, const std::string& value) {
 
 std::string heldId(const ItemStack& held) {
   return held.getItem() ? held.getItem()->getType().getId() : "";
+}
+
+// Crows only come once the farm is going
+constexpr int FIRST_CROW_DAY = 6;
+constexpr int MAX_SCARECROW_RADIUS = 6;
+constexpr int MAX_HOPPER_RADIUS = 6;
+
+template <typename T>
+const T* behaviourOf(const Tile& tile) {
+  for (auto const& behaviour : tile.getType().getBehaviours()) {
+    if (auto found = dynamic_cast<const T*>(behaviour.get())) {
+      return found;
+    }
+  }
+  return nullptr;
+}
+
+int tileDistance(const asw::Vec2i& a, const asw::Vec2i& b) {
+  return std::max(std::abs(a.x - b.x), std::abs(a.y - b.y));
+}
+
+// Scarecrow close enough to guard pos
+bool guards(const std::shared_ptr<Tile>& tile, const asw::Vec2i& pos) {
+  const auto* scarecrow = behaviourOf<ScarecrowBehaviour>(*tile);
+  return scarecrow &&
+         tileDistance(tile->getTilePosition(), pos) <= scarecrow->getRadius();
 }
 }  // namespace
 
@@ -30,7 +57,8 @@ CropBehaviour::CropBehaviour(const nlohmann::json& params)
       needs_soil(params.value("needs_soil", "tile:watered_soil")),
       seasons(params.value("seasons", std::vector<std::string>{})),
       min_temp(params.value("min_temp", -64)),
-      max_temp(params.value("max_temp", 64)) {}
+      max_temp(params.value("max_temp", 64)),
+      crow_chance(params.value("crow_chance", 0.04F)) {}
 
 int CropBehaviour::daysGrown(const std::shared_ptr<Tile>& tile) const {
   // Meta holds progress 0-255, round up to whole days
@@ -84,12 +112,25 @@ bool CropBehaviour::onInteract(World& world,
 
 void CropBehaviour::onDayEnd(World& world, const std::shared_ptr<Tile>& tile) {
   auto& map = world.getMap();
+  const auto& state = world.getState();
   const auto tile_pos = tile->getTilePosition();
 
   // Out of season crops die
   if (!inSeason(world)) {
     map.removeTile(tile);
     world.countEvent("Crops withered (out of season)");
+    return;
+  }
+
+  // Crows take unguarded crops
+  if (state.absoluteDay() >= FIRST_CROW_DAY &&
+      random(0, 999) < static_cast<int>(crow_chance * 1000.0F) &&
+      !world.findTileNear(tile_pos, MAX_SCARECROW_RADIUS,
+                          [&](const std::shared_ptr<Tile>& other) {
+                            return guards(other, tile_pos);
+                          })) {
+    map.removeTile(tile);
+    world.countEvent("Crops eaten by crows");
     return;
   }
 
@@ -240,7 +281,21 @@ void AnimalBehaviour::onDayEnd(World& world,
 
   if (meta & FED_BIT) {
     if (!product.empty()) {
-      world.dropNear(product, tile->getTilePosition());
+      const auto pos = tile->getTilePosition();
+
+      // A hopper nearby collects it, else it lands next to the animal
+      const auto hopper = world.findTileNear(
+          pos, MAX_HOPPER_RADIUS, [&](const std::shared_ptr<Tile>& other) {
+            const auto* found = behaviourOf<HopperBehaviour>(*other);
+            return found &&
+                   tileDistance(other->getTilePosition(), pos) <=
+                       found->getRadius() &&
+                   found->store(other, product);
+          });
+
+      if (!hopper) {
+        world.dropNear(product, pos);
+      }
       world.countEvent("Animal products");
     }
     tile->setMeta(makeMeta(false, 0));

@@ -213,7 +213,7 @@
     "height": 75,
     "labels": [
       {
-        "text": "CRAFTING",
+        "station": true,
         "x": 5,
         "y": 0
       }
@@ -357,6 +357,46 @@
         "x": 170,
         "y": 64,
         "type": "order"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "kiln",
+    "width": 100,
+    "height": 60,
+    "labels": [
+      {
+        "text": "KILN",
+        "x": 5,
+        "y": 0
+      }
+    ],
+    "slots": [
+      {
+        "x": 5,
+        "y": 15,
+        "type": "input"
+      },
+      {
+        "x": 25,
+        "y": 15,
+        "type": "input"
+      },
+      {
+        "x": 5,
+        "y": 35,
+        "type": "input"
+      },
+      {
+        "x": 25,
+        "y": 35,
+        "type": "input"
+      },
+      {
+        "x": 65,
+        "y": 25,
+        "type": "output"
       }
     ]
   }

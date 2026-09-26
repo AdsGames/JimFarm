@@ -45,10 +45,10 @@ class UiController {
   bool clickBuy(const UiSlot& slot, GameState& state);
   bool clickSell(bool sell_all, GameState& state);
   bool clickOrder(GameState& state);
-  bool clickOutput();
+  bool clickOutput(GameState& state);
 
   // Keep the crafting output showing what the inputs make
-  void updateRecipeOutput();
+  void updateRecipeOutput(const GameState& state);
 
   std::vector<std::shared_ptr<ItemStack>> stacksOfType(SlotType type) const;
 
@@ -66,6 +66,9 @@ class UiController {
   int currently_bound{0};
 
   bool dragging{false};
+
+  // Output shows a recipe that needs a better station
+  bool output_locked{false};
 };
 
 #endif  // SRC_UI_UI_CONTROLLER_H_

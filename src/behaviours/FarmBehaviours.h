@@ -38,6 +38,9 @@ class CropBehaviour : public TileBehaviour {
   std::vector<std::string> seasons{};
   int min_temp{-64};
   int max_temp{64};
+
+  // Chance each night crows take the crop when no scarecrow is near
+  float crow_chance{0.04F};
 };
 
 // Turns into another tile after some days or by chance each day

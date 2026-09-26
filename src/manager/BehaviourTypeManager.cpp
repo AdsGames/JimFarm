@@ -1,6 +1,7 @@
 #include "BehaviourTypeManager.h"
 
 #include "../behaviours/BuildingBehaviours.h"
+#include "../behaviours/CraftBehaviours.h"
 #include "../behaviours/FarmBehaviours.h"
 #include "../behaviours/TileBehaviour.h"
 #include "../behaviours/TreeTileBehaviour.h"
@@ -27,6 +28,11 @@ int BehaviourTypeManager::loadBehaviours() {
   factories["behaviour:shop"] = make<ShopBehaviour>();
   factories["behaviour:bed"] = make<BedBehaviour>();
   factories["behaviour:campfire"] = make<CampfireBehaviour>();
+  factories["behaviour:station"] = make<StationBehaviour>();
+  factories["behaviour:breakable"] = make<BreakableBehaviour>();
+  factories["behaviour:sprinkler"] = make<SprinklerBehaviour>();
+  factories["behaviour:scarecrow"] = make<ScarecrowBehaviour>();
+  factories["behaviour:hopper"] = make<HopperBehaviour>();
 
   return 0;
 }
