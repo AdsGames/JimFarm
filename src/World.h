@@ -2,7 +2,6 @@
 #define SRC_WORLD_H_
 
 #include <asw/asw.h>
-#include <asw/util/Timer.h>
 
 #include <memory>
 
@@ -10,12 +9,12 @@
 #include "MapItem.h"
 #include "Messenger.h"
 #include "TileMap.h"
+#include "ui/Hud.h"
 #include "utility/Camera.h"
-#include "utility/Vec2.h"
 
 // Viewport
-constexpr int VIEWPORT_WIDTH = 240 * 2;
-constexpr int VIEWPORT_HEIGHT = 160 * 2;
+constexpr int VIEWPORT_WIDTH = 240 * 4;
+constexpr int VIEWPORT_HEIGHT = 160 * 4;
 constexpr float VIEWPORT_MAX_ZOOM = 4.0f;
 constexpr float VIEWPORT_MIN_ZOOM = 0.25f;
 
@@ -29,10 +28,10 @@ class World {
   void loadImages();
 
   // Interact with
-  void interact(Vec2<int> inter_pos, std::shared_ptr<Item> in_hand);
+  void interact(const asw::Vec2i& inter_pos, std::shared_ptr<Item> in_hand);
 
   // Map
-  void update();
+  void update(float dt);
 
   // Get map
   TileMap& getMap();
@@ -53,13 +52,16 @@ class World {
   asw::Texture overlay_buffer{nullptr};
 
   // Ticker for world
-  Timer ticker{};
+  float ticker{};
 
   // Camera config
   Camera camera{};
 
   // Messager
   Messenger map_messages{Messenger(1, false, -4)};
+
+  // Hud
+  Hud hud{};
 };
 
 #endif  // SRC_WORLD_H_

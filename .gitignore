@@ -14,7 +14,7 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
-# Codeblocks files
+# Codeblocks filesd.
 *.layout
 *.depend
 
@@ -44,7 +44,6 @@ CppCheckResults.xml
 CMakeFiles
 CMakeCache.txt
 Makefile
-*.cmake
 install_manifest.txt
 bin
 docs

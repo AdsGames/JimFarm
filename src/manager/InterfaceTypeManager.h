@@ -21,6 +21,9 @@ class InterfaceTypeManager {
   // Allows communication
   static UiController& getInterfaceById(int id);
 
+  // Get interface by name
+  static UiController& getInterfaceByName(const std::string& name);
+
  private:
   // Stores all interfaces
   static std::vector<UiController> ui_defs;

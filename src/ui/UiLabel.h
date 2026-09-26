@@ -8,9 +8,9 @@
 
 class UiLabel : public UiElement {
  public:
-  UiLabel(Vec2<int> pos, const std::string& text);
+  UiLabel(const asw::Vec2i& pos, const std::string& text);
 
-  void draw(Vec2<int> parent_pos) override;
+  void draw(const asw::Vec2i& parent_pos) override;
   std::string text;
 };
 

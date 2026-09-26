@@ -1,8 +1,9 @@
 #ifndef SRC_UTILITY_CAMERA_H_
 #define SRC_UTILITY_CAMERA_H_
 
+#include <asw/asw.h>
+
 #include "Quad.h"
-#include "Vec2.h"
 
 class Camera {
  public:
@@ -12,13 +13,11 @@ class Camera {
   void setZoom(float zoom);
   float getZoom() const;
 
-  void pan(Vec2<int> pos_to);
+  void pan(const asw::Vec2i& pos_to);
 
-  Vec2<int> getSize() const;
-
-  Vec2<int> getPosition() const;
-  Vec2<int> getCenter() const;
-
+  const asw::Vec2i getSize() const;
+  const asw::Vec2i getPosition() const;
+  const asw::Vec2i getCenter() const;
   const Quad<int>& getBounds() const;
 
  private:

@@ -7,7 +7,7 @@ Item::Item(const std::string& id, unsigned char meta)
     : meta(meta), item_pointer(ItemTypeManager::getItem(id)) {}
 
 // Draw item to screen
-void Item::draw(Vec2<int> position) const {
+void Item::draw(const asw::Vec2i& position) const {
   item_pointer.draw(position.x, position.y, getMeta());
 }
 

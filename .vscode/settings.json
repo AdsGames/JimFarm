@@ -94,7 +94,14 @@
     "ios": "cpp",
     "locale": "cpp",
     "stack": "cpp",
-    "span": "cpp"
+    "span": "cpp",
+    "charconv": "cpp",
+    "source_location": "cpp",
+    "format": "cpp",
+    "future": "cpp",
+    "semaphore": "cpp",
+    "stdfloat": "cpp",
+    "text_encoding": "cpp"
   },
-  "sonarlint.pathToCompileCommands": "${workspaceFolder}/compile_commands.json"
+  "sonarlint.pathToCompileCommands": "${workspaceFolder}/build/compile_commands.json"
 }

@@ -1,13 +1,16 @@
 #ifndef SRC_GAMEMENU_H_
 #define SRC_GAMEMENU_H_
 
+#include <asw/asw.h>
+
 #include "State.h"
 
-class GameMenu : public State {
+class GameMenu : public asw::scene::Scene<ProgramState> {
  public:
-  GameMenu();
+  using asw::scene::Scene<ProgramState>::Scene;
 
-  void update(StateEngine* engine) override;
+  void init() override;
+  void update(float dt) override;
   void draw() override;
 
  private:

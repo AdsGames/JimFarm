@@ -5,26 +5,25 @@
 #include <string>
 
 #include "utility/Camera.h"
-#include "utility/Vec2.h"
 
 constexpr unsigned int MAX_SPRITES = 1000000;
 
 class Sprite {
  public:
   Sprite();
-  Sprite(Vec2<int> pos, int z);
+  Sprite(const asw::Vec2i& pos, int z);
 
   virtual ~Sprite() = default;
 
   virtual void draw(const Camera& camera) const = 0;
 
   // Get position
-  Vec2<int> getPosition() const;
+  const asw::Vec2i& getPosition() const;
   float getZ() const;
   unsigned int getSpriteId() const;
 
  protected:
-  Vec2<int> pos;
+  asw::Vec2i pos;
   float z;
 
  private:

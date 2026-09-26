@@ -6,11 +6,11 @@ Sprite::Sprite() {
   Sprite::next_id++;
 }
 
-Sprite::Sprite(Vec2<int> pos, int z) : pos(pos), z(z) {
+Sprite::Sprite(const asw::Vec2i& pos, int z) : pos(pos), z(z) {
   Sprite::next_id++;
 }
 
-Vec2<int> Sprite::getPosition() const {
+const asw::Vec2i& Sprite::getPosition() const {
   return this->pos;
 }
 

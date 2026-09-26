@@ -16,23 +16,24 @@ enum class MenuState {
   STORY,
 };
 
-class Menu : public State {
+class Menu : public asw::scene::Scene<ProgramState> {
  public:
-  Menu();
+  using asw::scene::Scene<ProgramState>::Scene;
+
+  void init() override;
 
   void draw() override;
 
-  void update(StateEngine* engine) override;
+  void update(float dt) override;
 
  private:
   void drawSlider(int x, int y, int value, const std::string& title) const;
 
-  int tick{0};
+  float tick_timer{0};
   int coin_frame{0};
   bool coin_direction{false};
   int indicator_location{4};
   int settings_indicator{1};
-  int music_volume{100};
 
   // Fonts
   asw::Font pixelart{};
@@ -46,7 +47,7 @@ class Menu : public State {
   asw::Texture options_slidee{};
   asw::Texture options_indicator{};
 
-  asw::Sample music{};
+  asw::Music music{};
   asw::Sample blip{};
 
   MenuState state{MenuState::MAIN_MENU};

@@ -6,7 +6,6 @@
 
 #include "../ui/UiLabel.h"
 #include "../ui/UiSlot.h"
-#include "../utility/Vec2.h"
 
 std::vector<UiController> InterfaceTypeManager::ui_defs;
 
@@ -31,21 +30,22 @@ int InterfaceTypeManager::loadInterfaces(const std::string& path) {
     int height = interface["height"];
 
     // Create ui controller
-    auto controller = UiController(Vec2<int>(width, height));
+    auto controller = UiController(name, asw::Vec2i(width, height));
 
     // Labels
     for (auto const& label : interface["labels"]) {
       std::string text = label["text"];
       int x = label["x"];
       int y = label["y"];
-      controller.addElement(std::make_shared<UiLabel>(Vec2<int>(x, y), text));
+      controller.addElement(std::make_shared<UiLabel>(asw::Vec2i(x, y), text));
     }
 
     // Slots
     for (auto const& slot : interface["slots"]) {
       int x = slot["x"];
       int y = slot["y"];
-      controller.addElement(std::make_shared<UiSlot>(Vec2<int>(x, y)));
+      std::string type = slot["type"];
+      controller.addElement(std::make_shared<UiSlot>(asw::Vec2i(x, y), type));
     }
 
     // Push to controllers
@@ -61,6 +61,19 @@ int InterfaceTypeManager::loadInterfaces(const std::string& path) {
 UiController& InterfaceTypeManager::getInterfaceById(int id) {
   if (id >= 0 && id < (signed)ui_defs.size()) {
     return ui_defs.at(id);
+  }
+
+  // Throw error
+  throw std::runtime_error("Interface not found");
+}
+
+// Get interfaces by Name
+UiController& InterfaceTypeManager::getInterfaceByName(
+    const std::string& name) {
+  for (auto& controller : ui_defs) {
+    if (controller.getName() == name) {
+      return controller;
+    }
   }
 
   // Throw error

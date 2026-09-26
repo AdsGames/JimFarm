@@ -11,9 +11,7 @@
 #include "World.h"
 
 #include "manager/InterfaceTypeManager.h"
-#include "manager/interface_defs.h"
 #include "ui/UiController.h"
-#include "utility/Vec2.h"
 
 const int HOTBAR_SIZE = 8;
 
@@ -40,7 +38,7 @@ class Character : public Sprite {
   void loadData();
 
   // Position character
-  void setPosition(Vec2<int> pos);
+  void setPosition(const asw::Vec2i& pos);
 
   // Draw
   void draw(const Camera& camera) const override;
@@ -55,15 +53,9 @@ class Character : public Sprite {
   // Character foreground
   std::shared_ptr<CharacterForeground> c_fore{nullptr};
 
-  // Attached UI
-  int attached_ui{-1};
-
   // Inventory UI
   UiController inventory_ui{
-      InterfaceTypeManager::getInterfaceById(INTERFACE_INVENTORY)};
-
-  // UI open
-  bool ui_open{false};
+      InterfaceTypeManager::getInterfaceByName("inventory")};
 
   // Directions
   enum directions { DIR_DOWN = 1, DIR_UP = 2, DIR_RIGHT = 3, DIR_LEFT = 4 };
@@ -75,7 +67,7 @@ class Character : public Sprite {
   int selected_item{0};
 
   // What tile you are over
-  Vec2<int> indicator_pos{};
+  asw::Vec2i indicator_pos{};
 
   // Movement
   char direction{1};
