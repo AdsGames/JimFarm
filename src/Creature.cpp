@@ -191,6 +191,11 @@ bool Creature::findPrey(World& world, asw::Vec2i& prey) const {
 }
 
 void Creature::update(World& world, const asw::Vec2i& player_pos, float dt) {
+  // Dead or gone, waiting to be removed
+  if (gone) {
+    return;
+  }
+
   attack_cooldown -= dt;
   flee_timer -= dt;
   hurt_timer -= dt;

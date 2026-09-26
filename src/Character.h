@@ -81,6 +81,9 @@ class Character : public Sprite {
   float eat_timer{-1.0F};
   int eat_slot{0};
 
+  // Holding right click with a spear charges a throw, -1 when not charging
+  float throw_charge{-1.0F};
+
   // Movement
   int move_speed{2};
   char direction{1};

@@ -14,7 +14,8 @@ then sell the harvest at the store. Sleep in the barn to end the day. The game
 saves each morning.
 
 Stay alive: eat (hold right click), drink at water or the well, and stay warm.
-Wolves hunt you and your chickens at night. Lit campfires keep them away and
+Wolves hunt you and your chickens at night. Weapons swing toward the cursor:
+the spear reaches far, axes and the scythe hit wide. Lit campfires keep them away and
 warm you. Fences keep them out.
 
 Explore: each biome has its own finds. Mushrooms grow in cold forests, herbs
@@ -35,6 +36,7 @@ recipe book (R) as you pick up new things.
 | Left click / Space      | Use held item (tools, weapons) |
 | Right click / C         | Interact: open, harvest, pick  |
 | Hold right click / C    | Eat or drink held food         |
+| Hold right click, spear | Charge a throw, let go to throw |
 | 1-8, Z / X, mouse wheel | Select hotbar slot             |
 | F                       | Drop item                      |
 | E / Q / G               | Bag / crafting / furnace       |

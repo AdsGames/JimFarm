@@ -49,6 +49,26 @@ struct HoverVerbs {
   std::string right{};
 };
 
+// Thrown item in flight, world pixels
+struct Projectile {
+  std::string item_id;
+  unsigned char meta{0};
+  asw::Vec2f pos{};
+  asw::Vec2f velocity{};
+  float travelled{0.0F};
+  float range{0.0F};
+  int damage{0};
+};
+
+// Weapon swing shown for a moment, world pixels
+struct Swing {
+  asw::Vec2f from{};
+  asw::Vec2f dir{};
+  float reach{0.0F};
+  float arc{0.0F};
+  float timer{0.0F};
+};
+
 // Weather particle
 struct Particle {
   asw::Vec2f pos;
@@ -103,6 +123,12 @@ class World {
   InteractResult interact(const asw::Vec2i& inter_pos,
                           const asw::Vec2i& player_pos,
                           ItemStack& held);
+
+  // Throw one of the held stack toward a pixel position, charge 0 to 1
+  void throwItem(ItemStack& held,
+                 const asw::Vec2i& player_pos,
+                 const asw::Vec2i& target,
+                 float charge);
 
   // What each click would do at pixel position
   HoverVerbs hoverVerbs(const asw::Vec2i& inter_pos,
@@ -229,8 +255,24 @@ class World {
                      const asw::Vec2i& tile_pos,
                      const ItemStack& held);
 
-  // Hit creatures at tile, returns true if one was there
-  bool attackAt(const asw::Vec2i& tile_pos, ItemStack& held);
+  // Swing the held weapon toward a pixel position, true when it swung
+  bool swing(const asw::Vec2i& player_pos,
+             const asw::Vec2i& target,
+             ItemStack& held);
+
+  // Closest creature in a weapon's reach and arc toward target, or nullptr
+  std::shared_ptr<Creature> swingTarget(const asw::Vec2i& player_pos,
+                                        const asw::Vec2i& target,
+                                        const ItemInfo& info) const;
+
+  // Damage a creature, dropping its loot when it dies
+  void hurtCreature(const std::shared_ptr<Creature>& creature,
+                    int damage,
+                    const asw::Vec2i& from);
+
+  // Weapons
+  void updateProjectiles(float dt);
+  void drawWeapons() const;
 
   // Is the tile close enough to the player to use
   bool inReach(const asw::Vec2i& tile_pos, const asw::Vec2i& player_pos) const;
@@ -306,6 +348,11 @@ class World {
   std::vector<std::shared_ptr<Creature>> creatures{};
   float spawn_timer{0.0F};
   float wildlife_timer{0.0F};
+
+  // Weapon swings and thrown items
+  std::vector<Projectile> projectiles{};
+  Swing last_swing{};
+  float attack_cooldown{0.0F};
 
   // Damage numbers over creatures
   FloatingTexts floating_texts{};

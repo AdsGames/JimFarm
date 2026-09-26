@@ -139,6 +139,7 @@ void Game::drawHelp(const asw::Vec2i& ui_size) const {
       "WASD / Arrows  move     Left click / Space  use held item",
       "Right click / C  open, harvest, pick up, drink, talk",
       "Hold right click / C with food to eat it",
+      "Weapons swing toward the cursor, hold right click to throw a spear",
       "1-8 / Z X / wheel  select hotbar",
       "F  drop       E  bag       Q  crafting      G  furnace",
       "R  recipe book, click tabs or 1-5, A D turn pages",

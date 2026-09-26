@@ -1,6 +1,7 @@
 #include "Character.h"
 
 #include "Graphics.h"
+#include "manager/ItemTypeManager.h"
 #include "manager/TileTypeManager.h"
 #include "ui/Tooltip.h"
 #include "ui/UiScale.h"
@@ -9,6 +10,10 @@
 
 // Seconds to eat or drink one item
 constexpr float EAT_TIME = 0.9F;
+
+// Seconds to fully charge a throw, and the least charge that throws
+constexpr float THROW_TIME = 0.8F;
+constexpr float MIN_THROW = 0.15F;
 
 // Top of head
 CharacterForeground::CharacterForeground(Character* charPtr)
@@ -96,13 +101,17 @@ void Character::draw(const Camera& camera) const {
       asw::Quadf(pos.x - camera.getPosition().x,
                  pos.y - camera.getPosition().y - 8, 16, 20));
 
-  // Eating progress over the head
-  if (eat_timer >= 0.0F) {
+  // Eating and throw charge over the head
+  const float progress = eat_timer >= 0.0F      ? eat_timer / EAT_TIME
+                         : throw_charge >= 0.0F ? throw_charge / THROW_TIME
+                                                : -1.0F;
+  if (progress >= 0.0F) {
     const float x = pos.x - camera.getPosition().x + 1.0F;
     const float y = pos.y - camera.getPosition().y - 13.0F;
     asw::draw::rect_fill(asw::Quadf(x, y, 14.0F, 3.0F), asw::Color(30, 30, 30));
-    asw::draw::rect_fill(asw::Quadf(x, y, 14.0F * eat_timer / EAT_TIME, 3.0F),
-                         asw::Color(240, 180, 60));
+    asw::draw::rect_fill(asw::Quadf(x, y, 14.0F * progress, 3.0F),
+                         eat_timer >= 0.0F ? asw::Color(240, 180, 60)
+                                           : asw::Color(230, 90, 60));
   }
 
   // Selected item
@@ -315,6 +324,19 @@ void Character::update(World& world, float dt) {
   if (input_enabled &&
       (asw::input::get_key_down(asw::input::Key::Space) ||
        asw::input::get_mouse_button_down(asw::input::MouseButton::Left))) {
+    // Weapons turn you toward the cursor
+    if (held->getItem() &&
+        ItemTypeManager::getInfo(held->getItem()->getType().getId()).attack >
+            0 &&
+        !moving) {
+      const auto to = indicator_pos - pos;
+      if (std::abs(to.x) > std::abs(to.y)) {
+        direction = to.x > 0 ? DIR_RIGHT : DIR_LEFT;
+      } else if (to.y != 0) {
+        direction = to.y > 0 ? DIR_DOWN : DIR_UP;
+      }
+    }
+
     world.use(indicator_pos, pos, *held);
   }
 
@@ -326,9 +348,24 @@ void Character::update(World& world, float dt) {
   if (input_enabled &&
       (asw::input::get_key_down(asw::input::Key::C) ||
        asw::input::get_mouse_button_down(asw::input::MouseButton::Right))) {
-    if (world.interact(indicator_pos, pos, *held) == InteractResult::Eat) {
+    const auto result = world.interact(indicator_pos, pos, *held);
+    if (result == InteractResult::Eat) {
       eat_timer = 0.0F;
       eat_slot = selected_item;
+    } else if (result == InteractResult::Throw) {
+      throw_charge = 0.0F;
+    }
+  }
+
+  // Throws charge while held and fly when let go
+  if (throw_charge >= 0.0F) {
+    if (interact_held && held->getItem()) {
+      throw_charge = std::min(THROW_TIME, throw_charge + dt);
+    } else {
+      if (held->getItem() && throw_charge >= MIN_THROW) {
+        world.throwItem(*held, pos, indicator_pos, throw_charge / THROW_TIME);
+      }
+      throw_charge = -1.0F;
     }
   }
 

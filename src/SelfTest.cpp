@@ -326,12 +326,57 @@ int runSelfTest() {
   world.getCreatures().push_back(deer);
   for (int i = 0; i < 3 && !deer->isGone(); i++) {
     use(deer->getTile(), *iron_axe);
+
+    // Wait out the swing cooldown
+    world.update(0.7F, home * TILE_SIZE);
   }
   const int hides = World::playerInventory().count("item:hide");
   check(deer->isGone() && dropsNear(deer->getTile(), "item:meat") &&
             World::playerInventory().count("item:hide") > hides,
         "deer drops meat and hide");
   world.clearCreatures();
+
+  // Weapons: a spear thrust reaches toward the cursor, not behind
+  {
+    auto spear = give("item:spear");
+    const auto from = origin + asw::Vec2i(9, 3);
+    const auto from_px = from * TILE_SIZE;
+    auto wolf = std::make_shared<Creature>((from + asw::Vec2i(2, 0)) * TILE_SIZE);
+    world.getCreatures().push_back(wolf);
+
+    state.energy = MAX_STAT;
+    world.use((from + asw::Vec2i(3, 0)) * TILE_SIZE, from_px, *spear);
+    check(wolf->getPosition() != (from + asw::Vec2i(2, 0)) * TILE_SIZE,
+          "spear thrust hits two tiles away");
+    world.clearCreatures();
+
+    // Wait out the cooldown, then thrust away from a wolf
+    world.update(0.6F, from_px);
+    auto behind =
+        std::make_shared<Creature>((from + asw::Vec2i(2, 0)) * TILE_SIZE);
+    world.getCreatures().push_back(behind);
+    world.use((from + asw::Vec2i(-3, 0)) * TILE_SIZE, from_px, *spear);
+    check(behind->getPosition() == (from + asw::Vec2i(2, 0)) * TILE_SIZE,
+          "spear does not hit behind you");
+    world.clearCreatures();
+    world.update(0.6F, from_px);
+
+    // A thrown spear flies, hits and lands on the ground
+    auto rabbit =
+        std::make_shared<Creature>((from + asw::Vec2i(5, 0)) * TILE_SIZE,
+                                   CreatureKind::Rabbit);
+    world.getCreatures().push_back(rabbit);
+    const int spears = World::playerInventory().count("item:spear");
+    world.throwItem(*spear, from_px, (from + asw::Vec2i(6, 0)) * TILE_SIZE,
+                    1.0F);
+    check(World::playerInventory().count("item:spear") == spears - 1,
+          "throwing uses the spear");
+    for (int i = 0; i < 60 && !rabbit->isGone(); i++) {
+      world.update(1.0F / 60.0F, from_px);
+    }
+    check(rabbit->isGone(), "thrown spear hits the rabbit");
+    world.clearCreatures();
+  }
 
   // Startled grazers run to a spot away from the player, then calm down
   {

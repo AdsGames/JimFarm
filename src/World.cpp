@@ -408,6 +408,7 @@ void World::draw() {
   // Drawable
   Graphics::Instance().draw(camera);
   drawRoofs();
+  drawWeapons();
   action_particles.draw(camera);
   floating_texts.draw(font, camera);
 
@@ -665,61 +666,247 @@ bool World::applyAction(const ItemAction& action,
   return true;
 }
 
-bool World::attackAt(const asw::Vec2i& tile_pos, ItemStack& held) {
-  const auto item = held.getItem();
-  const int attack =
-      item ? ItemTypeManager::getInfo(item->getType().getId()).attack : 0;
+namespace {
+constexpr float SWING_SHOW_TIME = 0.15F;
+constexpr float SWING_ENERGY = 2.0F;
+constexpr float THROW_SPEED = 240.0F;
+constexpr float THROW_MIN_RANGE = 3.0F;
+constexpr float THROW_MAX_RANGE = 8.0F;
+constexpr float HIT_RADIUS = 10.0F;
+
+asw::Vec2f centreOf(const asw::Vec2i& pos) {
+  return asw::Vec2f(pos.x + TILE_SIZE / 2.0F, pos.y + TILE_SIZE / 2.0F);
+}
+
+float lengthOf(const asw::Vec2f& v) {
+  return std::sqrt(v.x * v.x + v.y * v.y);
+}
+
+asw::Vec2f unit(const asw::Vec2f& v) {
+  const float len = lengthOf(v);
+  return len > 0.001F ? asw::Vec2f(v.x / len, v.y / len) : asw::Vec2f(0, 1);
+}
+}  // namespace
+
+std::shared_ptr<Creature> World::swingTarget(const asw::Vec2i& player_pos,
+                                             const asw::Vec2i& target,
+                                             const ItemInfo& info) const {
+  const auto from = centreOf(player_pos);
+  const auto dir = unit(centreOf(target) - from);
+  const float reach = info.reach * TILE_SIZE + TILE_SIZE / 2.0F;
+  const float min_cos = std::cos(info.arc / 2.0F * 3.14159F / 180.0F);
+
+  std::shared_ptr<Creature> best = nullptr;
+  float best_distance = reach;
 
   for (auto const& creature : creatures) {
-    // Creatures move between tiles, accept a click near them
-    const auto offset = creature->getPosition() - tile_pos * TILE_SIZE;
-    if (creature->isGone() || std::abs(offset.x) > TILE_SIZE * 3 / 4 ||
-        std::abs(offset.y) > TILE_SIZE * 3 / 4) {
+    if (creature->isGone()) {
       continue;
     }
 
-    if (attack <= 0) {
-      state.notify("You need a weapon, try a spear or axe");
-      SoundManager::play("error");
-      return true;
+    const auto offset = centreOf(creature->getPosition()) - from;
+    const float distance = lengthOf(offset);
+
+    // Point blank always hits, else it must be inside the arc
+    const bool in_arc =
+        distance < TILE_SIZE ||
+        (offset.x * dir.x + offset.y * dir.y) / distance >= min_cos;
+
+    if (distance <= best_distance && in_arc) {
+      best_distance = distance;
+      best = creature;
     }
+  }
 
-    if (!state.useEnergy(2.0F)) {
-      SoundManager::play("error");
-      return true;
-    }
+  return best;
+}
 
-    SoundManager::play("axe");
+void World::hurtCreature(const std::shared_ptr<Creature>& creature,
+                         int damage,
+                         const asw::Vec2i& from) {
+  SoundManager::play("axe");
 
-    floating_texts.add(std::to_string(attack),
-                       asw::Vec2f(creature->getPosition().x + TILE_SIZE / 2.0F,
-                                  creature->getPosition().y - 2.0F),
-                       asw::Color(255, 220, 90));
+  floating_texts.add(std::to_string(damage),
+                     asw::Vec2f(creature->getPosition().x + TILE_SIZE / 2.0F,
+                                creature->getPosition().y - 2.0F),
+                     asw::Color(255, 220, 90));
 
-    if (creature->hit(*this, attack, player_tile * TILE_SIZE)) {
-      const auto at = creature->getTile();
-      switch (creature->getKind()) {
-        case CreatureKind::Wolf:
-          dropItems("item:pelt", at);
-          state.wolves_defeated++;
-          state.notify("Wolf defeated!");
-          break;
-        case CreatureKind::Deer:
-          dropItems("item:meat", at, 2);
-          dropItems("item:hide", at);
-          state.notify("You hunted a deer");
-          break;
-        case CreatureKind::Rabbit:
-          dropItems("item:meat", at);
-          state.notify("You caught a rabbit");
-          break;
-      }
-    }
+  if (!creature->hit(*this, damage, from)) {
+    return;
+  }
 
+  const auto at = creature->getTile();
+  switch (creature->getKind()) {
+    case CreatureKind::Wolf:
+      dropItems("item:pelt", at);
+      state.wolves_defeated++;
+      state.notify("Wolf defeated!");
+      break;
+    case CreatureKind::Deer:
+      dropItems("item:meat", at, 2);
+      dropItems("item:hide", at);
+      state.notify("You hunted a deer");
+      break;
+    case CreatureKind::Rabbit:
+      dropItems("item:meat", at);
+      state.notify("You caught a rabbit");
+      break;
+  }
+}
+
+bool World::swing(const asw::Vec2i& player_pos,
+                  const asw::Vec2i& target,
+                  ItemStack& held) {
+  const auto item = held.getItem();
+  if (!item) {
+    return false;
+  }
+
+  const auto& info = ItemTypeManager::getInfo(item->getType().getId());
+  if (info.attack <= 0) {
+    return false;
+  }
+
+  // A tool with nothing to hit works on the tile as usual
+  const auto victim = swingTarget(player_pos, target, info);
+  const bool tool = !info.actions.empty() || info.power > 0.0F;
+  if (!victim && tool) {
+    return false;
+  }
+
+  // Still recovering from the last swing
+  if (attack_cooldown > 0.0F) {
     return true;
   }
 
-  return false;
+  if (!state.useEnergy(victim ? SWING_ENERGY : SWING_ENERGY / 2.0F)) {
+    SoundManager::play("error");
+    return true;
+  }
+
+  attack_cooldown = info.cooldown;
+
+  const auto from = centreOf(player_pos);
+  last_swing = {from, unit(centreOf(target) - from), info.reach * TILE_SIZE,
+                info.arc, SWING_SHOW_TIME};
+
+  if (victim) {
+    hurtCreature(victim, info.attack, player_pos);
+  } else {
+    SoundManager::play("scythe");
+  }
+
+  return true;
+}
+
+void World::throwItem(ItemStack& held,
+                      const asw::Vec2i& player_pos,
+                      const asw::Vec2i& target,
+                      float charge) {
+  const auto item = held.getItem();
+  if (!item) {
+    return;
+  }
+
+  const auto& info = ItemTypeManager::getInfo(item->getType().getId());
+  const auto from = centreOf(player_pos);
+  const float strength = std::clamp(charge, 0.0F, 1.0F);
+
+  projectiles.push_back(
+      {item->getType().getId(), item->getMeta(), from,
+       unit(centreOf(target) - from) * THROW_SPEED, 0.0F,
+       (THROW_MIN_RANGE + (THROW_MAX_RANGE - THROW_MIN_RANGE) * strength) *
+           TILE_SIZE,
+       info.attack + 1});
+
+  held.remove(1);
+  state.useEnergy(SWING_ENERGY);
+  SoundManager::play("scythe");
+}
+
+void World::updateProjectiles(float dt) {
+  attack_cooldown = std::max(0.0F, attack_cooldown - dt);
+  last_swing.timer = std::max(0.0F, last_swing.timer - dt);
+
+  std::erase_if(projectiles, [&](Projectile& p) {
+    const auto step = p.velocity * dt;
+    const auto next = p.pos + step;
+    const auto tile = asw::Vec2i(static_cast<int>(next.x) / TILE_SIZE,
+                                 static_cast<int>(next.y) / TILE_SIZE);
+    const auto last_tile = asw::Vec2i(static_cast<int>(p.pos.x) / TILE_SIZE,
+                                      static_cast<int>(p.pos.y) / TILE_SIZE);
+
+    auto land = [&](const asw::Vec2i& at) {
+      tile_map.placeItemAt(std::make_shared<Item>(p.item_id, p.meta),
+                           tile_map.isSolidAt(at) ? openTileNear(at) : at);
+      return true;
+    };
+
+    // Hits the first creature on its way
+    for (auto const& creature : creatures) {
+      if (!creature->isGone() &&
+          lengthOf(centreOf(creature->getPosition()) - next) < HIT_RADIUS) {
+        hurtCreature(creature, p.damage,
+                     asw::Vec2i(static_cast<int>(p.pos.x) - TILE_SIZE / 2,
+                                static_cast<int>(p.pos.y) - TILE_SIZE / 2));
+        return land(creature->getTile());
+      }
+    }
+
+    // Stops at walls and the edge of the map
+    if (!tile_map.inBounds(tile) || tile_map.isSolidAt(tile)) {
+      SoundManager::play("shovel");
+      return land(last_tile);
+    }
+
+    p.pos = next;
+    p.travelled += lengthOf(step);
+    return p.travelled >= p.range && land(tile);
+  });
+}
+
+void World::drawWeapons() const {
+  const auto cam = camera.getPosition();
+  auto screen = [&](const asw::Vec2f& world_pos) {
+    return asw::Vec2f(world_pos.x - cam.x, world_pos.y - cam.y);
+  };
+
+  // Swing: a curved slash for wide weapons, one line for a thrust
+  if (last_swing.timer > 0.0F) {
+    const auto alpha = static_cast<uint8_t>(
+        220.0F * last_swing.timer / SWING_SHOW_TIME);
+    const auto color = asw::Color(255, 250, 230, alpha);
+    const float base = std::atan2(last_swing.dir.y, last_swing.dir.x);
+    const float half = last_swing.arc / 2.0F * 3.14159F / 180.0F;
+
+    auto at = [&](float angle, float radius) {
+      return screen(last_swing.from +
+                    asw::Vec2f(std::cos(angle), std::sin(angle)) * radius);
+    };
+
+    if (last_swing.arc <= 40.0F) {
+      asw::draw::line(at(base, TILE_SIZE / 2.0F), at(base, last_swing.reach),
+                      color);
+    } else {
+      constexpr int SEGMENTS = 8;
+      for (const float radius : {last_swing.reach, last_swing.reach - 3.0F}) {
+        for (int i = 0; i < SEGMENTS; i++) {
+          const float a1 = base - half + 2.0F * half * i / SEGMENTS;
+          const float a2 = base - half + 2.0F * half * (i + 1) / SEGMENTS;
+          asw::draw::line(at(a1, radius), at(a2, radius), color);
+        }
+      }
+    }
+  }
+
+  // Thrown items fly point first
+  for (auto const& p : projectiles) {
+    const auto dir = unit(p.velocity);
+    const auto tail = p.pos - dir * 10.0F;
+    asw::draw::line(screen(tail), screen(p.pos), asw::Color(140, 90, 40));
+    asw::draw::line(screen(p.pos - dir * 3.0F), screen(p.pos),
+                    asw::Color(200, 200, 210));
+  }
 }
 
 bool World::inReach(const asw::Vec2i& tile_pos,
@@ -799,15 +986,15 @@ void World::use(const asw::Vec2i& inter_pos,
                 ItemStack& held) {
   const auto tile_pos = inter_pos / TILE_SIZE;
 
+  // Weapons swing toward the cursor, near or far
+  if (swing(player_pos, inter_pos, held)) {
+    return;
+  }
+
   if (!inReach(tile_pos, player_pos)) {
     if (tile_map.inBounds(tile_pos)) {
       state.notify("Too far away");
     }
-    return;
-  }
-
-  // Creatures first
-  if (attackAt(tile_pos, held)) {
     return;
   }
 
@@ -906,21 +1093,27 @@ HoverVerbs World::hoverVerbs(const asw::Vec2i& inter_pos,
   };
 
   if (!inReach(tile_pos, player_pos)) {
-    if (tile_map.inBounds(tile_pos)) {
-      verbs.left = item ? "Too far" : "";
+    if (tile_map.inBounds(tile_pos) && item) {
+      const auto& info = ItemTypeManager::getInfo(item->getType().getId());
+      if (info.attack > 0 && swingTarget(player_pos, inter_pos, info)) {
+        verbs.left = "Attack";
+      } else if (info.attack > 0 && info.actions.empty()) {
+        verbs.left = "Thrust";
+      } else {
+        verbs.left = "Too far";
+      }
     }
     verbs.right = self_verb();
     return verbs;
   }
 
-  // Creatures near the cursor
-  const int attack =
-      item ? ItemTypeManager::getInfo(item->getType().getId()).attack : 0;
-  for (auto const& creature : creatures) {
-    const auto offset = creature->getPosition() - tile_pos * TILE_SIZE;
-    if (!creature->isGone() && std::abs(offset.x) <= TILE_SIZE * 3 / 4 &&
-        std::abs(offset.y) <= TILE_SIZE * 3 / 4) {
-      verbs.left = attack > 0 ? "Attack" : "Needs a weapon";
+  // A weapon with something in reach attacks
+  if (item) {
+    const auto& info = ItemTypeManager::getInfo(item->getType().getId());
+    if (info.attack > 0 && swingTarget(player_pos, inter_pos, info)) {
+      verbs.left = "Attack";
+    } else if (info.attack > 0 && info.actions.empty()) {
+      verbs.left = "Thrust";
     }
   }
 
@@ -1048,6 +1241,7 @@ void World::update(float dt, const asw::Vec2i& player_pos) {
 
   updateCreatures(dt, player_pos);
   floating_texts.update(dt);
+  updateProjectiles(dt);
   action_particles.update(dt);
 
   // Coins fly from the player whenever money comes in
@@ -1302,6 +1496,16 @@ void World::spawnWildlife() {
 }
 
 void World::clearCreatures() {
+  // Anything in flight lands where it is
+  for (auto const& p : projectiles) {
+    const auto at = asw::Vec2i(static_cast<int>(p.pos.x) / TILE_SIZE,
+                               static_cast<int>(p.pos.y) / TILE_SIZE);
+    if (tile_map.inBounds(at)) {
+      tile_map.placeItemAt(std::make_shared<Item>(p.item_id, p.meta),
+                           tile_map.isSolidAt(at) ? openTileNear(at) : at);
+    }
+  }
+  projectiles.clear();
   for (auto const& creature : creatures) {
     Graphics::Instance().remove(creature);
   }
