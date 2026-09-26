@@ -104,9 +104,13 @@ int runSelfTest() {
   check(dropped && dropped->itemPtr->getType().getId() == "item:carrot",
         "carrot dropped");
 
-  // Range limit
-  world.use((plot + asw::Vec2i(10, 10)) * TILE_SIZE, player_pos, *seeds);
-  check(!world.getMap().getTileAt(plot + asw::Vec2i(10, 10), LAYER_FOREGROUND),
+  // Range limit, the far tile is outside the farm so it may hold a plant
+  const auto far = plot + asw::Vec2i(10, 10);
+  const auto far_before = world.getMap().getTileAt(far, LAYER_FOREGROUND);
+  const int far_seeds = seeds->getQuantity();
+  world.use(far * TILE_SIZE, player_pos, *seeds);
+  check(world.getMap().getTileAt(far, LAYER_FOREGROUND) == far_before &&
+            seeds->getQuantity() == far_seeds,
         "far tiles can not be used");
 
   // Eating
