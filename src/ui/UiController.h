@@ -20,7 +20,8 @@ class UiController {
 
   void draw(const GameState& state);
 
-  void update(GameState& state);
+  // Clicks are false when the hud already used this frame's click
+  void update(GameState& state, bool clicks = true);
 
   void addElement(std::shared_ptr<UiElement> element);
 
@@ -38,6 +39,23 @@ class UiController {
   // Is an item being dragged with the mouse
   static bool isHoldingItem();
 
+  // Stack held on the mouse
+  static ItemStack& mouseStack() { return *mouse_item; }
+
+  // Spread a left drag once the button is let go, call once per frame
+  static void finishDrag();
+
+  // Slot under a ui position, or nullptr
+  std::shared_ptr<UiSlot> slotAt(const asw::Vec2i& ui_pos) const;
+
+  // Is a ui position over the window or its drag bar
+  bool contains(const asw::Vec2i& ui_pos) const;
+
+  std::vector<std::shared_ptr<ItemStack>> stacksOfType(SlotType type) const;
+
+  // Craft until the inputs run out or the bag is full, returns crafts made
+  int craftAll(Inventory& bag, GameState& state);
+
  private:
   std::shared_ptr<UiElement> elementAt(const asw::Vec2i& pos) const;
 
@@ -50,7 +68,11 @@ class UiController {
   // Keep the crafting output showing what the inputs make
   void updateRecipeOutput(const GameState& state);
 
-  std::vector<std::shared_ptr<ItemStack>> stacksOfType(SlotType type) const;
+  // Click on a slot that holds items
+  void clickInput(ItemStack& stack, const asw::input::MouseState& mouse);
+
+  // Shared pointer to one of this window's input stacks
+  std::shared_ptr<ItemStack> ownStack(const ItemStack& stack) const;
 
   std::shared_ptr<Inventory> inv{nullptr};
 
@@ -62,6 +84,15 @@ class UiController {
   std::vector<std::shared_ptr<UiElement>> elements{};
 
   static std::shared_ptr<ItemStack> mouse_item;
+
+  // Mouse drag over slots: left spreads the held stack evenly, right puts
+  // one in each slot
+  struct SlotDrag {
+    int button{0};
+    int total{0};
+    std::vector<std::shared_ptr<ItemStack>> slots{};
+  };
+  static SlotDrag slot_drag;
 
   int currently_bound{0};
 

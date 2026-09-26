@@ -40,6 +40,19 @@ recipe book (R) as you pick up new things.
 | R                       | Recipe book (1-5 tabs, A D)    |
 | H                       | Controls and recipes           |
 | + / -                   | Zoom                           |
+
+In windows (Minecraft style):
+
+| Input                          | Action                                   |
+| ------------------------------ | ---------------------------------------- |
+| Click                          | Take a stack, place it, or swap stacks   |
+| Right click                    | Take half, or place one                  |
+| Drag / right drag              | Spread evenly / one in each slot         |
+| Shift click                    | Move to the other window, or craft all   |
+| Double click                   | Collect all of the held item             |
+| 1-8 over a slot                | Swap with that hotbar slot               |
+| F / Ctrl F over a slot         | Drop one / drop the stack                |
+| Click outside with held items  | Throw them (right click throws one)      |
 | Esc                     | Close windows, pause menu      |
 
 ## Modding

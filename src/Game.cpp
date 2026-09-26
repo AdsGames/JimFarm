@@ -144,6 +144,13 @@ void Game::drawHelp(const asw::Vec2i& ui_size) const {
       "Click a bed to sleep, the store to trade",
       "Click a workbench or kiln to craft with it",
       "Walls, windows and a door make a warm room",
+      "",
+      "WINDOWS",
+      "Click: take or swap   Right click: half, or place one",
+      "Drag: spread evenly   Right drag: one in each slot",
+      "Shift click: move across, or craft all from the output",
+      "Double click: collect all   1-8: swap with hotbar",
+      "F: drop one, Ctrl F all   Click outside: throw held items",
       "+ / -  zoom    H  help    Esc  close / menu",
   };
 

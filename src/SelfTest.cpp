@@ -11,6 +11,7 @@
 #include "manager/RecipeManager.h"
 #include "manager/TileTypeManager.h"
 #include "ui/Tooltip.h"
+#include "ui/UiSlot.h"
 
 namespace {
 int failures = 0;
@@ -342,6 +343,44 @@ int runSelfTest() {
   give("item:clay");
   tick();
   check(state.known_items.contains("item:clay"), "new items are learned");
+
+  // Inventory shortcuts: shift click moves stacks and crafts all
+  {
+    auto& hud = world.getHud();
+    auto& bag = World::playerInventory();
+    hud.closeAll();
+    hud.open("inventory");
+
+    auto* bag_ui = hud.window("inventory");
+    auto hotbar = bag.getStack(7);
+    hotbar->setItem(std::make_shared<Item>("item:stone"), 3);
+    hud.quickMove(*bag_ui, SlotType::Input, *hotbar, state);
+    check(!hotbar->getItem() && bag.count("item:stone") >= 3,
+          "shift click moves hotbar to bag rows");
+
+    hud.open("crafting");
+    auto* crafting_ui = hud.window("crafting");
+    auto wood = bag.getStack(6);
+    wood->setItem(std::make_shared<Item>("item:wood"), 3);
+    hud.quickMove(*bag_ui, SlotType::Input, *wood, state);
+    const auto inputs = crafting_ui->stacksOfType(SlotType::Input);
+    check(!wood->getItem() && inputs[0]->getItem() &&
+              inputs[0]->getQuantity() == 3,
+          "shift click moves bag to crafting");
+
+    const int planks = bag.count("item:plank");
+    const auto output = crafting_ui->stacksOfType(SlotType::Output).front();
+    hud.quickMove(*crafting_ui, SlotType::Output, *output, state);
+    check(bag.count("item:plank") == planks + 12 && !inputs[0]->getItem(),
+          "shift click on output crafts all");
+
+    inputs[1]->setItem(std::make_shared<Item>("item:clay"), 2);
+    const int clay = bag.count("item:clay");
+    hud.quickMove(*crafting_ui, SlotType::Input, *inputs[1], state);
+    check(!inputs[1]->getItem() && bag.count("item:clay") == clay + 2,
+          "shift click moves crafting back to bag");
+    hud.closeAll();
+  }
 
   // Economy
   const int coins = state.getCoins();

@@ -1,7 +1,9 @@
 #include "UiController.h"
 
+#include <algorithm>
 #include <cmath>
 #include <format>
+#include <utility>
 
 #include "../GameState.h"
 #include "../manager/InterfaceTypeManager.h"
@@ -15,6 +17,22 @@
 #include "Tooltip.h"
 
 std::shared_ptr<ItemStack> UiController::mouse_item = nullptr;
+UiController::SlotDrag UiController::slot_drag{};
+
+namespace {
+constexpr int MOUSE_LEFT = 1;
+constexpr int MOUSE_RIGHT = 3;
+
+bool sameType(const ItemStack& a, const std::shared_ptr<Item>& item) {
+  return a.getItem() && item &&
+         a.getItem()->getType().getId() == item->getType().getId();
+}
+
+// New item with the same type and meta, so split stacks do not share meta
+std::shared_ptr<Item> copyItem(const Item& item) {
+  return std::make_shared<Item>(item.getType().getId(), item.getMeta());
+}
+}  // namespace
 
 UiController::UiController(const std::string& name, const asw::Vec2i& size)
     : name(name), size(size) {
@@ -66,8 +84,19 @@ void UiController::draw(const GameState& state) {
   for (auto const& element : elements) {
     element->draw(position, state);
 
-    // Recipe needs a better station, grey it out
     auto slot = std::dynamic_pointer_cast<UiSlot>(element);
+
+    // Slots a left drag will spread into
+    if (slot && slot_drag.button == MOUSE_LEFT &&
+        std::ranges::find(slot_drag.slots, slot->getStack()) !=
+            slot_drag.slots.end()) {
+      const auto at = position + slot->getPosition();
+      asw::display::set_blend_mode(asw::BlendMode::Blend);
+      asw::draw::rect_fill(asw::Quadf(at.x, at.y, SLOT_SIZE, SLOT_SIZE),
+                           asw::Color(255, 255, 255, 70));
+    }
+
+    // Recipe needs a better station, grey it out
     if (output_locked && slot && slot->getType() == SlotType::Output) {
       const auto at = position + slot->getPosition();
       asw::display::set_blend_mode(asw::BlendMode::Blend);
@@ -98,94 +127,36 @@ void UiController::draw(const GameState& state) {
   }
 }
 
-void UiController::update(GameState& state) {
+void UiController::update(GameState& state, bool clicks) {
   const auto& mouse = asw::input::get_mouse();
   const auto mouse_pos = getUiMouse();
 
   updateRecipeOutput(state);
 
-  if (mouse.pressed[1] || mouse.down[3]) {
-    // Element at position
-    auto elem = elementAt(mouse_pos);
-    // Check if move
-    if (elem == nullptr) {
-      return;
-    }
+  auto slt = slotAt(mouse_pos);
 
-    // Cast to slot
-    auto slt = std::dynamic_pointer_cast<UiSlot>(elem);
-
-    // Ensure that it is slot
-    if (slt == nullptr) {
-      return;
-    }
-
-    auto item = mouse_item->getItem();
-    auto stack = slt->getStack();
+  if (clicks && slt) {
     const auto type = slt->getType();
 
-    // Special slots only react to a fresh click
-    if (type != SlotType::Input) {
-      if (!mouse.pressed[1] && !mouse.pressed[3]) {
-        return;
-      }
-
+    if (type == SlotType::Input) {
+      clickInput(*slt->getStack(), mouse);
+    } else if (mouse.pressed[MOUSE_LEFT] || mouse.pressed[MOUSE_RIGHT]) {
+      // Special slots only react to a fresh click
       switch (type) {
         case SlotType::Buy:
           clickBuy(*slt, state);
           break;
         case SlotType::Sell:
-          clickSell(mouse.pressed[1], state);
+          clickSell(mouse.pressed[MOUSE_LEFT], state);
           break;
         case SlotType::Order:
           clickOrder(state);
           break;
         case SlotType::Output:
-          if (mouse.pressed[1]) {
-            clickOutput(state);
-          }
+          clickOutput(state);
           break;
         case SlotType::Input:
           break;
-      }
-      return;
-    }
-
-    if (mouse.pressed[1]) {
-      // Pick up item
-      if (!item && stack->getItem()) {
-        mouse_item->setItem(stack->getItem(), stack->getQuantity());
-        stack->clear();
-      }
-      // Place item
-      else if (item && !stack->getItem()) {
-        stack->setItem(item, mouse_item->getQuantity());
-        mouse_item->clear();
-      }
-      // Add to stack
-      else if (item && stack->getItem() &&
-               stack->getItem()->getType().getId() == item->getType().getId()) {
-        stack->add(mouse_item->getQuantity());
-        mouse_item->clear();
-      }
-    } else if (mouse.pressed[3]) {
-      // Split stack
-      if (!item && stack->getItem() && stack->getQuantity() > 1) {
-        auto mouse_qty = static_cast<int>(ceil(stack->getQuantity() / 2.0));
-        mouse_item->setItem(stack->getItem(), mouse_qty);
-        stack->remove(mouse_qty);
-      }
-      // Stack one
-      else if (item && stack->getItem() &&
-               stack->getItem()->getType().getId() == item->getType().getId()) {
-        stack->add(1);
-        mouse_item->remove(1);
-      }
-    } else if (mouse.down[3]) {
-      // Remove one
-      if (item && !stack->getItem()) {
-        stack->setItem(item, 1);
-        mouse_item->remove(1);
       }
     }
   }
@@ -214,6 +185,159 @@ void UiController::update(GameState& state) {
                  getUiSize().y - size.y),
         0);
   }
+}
+
+void UiController::clickInput(ItemStack& stack, const asw::input::MouseState& mouse) {
+  auto item = mouse_item->getItem();
+
+  if (mouse.pressed[MOUSE_LEFT]) {
+    if (!item) {
+      // Pick up the whole stack
+      if (stack.getItem()) {
+        mouse_item->setItem(stack.getItem(), stack.getQuantity());
+        stack.clear();
+      }
+    } else if (stack.getItem() && !sameType(stack, item)) {
+      // Swap with the held stack
+      const auto held = mouse_item->getQuantity();
+      mouse_item->setItem(stack.getItem(), stack.getQuantity());
+      stack.setItem(item, held);
+    } else {
+      // Start spreading, placed when the button is let go
+      slot_drag = {MOUSE_LEFT, mouse_item->getQuantity(), {ownStack(stack)}};
+    }
+    return;
+  }
+
+  if (mouse.pressed[MOUSE_RIGHT]) {
+    if (!item) {
+      // Take half, rounded up
+      if (stack.getItem()) {
+        const int half = (stack.getQuantity() + 1) / 2;
+        mouse_item->setItem(stack.getQuantity() == half
+                                ? stack.getItem()
+                                : copyItem(*stack.getItem()),
+                            half);
+        stack.remove(half);
+      }
+      return;
+    }
+
+    if (stack.getItem() && !sameType(stack, item)) {
+      // Swap with the held stack
+      const auto held = mouse_item->getQuantity();
+      mouse_item->setItem(stack.getItem(), stack.getQuantity());
+      stack.setItem(item, held);
+      return;
+    }
+
+    slot_drag = {MOUSE_RIGHT, 0, {}};
+  }
+
+  // Drags only pass over slots that are empty or hold the same item
+  if (!item || (stack.getItem() && !sameType(stack, item))) {
+    return;
+  }
+
+  const auto own = ownStack(stack);
+  if (!own || std::ranges::find(slot_drag.slots, own) != slot_drag.slots.end()) {
+    return;
+  }
+
+  if (slot_drag.button == MOUSE_LEFT && mouse.down[MOUSE_LEFT] &&
+      static_cast<int>(slot_drag.slots.size()) < slot_drag.total) {
+    slot_drag.slots.push_back(own);
+  } else if (slot_drag.button == MOUSE_RIGHT && mouse.down[MOUSE_RIGHT]) {
+    // One into each slot passed over
+    if (stack.getItem()) {
+      stack.add(1);
+    } else {
+      stack.setItem(mouse_item->getQuantity() == 1 ? item : copyItem(*item), 1);
+    }
+    mouse_item->remove(1);
+    slot_drag.slots.push_back(own);
+  }
+}
+
+void UiController::finishDrag() {
+  const auto& mouse = asw::input::get_mouse();
+
+  if (slot_drag.button == MOUSE_RIGHT && !mouse.down[MOUSE_RIGHT]) {
+    slot_drag = {};
+    return;
+  }
+
+  if (slot_drag.button != MOUSE_LEFT || mouse.down[MOUSE_LEFT]) {
+    return;
+  }
+
+  auto drag = std::exchange(slot_drag, {});
+  auto item = mouse_item->getItem();
+  if (!item || drag.slots.empty()) {
+    return;
+  }
+
+  // One slot takes it all, more share it evenly, the rest stays held
+  const int share = drag.slots.size() == 1
+                        ? mouse_item->getQuantity()
+                        : mouse_item->getQuantity() /
+                              static_cast<int>(drag.slots.size());
+
+  for (auto const& stack : drag.slots) {
+    if (!mouse_item->getItem() || share <= 0) {
+      break;
+    }
+
+    if (stack->getItem()) {
+      stack->add(share);
+    } else {
+      stack->setItem(share == mouse_item->getQuantity() ? item
+                                                         : copyItem(*item),
+                     share);
+    }
+    mouse_item->remove(share);
+  }
+}
+
+std::shared_ptr<ItemStack> UiController::ownStack(
+    const ItemStack& stack) const {
+  for (auto const& candidate : stacksOfType(SlotType::Input)) {
+    if (candidate.get() == &stack) {
+      return candidate;
+    }
+  }
+  return nullptr;
+}
+
+std::shared_ptr<UiSlot> UiController::slotAt(const asw::Vec2i& ui_pos) const {
+  return std::dynamic_pointer_cast<UiSlot>(elementAt(ui_pos));
+}
+
+bool UiController::contains(const asw::Vec2i& ui_pos) const {
+  return ui_pos.x >= position.x && ui_pos.x < position.x + size.x &&
+         ui_pos.y >= position.y - DRAG_BOX_HEIGHT &&
+         ui_pos.y < position.y + size.y;
+}
+
+int UiController::craftAll(Inventory& bag, GameState& state) {
+  const auto inputs = stacksOfType(SlotType::Input);
+  int crafts = 0;
+
+  // Capped so a mistake in the recipes can never loop forever
+  while (crafts < 999) {
+    const auto* recipe =
+        RecipeManager::match(name, inputs, state.crafting_tier);
+    if (!recipe ||
+        !bag.addItem(std::make_shared<Item>(recipe->output), recipe->count)) {
+      break;
+    }
+
+    RecipeManager::consume(*recipe, inputs);
+    crafts++;
+  }
+
+  updateRecipeOutput(state);
+  return crafts;
 }
 
 std::shared_ptr<UiElement> UiController::elementAt(

@@ -138,6 +138,16 @@ void setStat(float& stat, float change) {
  ************/
 World::World() {
   resetCamera();
+
+  // Items thrown out of windows land next to the player, not under them
+  hud.setDropHandler([this](const Item& item, int count) {
+    const auto at = openTileNear(player_tile);
+    for (int i = 0; i < count; i++) {
+      tile_map.placeItemAt(
+          std::make_shared<Item>(item.getType().getId(), item.getMeta()), at);
+    }
+    SoundManager::play("pickup");
+  });
 }
 
 void World::resetCamera() {
