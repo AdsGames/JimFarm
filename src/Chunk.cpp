@@ -281,9 +281,6 @@ void Chunk::generate() {
         } else if (random(0, 10) == 0) {
           tiles[pos_3_foreground] =
               std::make_shared<Tile>("tile:bush", t_pos, LAYER_FOREGROUND, 0);
-        } else if (random(0, 50) == 0) {
-          tiles[pos_3_foreground] =
-              std::make_shared<Tile>("tile:barn", t_pos, LAYER_FOREGROUND, 1);
         }
       }
       // Desert
