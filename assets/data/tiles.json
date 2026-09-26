@@ -14,6 +14,7 @@
       "width": 1
     },
     "attribute": "NON_SOLID",
+    "seasonal": true,
     "behaviours": []
   },
   {
@@ -50,6 +51,7 @@
   },
   {
     "id": "tile:well",
+    "shadow": 14,
     "name": "Well",
     "width": 1,
     "height": 1,
@@ -78,10 +80,13 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
+    "attribute": "NON_SOLID",
+    "seasonal": true,
+    "sway": true
   },
   {
     "id": "tile:tree",
+    "shadow": 14,
     "name": "Tree",
     "width": 1,
     "height": 1,
@@ -95,10 +100,21 @@
       "width": 1
     },
     "attribute": "SOLID",
-    "behaviours": ["behaviour:tree"]
+    "seasonal": true,
+    "sway": true,
+    "behaviours": [
+      {
+        "id": "behaviour:tree",
+        "tools": ["item:axe", "item:copper_axe", "item:iron_axe"],
+        "hits": 3,
+        "energy": 4,
+        "sapling_chance": 0.3
+      }
+    ]
   },
   {
     "id": "tile:bush",
+    "shadow": 12,
     "name": "Bush",
     "width": 1,
     "height": 1,
@@ -111,7 +127,18 @@
       "height": 2,
       "width": 1
     },
-    "attribute": "SOLID"
+    "attribute": "SOLID",
+    "seasonal": true,
+    "sway": true,
+    "behaviours": [
+      {
+        "id": "behaviour:forage",
+        "yield": "item:berry",
+        "yield_min": 1,
+        "yield_max": 3,
+        "regrow": 3
+      }
+    ]
   },
   {
     "id": "tile:well_path",
@@ -175,7 +202,14 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
+    "attribute": "NON_SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:transform",
+        "into": "",
+        "days": 7
+      }
+    ]
   },
   {
     "id": "tile:plowed_soil",
@@ -191,7 +225,16 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
+    "attribute": "NON_SOLID",
+    "bitmask_group": "farmland",
+    "behaviours": [
+      {
+        "id": "behaviour:transform",
+        "into": "tile:grass",
+        "chance": 0.05,
+        "requires_empty_above": true
+      }
+    ]
   },
   {
     "id": "tile:store_path",
@@ -239,7 +282,22 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
+    "attribute": "NON_SOLID",
+    "seasonal": true,
+    "sway": true,
+    "behaviours": [
+      {
+        "id": "behaviour:crop",
+        "days": 3,
+        "regrow": 2,
+        "yield": "item:berry",
+        "yield_min": 1,
+        "yield_max": 2,
+        "seasons": ["Spring", "Summer"],
+        "min_temp": -20,
+        "max_temp": 64
+      }
+    ]
   },
   {
     "id": "tile:tomato",
@@ -255,7 +313,22 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
+    "attribute": "NON_SOLID",
+    "seasonal": true,
+    "sway": true,
+    "behaviours": [
+      {
+        "id": "behaviour:crop",
+        "days": 5,
+        "regrow": 3,
+        "yield": "item:tomato",
+        "yield_min": 1,
+        "yield_max": 3,
+        "seasons": ["Summer", "Fall"],
+        "min_temp": -5,
+        "max_temp": 64
+      }
+    ]
   },
   {
     "id": "tile:carrot",
@@ -271,7 +344,22 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
+    "attribute": "NON_SOLID",
+    "seasonal": true,
+    "sway": true,
+    "behaviours": [
+      {
+        "id": "behaviour:crop",
+        "days": 4,
+        "regrow": 0,
+        "yield": "item:carrot",
+        "yield_min": 1,
+        "yield_max": 2,
+        "seasons": ["Spring", "Fall"],
+        "min_temp": -40,
+        "max_temp": 40
+      }
+    ]
   },
   {
     "id": "tile:lavender",
@@ -287,7 +375,22 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
+    "attribute": "NON_SOLID",
+    "seasonal": true,
+    "sway": true,
+    "behaviours": [
+      {
+        "id": "behaviour:crop",
+        "days": 6,
+        "regrow": 0,
+        "yield": "item:lavender",
+        "yield_min": 1,
+        "yield_max": 2,
+        "seasons": ["Summer", "Fall"],
+        "min_temp": 8,
+        "max_temp": 64
+      }
+    ]
   },
   {
     "id": "tile:patchy_grass",
@@ -303,7 +406,8 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
+    "attribute": "NON_SOLID",
+    "seasonal": true
   },
   {
     "id": "tile:store",
@@ -319,7 +423,8 @@
       "height": 2,
       "width": 3
     },
-    "attribute": "SOLID"
+    "attribute": "SOLID",
+    "behaviours": ["behaviour:shop"]
   },
   {
     "id": "tile:barn",
@@ -335,10 +440,12 @@
       "height": 4,
       "width": 3
     },
-    "attribute": "SOLID"
+    "attribute": "SOLID",
+    "behaviours": ["behaviour:bed"]
   },
   {
     "id": "tile:goat",
+    "shadow": 12,
     "name": "Goat",
     "width": 1,
     "height": 1,
@@ -415,6 +522,7 @@
       "height": 2,
       "width": 1
     },
+    "encloses": true,
     "attribute": "SOLID"
   },
   {
@@ -431,10 +539,12 @@
       "height": 2,
       "width": 1
     },
+    "encloses": true,
     "attribute": "SOLID"
   },
   {
     "id": "tile:stone",
+    "shadow": 13,
     "name": "Stone",
     "width": 1,
     "height": 1,
@@ -448,5 +558,681 @@
       "width": 1
     },
     "attribute": "SOLID"
+  },
+  {
+    "id": "tile:watered_soil",
+    "name": "Watered Soil",
+    "width": 1,
+    "height": 1,
+    "image": {
+      "type": "dynamic",
+      "spritesheet_width": 4,
+      "spritesheet_height": 4,
+      "x": 12,
+      "y": 4,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "NON_SOLID",
+    "tint": [140, 110, 110],
+    "bitmask_group": "farmland",
+    "behaviours": [
+      {
+        "id": "behaviour:transform",
+        "into": "tile:plowed_soil"
+      }
+    ]
+  },
+  {
+    "id": "tile:structure_part",
+    "name": "Building",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "none",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 12,
+      "y": 0,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "SOLID"
+  },
+  {
+    "id": "tile:chicken",
+    "shadow": 9,
+    "name": "Chicken",
+    "width": 1,
+    "height": 1,
+    "sheet": "items",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 3,
+      "y": 0,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:animal",
+        "name": "chicken",
+        "product": "item:egg",
+        "food": ["item:hay", "item:berry_seed", "item:berry"],
+        "pickup": "item:chicken",
+        "wander": 0.02,
+        "leave_days": 3
+      }
+    ]
+  },
+  {
+    "id": "tile:campfire",
+    "shadow": 10,
+    "name": "Campfire",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 0,
+      "y": 0,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:campfire",
+        "lit": true
+      }
+    ]
+  },
+  {
+    "id": "tile:campfire_out",
+    "shadow": 10,
+    "name": "Cold Campfire",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 1,
+      "y": 0,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:campfire",
+        "lit": false
+      }
+    ]
+  },
+  {
+    "id": "tile:sapling",
+    "shadow": 7,
+    "name": "Sapling",
+    "width": 1,
+    "height": 1,
+    "sheet": "items",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 7,
+      "y": 0,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "NON_SOLID",
+    "seasonal": true,
+    "sway": true,
+    "behaviours": [
+      {
+        "id": "behaviour:transform",
+        "into": "tile:tree",
+        "days": 5,
+        "meta_min": 0,
+        "meta_max": 1
+      }
+    ]
+  },
+  {
+    "id": "tile:mushroom",
+    "shadow": 6,
+    "name": "Mushroom",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 0,
+      "y": 3,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "NON_SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:forage",
+        "yield": "item:mushroom",
+        "yield_min": 1,
+        "yield_max": 2,
+        "regrow": 5
+      }
+    ]
+  },
+  {
+    "id": "tile:herb",
+    "shadow": 6,
+    "name": "Wild Herb",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 1,
+      "y": 3,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "NON_SOLID",
+    "seasonal": true,
+    "sway": true,
+    "behaviours": [
+      {
+        "id": "behaviour:forage",
+        "yield": "item:herb",
+        "yield_min": 1,
+        "yield_max": 2,
+        "regrow": 4
+      }
+    ]
+  },
+  {
+    "id": "tile:clam",
+    "name": "Clam",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 2,
+      "y": 3,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "NON_SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:forage",
+        "yield": "item:clam",
+        "yield_min": 1,
+        "yield_max": 1,
+        "regrow": 4
+      }
+    ]
+  },
+  {
+    "id": "tile:reeds",
+    "name": "Reeds",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 13,
+      "y": 3,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "NON_SOLID",
+    "sway": true,
+    "behaviours": [
+      {
+        "id": "behaviour:forage",
+        "yield": "item:reed",
+        "yield_min": 1,
+        "yield_max": 3,
+        "regrow": 3
+      }
+    ]
+  },
+  {
+    "id": "tile:cactus",
+    "shadow": 10,
+    "name": "Cactus",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 0,
+      "y": 4,
+      "height": 2,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:forage",
+        "yield": "item:cactus_fruit",
+        "yield_min": 1,
+        "yield_max": 2,
+        "regrow": 4
+      }
+    ]
+  },
+  {
+    "id": "tile:clay",
+    "name": "Clay",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 3,
+      "y": 3,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "NON_SOLID"
+  },
+  {
+    "id": "tile:copper_ore",
+    "shadow": 13,
+    "name": "Copper Ore",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 10,
+      "y": 3,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:breakable",
+        "tools": ["item:pickaxe", "item:copper_pickaxe", "item:iron_pickaxe"],
+        "hits": 4,
+        "energy": 4,
+        "drops": {
+          "item:copper_ore": [1, 2],
+          "item:stone": [0, 1]
+        },
+        "particles": "stone",
+        "sound": "shovel",
+        "hint": "Needs a pickaxe"
+      }
+    ]
+  },
+  {
+    "id": "tile:iron_ore",
+    "shadow": 13,
+    "name": "Iron Ore",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 11,
+      "y": 3,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:breakable",
+        "tools": ["item:copper_pickaxe", "item:iron_pickaxe"],
+        "hits": 6,
+        "energy": 5,
+        "drops": {
+          "item:iron_ore": [1, 2],
+          "item:stone": [0, 1]
+        },
+        "particles": "stone",
+        "sound": "shovel",
+        "hint": "Needs a copper pickaxe or better"
+      }
+    ]
+  },
+  {
+    "id": "tile:workbench",
+    "shadow": 14,
+    "name": "Workbench",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 6,
+      "y": 3,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:station",
+        "window": "crafting",
+        "tier": 1
+      }
+    ]
+  },
+  {
+    "id": "tile:stone_workbench",
+    "shadow": 14,
+    "name": "Stone Workbench",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 12,
+      "y": 3,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:station",
+        "window": "crafting",
+        "tier": 2
+      }
+    ]
+  },
+  {
+    "id": "tile:kiln",
+    "shadow": 14,
+    "name": "Kiln",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 1,
+      "y": 4,
+      "height": 2,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:station",
+        "window": "kiln",
+        "tier": 0
+      }
+    ]
+  },
+  {
+    "id": "tile:bed",
+    "shadow": 14,
+    "name": "Bed",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 7,
+      "y": 3,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "behaviours": ["behaviour:bed"]
+  },
+  {
+    "id": "tile:door",
+    "name": "Door",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 2,
+      "y": 4,
+      "height": 2,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "encloses": true,
+    "behaviours": [
+      {
+        "id": "behaviour:door",
+        "open": false
+      }
+    ]
+  },
+  {
+    "id": "tile:window",
+    "name": "Window",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 3,
+      "y": 4,
+      "height": 2,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "encloses": true
+  },
+  {
+    "id": "tile:brick_wall",
+    "name": "Brick Wall",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 4,
+      "y": 4,
+      "height": 2,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "encloses": true
+  },
+  {
+    "id": "tile:plank_floor",
+    "name": "Plank Floor",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 4,
+      "y": 3,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "NON_SOLID"
+  },
+  {
+    "id": "tile:brick_floor",
+    "name": "Brick Floor",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 5,
+      "y": 3,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "NON_SOLID"
+  },
+  {
+    "id": "tile:sprinkler",
+    "shadow": 8,
+    "name": "Sprinkler",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 8,
+      "y": 3,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:sprinkler",
+        "radius": 1
+      }
+    ]
+  },
+  {
+    "id": "tile:iron_sprinkler",
+    "shadow": 8,
+    "name": "Iron Sprinkler",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 8,
+      "y": 3,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "tint": [175, 185, 200],
+    "behaviours": [
+      {
+        "id": "behaviour:sprinkler",
+        "radius": 2
+      }
+    ]
+  },
+  {
+    "id": "tile:scarecrow",
+    "shadow": 10,
+    "name": "Scarecrow",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 5,
+      "y": 4,
+      "height": 2,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:scarecrow",
+        "radius": 4
+      }
+    ]
+  },
+  {
+    "id": "tile:hopper",
+    "shadow": 12,
+    "name": "Egg Hopper",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 9,
+      "y": 3,
+      "height": 1,
+      "width": 1
+    },
+    "attribute": "SOLID",
+    "behaviours": [
+      {
+        "id": "behaviour:hopper",
+        "item": "item:egg",
+        "radius": 4
+      }
+    ]
+  },
+  {
+    "id": "tile:door_open",
+    "name": "Open Door",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 6,
+      "y": 4,
+      "height": 2,
+      "width": 1
+    },
+    "attribute": "NON_SOLID",
+    "encloses": true,
+    "behaviours": [
+      {
+        "id": "behaviour:door",
+        "open": true
+      }
+    ]
   }
 ]

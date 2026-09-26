@@ -24,7 +24,16 @@ class Chunk {
    * @param index_x - Chunk x index in chunk coordinates
    * @param index_y - Chunk y index in chunk coordinates
    */
-  Chunk(int index_x, int index_y);
+  Chunk(int index_x, int index_y, bool generate_tiles = true);
+
+  Chunk(const Chunk&) = delete;
+  Chunk& operator=(const Chunk&) = delete;
+
+  /**
+   * @brief Destroy the Chunk object, unregistering drawn sprites
+   *
+   */
+  ~Chunk();
 
   int getXIndex() const;
   int getYIndex() const;
@@ -96,10 +105,24 @@ class Chunk {
   void setDrawEnabled(bool enabled);
 
   /**
-   * @brief Update chunk
+   * @brief All tiles, indexed by x + y * CHUNK_SIZE + z * CHUNK_SIZE^2
    *
    */
-  void tick();
+  const std::array<std::shared_ptr<Tile>,
+                   CHUNK_SIZE * CHUNK_SIZE * CHUNK_LAYERS>&
+  getTiles() const {
+    return tiles;
+  }
+
+  /**
+   * @brief Items lying in the chunk
+   *
+   */
+  const std::vector<std::shared_ptr<MapItem>>& getItems() const {
+    return items;
+  }
+
+  bool isDrawing() const { return is_drawing; }
 
   /**
    * @brief Seed for random number generation

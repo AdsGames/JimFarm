@@ -1,22 +1,154 @@
 #include "World.h"
 
-#include <iostream>
-// #include <sol/sol.hpp>
+#include <algorithm>
+#include <array>
+#include <chrono>
+#include <cmath>
+#include <format>
+#include <limits>
 
 #include "Graphics.h"
+#include "behaviours/TileBehaviour.h"
 #include "manager/BehaviourTypeManager.h"
 #include "manager/InterfaceTypeManager.h"
 #include "manager/ItemTypeManager.h"
+#include "manager/RecipeManager.h"
 #include "manager/SoundManager.h"
 #include "manager/TileTypeManager.h"
-#include "manager/sound_defs.h"
+#include "utility/Fonts.h"
 #include "utility/Tools.h"
+
+namespace {
+// Starter farm size in tiles
+constexpr int FARM_WIDTH = 24;
+constexpr int FARM_HEIGHT = 18;
+
+// Light buffer is a quarter of the viewport, it is scaled up smoothly
+constexpr int LIGHT_SCALE = 4;
+
+// Survival rates, per game minute
+constexpr float HUNGER_RATE = 0.06F;
+constexpr float THIRST_RATE = 0.08F;
+constexpr float COLD_THRESHOLD = 8.0F;
+constexpr float HOT_THRESHOLD = 28.0F;
+constexpr float CHILL_RATE = 0.02F;
+constexpr float WARM_UP_RATE = 0.3F;
+constexpr float STARVE_DAMAGE = 0.1F;
+constexpr float THIRST_DAMAGE = 0.15F;
+constexpr float FREEZE_DAMAGE = 0.25F;
+constexpr float HEAL_RATE = 0.03F;
+constexpr float WARNING_LEVEL = 25.0F;
+
+constexpr int FIRST_WOLF_DAY = 2;
+constexpr int MAX_WOLVES = 6;
+constexpr int MAX_WILDLIFE = 4;
+
+// Rooms are warm and dry
+constexpr float INDOOR_WARMTH = 12.0F;
+
+// Roof sprite in the placeholder sheet
+constexpr int ROOF_X = 4;
+constexpr int ROOF_Y = 1;
+
+// Light gradient texture size in pixels
+constexpr int LIGHT_GRADIENT_SIZE = 64;
+
+// Ambient light, the map is multiplied by it
+const asw::Color DAY_LIGHT(255, 255, 255);
+const asw::Color GOLDEN_LIGHT(255, 180, 120);
+const asw::Color OVERCAST_LIGHT(190, 195, 210);
+const asw::Color NIGHT_LIGHT(50, 58, 110);
+
+// Lights, added to the ambient light
+const asw::Color LANTERN_LIGHT(255, 225, 180);
+const asw::Color FIRE_LIGHT(255, 130, 40);
+
+// Golden hour lengths in game minutes
+constexpr float DAWN_MINUTES = 120.0F;
+constexpr float EVENING_MINUTES = 90.0F;
+
+// Light strengths at full night
+constexpr float LANTERN_STRENGTH = 0.55F;
+constexpr float FIRE_STRENGTH = 0.9F;
+
+// Share of the fire light also added straight onto the screen at night
+constexpr float FIRE_GLOW = 0.35F;
+
+float smoothstep(float edge_0, float edge_1, float value) {
+  const float t = std::clamp((value - edge_0) / (edge_1 - edge_0), 0.0F, 1.0F);
+  return t * t * (3.0F - 2.0F * t);
+}
+
+asw::Color mix(const asw::Color& from, const asw::Color& to, float amount) {
+  auto channel = [&](uint8_t a, uint8_t b) {
+    return static_cast<uint8_t>(static_cast<float>(a) +
+                                (static_cast<float>(b) - a) * amount);
+  };
+  return asw::Color(channel(from.r, to.r), channel(from.g, to.g),
+                    channel(from.b, to.b));
+}
+
+// Golden after sunrise and before dusk, blue at night, grey when overcast
+asw::Color ambientLight(const GameState& state) {
+  const float minutes = state.getMinutes();
+  const float dawn =
+      1.0F - smoothstep(DAY_START_MINUTES, DAY_START_MINUTES + DAWN_MINUTES,
+                        minutes);
+  const float evening =
+      smoothstep(DUSK_MINUTES - EVENING_MINUTES, DUSK_MINUTES, minutes);
+
+  auto light = mix(DAY_LIGHT, GOLDEN_LIGHT, std::max(dawn, evening));
+
+  if (state.getWeather() != Weather::Sunny) {
+    light = mix(light, OVERCAST_LIGHT, 0.8F);
+  }
+
+  return mix(light, NIGHT_LIGHT, state.darkness());
+}
+
+// Seconds since start, drives the fire flicker
+float flickerClock() {
+  static const auto start = std::chrono::steady_clock::now();
+  return std::chrono::duration<float>(std::chrono::steady_clock::now() - start)
+      .count();
+}
+
+// White circle, opaque in the middle and clear at the edge
+asw::Texture makeLightGradient() {
+  auto texture = asw::assets::create_radial_gradient(
+      LIGHT_GRADIENT_SIZE, asw::Color(255, 255, 255, 255),
+      asw::Color(255, 255, 255, 0));
+  asw::draw::set_blend_mode(texture, asw::BlendMode::Add);
+  return texture;
+}
+
+// Seconds a rain splash stays on screen
+constexpr float SPLASH_LIFE = 0.3F;
+
+float clampStat(float value) {
+  return std::clamp(value, 0.0F, MAX_STAT);
+}
+
+void setStat(float& stat, float change) {
+  stat = clampStat(stat + change);
+}
+}  // namespace
 
 /************
  * TILE MAP *
  ************/
 World::World() {
   resetCamera();
+
+  // Items thrown out of windows land next to the player, not under them
+  hud.setDropHandler([this](const Item& item, int count) {
+    const auto at = openTileNear(player_tile);
+    for (int i = 0; i < count; i++) {
+      tile_map.placeItemAt(
+          std::make_shared<Item>(item.getType().getId(), item.getMeta()), at);
+    }
+    SoundManager::play("pickup");
+  });
 }
 
 void World::resetCamera() {
@@ -39,67 +171,22 @@ void World::resetCamera() {
 }
 
 /*
- * IMAGES
+ * DATA
  */
-// Draw bottom tiles
-void World::draw() {
-  // Clear buffer
-  SDL_SetRenderTarget(asw::display::get_renderer(), map_buffer.get());
-
-  // Drawable
-  Graphics::Instance()->draw(camera);
-
-  SDL_SetRenderTarget(asw::display::get_renderer(), nullptr);
-
-  SDL_SetTextureBlendMode(map_buffer.get(), SDL_BLENDMODE_BLEND);
-
-  // Draw buffer
-  asw::draw::stretch_sprite_blit(
-      map_buffer, asw::Quadf(0, 0, camera.getSize().x, camera.getSize().y),
-      asw::Quadf(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT));
-
-  // Draw temperature indicator
-  const char temp = tile_map.getTemperatureAt(camera.getCenter());
-  const char r_val = (temp > 0) ? (temp / 2) : 0;
-  const char b_val = (temp < 0) ? (temp / 2 * -1) : 0;
-
-  SDL_SetRenderTarget(asw::display::get_renderer(), overlay_buffer.get());
-
-  if (r_val > 0) {
-    asw::draw::rect_fill(asw::Quadf(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT),
-                         asw::Color(255, 0, 0, r_val));
+void World::loadData() {
+  static bool loaded = false;
+  if (loaded) {
+    return;
   }
-  if (b_val > 0) {
-    asw::draw::rect_fill(asw::Quadf(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT),
-                         asw::Color(0, 0, 255, b_val));
-  }
+  loaded = true;
 
-  SDL_SetRenderTarget(asw::display::get_renderer(), nullptr);
-
-  SDL_SetTextureBlendMode(overlay_buffer.get(), SDL_BLENDMODE_BLEND);
-
-  asw::draw::sprite(overlay_buffer, asw::Vec2f(0, 0));
-
-  // Draw hud
-  if (hud.isOpen()) {
-    SDL_SetRenderTarget(asw::display::get_renderer(), nullptr);
-    SDL_SetRenderDrawBlendMode(asw::display::get_renderer(),
-                               SDL_BLENDMODE_BLEND);
-    asw::draw::rect_fill(asw::Quadf(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT),
-                         asw::Color(0, 0, 0, 64));
-    hud.draw();
-  }
-
-  // Message system
-  map_messages.draw(5, 145);
-}
-
-// Load images
-void World::loadImages() {
-  TileTypeManager::sprite_sheet_tiles =
-      asw::assets::load_texture("assets/images/tiles.png");
-  ItemTypeManager::sprite_sheet_items =
-      asw::assets::load_texture("assets/images/items.png");
+  TileTypeManager::addSheet("tiles",
+                            asw::assets::load_texture("assets/images/tiles.png"));
+  TileTypeManager::addSheet("items",
+                            asw::assets::load_texture("assets/images/items.png"));
+  TileTypeManager::addSheet(
+      "placeholders",
+      asw::assets::load_texture("assets/images/placeholders.png"));
 
   BehaviourTypeManager::loadBehaviours();
 
@@ -123,232 +210,1971 @@ void World::loadImages() {
     asw::util::abort_on_error("Could not load assets/data/sounds.json");
   }
 
-  // Create map buffer
-  map_buffer = asw::assets::create_texture(
-      static_cast<int>(VIEWPORT_WIDTH * VIEWPORT_MAX_ZOOM),
-      static_cast<int>(VIEWPORT_HEIGHT * VIEWPORT_MAX_ZOOM));
+  asw::log::info("Loading assets/data/recipes.json");
+  if (RecipeManager::loadRecipes("assets/data/recipes.json")) {
+    asw::util::abort_on_error("Could not load assets/data/recipes.json");
+  }
 
-  overlay_buffer = asw::assets::create_texture(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+  Creature::loadImages();
+}
 
-  tile_map.generateMap(asw::Vec2<unsigned int>(8, 8));
+void World::ensureBuffers() {
+  if (!map_buffer) {
+    // Large enough for the widest (min zoom) camera view
+    map_buffer = asw::assets::create_texture(
+        static_cast<int>(VIEWPORT_WIDTH / VIEWPORT_MIN_ZOOM),
+        static_cast<int>(VIEWPORT_HEIGHT / VIEWPORT_MIN_ZOOM));
+  }
 
+  if (!light_buffer) {
+    light_buffer = asw::assets::create_texture(VIEWPORT_WIDTH / LIGHT_SCALE,
+                                               VIEWPORT_HEIGHT / LIGHT_SCALE);
+    asw::draw::set_blend_mode(light_buffer, asw::BlendMode::Modulate);
+    asw::draw::set_scale_mode(light_buffer, asw::ScaleMode::Linear);
+  }
+
+  if (!light_gradient) {
+    light_gradient = makeLightGradient();
+  }
+
+  if (!font) {
+    font = fonts::load();
+  }
+}
+
+void World::resetSession() {
+  ensureBuffers();
+  clearCreatures();
+  hud.closeAll();
+  day_events.clear();
+  summary.clear();
+  summary_open = false;
+  warp_requested = false;
+  save_requested = false;
+
+  for (const auto* name : {"inventory", "crafting", "furnace", "kiln"}) {
+    InterfaceTypeManager::getInterfaceByName(name).getInventory()->empty();
+  }
+
+  rooms_ready = false;
+  discovery_primed = false;
+}
+
+void World::newGame() {
+  resetSession();
+  state = GameState();
+
+  tile_map.clearMap();
+  tile_map.generateMap(asw::Vec2<unsigned int>(WORLD_CHUNKS, WORLD_CHUNKS));
+  setupFarm();
   resetCamera();
+  updateOrder();
+
+  summary = {
+      "Welcome to JimFarm!",
+      "",
+      std::format("Goal: earn ${} by the end of Spring", GOAL_COINS),
+      "Till soil, plant seeds, water them each day.",
+      "Sell crops at the store, sleep in the barn.",
+      "",
+      "Eat, drink and stay warm to survive.",
+      "Wolves hunt at night. Campfires keep them away.",
+      "",
+      "Press H for controls",
+  };
+  summary_open = true;
+}
+
+nlohmann::json World::toJson() const {
+  return {{"state", state.toJson()}, {"map", tile_map.toJson()}};
+}
+
+void World::fromJson(const nlohmann::json& data) {
+  resetSession();
+  state = GameState();
+  state.fromJson(data["state"]);
+  tile_map.fromJson(data["map"]);
+  resetCamera();
+}
+
+/*
+ * FARM
+ */
+asw::Vec2i World::findFarmLocation() {
+  asw::Vec2i best_pos(2, 2);
+  int best_score = std::numeric_limits<int>::max();
+
+  for (int y = 2; y + FARM_HEIGHT + 2 < tile_map.getHeight(); y += 4) {
+    for (int x = 2; x + FARM_WIDTH + 2 < tile_map.getWidth(); x += 4) {
+      int score = 0;
+
+      // Sample every other tile, water and rock are hard to farm
+      for (int dx = 0; dx < FARM_WIDTH; dx += 2) {
+        for (int dy = 0; dy < FARM_HEIGHT; dy += 2) {
+          const auto at = asw::Vec2i(x + dx, y + dy);
+          const auto top = tile_map.getTileAt(at, LAYER_FOREGROUND);
+          if (top && (top->getType().getId() == "tile:water" ||
+                      top->getType().getId() == "tile:stone_wall")) {
+            score += 10;
+          }
+
+          // Mild climate suits most crops
+          score += std::abs(tile_map.getTemperatureAt(at) - 12) / 4;
+        }
+      }
+
+      if (score < best_score) {
+        best_score = score;
+        best_pos = asw::Vec2i(x, y);
+      }
+    }
+  }
+
+  return best_pos;
+}
+
+void World::setupFarm() {
+  const auto origin = findFarmLocation();
+
+  auto set = [&](const asw::Vec2i& offset, int z, const std::string& id,
+                 unsigned char meta = 0) {
+    const auto at = origin + offset;
+    if (auto existing = tile_map.getTileAt(at, z)) {
+      tile_map.removeTile(existing);
+    }
+    if (!id.empty()) {
+      tile_map.placeTile(std::make_shared<Tile>(id, at * TILE_SIZE, z, meta));
+    }
+  };
+
+  // Clear to grass
+  for (int x = 0; x < FARM_WIDTH; x++) {
+    for (int y = 0; y < FARM_HEIGHT; y++) {
+      set(asw::Vec2i(x, y), LAYER_FOREGROUND, "");
+      set(asw::Vec2i(x, y), LAYER_MIDGROUND, "tile:grass");
+      set(asw::Vec2i(x, y), LAYER_BACKGROUND, "tile:soil");
+    }
+  }
+  tile_map.clearItems(origin,
+                      origin + asw::Vec2i(FARM_WIDTH - 1, FARM_HEIGHT - 1));
+
+  // Road
+  for (int x = 1; x < FARM_WIDTH - 1; x++) {
+    set(asw::Vec2i(x, 7), LAYER_MIDGROUND, "tile:path");
+  }
+
+  // Barn is home, the store buys and sells
+  tile_map.placeStructure("tile:barn", origin + asw::Vec2i(3, 6));
+  tile_map.placeStructure("tile:store", origin + asw::Vec2i(18, 6));
+
+  // Well, fill the watering can on the stones in front of it
+  set(asw::Vec2i(11, 5), LAYER_FOREGROUND, "tile:well");
+  for (int x = 10; x <= 12; x++) {
+    set(asw::Vec2i(x, 6), LAYER_MIDGROUND, "tile:well_path");
+  }
+
+  // Field, some of it ready to plant
+  for (int x = 5; x <= 8; x++) {
+    for (int y = 10; y <= 11; y++) {
+      set(asw::Vec2i(x, y), LAYER_MIDGROUND, "tile:plowed_soil");
+    }
+  }
+
+  // Campfire
+  set(asw::Vec2i(14, 10), LAYER_FOREGROUND, "tile:campfire", 200);
+
+  // Chicken pen
+  for (int x = 16; x <= 22; x++) {
+    set(asw::Vec2i(x, 11), LAYER_FOREGROUND, "tile:fence");
+    set(asw::Vec2i(x, 16), LAYER_FOREGROUND, "tile:fence");
+  }
+  for (int y = 12; y <= 15; y++) {
+    set(asw::Vec2i(16, y), LAYER_FOREGROUND, "tile:fence");
+    set(asw::Vec2i(22, y), LAYER_FOREGROUND, "tile:fence");
+  }
+  set(asw::Vec2i(19, 11), LAYER_FOREGROUND, "tile:fence_door");
+
+  state.home = origin + asw::Vec2i(4, 7);
+}
+
+/*
+ * IMAGES
+ */
+// Draw bottom tiles
+void World::draw() {
+  // Clear buffer
+  asw::display::set_render_target(map_buffer);
+
+  // Drawable
+  Graphics::Instance().draw(camera);
+  drawRoofs();
+  drawWeapons();
+  action_particles.draw(camera);
+  floating_texts.draw(font, camera);
+
+  asw::display::reset_render_target();
+
+  asw::draw::set_blend_mode(map_buffer, asw::BlendMode::Blend);
+
+  // Draw buffer
+  asw::draw::stretch_sprite_blit(
+      map_buffer, asw::Quadf(0, 0, camera.getSize().x, camera.getSize().y),
+      asw::Quadf(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT));
+
+  // Draw temperature indicator
+  const char temp = tile_map.getTemperatureAt(camera.getCenter() / TILE_SIZE);
+  const char r_val = (temp > 0) ? (temp / 2) : 0;
+  const char b_val = (temp < 0) ? (temp / 2 * -1) : 0;
+
+  asw::display::set_blend_mode(asw::BlendMode::Blend);
+
+  if (r_val > 0) {
+    asw::draw::rect_fill(asw::Quadf(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT),
+                         asw::Color(255, 0, 0, r_val));
+  }
+  if (b_val > 0) {
+    asw::draw::rect_fill(asw::Quadf(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT),
+                         asw::Color(0, 0, 255, b_val));
+  }
+
+  // Night
+  drawLighting();
+
+  // Rain and snow
+  asw::display::set_blend_mode(asw::BlendMode::Blend);
+
+  // Light fog while raining, slowly pulsing
+  if (state.getWeather() == Weather::Rain) {
+    const float pulse = 0.5F + 0.5F * std::sin(weather_time * 0.35F);
+    const auto fog_alpha = static_cast<unsigned char>(20.0F + 14.0F * pulse);
+    asw::draw::rect_fill(asw::Quadf(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT),
+                         asw::Color(170, 185, 205, fog_alpha));
+  }
+
+  for (auto const& p : particles) {
+    if (!p.snow) {
+      // Streak slants with the wind, 0.3 px across per px down
+      asw::draw::line(p.pos,
+                      asw::Vec2f(p.pos.x - p.length * 0.3F, p.pos.y + p.length),
+                      asw::Color(160, 180, 255, p.alpha));
+    } else {
+      asw::draw::rect_fill(asw::Quadf(p.pos.x, p.pos.y, p.size, p.size),
+                           asw::Color(255, 255, 255, 200));
+    }
+  }
+
+  // Splashes, a ring that grows and fades with two droplets
+  for (auto const& s : splashes) {
+    const float t = 1.0F - s.life / SPLASH_LIFE;
+    const auto alpha = static_cast<unsigned char>(150.0F * (1.0F - t));
+    const asw::Color color(170, 190, 255, alpha);
+    const float spread = 1.0F + 4.0F * t;
+
+    asw::draw::circle(s.pos, spread, color);
+    asw::draw::point(
+        asw::Vec2f(s.pos.x - spread - 1.0F, s.pos.y - 2.0F - 3.0F * t), color);
+    asw::draw::point(
+        asw::Vec2f(s.pos.x + spread + 1.0F, s.pos.y - 2.0F - 3.0F * t), color);
+  }
+
+  // Dim map while hud is open, hud itself is drawn in the ui pass
+  if (hud.isOpen()) {
+    asw::draw::rect_fill(asw::Quadf(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT),
+                         asw::Color(0, 0, 0, 64));
+  }
+}
+
+void World::drawLighting() {
+  const auto ambient = ambientLight(state);
+
+  // Full daylight leaves the map as it is
+  if (ambient.r == 255 && ambient.g == 255 && ambient.b == 255) {
+    return;
+  }
+
+  // Lights only show once it gets dark
+  const float dark = state.darkness();
+  const float zoom = camera.getZoom();
+  const auto cam = camera.getPosition();
+  const float seconds = flickerClock();
+
+  // Screen area of a light centred on world pixels, scale is 1 for the
+  // screen and less for the buffer
+  auto lightQuadAt = [&](const asw::Vec2f& centre, float radius_tiles,
+                         float scale) {
+    const float x = (centre.x - static_cast<float>(cam.x)) * zoom * scale;
+    const float y = (centre.y - static_cast<float>(cam.y)) * zoom * scale;
+    const float radius = radius_tiles * TILE_SIZE * zoom * scale;
+    return asw::Quadf(x - radius, y - radius, radius * 2.0F, radius * 2.0F);
+  };
+
+  auto lightQuad = [&](const asw::Vec2i& tile, float radius_tiles,
+                       float scale) {
+    return lightQuadAt(
+        asw::Vec2f(tile.x * TILE_SIZE + TILE_SIZE / 2.0F,
+                   tile.y * TILE_SIZE + TILE_SIZE / 2.0F),
+        radius_tiles, scale);
+  };
+
+  // -1 to 1, each fire out of step with the others
+  auto flicker = [&](const asw::Vec2i& tile) {
+    return std::sin(seconds * 9.0F + tile.x * 1.7F) * 0.6F +
+           std::sin(seconds * 23.0F + tile.y * 2.3F) * 0.4F;
+  };
+
+  auto light = [&](const asw::Quadf& area, const asw::Color& color,
+                   float strength) {
+    asw::draw::set_tint(light_gradient, color);
+    asw::draw::set_alpha(light_gradient, std::clamp(strength, 0.0F, 1.0F));
+    asw::draw::stretch_sprite(light_gradient, area);
+  };
+
+  // Light map: ambient colour, then lights added on top
+  asw::display::set_render_target(light_buffer);
+  asw::display::clear(ambient);
+
+  const float buffer_scale = 1.0F / LIGHT_SCALE;
+
+  // Player carries a small lantern
+  light(lightQuadAt(lantern_pos, 3.5F, buffer_scale), LANTERN_LIGHT,
+        dark * LANTERN_STRENGTH);
+
+  for (auto const& pos : lights) {
+    const float f = flicker(pos);
+    light(lightQuad(pos, (CAMPFIRE_RADIUS + 2.0F) * (1.0F + 0.04F * f),
+                    buffer_scale),
+          FIRE_LIGHT, dark * FIRE_STRENGTH * (0.92F + 0.08F * f));
+  }
+
+  asw::display::reset_render_target();
+  asw::display::set_blend_mode(asw::BlendMode::Blend);
+
+  // Multiply the map by the light map
+  asw::draw::stretch_sprite(light_buffer,
+                            asw::Quadf(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT));
+
+  // Fires also glow, so they look warm and not only less dark
+  for (auto const& pos : lights) {
+    const float f = flicker(pos);
+    light(lightQuad(pos, CAMPFIRE_RADIUS * 0.6F * (1.0F + 0.06F * f), 1.0F),
+          FIRE_LIGHT, dark * FIRE_GLOW * (0.85F + 0.15F * f));
+  }
+
+  asw::draw::set_tint(light_gradient, asw::color::white);
+  asw::draw::set_alpha(light_gradient, 1.0F);
 }
 
 /*
  * MAP
  */
-// Interact with
-void World::interact(const asw::Vec2i& inter_pos,
-                     std::shared_ptr<Item> inHand) {
-  auto tile_pos = inter_pos / TILE_SIZE;
+bool World::actionMatches(const ItemAction& action,
+                          const asw::Vec2i& tile_pos,
+                          const ItemStack& held) {
+  if (!tile_map.inBounds(tile_pos)) {
+    return false;
+  }
 
-  std::shared_ptr<Tile> tile_f = tile_map.getTileAt(tile_pos, LAYER_FOREGROUND);
-  std::shared_ptr<Tile> tile_m = tile_map.getTileAt(tile_pos, LAYER_MIDGROUND);
-  std::shared_ptr<Tile> tile_b = tile_map.getTileAt(tile_pos, LAYER_BACKGROUND);
+  const auto item = held.getItem();
+  const int meta = item ? item->getMeta() : 0;
 
-  // Hoe
-  if (inHand->getType().getId() == "item:hoe") {
-    if (tile_m && !tile_f) {
-      if (tile_m->getType().getId() == "tile:grass") {
-        auto plowed_tile = std::make_shared<Tile>("tile:plowed_soil", inter_pos,
-                                                  LAYER_MIDGROUND);
+  if (action.consume && !item) {
+    return false;
+  }
+  if (action.min_meta >= 0 && meta < action.min_meta) {
+    return false;
+  }
+  if (action.max_meta >= 0 && meta > action.max_meta) {
+    return false;
+  }
 
-        tile_map.removeTile(tile_m);
-        tile_map.placeTile(plowed_tile);
+  if (action.layer >= 0) {
+    const auto tile = tile_map.getTileAt(tile_pos, action.layer);
 
-        SoundManager::play(SOUND_HOE);
-      } else if (tile_m->getType().getId() == "tile:soil") {
-        auto plowed_tile = std::make_shared<Tile>("tile:plowed_soil", inter_pos,
-                                                  LAYER_MIDGROUND);
-
-        tile_map.removeTile(tile_m);
-        tile_map.placeTile(plowed_tile);
-
-        SoundManager::play(SOUND_HOE);
-      } else {
-        SoundManager::play(SOUND_ERROR);
+    if (action.empty) {
+      if (tile) {
+        return false;
       }
     } else {
-      SoundManager::play(SOUND_ERROR);
-    }
-  }
-  // Scythe
-  else if (inHand->getType().getId() == "item:scythe") {
-    if (tile_f && tile_f->getType().getId() == "tile:dense_grass") {
-      tile_map.removeTile(tile_f);
+      if (!tile) {
+        return false;
+      }
 
-      auto hay_item = std::make_shared<Item>("item:hay", 0);
-      tile_map.placeItemAt(hay_item, tile_pos);
-      SoundManager::play(SOUND_SCYTHE);
-    } else {
-      SoundManager::play(SOUND_ERROR);
+      const auto& id = tile->getType().getId();
+      const bool listed = std::ranges::any_of(action.tiles, [&](auto& t) {
+        return t == "*" || t == id;
+      });
+      if (!listed) {
+        return false;
+      }
     }
   }
-  // Berry
-  else if (inHand->getType().getId() == "item:berry_seed") {
-    if (tile_m && tile_m->getType().getId() == "tile:plowed_soil" && !tile_f) {
-      tile_map.placeTile(
-          std::make_shared<Tile>("tile:berry", inter_pos, LAYER_FOREGROUND));
-    } else {
-      SoundManager::play(SOUND_ERROR);
+
+  for (const int layer : action.requires_empty) {
+    if (tile_map.getTileAt(tile_pos, layer)) {
+      return false;
     }
   }
-  // Tomato
-  else if (inHand->getType().getId() == "item:tomato_seed") {
-    if (tile_m && tile_m->getType().getId() == "tile:plowed_soil" && !tile_f) {
-      tile_map.placeTile(
-          std::make_shared<Tile>("tile:tomato", inter_pos, LAYER_FOREGROUND));
-    } else {
-      SoundManager::play(SOUND_ERROR);
+
+  for (const int layer : action.requires_present) {
+    if (!tile_map.getTileAt(tile_pos, layer)) {
+      return false;
     }
   }
-  // Carrot
-  else if (inHand->getType().getId() == "item:carrot_seed") {
-    if (tile_m && tile_m->getType().getId() == "tile:plowed_soil" && !tile_f) {
-      tile_map.placeTile(
-          std::make_shared<Tile>("tile:carrot", inter_pos, LAYER_FOREGROUND));
-    } else {
-      SoundManager::play(SOUND_ERROR);
+
+  return true;
+}
+
+bool World::applyAction(const ItemAction& action,
+                        const asw::Vec2i& tile_pos,
+                        ItemStack& held) {
+  if (action.has_replace && action.layer >= 0) {
+    if (auto tile = tile_map.getTileAt(tile_pos, action.layer)) {
+      tile_map.replaceTile(tile, action.replace, action.replace_meta);
+    } else if (!action.replace.empty()) {
+      tile_map.placeTile(std::make_shared<Tile>(action.replace,
+                                                tile_pos * TILE_SIZE,
+                                                action.layer,
+                                                action.replace_meta));
     }
   }
-  // Lavender
-  else if (inHand->getType().getId() == "item:lavender_seed") {
-    if (tile_m && tile_m->getType().getId() == "tile:plowed_soil" && !tile_f) {
-      tile_map.placeTile(
-          std::make_shared<Tile>("tile:lavender", inter_pos, LAYER_FOREGROUND));
-    } else {
-      SoundManager::play(SOUND_ERROR);
+
+  if (!action.place.empty() &&
+      !tile_map.getTileAt(tile_pos, action.place_layer)) {
+    tile_map.placeTile(std::make_shared<Tile>(action.place,
+                                              tile_pos * TILE_SIZE,
+                                              action.place_layer,
+                                              action.place_meta));
+  }
+
+  for (auto const& drop : action.drops) {
+    dropItems(drop, tile_pos);
+  }
+
+  for (auto const& give : action.gives) {
+    giveItem(give);
+  }
+
+  if (auto item = held.getItem()) {
+    if (action.set_meta >= 0) {
+      item->setMeta(static_cast<unsigned char>(action.set_meta));
+    }
+    if (action.add_meta != 0) {
+      item->setMeta(static_cast<unsigned char>(
+          std::clamp(item->getMeta() + action.add_meta, 0, 255)));
     }
   }
-  // Watering can
-  else if (inHand->getType().getId() == "item:watering_can") {
-    if (tile_m && tile_m->getType().getId() == "tile:well_path") {
-      map_messages.pushMessage("Watering can filled");
-      inHand->setMeta(8);
-      SoundManager::play(SOUND_WATER_FILL);
-    } else if (inHand->getMeta() > 0) {
-      inHand->changeMeta(-1);
-      map_messages.pushMessage("Watered");
-      SoundManager::play(SOUND_WATER_POUR);
-    } else {
-      map_messages.pushMessage("Out of water");
-      SoundManager::play(SOUND_ERROR);
+
+  if (action.consume) {
+    held.remove(1);
+  }
+
+  setStat(state.hunger, action.hunger);
+  setStat(state.thirst, action.thirst);
+  setStat(state.health, action.health);
+
+  return true;
+}
+
+namespace {
+constexpr float SWING_SHOW_TIME = 0.15F;
+constexpr float SWING_ENERGY = 2.0F;
+constexpr float THROW_SPEED = 240.0F;
+constexpr float THROW_MIN_RANGE = 3.0F;
+constexpr float THROW_MAX_RANGE = 8.0F;
+constexpr float HIT_RADIUS = 10.0F;
+
+asw::Vec2f centreOf(const asw::Vec2i& pos) {
+  return asw::Vec2f(pos.x + TILE_SIZE / 2.0F, pos.y + TILE_SIZE / 2.0F);
+}
+
+float lengthOf(const asw::Vec2f& v) {
+  return std::sqrt(v.x * v.x + v.y * v.y);
+}
+
+asw::Vec2f unit(const asw::Vec2f& v) {
+  const float len = lengthOf(v);
+  return len > 0.001F ? asw::Vec2f(v.x / len, v.y / len) : asw::Vec2f(0, 1);
+}
+}  // namespace
+
+std::shared_ptr<Creature> World::swingTarget(const asw::Vec2i& player_pos,
+                                             const asw::Vec2i& target,
+                                             const ItemInfo& info) const {
+  const auto from = centreOf(player_pos);
+  const auto dir = unit(centreOf(target) - from);
+  const float reach = info.reach * TILE_SIZE + TILE_SIZE / 2.0F;
+  const float min_cos = std::cos(info.arc / 2.0F * 3.14159F / 180.0F);
+
+  std::shared_ptr<Creature> best = nullptr;
+  float best_distance = reach;
+
+  for (auto const& creature : creatures) {
+    if (creature->isGone()) {
+      continue;
+    }
+
+    const auto offset = centreOf(creature->getPosition()) - from;
+    const float distance = lengthOf(offset);
+
+    // Point blank always hits, else it must be inside the arc
+    const bool in_arc =
+        distance < TILE_SIZE ||
+        (offset.x * dir.x + offset.y * dir.y) / distance >= min_cos;
+
+    if (distance <= best_distance && in_arc) {
+      best_distance = distance;
+      best = creature;
     }
   }
-  // Axe
-  else if (inHand->getType().getId() == "item:axe") {
-    if (tile_f && tile_f->getType().getId() == "tile:tree") {
-      tile_map.removeTile(tile_f);
-      tile_map.placeTile(
-          std::make_shared<Tile>("tile:stump", inter_pos, LAYER_FOREGROUND));
-      tile_map.placeItemAt(std::make_shared<Item>("item:stick", 0), tile_pos);
-      tile_map.placeItemAt(std::make_shared<Item>("item:stick", 0), tile_pos);
-      tile_map.placeItemAt(std::make_shared<Item>("item:wood", 0), tile_pos);
-      SoundManager::play(SOUND_AXE);
-    } else {
-      SoundManager::play(SOUND_ERROR);
-    }
+
+  return best;
+}
+
+void World::hurtCreature(const std::shared_ptr<Creature>& creature,
+                         int damage,
+                         const asw::Vec2i& from) {
+  SoundManager::play("axe");
+
+  floating_texts.add(std::to_string(damage),
+                     asw::Vec2f(creature->getPosition().x + TILE_SIZE / 2.0F,
+                                creature->getPosition().y - 2.0F),
+                     asw::Color(255, 220, 90));
+
+  if (!creature->hit(*this, damage, from)) {
+    return;
   }
-  // Shovel
-  else if (inHand->getType().getId() == "item:shovel") {
-    if (tile_f && (tile_f->getType().getId() == "tile:bush" ||
-                   tile_f->getType().getId() == "tile:stump")) {
-      tile_map.removeTile(tile_f);
-      SoundManager::play(SOUND_SHOVEL);
-    } else if (tile_m && tile_m->getType().getId() == "tile:grass" && !tile_f) {
-      tile_map.removeTile(tile_m);
-      tile_map.placeItemAt(std::make_shared<Item>("item:grass", 0), tile_pos);
-      SoundManager::play(SOUND_SHOVEL);
-    } else if (tile_m && tile_m->getType().getId() == "tile:sand" && !tile_f) {
-      tile_map.removeTile(tile_m);
-      tile_map.placeItemAt(std::make_shared<Item>("item:sand", 0), tile_pos);
-      SoundManager::play(SOUND_SHOVEL);
-    } else if (tile_f && (tile_f->getType().getId() == "tile:stone_wall")) {
-      tile_map.removeTile(tile_f);
-      tile_map.placeItemAt(std::make_shared<Item>("item:stone", 0), tile_pos);
-      SoundManager::play(SOUND_SHOVEL);
-    } else {
-      SoundManager::play(SOUND_ERROR);
-    }
-  }
-  // Wood Wall
-  else if (inHand->getType().getId() == "item:wood") {
-    if (!tile_f && tile_m) {
-      tile_map.placeTile(std::make_shared<Tile>("tile:wood_wall", inter_pos,
-                                                LAYER_FOREGROUND));
-      SoundManager::play(SOUND_SHOVEL);
-    } else {
-      SoundManager::play(SOUND_ERROR);
-    }
-  }
-  // Fence
-  else if (inHand->getType().getId() == "item:stick") {
-    if (!tile_f && tile_m) {
-      tile_map.placeTile(
-          std::make_shared<Tile>("tile:fence", inter_pos, LAYER_FOREGROUND));
-      SoundManager::play(SOUND_SHOVEL);
-    } else {
-      SoundManager::play(SOUND_ERROR);
-    }
-  }
-  // Place dirt
-  else if (inHand->getType().getId() == "item:grass") {
-    if (tile_b && !tile_m) {
-      tile_map.placeTile(
-          std::make_shared<Tile>("tile:grass", inter_pos, LAYER_MIDGROUND));
-      SoundManager::play(SOUND_SHOVEL);
-    } else {
-      SoundManager::play(SOUND_ERROR);
-    }
-  }
-  // Place dirt
-  else if (inHand->getType().getId() == "item:sand") {
-    if (tile_b && !tile_m) {
-      tile_map.placeTile(
-          std::make_shared<Tile>("tile:sand", inter_pos, LAYER_MIDGROUND));
-      SoundManager::play(SOUND_SHOVEL);
-    } else {
-      SoundManager::play(SOUND_ERROR);
-    }
+
+  const auto at = creature->getTile();
+  switch (creature->getKind()) {
+    case CreatureKind::Wolf:
+      dropItems("item:pelt", at);
+      state.wolves_defeated++;
+      state.notify("Wolf defeated!");
+      break;
+    case CreatureKind::Deer:
+      dropItems("item:meat", at, 2);
+      dropItems("item:hide", at);
+      state.notify("You hunted a deer");
+      break;
+    case CreatureKind::Rabbit:
+      dropItems("item:meat", at);
+      state.notify("You caught a rabbit");
+      break;
   }
 }
 
+bool World::swing(const asw::Vec2i& player_pos,
+                  const asw::Vec2i& target,
+                  ItemStack& held) {
+  const auto item = held.getItem();
+  if (!item) {
+    return false;
+  }
+
+  const auto& info = ItemTypeManager::getInfo(item->getType().getId());
+  if (info.attack <= 0) {
+    return false;
+  }
+
+  // A tool with nothing to hit works on the tile as usual
+  const auto victim = swingTarget(player_pos, target, info);
+  const bool tool = !info.actions.empty() || info.power > 0.0F;
+  if (!victim && tool) {
+    return false;
+  }
+
+  // Still recovering from the last swing
+  if (attack_cooldown > 0.0F) {
+    return true;
+  }
+
+  if (!state.useEnergy(victim ? SWING_ENERGY : SWING_ENERGY / 2.0F)) {
+    SoundManager::play("error");
+    return true;
+  }
+
+  attack_cooldown = info.cooldown;
+
+  const auto from = centreOf(player_pos);
+  last_swing = {from, unit(centreOf(target) - from), info.reach * TILE_SIZE,
+                info.arc, SWING_SHOW_TIME};
+
+  if (victim) {
+    hurtCreature(victim, info.attack, player_pos);
+  } else {
+    SoundManager::play("scythe");
+  }
+
+  return true;
+}
+
+void World::throwItem(ItemStack& held,
+                      const asw::Vec2i& player_pos,
+                      const asw::Vec2i& target,
+                      float charge) {
+  const auto item = held.getItem();
+  if (!item) {
+    return;
+  }
+
+  const auto& info = ItemTypeManager::getInfo(item->getType().getId());
+  const auto from = centreOf(player_pos);
+  const float strength = std::clamp(charge, 0.0F, 1.0F);
+
+  projectiles.push_back(
+      {item->getType().getId(), item->getMeta(), from,
+       unit(centreOf(target) - from) * THROW_SPEED, 0.0F,
+       (THROW_MIN_RANGE + (THROW_MAX_RANGE - THROW_MIN_RANGE) * strength) *
+           TILE_SIZE,
+       info.attack + 1});
+
+  held.remove(1);
+  state.useEnergy(SWING_ENERGY);
+  SoundManager::play("scythe");
+}
+
+void World::updateProjectiles(float dt) {
+  attack_cooldown = std::max(0.0F, attack_cooldown - dt);
+  last_swing.timer = std::max(0.0F, last_swing.timer - dt);
+
+  std::erase_if(projectiles, [&](Projectile& p) {
+    const auto step = p.velocity * dt;
+    const auto next = p.pos + step;
+    const auto tile = asw::Vec2i(static_cast<int>(next.x) / TILE_SIZE,
+                                 static_cast<int>(next.y) / TILE_SIZE);
+    const auto last_tile = asw::Vec2i(static_cast<int>(p.pos.x) / TILE_SIZE,
+                                      static_cast<int>(p.pos.y) / TILE_SIZE);
+
+    auto land = [&](const asw::Vec2i& at) {
+      tile_map.placeItemAt(std::make_shared<Item>(p.item_id, p.meta),
+                           tile_map.isSolidAt(at) ? openTileNear(at) : at);
+      return true;
+    };
+
+    // Hits the first creature on its way
+    for (auto const& creature : creatures) {
+      if (!creature->isGone() &&
+          lengthOf(centreOf(creature->getPosition()) - next) < HIT_RADIUS) {
+        hurtCreature(creature, p.damage,
+                     asw::Vec2i(static_cast<int>(p.pos.x) - TILE_SIZE / 2,
+                                static_cast<int>(p.pos.y) - TILE_SIZE / 2));
+        return land(creature->getTile());
+      }
+    }
+
+    // Stops at walls and the edge of the map
+    if (!tile_map.inBounds(tile) || tile_map.isSolidAt(tile)) {
+      SoundManager::play("shovel");
+      return land(last_tile);
+    }
+
+    p.pos = next;
+    p.travelled += lengthOf(step);
+    return p.travelled >= p.range && land(tile);
+  });
+}
+
+void World::drawWeapons() const {
+  const auto cam = camera.getPosition();
+  auto screen = [&](const asw::Vec2f& world_pos) {
+    return asw::Vec2f(world_pos.x - cam.x, world_pos.y - cam.y);
+  };
+
+  // Swing: a curved slash for wide weapons, one line for a thrust
+  if (last_swing.timer > 0.0F) {
+    const auto alpha = static_cast<uint8_t>(
+        220.0F * last_swing.timer / SWING_SHOW_TIME);
+    const auto color = asw::Color(255, 250, 230, alpha);
+    const float base = std::atan2(last_swing.dir.y, last_swing.dir.x);
+    const float half = last_swing.arc / 2.0F * 3.14159F / 180.0F;
+
+    auto at = [&](float angle, float radius) {
+      return screen(last_swing.from +
+                    asw::Vec2f(std::cos(angle), std::sin(angle)) * radius);
+    };
+
+    if (last_swing.arc <= 40.0F) {
+      asw::draw::line(at(base, TILE_SIZE / 2.0F), at(base, last_swing.reach),
+                      color);
+    } else {
+      constexpr int SEGMENTS = 8;
+      for (const float radius : {last_swing.reach, last_swing.reach - 3.0F}) {
+        for (int i = 0; i < SEGMENTS; i++) {
+          const float a1 = base - half + 2.0F * half * i / SEGMENTS;
+          const float a2 = base - half + 2.0F * half * (i + 1) / SEGMENTS;
+          asw::draw::line(at(a1, radius), at(a2, radius), color);
+        }
+      }
+    }
+  }
+
+  // Thrown items fly point first
+  for (auto const& p : projectiles) {
+    const auto dir = unit(p.velocity);
+    const auto tail = p.pos - dir * 10.0F;
+    asw::draw::line(screen(tail), screen(p.pos), asw::Color(140, 90, 40));
+    asw::draw::line(screen(p.pos - dir * 3.0F), screen(p.pos),
+                    asw::Color(200, 200, 210));
+  }
+}
+
+bool World::inReach(const asw::Vec2i& tile_pos,
+                    const asw::Vec2i& player_pos) const {
+  const auto player =
+      (player_pos + asw::Vec2i(TILE_SIZE / 2, TILE_SIZE / 2)) / TILE_SIZE;
+  return tile_map.inBounds(tile_pos) &&
+         std::max(std::abs(tile_pos.x - player.x),
+                  std::abs(tile_pos.y - player.y)) <= INTERACT_RANGE;
+}
+
+const ItemAction* World::matchingAction(const std::string& item_id,
+                                        const asw::Vec2i& tile_pos,
+                                        const ItemStack& held) {
+  for (auto const& action : ItemTypeManager::getInfo(item_id).actions) {
+    if (actionMatches(action, tile_pos, held)) {
+      return &action;
+    }
+  }
+  return nullptr;
+}
+
+bool World::runItemRules(const std::string& item_id,
+                         const asw::Vec2i& tile_pos,
+                         ItemStack& held) {
+  for (auto const& action : ItemTypeManager::getInfo(item_id).actions) {
+    // Centre tile first, then the rest of the area
+    std::vector<asw::Vec2i> cells;
+    for (int dx = -action.area; dx <= action.area; dx++) {
+      for (int dy = -action.area; dy <= action.area; dy++) {
+        const auto at = tile_pos + asw::Vec2i(dx, dy);
+        if (actionMatches(action, at, held)) {
+          cells.push_back(at);
+        }
+      }
+    }
+
+    if (cells.empty()) {
+      continue;
+    }
+
+    if (action.fail) {
+      SoundManager::play(action.sound.empty() ? "error" : action.sound);
+      if (!action.message.empty()) {
+        state.notify(action.message);
+      }
+      return true;
+    }
+
+    if (!state.useEnergy(action.energy)) {
+      SoundManager::play("error");
+      return true;
+    }
+
+    for (auto const& cell : cells) {
+      // Stack or meta may run out part way through an area
+      if (actionMatches(action, cell, held)) {
+        applyAction(action, cell, held);
+        burstParticles(action.particles, cell);
+      }
+    }
+
+    if (!action.sound.empty()) {
+      SoundManager::play(action.sound);
+    }
+    if (!action.message.empty()) {
+      state.notify(action.message);
+    }
+    return true;
+  }
+
+  return false;
+}
+
+void World::use(const asw::Vec2i& inter_pos,
+                const asw::Vec2i& player_pos,
+                ItemStack& held) {
+  const auto tile_pos = inter_pos / TILE_SIZE;
+
+  // Weapons swing toward the cursor, near or far
+  if (swing(player_pos, inter_pos, held)) {
+    return;
+  }
+
+  if (!inReach(tile_pos, player_pos)) {
+    if (tile_map.inBounds(tile_pos)) {
+      state.notify("Too far away");
+    }
+    return;
+  }
+
+  // Tile behaviours, top layer first
+  for (int z = LAYER_FOREGROUND; z >= static_cast<int>(LAYER_BACKGROUND);
+       z--) {
+    auto tile = tile_map.resolveStructure(tile_map.getTileAt(tile_pos, z));
+    if (!tile) {
+      continue;
+    }
+
+    for (auto const& behaviour : tile->getType().getBehaviours()) {
+      if (behaviour->onUse(*this, tile, held)) {
+        return;
+      }
+    }
+  }
+
+  // Item rules
+  const auto item = held.getItem();
+  if (item && !runItemRules(item->getType().getId(), tile_pos, held)) {
+    SoundManager::play("error");
+  }
+}
+
+InteractResult World::interact(const asw::Vec2i& inter_pos,
+                               const asw::Vec2i& player_pos,
+                               ItemStack& held) {
+  const auto tile_pos = inter_pos / TILE_SIZE;
+  const auto item = held.getItem();
+  const bool reach = inReach(tile_pos, player_pos);
+
+  if (reach) {
+    // Items lying on the tile
+    if (pickUpItems(tile_pos)) {
+      SoundManager::play("pickup");
+      return InteractResult::Handled;
+    }
+
+    // Tile behaviours, top layer first
+    for (int z = LAYER_FOREGROUND; z >= static_cast<int>(LAYER_BACKGROUND);
+         z--) {
+      auto tile = tile_map.resolveStructure(tile_map.getTileAt(tile_pos, z));
+      if (!tile) {
+        continue;
+      }
+
+      for (auto const& behaviour : tile->getType().getBehaviours()) {
+        if (behaviour->onInteract(*this, tile, held)) {
+          return InteractResult::Handled;
+        }
+      }
+    }
+
+    // Hand rules, e.g. drinking from water
+    if (runItemRules("item:hand", tile_pos, held)) {
+      return InteractResult::Handled;
+    }
+  }
+
+  // Nothing here, use the held item on yourself
+  if (item) {
+    const auto& info = ItemTypeManager::getInfo(item->getType().getId());
+    if (info.edible) {
+      return InteractResult::Eat;
+    }
+    if (info.throwable) {
+      return InteractResult::Throw;
+    }
+  }
+
+  if (!reach && tile_map.inBounds(tile_pos)) {
+    state.notify("Too far away");
+  }
+
+  return InteractResult::None;
+}
+
+HoverVerbs World::hoverVerbs(const asw::Vec2i& inter_pos,
+                             const asw::Vec2i& player_pos,
+                             const ItemStack& held) {
+  const auto tile_pos = inter_pos / TILE_SIZE;
+  const auto item = held.getItem();
+  HoverVerbs verbs;
+
+  // Held food and throwing work anywhere
+  auto self_verb = [&]() -> std::string {
+    if (!item) {
+      return "";
+    }
+    const auto& info = ItemTypeManager::getInfo(item->getType().getId());
+    if (info.edible) {
+      return info.hunger <= 0.0F && info.thirst > 0.0F ? "Drink" : "Eat";
+    }
+    return info.throwable ? "Throw" : "";
+  };
+
+  if (!inReach(tile_pos, player_pos)) {
+    if (tile_map.inBounds(tile_pos) && item) {
+      const auto& info = ItemTypeManager::getInfo(item->getType().getId());
+      if (info.attack > 0 && swingTarget(player_pos, inter_pos, info)) {
+        verbs.left = "Attack";
+      } else if (info.attack > 0 && info.actions.empty()) {
+        verbs.left = "Thrust";
+      } else {
+        verbs.left = "Too far";
+      }
+    }
+    verbs.right = self_verb();
+    return verbs;
+  }
+
+  // A weapon with something in reach attacks
+  if (item) {
+    const auto& info = ItemTypeManager::getInfo(item->getType().getId());
+    if (info.attack > 0 && swingTarget(player_pos, inter_pos, info)) {
+      verbs.left = "Attack";
+    } else if (info.attack > 0 && info.actions.empty()) {
+      verbs.left = "Thrust";
+    }
+  }
+
+  // Behaviours, top layer first
+  for (int z = LAYER_FOREGROUND; z >= static_cast<int>(LAYER_BACKGROUND);
+       z--) {
+    auto tile = tile_map.resolveStructure(tile_map.getTileAt(tile_pos, z));
+    if (!tile) {
+      continue;
+    }
+
+    for (auto const& behaviour : tile->getType().getBehaviours()) {
+      if (verbs.left.empty()) {
+        verbs.left = behaviour->useVerb(*this, tile, held);
+      }
+      if (verbs.right.empty()) {
+        verbs.right = behaviour->interactVerb(*this, tile, held);
+      }
+    }
+  }
+
+  // Item rules
+  if (verbs.left.empty() && item) {
+    if (const auto* action =
+            matchingAction(item->getType().getId(), tile_pos, held)) {
+      verbs.left = action->verb;
+    }
+  }
+
+  if (tile_map.getItemAt(tile_pos)) {
+    verbs.right = "Pick up";
+  }
+
+  if (verbs.right.empty()) {
+    if (const auto* action = matchingAction("item:hand", tile_pos, held)) {
+      verbs.right = action->verb;
+    }
+  }
+
+  if (verbs.right.empty()) {
+    verbs.right = self_verb();
+  }
+
+  return verbs;
+}
+
+void World::consume(ItemStack& held) {
+  const auto item = held.getItem();
+  if (!item) {
+    return;
+  }
+
+  const auto& info = ItemTypeManager::getInfo(item->getType().getId());
+  if (!info.edible) {
+    state.notify("You can not eat that");
+    return;
+  }
+
+  // Drinking from a container uses its meta instead of the item
+  if (info.food_uses_meta) {
+    if (item->getMeta() == 0) {
+      state.notify("It is empty");
+      SoundManager::play("error");
+      return;
+    }
+    item->setMeta(item->getMeta() - 1);
+  } else {
+    held.remove(1);
+  }
+
+  setStat(state.hunger, info.hunger);
+  setStat(state.thirst, info.thirst);
+  setStat(state.health, info.health);
+  setStat(state.warmth, info.warmth);
+  setStat(state.energy, info.hunger * 0.5F);
+
+  state.notify(info.hunger > 0 ? "Ate the " + item->getType().getName()
+                               : "Used the " + item->getType().getName());
+  SoundManager::play("egg");
+}
+
 // Update tile map
-void World::update(float dt) {
+void World::update(float dt, const asw::Vec2i& player_pos) {
   // Re-sort dynamic sprites (character position changes each frame)
-  Graphics::Instance()->prune();
+  Graphics::Instance().prune();
+
+  player_tile =
+      (player_pos + asw::Vec2i(TILE_SIZE / 2, TILE_SIZE / 2)) / TILE_SIZE;
+  lantern_pos = asw::Vec2f(static_cast<float>(player_pos.x) + TILE_SIZE / 2.0F,
+                           static_cast<float>(player_pos.y) + 4.0F);
+
+  map_messages.update(dt);
+
+  // Seasonal tint and wind sway for tiles
+  TileType::updateEnvironment(dt, state);
+
+  // Everything waits while the summary is up
+  if (summary_open) {
+    return;
+  }
 
   // Update hud
-  hud.update();
+  hud.update(state);
 
-  // Regen map
-  if (asw::input::get_key_down(asw::input::Key::R)) {
-    tile_map.clearMap();
-    tile_map.generateMap(asw::Vec2<unsigned int>(8, 8));
+  // Crafting by hand unless a station opened the window
+  if (!hud.isOpen("crafting")) {
+    state.crafting_tier = TIER_HAND;
   }
+
+  updateRooms();
+  updateDiscovery();
+
+  // Clock
+  const float before = state.getMinutes();
+  const bool out_of_time = state.advanceClock(dt);
+  updateSurvival(state.getMinutes() - before);
 
   // One game tick (20x second, 50ms)
   ticker += dt;
   if (ticker >= 0.050F) {
     ticker -= 0.050F;
 
-    // Update tile map
-    tile_map.tick(camera);
+    // Campfires register their light as they tick
+    lights.clear();
+    tile_map.tick(camera, *this);
+  }
+
+  updateCreatures(dt, player_pos);
+  floating_texts.update(dt);
+  updateProjectiles(dt);
+  action_particles.update(dt);
+
+  // Coins fly from the player whenever money comes in
+  const int total_earned = state.getTotalEarned();
+  if (last_total_earned >= 0 && total_earned > last_total_earned) {
+    burstParticles("coins", player_tile);
+  }
+  last_total_earned = total_earned;
+  updateWeather(dt);
+
+  // End of day
+  if (state.health <= 0.0F) {
+    endDay(true);
+  } else if (state.sleep_requested) {
+    endDay(false);
+  } else if (out_of_time) {
+    endDay(true);
+  }
+
+  // Messages
+  for (auto const& message : state.takeMessages()) {
+    map_messages.pushMessage(message);
   }
 
   // Zooming
   const auto zoom = camera.getZoom();
 
-  if (asw::input::get_key_down(asw::input::Key::KpPlus) &&
+  // "=" is the unshifted "+" key
+  if ((asw::input::get_key_down(asw::input::Key::KpPlus) ||
+       asw::input::get_key_down(asw::input::Key::Equals)) &&
       zoom < VIEWPORT_MAX_ZOOM) {
     camera.setZoom(zoom * 2.0f);
   }
 
-  if (asw::input::get_key_down(asw::input::Key::KpMinus) &&
+  if ((asw::input::get_key_down(asw::input::Key::KpMinus) ||
+       asw::input::get_key_down(asw::input::Key::Minus)) &&
       zoom > VIEWPORT_MIN_ZOOM) {
     camera.setZoom(zoom * 0.5f);
   }
+}
+
+/*
+ * SURVIVAL
+ */
+float World::ambientTemperature(const asw::Vec2i& tile_pos) const {
+  // Biome temperature is -64 to 64, map to roughly -9C to 33C
+  float temperature =
+      static_cast<float>(
+          const_cast<TileMap&>(tile_map).getTemperatureAt(tile_pos)) /
+          3.0F +
+      12.0F;
+
+  switch (state.getSeason()) {
+    case Season::Summer:
+      temperature += 8.0F;
+      break;
+    case Season::Fall:
+      temperature -= 3.0F;
+      break;
+    case Season::Winter:
+      temperature -= 15.0F;
+      break;
+    case Season::Spring:
+      break;
+  }
+
+  temperature -= 6.0F * state.darkness();
+
+  if (state.getWeather() == Weather::Rain) {
+    temperature -= 3.0F;
+  } else if (state.getWeather() == Weather::Snow) {
+    temperature -= 5.0F;
+  }
+
+  if (nearLitCampfire(tile_pos, CAMPFIRE_RADIUS)) {
+    temperature += 18.0F;
+  }
+
+  if (isIndoors(tile_pos)) {
+    temperature += INDOOR_WARMTH;
+  }
+
+  // Best warm item carried (e.g. coat)
+  float carried = 0.0F;
+  auto& inventory = playerInventory();
+  for (int i = 0; i < inventory.getSize(); i++) {
+    const auto item = inventory.getStack(i)->getItem();
+    if (item) {
+      carried = std::max(
+          carried,
+          ItemTypeManager::getInfo(item->getType().getId()).carry_warmth);
+    }
+  }
+
+  return temperature + carried;
+}
+
+void World::updateSurvival(float minutes) {
+  if (minutes <= 0.0F) {
+    return;
+  }
+
+  const float ambient = ambientTemperature(player_tile);
+
+  setStat(state.hunger, -HUNGER_RATE * minutes);
+  setStat(state.thirst, -THIRST_RATE * minutes *
+                            (ambient > HOT_THRESHOLD ? 2.0F : 1.0F));
+
+  if (ambient < COLD_THRESHOLD) {
+    setStat(state.warmth, -(COLD_THRESHOLD - ambient) * CHILL_RATE * minutes);
+  } else {
+    setStat(state.warmth, WARM_UP_RATE * minutes);
+  }
+
+  float damage = 0.0F;
+  if (state.hunger <= 0.0F) {
+    damage += STARVE_DAMAGE;
+  }
+  if (state.thirst <= 0.0F) {
+    damage += THIRST_DAMAGE;
+  }
+  if (state.warmth <= 0.0F) {
+    damage += FREEZE_DAMAGE;
+  }
+  setStat(state.health, -damage * minutes);
+
+  if (state.hunger > 40.0F && state.thirst > 40.0F && state.warmth > 40.0F) {
+    setStat(state.health, HEAL_RATE * minutes);
+  }
+
+  // Warn once as each stat gets low
+  auto warn = [&](float value, bool& warned, const std::string& message) {
+    if (value < WARNING_LEVEL && !warned) {
+      state.notify(message);
+      warned = true;
+    } else if (value >= WARNING_LEVEL + 10.0F) {
+      warned = false;
+    }
+  };
+
+  warn(state.hunger, warned_hunger, "You are hungry, eat something (C)");
+  warn(state.thirst, warned_thirst, "You are thirsty, drink at water or well");
+  warn(state.warmth, warned_cold, "You are freezing, find a fire");
+  warn(state.health, warned_health, "You are badly hurt!");
+}
+
+/*
+ * CREATURES
+ */
+void World::updateCreatures(float dt, const asw::Vec2i& player_pos) {
+  for (auto const& creature : creatures) {
+    creature->update(*this, player_pos, dt);
+  }
+
+  std::erase_if(creatures, [](auto const& creature) {
+    if (creature->isGone()) {
+      Graphics::Instance().remove(creature);
+      return true;
+    }
+    return false;
+  });
+
+  // Deer and rabbits by day
+  if (!state.isNight()) {
+    wildlife_timer -= dt;
+    if (wildlife_timer <= 0.0F) {
+      wildlife_timer = static_cast<float>(random(6, 12));
+      spawnWildlife();
+    }
+    return;
+  }
+
+  if (state.absoluteDay() < FIRST_WOLF_DAY) {
+    return;
+  }
+
+  spawn_timer -= dt;
+  if (spawn_timer > 0.0F) {
+    return;
+  }
+  spawn_timer = static_cast<float>(random(8, 15));
+
+  const int max_wolves =
+      std::min(MAX_WOLVES, 1 + state.absoluteDay() / DAYS_PER_SEASON * 2 +
+                               state.absoluteDay() / 5);
+  const auto wolves = std::ranges::count_if(
+      creatures, [](auto const& creature) { return creature->isHostile(); });
+  if (wolves >= max_wolves) {
+    return;
+  }
+
+  asw::Vec2i at;
+  if (findSpawnTile(at) && !nearLitCampfire(at, CAMPFIRE_RADIUS)) {
+    auto wolf = std::make_shared<Creature>(at * TILE_SIZE);
+    creatures.push_back(wolf);
+    Graphics::Instance().add(wolf, true);
+  }
+}
+
+bool World::findSpawnTile(asw::Vec2i& at) {
+  // Try a few spots out of sight
+  for (int attempt = 0; attempt < 10; attempt++) {
+    const float angle = static_cast<float>(random(0, 359)) * 3.14159F / 180.0F;
+    const float distance = static_cast<float>(random(12, 18));
+    at = player_tile + asw::Vec2i(static_cast<int>(std::cos(angle) * distance),
+                                  static_cast<int>(std::sin(angle) * distance));
+
+    if (!tile_map.inBounds(at) || tile_map.isSolidAt(at) ||
+        !tile_map.getTileAt(at, LAYER_MIDGROUND) || isIndoors(at)) {
+      continue;
+    }
+
+    const auto top = tile_map.getTileAt(at, LAYER_FOREGROUND);
+    if (top && (top->getType().getId() == "tile:water" ||
+                top->getType().getEncloses())) {
+      continue;
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
+void World::spawnWildlife() {
+  const auto grazers = std::ranges::count_if(
+      creatures, [](auto const& creature) { return !creature->isHostile(); });
+  if (grazers >= MAX_WILDLIFE) {
+    return;
+  }
+
+  asw::Vec2i at;
+  if (!findSpawnTile(at)) {
+    return;
+  }
+
+  // Deer live in woods, rabbits on open grass
+  const bool woods = findTileNear(at, 2, [](const std::shared_ptr<Tile>& t) {
+                       return t->getType().getId() == "tile:tree";
+                     }) != nullptr;
+  const auto ground = tile_map.getTileAt(at, LAYER_MIDGROUND);
+  const bool grass = ground && ground->getType().getId() == "tile:grass";
+
+  if (!woods && !grass) {
+    return;
+  }
+
+  auto animal = std::make_shared<Creature>(
+      at * TILE_SIZE, woods ? CreatureKind::Deer : CreatureKind::Rabbit);
+  creatures.push_back(animal);
+  Graphics::Instance().add(animal, true);
+}
+
+void World::clearCreatures() {
+  // Anything in flight lands where it is
+  for (auto const& p : projectiles) {
+    const auto at = asw::Vec2i(static_cast<int>(p.pos.x) / TILE_SIZE,
+                               static_cast<int>(p.pos.y) / TILE_SIZE);
+    if (tile_map.inBounds(at)) {
+      tile_map.placeItemAt(std::make_shared<Item>(p.item_id, p.meta),
+                           tile_map.isSolidAt(at) ? openTileNear(at) : at);
+    }
+  }
+  projectiles.clear();
+  for (auto const& creature : creatures) {
+    Graphics::Instance().remove(creature);
+  }
+  creatures.clear();
+  floating_texts.clear();
+  action_particles.clear();
+  last_total_earned = -1;
+}
+
+/*
+ * WEATHER
+ */
+void World::updateWeather(float dt) {
+  const bool raining = state.getWeather() == Weather::Rain;
+  const bool snowing = state.getWeather() == Weather::Snow;
+
+  weather_time += dt;
+
+  // Age splashes, they finish even after the rain stops
+  for (auto& s : splashes) {
+    s.life -= dt;
+  }
+  std::erase_if(splashes, [](const Splash& s) { return s.life <= 0.0F; });
+
+  // Drop particles left over from other weather
+  std::erase_if(particles,
+                [snowing](const Particle& p) { return p.snow != snowing; });
+
+  if (!raining && !snowing) {
+    particles.clear();
+    return;
+  }
+
+  // New particle, anywhere on screen or just above it
+  const auto respawn = [snowing](Particle& p, bool on_screen) {
+    p.snow = snowing;
+
+    if (snowing) {
+      p.speed = static_cast<float>(random(25, 80));
+      p.size = static_cast<float>(random(1, 3));
+      p.phase = static_cast<float>(random(0, 628)) / 100.0F;
+    } else {
+      p.speed = static_cast<float>(random(350, 520));
+      p.length = static_cast<float>(random(5, 14));
+      p.alpha = static_cast<unsigned char>(random(80, 190));
+      p.land_y =
+          static_cast<float>(random(VIEWPORT_HEIGHT / 5, VIEWPORT_HEIGHT + 10));
+    }
+
+    const float top = on_screen && !snowing ? p.land_y : VIEWPORT_HEIGHT;
+    p.pos = asw::Vec2f(
+        static_cast<float>(random(0, VIEWPORT_WIDTH + 100)),
+        on_screen ? static_cast<float>(random(0, static_cast<int>(top)))
+                  : -static_cast<float>(random(10, 40)));
+  };
+
+  const size_t count = raining ? 220 : 140;
+  while (particles.size() < count) {
+    Particle p{asw::Vec2f(0.0F, 0.0F), 0.0F};
+    respawn(p, true);
+    particles.push_back(p);
+  }
+
+  constexpr size_t MAX_SPLASHES = 120;
+
+  for (auto& p : particles) {
+    p.pos.y += p.speed * dt;
+
+    if (snowing) {
+      // Drift with the wind and sway on the flake's own phase
+      p.pos.x -= p.speed * dt * 0.1F;
+      p.pos.x += std::sin(weather_time * 1.6F + p.phase) * 18.0F * dt;
+    } else {
+      p.pos.x -= p.speed * dt * 0.3F;
+    }
+
+    if (!snowing && p.pos.y >= p.land_y) {
+      if (splashes.size() < MAX_SPLASHES) {
+        splashes.push_back({asw::Vec2f(p.pos.x, p.land_y), SPLASH_LIFE});
+      }
+      respawn(p, false);
+    } else if (p.pos.y > VIEWPORT_HEIGHT || p.pos.x < -20.0F ||
+               p.pos.x > VIEWPORT_WIDTH + 120.0F) {
+      respawn(p, false);
+    }
+  }
+}
+
+/*
+ * DAYS
+ */
+void World::updateOrder() {
+  auto& order = state.order;
+
+  if (order.active && state.absoluteDay() > order.deadline) {
+    order.active = false;
+    countEvent("Store order expired");
+  }
+
+  if (order.active) {
+    return;
+  }
+
+  // Ask for something that grows this season
+  std::vector<std::string> wanted;
+  switch (state.getSeason()) {
+    case Season::Spring:
+      wanted = {"item:berry", "item:carrot"};
+      break;
+    case Season::Summer:
+      wanted = {"item:berry", "item:tomato", "item:lavender"};
+      break;
+    case Season::Fall:
+      wanted = {"item:tomato", "item:carrot", "item:lavender"};
+      break;
+    case Season::Winter:
+      wanted = {"item:egg", "item:cooked_egg", "item:pelt"};
+      break;
+  }
+
+  const auto& id = wanted[random<size_t>(0, wanted.size() - 1)];
+  const int value = std::max(1, ItemTypeManager::getInfo(id).value);
+
+  order.item_id = id;
+  order.quantity = std::clamp(120 / value + random(-2, 3), 3, 20);
+  order.delivered = 0;
+  order.reward = value * order.quantity * 3 / 2 + 25;
+  order.deadline = state.absoluteDay() + 5;
+  order.active = true;
+}
+
+void World::endDay(bool passed_out) {
+  const bool fainted = state.health <= 0.0F;
+  const int earned = state.getEarnedToday();
+  const int finished_day = state.getDay();
+  const auto finished_season = state.getSeason();
+
+  hud.closeAll();
+  clearCreatures();
+  state.sleep_requested = false;
+
+  // Crops grow, soil dries, animals produce
+  day_events.clear();
+  tile_map.dayEnd(*this);
+
+  // Overnight
+  setStat(state.hunger, -15.0F);
+  setStat(state.thirst, -20.0F);
+  state.warmth = MAX_STAT;
+
+  state.nextDay();
+
+  summary.clear();
+  summary.push_back(std::format("{} {} is over", GameState::seasonName(
+                                                     finished_season),
+                                finished_day));
+  summary.push_back("");
+
+  if (fainted) {
+    const int lost = state.lose(state.getCoins() / 4);
+    state.health = 35.0F;
+    state.energy = MAX_STAT / 2.0F;
+    summary.push_back(std::format("You collapsed. Doctor bill: ${}", lost));
+  } else if (passed_out) {
+    const int lost = state.lose(std::min(state.getCoins() / 10, 200));
+    state.energy = MAX_STAT / 2.0F;
+    summary.push_back(
+        std::format("You passed out outside. Lost ${} on the way home", lost));
+  } else {
+    state.energy = MAX_STAT;
+    setStat(state.health, 20.0F);
+  }
+
+  summary.push_back(std::format("Earned today: ${}", earned));
+
+  for (auto const& [event, count] : day_events) {
+    summary.push_back(std::format("{}: {}", event, count));
+  }
+
+  // Rain waters the fields
+  if (state.getWeather() == Weather::Rain) {
+    tile_map.replaceAll("tile:plowed_soil", "tile:watered_soil");
+    summary.push_back("It is raining, your fields are watered");
+  } else if (state.getWeather() == Weather::Snow) {
+    summary.push_back("It is snowing, stay warm");
+  }
+
+  if (state.getDay() == 1) {
+    summary.push_back(std::format("{} has begun!", GameState::seasonName(
+                                                       state.getSeason())));
+  }
+
+  // Goal at the end of the first spring
+  if (!state.goal_checked && state.getSeason() != Season::Spring) {
+    state.goal_checked = true;
+    state.goal_met = state.getTotalEarned() >= GOAL_COINS;
+    summary.push_back("");
+    summary.push_back(
+        state.goal_met
+            ? std::format("GOAL MET! You earned ${} in Spring",
+                          state.getTotalEarned())
+            : std::format("Goal missed: ${} of ${}. Keep farming!",
+                          state.getTotalEarned(), GOAL_COINS));
+  }
+
+  updateOrder();
+
+  summary_open = true;
+  warp_requested = true;
+  save_requested = true;
+}
+
+bool World::takePlayerWarp(asw::Vec2i& to) {
+  if (!warp_requested) {
+    return false;
+  }
+
+  warp_requested = false;
+  to = state.home * TILE_SIZE;
+  return true;
+}
+
+bool World::takeSaveRequest() {
+  return std::exchange(save_requested, false);
+}
+
+/*
+ * HELPERS
+ */
+Inventory& World::playerInventory() {
+  return *InterfaceTypeManager::getInterfaceByName("inventory").getInventory();
+}
+
+void World::dropItems(const std::string& id,
+                      const asw::Vec2i& tile_pos,
+                      int count) {
+  if (id.empty()) {
+    return;
+  }
+
+  // Items under solid tiles (fires, bushes) can not be picked up
+  const auto at = tile_map.isSolidAt(tile_pos) ? openTileNear(tile_pos)
+                                               : tile_pos;
+
+  for (int i = 0; i < count; i++) {
+    tile_map.placeItemAt(std::make_shared<Item>(id), at);
+  }
+}
+
+void World::dropNear(const std::string& id, const asw::Vec2i& tile_pos) {
+  dropItems(id, openTileNear(tile_pos));
+}
+
+asw::Vec2i World::openTileNear(const asw::Vec2i& tile_pos) {
+  const std::array<asw::Vec2i, 8> around = {
+      asw::Vec2i(0, 1),  asw::Vec2i(1, 0),  asw::Vec2i(-1, 0),
+      asw::Vec2i(0, -1), asw::Vec2i(1, 1),  asw::Vec2i(-1, 1),
+      asw::Vec2i(1, -1), asw::Vec2i(-1, -1)};
+
+  for (auto const& offset : around) {
+    const auto at = tile_pos + offset;
+    if (tile_map.inBounds(at) && !tile_map.isSolidAt(at)) {
+      return at;
+    }
+  }
+
+  return tile_pos;
+}
+
+bool World::pickUpItems(const asw::Vec2i& tile_pos) {
+  bool picked = false;
+
+  while (auto item = tile_map.getItemAt(tile_pos)) {
+    if (!playerInventory().addItem(item->itemPtr, 1)) {
+      state.notify("Your bag is full");
+      break;
+    }
+
+    tile_map.removeItem(item);
+    picked = true;
+  }
+
+  return picked;
+}
+
+void World::giveItem(const std::string& id, int count) {
+  if (!playerInventory().addItem(std::make_shared<Item>(id), count)) {
+    dropItems(id, player_tile, count);
+  }
+}
+
+void World::burstParticles(const std::string& preset,
+                           const asw::Vec2i& tile_pos) {
+  action_particles.burst(preset,
+                         asw::Vec2f(tile_pos.x * TILE_SIZE + TILE_SIZE / 2.0F,
+                                    tile_pos.y * TILE_SIZE + TILE_SIZE / 2.0F));
+}
+
+void World::countEvent(const std::string& name, int amount) {
+  day_events[name] += amount;
+}
+
+void World::addLight(const asw::Vec2i& tile_pos) {
+  lights.push_back(tile_pos);
+}
+
+bool World::nearLitCampfire(const asw::Vec2i& tile_pos, int radius) const {
+  return std::ranges::any_of(lights, [&](const asw::Vec2i& light) {
+    return std::abs(light.x - tile_pos.x) <= radius &&
+           std::abs(light.y - tile_pos.y) <= radius;
+  });
+}
+
+void World::openStation(const std::string& window, int tier) {
+  hud.open(window, 0.15F);
+  hud.open("inventory", 0.8F);
+  state.crafting_tier = tier;
+}
+
+std::shared_ptr<Tile> World::findTileNear(
+    const asw::Vec2i& tile_pos,
+    int radius,
+    const std::function<bool(const std::shared_ptr<Tile>&)>& match) {
+  for (int dx = -radius; dx <= radius; dx++) {
+    for (int dy = -radius; dy <= radius; dy++) {
+      auto tile = tile_map.getTileAt(tile_pos + asw::Vec2i(dx, dy),
+                                     LAYER_FOREGROUND);
+      if (tile && match(tile)) {
+        return tile;
+      }
+    }
+  }
+
+  return nullptr;
+}
+
+bool World::tryOpenDoor(const asw::Vec2i& tile_pos) {
+  auto tile = tile_map.getTileAt(tile_pos, LAYER_FOREGROUND);
+  if (!tile || tile->getType().getId() != "tile:door") {
+    return false;
+  }
+
+  tile_map.replaceTile(tile, "tile:door_open");
+  SoundManager::play("shovel");
+  return true;
+}
+
+bool World::creatureAt(const asw::Vec2i& tile_pos) const {
+  return std::ranges::any_of(creatures, [&](auto const& creature) {
+    return !creature->isGone() && creature->getTile() == tile_pos;
+  });
+}
+
+/*
+ * ROOMS
+ */
+int World::roomAt(const asw::Vec2i& tile_pos) const {
+  if (!tile_map.inBounds(tile_pos) || rooms.empty()) {
+    return 0;
+  }
+
+  return rooms[tile_pos.x + tile_pos.y * tile_map.getWidth()];
+}
+
+bool World::isIndoors(const asw::Vec2i& tile_pos) const {
+  return roomAt(tile_pos) > 0;
+}
+
+void World::updateRooms() {
+  // Only after a wall, window or door changed
+  if (rooms_ready && rooms_version == tile_map.getEnclosureVersion()) {
+    return;
+  }
+  rooms_ready = true;
+  rooms_version = tile_map.getEnclosureVersion();
+
+  const int width = tile_map.getWidth();
+  const int height = tile_map.getHeight();
+  rooms.assign(static_cast<size_t>(width * height), 0);
+
+  auto encloses = [&](const asw::Vec2i& at) {
+    const auto tile = tile_map.getTileAt(at, LAYER_FOREGROUND);
+    return tile && tile->getType().getEncloses();
+  };
+
+  const std::array<asw::Vec2i, 4> around = {
+      asw::Vec2i(0, -1), asw::Vec2i(1, 0), asw::Vec2i(0, 1), asw::Vec2i(-1, 0)};
+
+  int next_room = 1;
+
+  // Rooms start next to a door, a fill that escapes is outdoors
+  for (int x = 0; x < width; x++) {
+    for (int y = 0; y < height; y++) {
+      const auto door = tile_map.getTileAt(asw::Vec2i(x, y), LAYER_FOREGROUND);
+      if (!door || (door->getType().getId() != "tile:door" &&
+                    door->getType().getId() != "tile:door_open")) {
+        continue;
+      }
+
+      for (auto const& step : around) {
+        const auto start = asw::Vec2i(x, y) + step;
+        if (!tile_map.inBounds(start) || encloses(start) || roomAt(start)) {
+          continue;
+        }
+
+        std::vector<asw::Vec2i> filled{start};
+        std::vector<bool> seen(static_cast<size_t>(width * height), false);
+        seen[start.x + start.y * width] = true;
+        bool closed = true;
+
+        for (size_t i = 0; i < filled.size() && closed; i++) {
+          for (auto const& next_step : around) {
+            const auto next = filled[i] + next_step;
+            if (!tile_map.inBounds(next)) {
+              closed = false;
+              break;
+            }
+
+            const auto index = static_cast<size_t>(next.x + next.y * width);
+            if (seen[index] || encloses(next)) {
+              continue;
+            }
+
+            seen[index] = true;
+            filled.push_back(next);
+            if (filled.size() > MAX_ROOM_TILES) {
+              closed = false;
+              break;
+            }
+          }
+        }
+
+        if (!closed) {
+          continue;
+        }
+
+        for (auto const& at : filled) {
+          rooms[at.x + at.y * width] = next_room;
+        }
+        next_room++;
+      }
+    }
+  }
+}
+
+void World::drawRoofs() {
+  if (rooms.empty()) {
+    return;
+  }
+
+  const auto sheet = TileTypeManager::getSheet("placeholders");
+  const auto cam = camera.getPosition();
+  const auto& bounds = camera.getBounds();
+  const int inside = roomAt(player_tile);
+
+  const int x_1 = std::max(0, bounds.x_1 / TILE_SIZE - 1);
+  const int y_1 = std::max(0, bounds.y_1 / TILE_SIZE - 1);
+  const int x_2 = std::min(tile_map.getWidth() - 1, bounds.x_2 / TILE_SIZE + 1);
+  const int y_2 =
+      std::min(tile_map.getHeight() - 1, bounds.y_2 / TILE_SIZE + 1);
+
+  // Covers the room and its walls, hidden while the player is inside
+  auto covered = [&](int x, int y) {
+    const int own = roomAt(asw::Vec2i(x, y));
+    if (own > 0) {
+      return own != inside;
+    }
+
+    const auto wall = tile_map.getTileAt(asw::Vec2i(x, y), LAYER_FOREGROUND);
+    if (!wall || !wall->getType().getEncloses()) {
+      return false;
+    }
+
+    for (int dx = -1; dx <= 1; dx++) {
+      for (int dy = -1; dy <= 1; dy++) {
+        const int room = roomAt(asw::Vec2i(x + dx, y + dy));
+        if (room > 0 && room != inside) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  for (int x = x_1; x <= x_2; x++) {
+    for (int y = y_1; y <= y_2; y++) {
+      if (!covered(x, y)) {
+        continue;
+      }
+
+      asw::draw::stretch_sprite_blit(
+          sheet,
+          asw::Quadf(ROOF_X * TILE_SIZE, ROOF_Y * TILE_SIZE, TILE_SIZE,
+                     TILE_SIZE),
+          asw::Quadf(x * TILE_SIZE - cam.x, y * TILE_SIZE - cam.y - TILE_SIZE,
+                     TILE_SIZE, TILE_SIZE));
+    }
+  }
+}
+
+/*
+ * RECIPE DISCOVERY
+ */
+void World::updateDiscovery() {
+  auto& inventory = playerInventory();
+  std::vector<std::string> found;
+
+  for (int i = 0; i < inventory.getSize(); i++) {
+    const auto item = inventory.getStack(i)->getItem();
+    if (item && !state.known_items.contains(item->getType().getId())) {
+      found.push_back(item->getType().getId());
+    }
+  }
+
+  if (found.empty()) {
+    discovery_primed = true;
+    return;
+  }
+
+  auto visible = [&](const Recipe& recipe) {
+    return std::ranges::any_of(recipe.inputs, [&](auto const& input) {
+      return state.known_items.contains(input.first);
+    });
+  };
+
+  std::vector<const Recipe*> hidden;
+  for (auto const& recipe : RecipeManager::getRecipes()) {
+    if (!visible(recipe)) {
+      hidden.push_back(&recipe);
+    }
+  }
+
+  state.known_items.insert(found.begin(), found.end());
+
+  // Starting items and loaded saves do not announce recipes
+  if (!discovery_primed) {
+    discovery_primed = true;
+    return;
+  }
+
+  int learned = 0;
+  for (auto const* recipe : hidden) {
+    if (visible(*recipe)) {
+      learned++;
+    }
+  }
+
+  if (learned > 0) {
+    state.notify(std::format("{} new recipe{}! Press R to see them", learned,
+                             learned == 1 ? "" : "s"));
+  }
+}
+
+void World::openShop() {
+  hud.open("shop", 0.15F);
+  hud.open("inventory", 0.8F);
+}
+
+/*
+ * STATUS
+ */
+void World::drawStatus(const asw::Vec2i& ui_size) const {
+  const auto shadow = asw::Color(0, 0, 0, 180);
+
+  auto text = [&](const std::string& value, int x, int y,
+                  asw::Color color = asw::Color(255, 255, 255),
+                  asw::TextJustify justify = asw::TextJustify::Left) {
+    asw::draw::text(font, value, asw::Vec2f(x + 1, y + 1), shadow, justify);
+    asw::draw::text(font, value, asw::Vec2f(x, y), color, justify);
+  };
+
+  // Clock and money
+  asw::draw::rect_fill(asw::Quadf(4, 4, 96, 34), asw::Color(0, 0, 0, 120));
+  text(state.dateString(), 8, 6);
+  text(state.timeString() + "  " + state.weatherName(), 8, 16);
+  text(std::format("${}", state.getCoins()), 8, 26,
+       asw::Color(255, 220, 90));
+
+  // Stat bars
+  struct Bar {
+    const char* label;
+    float value;
+    asw::Color color;
+  };
+
+  const std::array<Bar, 5> bars = {{
+      {"HP", state.health, asw::Color(220, 60, 60)},
+      {"Food", state.hunger, asw::Color(230, 150, 50)},
+      {"Water", state.thirst, asw::Color(70, 140, 230)},
+      {"Warm", state.warmth, asw::Color(240, 210, 80)},
+      {"Energy", state.energy, asw::Color(90, 200, 90)},
+  }};
+
+  const int bar_x = ui_size.x - 70;
+  asw::draw::rect_fill(asw::Quadf(bar_x - 34, 4, 100, 58),
+                       asw::Color(0, 0, 0, 120));
+
+  for (size_t i = 0; i < bars.size(); i++) {
+    const int y = 7 + static_cast<int>(i) * 11;
+    text(bars[i].label, bar_x - 31, y - 2);
+    asw::draw::rect_fill(asw::Quadf(bar_x, y, 60, 6), asw::Color(40, 40, 40));
+    asw::draw::rect_fill(asw::Quadf(bar_x, y, 60.0F * bars[i].value / MAX_STAT,
+                                    6),
+                         bars[i].value < WARNING_LEVEL
+                             ? asw::Color(255, 60, 60)
+                             : bars[i].color);
+  }
+
+  // Temperature where the player stands
+  text(std::format("{:.0f}C", ambientTemperature(player_tile)), bar_x - 31,
+       64);
+
+  // Goal and order
+  int line_y = 42;
+  if (!state.goal_checked) {
+    text(std::format("Goal: ${}/{} by end of Spring", state.getTotalEarned(),
+                     GOAL_COINS),
+         6, line_y, asw::Color(200, 230, 255));
+    line_y += 10;
+  }
+
+  if (state.order.active) {
+    text(std::format("Order: {} {}/{} for ${} (day {})",
+                     ItemTypeManager::getItem(state.order.item_id).getName(),
+                     state.order.delivered, state.order.quantity,
+                     state.order.reward, state.order.deadline),
+         6, line_y, asw::Color(160, 210, 255));
+  }
+
+  // Messages above the hotbar
+  map_messages.draw(6, ui_size.y - 34);
+}
+
+void World::drawSummary(const asw::Vec2i& ui_size) const {
+  if (!summary_open) {
+    return;
+  }
+
+  const int width = 260;
+  const int height = static_cast<int>(summary.size()) * 11 + 30;
+  const int x = (ui_size.x - width) / 2;
+  const int y = (ui_size.y - height) / 2;
+
+  asw::draw::rect_fill(asw::Quadf(0, 0, ui_size.x, ui_size.y),
+                       asw::Color(0, 0, 0, 120));
+  asw::draw::rect_fill(asw::Quadf(x, y, width, height),
+                       asw::Color(40, 50, 40, 235));
+  asw::draw::rect(asw::Quadf(x, y, width, height), asw::Color(150, 200, 120));
+
+  for (size_t i = 0; i < summary.size(); i++) {
+    asw::draw::text(font, summary[i],
+                    asw::Vec2f(x + width / 2, y + 10 + static_cast<int>(i) * 11),
+                    asw::Color(255, 255, 255), asw::TextJustify::Center);
+  }
+
+  asw::draw::text(font, "Press Space to continue",
+                  asw::Vec2f(x + width / 2, y + height - 14),
+                  asw::Color(200, 230, 160), asw::TextJustify::Center);
 }
 
 // Get map
@@ -361,6 +2187,18 @@ Messenger& World::getMessenger() {
   return this->map_messages;
 }
 
+Hud& World::getHud() {
+  return hud;
+}
+
 Camera& World::getCamera() {
   return camera;
+}
+
+GameState& World::getState() {
+  return state;
+}
+
+const GameState& World::getState() const {
+  return state;
 }

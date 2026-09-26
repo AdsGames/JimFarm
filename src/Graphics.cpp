@@ -1,68 +1,88 @@
 #include "Graphics.h"
 
-#include <algorithm>
-
-std::shared_ptr<Graphics> Graphics::instance = nullptr;
+#include <vector>
 
 // Get instance
-std::shared_ptr<Graphics> Graphics::Instance() {
-  if (!instance) {
-    instance = std::make_shared<Graphics>();
-  }
-
+Graphics& Graphics::Instance() {
+  static Graphics instance;
   return instance;
 }
 
 // Add sprites
-void Graphics::add(std::shared_ptr<Sprite> sprite, bool dynamic) {
-  sprites[sprite->getSpriteId()] = sprite;
-  sorted_sprites.insert(sprite);
+void Graphics::add(const std::shared_ptr<Sprite>& sprite, bool dynamic) {
+  const auto id = sprite->getSpriteId();
+
+  // Re-adding refreshes the sort key
+  erase(id);
+
+  auto [it, _] = sorted_sprites.insert(
+      {sprite->getZ(), sprite->getPosition().y, id, sprite});
+  sprites[id] = it;
 
   if (dynamic) {
-    dynamic_sprites.insert(sprite->getSpriteId());
+    dynamic_sprites.insert(id);
   }
 }
 
 // Remove sprites
-void Graphics::remove(std::shared_ptr<Sprite> sprite) {
-  sprites.erase(sprite->getSpriteId());
+void Graphics::remove(const std::shared_ptr<Sprite>& sprite) {
+  const auto id = sprite->getSpriteId();
+  erase(id);
+  dynamic_sprites.erase(id);
+}
+
+void Graphics::erase(unsigned int id) {
+  auto found = sprites.find(id);
+  if (found == sprites.end()) {
+    return;
+  }
+
+  sorted_sprites.erase(found->second);
+  sprites.erase(found);
 }
 
 void Graphics::prune() {
-  // Prune sprites
-  std::erase_if(sprites,
-                [](const auto& sprite) { return sprite.second.expired(); });
+  // Dynamic sprites move, so re-insert them with a fresh sort key
+  std::vector<unsigned int> dead;
 
-  // Prune dynamic sprites
-  std::erase_if(dynamic_sprites,
-                [this](const auto& id) { return !this->sprites.contains(id); });
-
-  // Prune dead sprites from sorted set as well as any dynamic sprites
-  std::erase_if(sorted_sprites, [this](const auto& sprite) {
-    return sprite.expired() ||
-           this->dynamic_sprites.contains(sprite.lock()->getSpriteId()) ||
-           !this->sprites.contains(sprite.lock()->getSpriteId());
-  });
-
-  // Add back dynamic sprites
   for (auto const& id : dynamic_sprites) {
-    sorted_sprites.insert(sprites[id]);
+    auto found = sprites.find(id);
+    if (found == sprites.end()) {
+      dead.push_back(id);
+      continue;
+    }
+
+    auto sprite = found->second->sprite.lock();
+    sorted_sprites.erase(found->second);
+
+    if (!sprite) {
+      sprites.erase(found);
+      dead.push_back(id);
+      continue;
+    }
+
+    found->second = sorted_sprites
+                        .insert({sprite->getZ(), sprite->getPosition().y, id,
+                                 sprite})
+                        .first;
+  }
+
+  for (auto const& id : dead) {
+    dynamic_sprites.erase(id);
   }
 }
 
 void Graphics::draw(const Camera& camera) const {
   auto& camera_bounds = camera.getBounds();
 
-  for (auto const& sprite : sorted_sprites) {
-    if (sprite.expired()) {
+  for (auto const& entry : sorted_sprites) {
+    auto sprite = entry.sprite.lock();
+    if (!sprite) {
       continue;
     }
 
-    auto spr_pos = sprite.lock()->getPosition();
-    Quad<int> quad(spr_pos.x, spr_pos.y, spr_pos.x + 64, spr_pos.y + 64);
-
-    if (camera_bounds.intersects(quad)) {
-      sprite.lock()->draw(camera);
+    if (camera_bounds.intersects(sprite->getDrawBounds())) {
+      sprite->draw(camera);
     }
   }
 }

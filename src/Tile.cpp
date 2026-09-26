@@ -1,6 +1,7 @@
 #include "Tile.h"
 
 #include "manager/TileTypeManager.h"
+#include "utility/Anim.h"
 #include "utility/Tools.h"
 
 // Ctor for tile
@@ -16,8 +17,21 @@ const asw::Vec2i Tile::getTilePosition() const {
 
 // Draw tile to screen
 void Tile::draw(const Camera& camera) const {
+  // Animals breathe, see utility/Anim.h
+  const int bob = tile_pointer.getBobs() ? anim::idleBob(getSpriteId()) : 0;
+
   tile_pointer.draw(pos.x - camera.getPosition().x,
-                    pos.y - camera.getPosition().y, getMeta());
+                    pos.y - camera.getPosition().y + bob, getMeta(),
+                    pos.x / TILE_SIZE);
+}
+
+Quad<int> Tile::getDrawBounds() const {
+  // A little extra for wind sway, animal bob and the shadow below
+  constexpr int SLACK = 4;
+  const int width = tile_pointer.getImageWidth() * TILE_SIZE;
+  const int height = tile_pointer.getImageHeight() * TILE_SIZE;
+  return {pos.x - SLACK, pos.y + TILE_SIZE - height - SLACK,
+          pos.x + width + SLACK, pos.y + TILE_SIZE + SLACK};
 }
 
 const TileType& Tile::getType() const {
@@ -48,5 +62,5 @@ void Tile::damage(unsigned char amt) {
 
 // Get image type
 bool Tile::needsBitmask() const {
-  return this->tile_pointer.getImageType() == "dynamic";
+  return this->tile_pointer.getImageType() == ImageType::Dynamic;
 }

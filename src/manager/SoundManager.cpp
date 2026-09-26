@@ -22,6 +22,7 @@ SampleWrapper::SampleWrapper(asw::Sample sample_ptr,
 
 // List of sounds
 std::vector<SampleWrapper> SoundManager::sound_defs;
+std::map<std::string, unsigned int> SoundManager::sound_names;
 
 /*
  * Load sounds from file
@@ -51,6 +52,7 @@ int SoundManager::load(const std::string& path) {
     asw::Sample tempSample = asw::assets::load_sample(asset_file);
     auto tempWrapper = SampleWrapper(tempSample, volume, panning, frequency,
                                      frequency_rand, false);
+    sound_names[sound["name"]] = sound_defs.size();
     sound_defs.push_back(tempWrapper);
   }
 
@@ -68,4 +70,11 @@ void SoundManager::play(unsigned int sound_id) {
   const auto& sound = sound_defs.at(sound_id);
 
   asw::sound::play(sound.sample_ptr, sound.vol, sound.pan, sound.loop);
+}
+
+void SoundManager::play(const std::string& name) {
+  auto found = sound_names.find(name);
+  if (found != sound_names.end()) {
+    play(found->second);
+  }
 }

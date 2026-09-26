@@ -34,6 +34,7 @@ class Menu : public asw::scene::Scene<ProgramState> {
   bool coin_direction{false};
   int indicator_location{4};
   int settings_indicator{1};
+  bool has_save{false};
 
   // Fonts
   asw::Font pixelart{};

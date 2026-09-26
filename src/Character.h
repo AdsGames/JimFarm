@@ -37,17 +37,26 @@ class Character : public Sprite {
   // Load images and samples
   void loadData();
 
+  // Tools and seeds for a new game
+  void giveStarterItems();
+
   // Position character
   void setPosition(const asw::Vec2i& pos);
 
   // Draw
   void draw(const Camera& camera) const override;
-  void drawInventory() const;
+  void drawInventory(const asw::Vec2i& screen_size) const;
 
   std::shared_ptr<Item> getSelectedItem() const;
 
   // Update
-  void update(World& world);
+  void update(World& world, float dt);
+
+  // Stack in the selected hotbar slot
+  std::shared_ptr<ItemStack> getHeldStack() const;
+
+  // Top left of the tile under the cursor, in world pixels
+  const asw::Vec2i& getCursorTile() const { return indicator_pos; }
 
  private:
   // Character foreground
@@ -61,7 +70,6 @@ class Character : public Sprite {
   enum directions { DIR_DOWN = 1, DIR_UP = 2, DIR_RIGHT = 3, DIR_LEFT = 4 };
 
   // Fonts
-  asw::Font pixelart{};
 
   // Item in hand
   int selected_item{0};
@@ -69,7 +77,15 @@ class Character : public Sprite {
   // What tile you are over
   asw::Vec2i indicator_pos{};
 
+  // Holding right click on food eats it, -1 when not eating
+  float eat_timer{-1.0F};
+  int eat_slot{0};
+
+  // Holding right click with a spear charges a throw, -1 when not charging
+  float throw_charge{-1.0F};
+
   // Movement
+  int move_speed{2};
   char direction{1};
   bool moving{false};
   bool sound_step{false};

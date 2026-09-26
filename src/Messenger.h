@@ -20,6 +20,9 @@ class Messenger {
 
   size_t messageCount() const;
 
+  // Ages messages and removes expired ones
+  void update(float dt);
+
   void draw(int x, int y) const;
   void setColors(asw::Color font, asw::Color background);
 
@@ -35,7 +38,12 @@ class Messenger {
   asw::Color font_color{asw::Color(255, 255, 255)};
   asw::Color bg_color{asw::Color(0, 0, 0, 0)};
 
-  std::vector<std::string> msgs{};
+  struct Message {
+    std::string text;
+    float age;
+  };
+
+  std::vector<Message> msgs{};
 
   asw::Font pixelart{};
 };

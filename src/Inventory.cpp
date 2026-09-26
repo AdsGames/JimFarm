@@ -1,5 +1,7 @@
 #include "Inventory.h"
 
+#include <algorithm>
+
 // Push item to contents (if it fits)
 bool Inventory::addItem(std::shared_ptr<Item> item, int quantity) {
   // Null item
@@ -80,11 +82,39 @@ int Inventory::getSize() const {
   return contents.size();
 }
 
-// Clear all contents
+// Clear all contents, keeping the slots
 void Inventory::empty() {
-  contents.clear();
-
-  for (int i = 0; i < getSize(); i++) {
-    contents.push_back(std::make_shared<ItemStack>());
+  for (auto const& content : contents) {
+    content->clear();
   }
+}
+
+int Inventory::count(const std::string& id) const {
+  int total = 0;
+  for (auto const& content : contents) {
+    if (content->getItem() && content->getItem()->getType().getId() == id) {
+      total += content->getQuantity();
+    }
+  }
+  return total;
+}
+
+bool Inventory::take(const std::string& id, int quantity) {
+  if (count(id) < quantity) {
+    return false;
+  }
+
+  for (auto const& content : contents) {
+    if (quantity <= 0) {
+      break;
+    }
+
+    if (content->getItem() && content->getItem()->getType().getId() == id) {
+      const int taken = std::min(quantity, content->getQuantity());
+      content->remove(taken);
+      quantity -= taken;
+    }
+  }
+
+  return true;
 }

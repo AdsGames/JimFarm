@@ -21,11 +21,17 @@ class TileTypeManager {
   // Allows communication
   static TileType& getTile(const std::string& id);
 
-  static asw::Texture sprite_sheet_tiles;
-  static asw::Texture sprite_sheet_items;
+  static bool exists(const std::string& id);
+
+  static const std::map<std::string, TileType>& getTiles() { return tile_defs; }
+
+  // Named sprite sheets ("tiles", "items", "placeholders")
+  static void addSheet(const std::string& name, asw::Texture texture);
+  static asw::Texture getSheet(const std::string& name);
 
  private:
   static std::map<std::string, TileType> tile_defs;
+  static std::map<std::string, asw::Texture> sheets;
 };
 
 #endif  // TILE_TYPE_MANAGER_H

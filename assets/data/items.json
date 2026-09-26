@@ -4,167 +4,1648 @@
     "name": "hand",
     "image_x": 0,
     "image_y": 0,
-    "value": 0
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:water"],
+        "thirst": 35,
+        "particles": "water",
+        "sound": "water fill",
+        "message": "You drink the water"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:well_path"],
+        "thirst": 40,
+        "particles": "water",
+        "sound": "water fill",
+        "message": "You drink from the well"
+      }
+    ]
   },
   {
     "id": "item:hoe",
     "name": "hoe",
+    "description": "Tills grass and soil so seeds can be planted.",
     "image_x": 3,
     "image_y": 1,
-    "value": 10
+    "value": 10,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:grass", "tile:soil", "tile:patchy_grass"],
+        "requires_empty": ["foreground"],
+        "replace": "tile:plowed_soil",
+        "particles": "dirt",
+        "sound": "hoe",
+        "energy": 2,
+        "area": 0,
+        "verb": "Till"
+      }
+    ]
+  },
+  {
+    "id": "item:hoe_gold",
+    "name": "golden hoe",
+    "description": "Tills a 3x3 area in one swing.",
+    "image_x": 3,
+    "image_y": 1,
+    "tint": [255, 215, 70],
+    "price": 500,
+    "value": 150,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:grass", "tile:soil", "tile:patchy_grass"],
+        "requires_empty": ["foreground"],
+        "replace": "tile:plowed_soil",
+        "particles": "dirt",
+        "sound": "hoe",
+        "energy": 6,
+        "area": 1,
+        "verb": "Till"
+      }
+    ]
   },
   {
     "id": "item:scythe",
     "name": "scythe",
+    "description": "Cuts tall grass for hay. Can fight in a pinch.",
     "image_x": 0,
     "image_y": 1,
-    "value": 20
+    "value": 20,
+    "attack": 1,
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:dense_grass"],
+        "replace": null,
+        "drops": ["item:hay"],
+        "particles": "grass",
+        "sound": "scythe",
+        "energy": 1,
+        "verb": "Cut"
+      }
+    ],
+    "reach": 1.5,
+    "arc": 70,
+    "cooldown": 0.6
   },
   {
     "id": "item:watering_can",
     "name": "watering can",
+    "description": "Waters tilled soil. Fill it at the well or water. Drink from it with C.",
     "image_x": 2,
     "image_y": 1,
-    "value": 20
+    "value": 20,
+    "start_meta": 10,
+    "food": {
+      "thirst": 20,
+      "uses_meta": true
+    },
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:water"],
+        "set_meta": 10,
+        "particles": "water",
+        "sound": "water fill",
+        "message": "Watering can filled"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:well_path"],
+        "set_meta": 10,
+        "particles": "water",
+        "sound": "water fill",
+        "message": "Watering can filled"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:plowed_soil"],
+        "min_meta": 1,
+        "replace": "tile:watered_soil",
+        "add_meta": -1,
+        "particles": "water",
+        "sound": "water pour",
+        "energy": 1,
+        "area": 0,
+        "verb": "Water"
+      },
+      {
+        "max_meta": 0,
+        "fail": true,
+        "message": "Out of water, fill up at the well"
+      }
+    ]
+  },
+  {
+    "id": "item:watering_can_gold",
+    "name": "golden can",
+    "description": "Waters a 3x3 area and holds three times more.",
+    "image_x": 2,
+    "image_y": 1,
+    "tint": [255, 215, 70],
+    "price": 500,
+    "value": 150,
+    "start_meta": 30,
+    "food": {
+      "thirst": 20,
+      "uses_meta": true
+    },
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:water"],
+        "set_meta": 30,
+        "particles": "water",
+        "sound": "water fill",
+        "message": "Watering can filled"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:well_path"],
+        "set_meta": 30,
+        "particles": "water",
+        "sound": "water fill",
+        "message": "Watering can filled"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:plowed_soil"],
+        "min_meta": 1,
+        "replace": "tile:watered_soil",
+        "add_meta": -1,
+        "particles": "water",
+        "sound": "water pour",
+        "energy": 1,
+        "area": 1,
+        "verb": "Water"
+      },
+      {
+        "max_meta": 0,
+        "fail": true,
+        "message": "Out of water, fill up at the well"
+      }
+    ]
   },
   {
     "id": "item:axe",
     "name": "axe",
+    "description": "Chops trees, stumps, walls and fences. Picks up wooden buildings. Hits wolves.",
     "image_x": 4,
     "image_y": 1,
-    "value": 20
+    "value": 20,
+    "attack": 1,
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:workbench"],
+        "replace": null,
+        "drops": ["item:workbench"],
+        "particles": "wood",
+        "sound": "axe",
+        "energy": 1,
+        "verb": "Pick up"
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:bed"],
+        "replace": null,
+        "drops": ["item:bed"],
+        "particles": "wood",
+        "sound": "axe",
+        "energy": 1,
+        "verb": "Pick up"
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:door", "tile:door_open"],
+        "replace": null,
+        "drops": ["item:door"],
+        "particles": "wood",
+        "sound": "axe",
+        "energy": 1,
+        "verb": "Pick up"
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:scarecrow"],
+        "replace": null,
+        "drops": ["item:scarecrow"],
+        "particles": "wood",
+        "sound": "axe",
+        "energy": 1,
+        "verb": "Pick up"
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:hopper"],
+        "replace": null,
+        "drops": ["item:hopper"],
+        "particles": "wood",
+        "sound": "axe",
+        "energy": 1,
+        "verb": "Pick up"
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:stump"],
+        "replace": null,
+        "drops": ["item:wood"],
+        "particles": "wood",
+        "sound": "axe",
+        "energy": 3,
+        "verb": "Chop"
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:wood_wall"],
+        "replace": null,
+        "drops": ["item:wood"],
+        "particles": "wood",
+        "sound": "axe",
+        "energy": 2,
+        "verb": "Break"
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:fence", "tile:fence_door"],
+        "replace": null,
+        "drops": ["item:stick"],
+        "particles": "wood",
+        "sound": "axe",
+        "energy": 1,
+        "verb": "Break"
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:campfire_out"],
+        "replace": null,
+        "drops": ["item:campfire"],
+        "particles": "wood",
+        "sound": "axe",
+        "energy": 1,
+        "verb": "Break"
+      }
+    ],
+    "reach": 1.5,
+    "arc": 70,
+    "cooldown": 0.6
   },
   {
     "id": "item:shovel",
     "name": "shovel",
+    "description": "Digs up bushes, stumps, rock, grass, sand, clay, floors and tilled soil.",
     "image_x": 1,
     "image_y": 1,
-    "value": 20
+    "value": 20,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:plank_floor"],
+        "replace": null,
+        "drops": ["item:plank_floor"],
+        "particles": "dirt",
+        "sound": "shovel",
+        "energy": 1,
+        "verb": "Pick up"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:brick_floor"],
+        "replace": null,
+        "drops": ["item:brick_floor"],
+        "particles": "dirt",
+        "sound": "shovel",
+        "energy": 1,
+        "verb": "Pick up"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:clay"],
+        "replace": null,
+        "drops": ["item:clay"],
+        "particles": "dirt",
+        "sound": "shovel",
+        "energy": 2,
+        "requires_empty": ["foreground"],
+        "verb": "Pick up"
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:bush", "tile:stump", "tile:sapling"],
+        "replace": null,
+        "particles": "dirt",
+        "sound": "shovel",
+        "energy": 2,
+        "verb": "Dig"
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:stone_wall"],
+        "replace": null,
+        "drops": ["item:stone"],
+        "particles": "dirt",
+        "sound": "shovel",
+        "energy": 4,
+        "verb": "Dig"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:grass"],
+        "requires_empty": ["foreground"],
+        "replace": null,
+        "drops": ["item:grass"],
+        "particles": "dirt",
+        "sound": "shovel",
+        "energy": 2,
+        "verb": "Pick up"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:sand"],
+        "requires_empty": ["foreground"],
+        "replace": null,
+        "drops": ["item:sand"],
+        "particles": "dirt",
+        "sound": "shovel",
+        "energy": 2,
+        "verb": "Pick up"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:plowed_soil", "tile:watered_soil"],
+        "requires_empty": ["foreground"],
+        "replace": null,
+        "particles": "dirt",
+        "sound": "shovel",
+        "energy": 1,
+        "verb": "Dig"
+      }
+    ]
+  },
+  {
+    "id": "item:spear",
+    "name": "spear",
+    "description": "Thrusts far toward the cursor. Hold right click to throw it.",
+    "sheet": "placeholders",
+    "image_x": 4,
+    "image_y": 0,
+    "value": 15,
+    "attack": 3,
+    "reach": 2.5,
+    "arc": 25,
+    "cooldown": 0.45,
+    "throw": true
   },
   {
     "id": "item:chicken",
     "name": "chicken",
+    "description": "Place on the ground. Feed it hay each day for an egg.",
     "image_x": 3,
     "image_y": 0,
-    "value": 30
+    "price": 60,
+    "value": 30,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:chicken",
+          "layer": "foreground",
+          "meta": 0
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
   },
   {
     "id": "item:egg",
     "name": "egg",
+    "description": "Cook it on a campfire or in the furnace.",
     "image_x": 1,
     "image_y": 0,
-    "value": 2
+    "value": 8,
+    "food": {
+      "hunger": 6,
+      "health": -2
+    },
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:campfire"],
+        "consume": true,
+        "particles": "smoke",
+        "sound": "egg",
+        "message": "Cooked!",
+        "give": ["item:cooked_egg"]
+      }
+    ]
+  },
+  {
+    "id": "item:cooked_egg",
+    "name": "cooked egg",
+    "sheet": "placeholders",
+    "image_x": 7,
+    "image_y": 0,
+    "value": 15,
+    "food": {
+      "hunger": 25,
+      "health": 5
+    }
   },
   {
     "id": "item:berry_seed",
     "name": "berry seed",
+    "description": "Plant in tilled soil.",
     "image_x": 0,
     "image_y": 2,
-    "value": 1
+    "price": 5,
+    "value": 1,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:plowed_soil", "tile:watered_soil"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:berry",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel",
+        "verb": "Plant"
+      },
+      {
+        "fail": true,
+        "message": "Plant seeds in tilled soil"
+      }
+    ]
   },
   {
     "id": "item:berry",
     "name": "berry",
     "image_x": 0,
     "image_y": 3,
-    "value": 2
+    "value": 4,
+    "food": {
+      "hunger": 8,
+      "thirst": 3
+    }
   },
   {
     "id": "item:tomato_seed",
     "name": "tomato seed",
+    "description": "Plant in tilled soil.",
     "image_x": 1,
     "image_y": 2,
-    "value": 2
+    "price": 12,
+    "value": 2,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:plowed_soil", "tile:watered_soil"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:tomato",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel",
+        "verb": "Plant"
+      },
+      {
+        "fail": true,
+        "message": "Plant seeds in tilled soil"
+      }
+    ]
   },
   {
     "id": "item:tomato",
     "name": "tomato",
     "image_x": 1,
     "image_y": 3,
-    "value": 5
+    "value": 18,
+    "food": {
+      "hunger": 12,
+      "thirst": 6
+    }
   },
   {
     "id": "item:carrot_seed",
     "name": "carrot seed",
+    "description": "Plant in tilled soil.",
     "image_x": 2,
     "image_y": 2,
-    "value": 5
+    "price": 15,
+    "value": 3,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:plowed_soil", "tile:watered_soil"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:carrot",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel",
+        "verb": "Plant"
+      },
+      {
+        "fail": true,
+        "message": "Plant seeds in tilled soil"
+      }
+    ]
   },
   {
     "id": "item:carrot",
     "name": "carrot",
+    "description": "Roast it on a campfire for a better meal.",
     "image_x": 2,
     "image_y": 3,
-    "value": 15
+    "value": 30,
+    "food": {
+      "hunger": 12
+    },
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:campfire"],
+        "consume": true,
+        "particles": "smoke",
+        "sound": "egg",
+        "message": "Cooked!",
+        "give": ["item:roast_carrot"]
+      }
+    ]
+  },
+  {
+    "id": "item:roast_carrot",
+    "name": "roast carrot",
+    "sheet": "placeholders",
+    "image_x": 13,
+    "image_y": 0,
+    "value": 40,
+    "food": {
+      "hunger": 22,
+      "health": 3
+    }
   },
   {
     "id": "item:lavender_seed",
     "name": "lavender seed",
+    "description": "Plant in tilled soil.",
     "image_x": 3,
     "image_y": 2,
-    "value": 15
+    "price": 30,
+    "value": 5,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:plowed_soil", "tile:watered_soil"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:lavender",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel",
+        "verb": "Plant"
+      },
+      {
+        "fail": true,
+        "message": "Plant seeds in tilled soil"
+      }
+    ]
   },
   {
     "id": "item:lavender",
     "name": "lavender",
+    "description": "Sells well. Used to craft bandages.",
     "image_x": 3,
     "image_y": 3,
-    "value": 25
+    "value": 80
+  },
+  {
+    "id": "item:stew",
+    "name": "stew",
+    "sheet": "placeholders",
+    "image_x": 8,
+    "image_y": 0,
+    "value": 70,
+    "food": {
+      "hunger": 45,
+      "thirst": 10,
+      "health": 10,
+      "warmth": 30
+    }
+  },
+  {
+    "id": "item:bandage",
+    "name": "herbal bandage",
+    "description": "Heals wounds.",
+    "sheet": "placeholders",
+    "image_x": 11,
+    "image_y": 0,
+    "price": 40,
+    "value": 20,
+    "food": {
+      "health": 35
+    }
+  },
+  {
+    "id": "item:pelt",
+    "name": "wolf pelt",
+    "description": "Craft 3 into a fur coat.",
+    "sheet": "placeholders",
+    "image_x": 5,
+    "image_y": 0,
+    "value": 40
+  },
+  {
+    "id": "item:coat",
+    "name": "fur coat",
+    "description": "Keeps you warm while it is in your bag.",
+    "sheet": "placeholders",
+    "image_x": 6,
+    "image_y": 0,
+    "value": 120,
+    "carry_warmth": 12
+  },
+  {
+    "id": "item:campfire",
+    "name": "campfire kit",
+    "description": "Place to build a campfire. Gives warmth and light, and keeps wolves away.",
+    "sheet": "placeholders",
+    "image_x": 9,
+    "image_y": 0,
+    "value": 5,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:campfire",
+          "layer": "foreground",
+          "meta": 120
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
+  },
+  {
+    "id": "item:gate",
+    "name": "gate",
+    "description": "Place in a fence to make a door.",
+    "sheet": "placeholders",
+    "image_x": 10,
+    "image_y": 0,
+    "value": 4,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:fence_door",
+          "layer": "foreground",
+          "meta": 0
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
   },
   {
     "id": "item:stick",
     "name": "stick",
+    "description": "Place to build a fence. Burns as fuel.",
     "image_x": 2,
     "image_y": 0,
-    "value": 1
+    "value": 1,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:fence",
+          "layer": "foreground",
+          "meta": 0
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
   },
   {
     "id": "item:wood",
     "name": "wood",
+    "description": "Place to build a wall. Burns as fuel.",
     "image_x": 4,
     "image_y": 0,
-    "value": 1
+    "value": 2,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:wood_wall",
+          "layer": "foreground",
+          "meta": 0
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
   },
   {
     "id": "item:hay",
     "name": "hay",
+    "description": "Chicken feed.",
     "image_x": 5,
     "image_y": 0,
+    "price": 3,
     "value": 1
   },
   {
     "id": "item:stone",
     "name": "stone",
+    "description": "Place to build a stone wall.",
     "image_x": 6,
     "image_y": 0,
-    "value": 1
+    "value": 2,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:stone_wall",
+          "layer": "foreground",
+          "meta": 0
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
   },
   {
     "id": "item:sapling",
     "name": "sapling",
+    "description": "Plant on grass. Grows into a tree in 5 days.",
     "image_x": 7,
     "image_y": 0,
-    "value": 1
+    "value": 3,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:grass", "tile:soil", "tile:snow"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:sapling",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel",
+        "verb": "Plant"
+      }
+    ]
   },
   {
     "id": "item:plank",
     "name": "plank",
+    "description": "Crafting material.",
     "image_x": 5,
     "image_y": 1,
-    "value": 1
+    "value": 3
   },
   {
     "id": "item:grass",
     "name": "grass",
+    "description": "Place on bare ground.",
     "image_x": 6,
     "image_y": 1,
-    "value": 1
+    "value": 1,
+    "actions": [
+      {
+        "layer": "midground",
+        "empty": true,
+        "requires_present": ["background"],
+        "replace": "tile:grass",
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
   },
   {
     "id": "item:sand",
     "name": "sand",
+    "description": "Place on bare ground.",
     "image_x": 7,
     "image_y": 1,
-    "value": 1
+    "value": 1,
+    "actions": [
+      {
+        "layer": "midground",
+        "empty": true,
+        "requires_present": ["background"],
+        "replace": "tile:sand",
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
+  },
+  {
+    "id": "item:meat",
+    "name": "raw meat",
+    "description": "Cook it on a campfire or in the furnace.",
+    "sheet": "placeholders",
+    "image_x": 5,
+    "image_y": 1,
+    "value": 6,
+    "food": {
+      "hunger": 8,
+      "health": -3
+    },
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:campfire"],
+        "consume": true,
+        "particles": "smoke",
+        "sound": "egg",
+        "message": "Cooked!",
+        "give": ["item:cooked_meat"]
+      }
+    ]
+  },
+  {
+    "id": "item:cooked_meat",
+    "name": "cooked meat",
+    "sheet": "placeholders",
+    "image_x": 6,
+    "image_y": 1,
+    "value": 22,
+    "food": {
+      "hunger": 35,
+      "health": 4,
+      "warmth": 5
+    }
+  },
+  {
+    "id": "item:hide",
+    "name": "deer hide",
+    "description": "Used to make beds.",
+    "sheet": "placeholders",
+    "image_x": 7,
+    "image_y": 1,
+    "value": 25
+  },
+  {
+    "id": "item:mushroom",
+    "name": "mushroom",
+    "description": "Grows in cold forests. Good in stew.",
+    "sheet": "placeholders",
+    "image_x": 8,
+    "image_y": 1,
+    "value": 10,
+    "food": {
+      "hunger": 6,
+      "health": 2
+    }
+  },
+  {
+    "id": "item:cactus_fruit",
+    "name": "cactus fruit",
+    "description": "Picked from desert cactus. Very juicy.",
+    "sheet": "placeholders",
+    "image_x": 9,
+    "image_y": 1,
+    "value": 12,
+    "food": {
+      "hunger": 6,
+      "thirst": 18
+    }
+  },
+  {
+    "id": "item:reed",
+    "name": "reed",
+    "description": "Grows by the water. Used for bandages.",
+    "sheet": "placeholders",
+    "image_x": 10,
+    "image_y": 1,
+    "value": 2
+  },
+  {
+    "id": "item:herb",
+    "name": "wild herb",
+    "description": "Grows in dry grassland. Heals a little, makes bandages.",
+    "sheet": "placeholders",
+    "image_x": 11,
+    "image_y": 1,
+    "value": 8,
+    "food": {
+      "health": 5
+    }
+  },
+  {
+    "id": "item:clam",
+    "name": "clam",
+    "description": "Found on shores. Cook it on a campfire.",
+    "sheet": "placeholders",
+    "image_x": 12,
+    "image_y": 1,
+    "value": 10,
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:campfire"],
+        "consume": true,
+        "particles": "smoke",
+        "sound": "egg",
+        "message": "Cooked!",
+        "give": ["item:cooked_clam"]
+      }
+    ]
+  },
+  {
+    "id": "item:cooked_clam",
+    "name": "cooked clam",
+    "sheet": "placeholders",
+    "image_x": 13,
+    "image_y": 1,
+    "value": 28,
+    "food": {
+      "hunger": 18,
+      "health": 3
+    }
+  },
+  {
+    "id": "item:clay",
+    "name": "clay",
+    "description": "Dug from the shore. Fire it into bricks in a kiln.",
+    "sheet": "placeholders",
+    "image_x": 14,
+    "image_y": 1,
+    "value": 2
+  },
+  {
+    "id": "item:brick",
+    "name": "brick",
+    "description": "Place to build a brick wall.",
+    "sheet": "placeholders",
+    "image_x": 15,
+    "image_y": 1,
+    "value": 6,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:brick_wall",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
+  },
+  {
+    "id": "item:glass",
+    "name": "glass",
+    "description": "Made from sand in a kiln. Used for windows.",
+    "sheet": "placeholders",
+    "image_x": 0,
+    "image_y": 2,
+    "value": 8
+  },
+  {
+    "id": "item:copper_ore",
+    "name": "copper ore",
+    "description": "Smelt it into ingots in a kiln.",
+    "sheet": "placeholders",
+    "image_x": 1,
+    "image_y": 2,
+    "tint": [215, 130, 80],
+    "value": 6
+  },
+  {
+    "id": "item:iron_ore",
+    "name": "iron ore",
+    "description": "Smelt it into ingots in a kiln.",
+    "sheet": "placeholders",
+    "image_x": 1,
+    "image_y": 2,
+    "tint": [175, 185, 200],
+    "value": 10
+  },
+  {
+    "id": "item:copper_ingot",
+    "name": "copper ingot",
+    "description": "Upgrades tools at a workbench.",
+    "sheet": "placeholders",
+    "image_x": 2,
+    "image_y": 2,
+    "tint": [215, 130, 80],
+    "value": 18
+  },
+  {
+    "id": "item:iron_ingot",
+    "name": "iron ingot",
+    "description": "Upgrades tools at a stone workbench.",
+    "sheet": "placeholders",
+    "image_x": 2,
+    "image_y": 2,
+    "tint": [175, 185, 200],
+    "value": 30
+  },
+  {
+    "id": "item:pickaxe",
+    "name": "pickaxe",
+    "description": "Breaks rock and copper ore. Picks up stone and brick buildings.",
+    "sheet": "placeholders",
+    "image_x": 3,
+    "image_y": 2,
+    "value": 15,
+    "power": 1,
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:stone_wall"],
+        "replace": null,
+        "drops": ["item:stone"],
+        "particles": "stone",
+        "sound": "shovel",
+        "energy": 2,
+        "verb": "Mine"
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:brick_wall"],
+        "replace": null,
+        "drops": ["item:brick"],
+        "particles": "stone",
+        "sound": "shovel",
+        "energy": 2,
+        "verb": "Mine"
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:window"],
+        "replace": null,
+        "drops": ["item:window"],
+        "particles": "stone",
+        "sound": "shovel",
+        "energy": 1,
+        "verb": "Pick up"
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:kiln"],
+        "replace": null,
+        "drops": ["item:kiln"],
+        "particles": "stone",
+        "sound": "shovel",
+        "energy": 2,
+        "verb": "Pick up"
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:stone_workbench"],
+        "replace": null,
+        "drops": ["item:stone_workbench"],
+        "particles": "stone",
+        "sound": "shovel",
+        "energy": 2,
+        "verb": "Pick up"
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:sprinkler"],
+        "replace": null,
+        "drops": ["item:sprinkler"],
+        "particles": "stone",
+        "sound": "shovel",
+        "energy": 1,
+        "verb": "Pick up"
+      },
+      {
+        "layer": "foreground",
+        "tiles": ["tile:iron_sprinkler"],
+        "replace": null,
+        "drops": ["item:iron_sprinkler"],
+        "particles": "stone",
+        "sound": "shovel",
+        "energy": 1,
+        "verb": "Pick up"
+      }
+    ]
+  },
+  {
+    "id": "item:copper_pickaxe",
+    "name": "copper pickaxe",
+    "description": "Breaks rock twice as fast, and iron ore.",
+    "sheet": "placeholders",
+    "image_x": 3,
+    "image_y": 2,
+    "tint": [215, 130, 80],
+    "value": 50,
+    "power": 2,
+    "actions_from": "item:pickaxe"
+  },
+  {
+    "id": "item:iron_pickaxe",
+    "name": "iron pickaxe",
+    "description": "Breaks any rock in one or two hits.",
+    "sheet": "placeholders",
+    "image_x": 3,
+    "image_y": 2,
+    "tint": [175, 185, 200],
+    "value": 110,
+    "power": 3,
+    "actions_from": "item:pickaxe"
+  },
+  {
+    "id": "item:copper_axe",
+    "name": "copper axe",
+    "description": "Chops trees in two hits. Hits harder.",
+    "image_x": 4,
+    "image_y": 1,
+    "tint": [215, 130, 80],
+    "value": 50,
+    "attack": 2,
+    "power": 2,
+    "actions_from": "item:axe",
+    "reach": 1.5,
+    "arc": 70,
+    "cooldown": 0.6
+  },
+  {
+    "id": "item:iron_axe",
+    "name": "iron axe",
+    "description": "Chops trees in one hit. Hits hard.",
+    "image_x": 4,
+    "image_y": 1,
+    "tint": [175, 185, 200],
+    "value": 110,
+    "attack": 3,
+    "power": 3,
+    "actions_from": "item:axe",
+    "reach": 1.5,
+    "arc": 70,
+    "cooldown": 0.6
+  },
+  {
+    "id": "item:copper_hoe",
+    "name": "copper hoe",
+    "description": "Tills a 3x3 area in one swing.",
+    "image_x": 3,
+    "image_y": 1,
+    "tint": [215, 130, 80],
+    "value": 50,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:grass", "tile:soil", "tile:patchy_grass"],
+        "requires_empty": ["foreground"],
+        "replace": "tile:plowed_soil",
+        "particles": "dirt",
+        "sound": "hoe",
+        "energy": 5,
+        "area": 1,
+        "verb": "Till"
+      }
+    ]
+  },
+  {
+    "id": "item:iron_hoe",
+    "name": "iron hoe",
+    "description": "Tills a 5x5 area in one swing.",
+    "image_x": 3,
+    "image_y": 1,
+    "tint": [175, 185, 200],
+    "value": 110,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["tile:grass", "tile:soil", "tile:patchy_grass"],
+        "requires_empty": ["foreground"],
+        "replace": "tile:plowed_soil",
+        "particles": "dirt",
+        "sound": "hoe",
+        "energy": 10,
+        "area": 2,
+        "verb": "Till"
+      }
+    ]
+  },
+  {
+    "id": "item:copper_can",
+    "name": "copper can",
+    "description": "Waters a 3x3 area, holds 20.",
+    "image_x": 2,
+    "image_y": 1,
+    "tint": [215, 130, 80],
+    "value": 50,
+    "start_meta": 20,
+    "food": {
+      "thirst": 20,
+      "uses_meta": true
+    },
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:water"],
+        "set_meta": 20,
+        "particles": "water",
+        "sound": "water fill",
+        "message": "Watering can filled"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:well_path"],
+        "set_meta": 20,
+        "particles": "water",
+        "sound": "water fill",
+        "message": "Watering can filled"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:plowed_soil"],
+        "min_meta": 1,
+        "replace": "tile:watered_soil",
+        "add_meta": -1,
+        "particles": "water",
+        "sound": "water pour",
+        "energy": 1,
+        "area": 1,
+        "verb": "Water"
+      },
+      {
+        "max_meta": 0,
+        "fail": true,
+        "message": "Out of water, fill up at the well"
+      }
+    ]
+  },
+  {
+    "id": "item:iron_can",
+    "name": "iron can",
+    "description": "Waters a 5x5 area, holds 40.",
+    "image_x": 2,
+    "image_y": 1,
+    "tint": [175, 185, 200],
+    "value": 110,
+    "start_meta": 40,
+    "food": {
+      "thirst": 20,
+      "uses_meta": true
+    },
+    "actions": [
+      {
+        "layer": "foreground",
+        "tiles": ["tile:water"],
+        "set_meta": 40,
+        "particles": "water",
+        "sound": "water fill",
+        "message": "Watering can filled"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:well_path"],
+        "set_meta": 40,
+        "particles": "water",
+        "sound": "water fill",
+        "message": "Watering can filled"
+      },
+      {
+        "layer": "midground",
+        "tiles": ["tile:plowed_soil"],
+        "min_meta": 1,
+        "replace": "tile:watered_soil",
+        "add_meta": -1,
+        "particles": "water",
+        "sound": "water pour",
+        "energy": 1,
+        "area": 2,
+        "verb": "Water"
+      },
+      {
+        "max_meta": 0,
+        "fail": true,
+        "message": "Out of water, fill up at the well"
+      }
+    ]
+  },
+  {
+    "id": "item:workbench",
+    "name": "workbench",
+    "description": "Place it, then click it to craft tools and buildings.",
+    "sheet": "placeholders",
+    "image_x": 4,
+    "image_y": 2,
+    "value": 10,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:workbench",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
+  },
+  {
+    "id": "item:stone_workbench",
+    "name": "stone workbench",
+    "description": "Place it to craft iron tools.",
+    "sheet": "placeholders",
+    "image_x": 5,
+    "image_y": 2,
+    "value": 40,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:stone_workbench",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
+  },
+  {
+    "id": "item:kiln",
+    "name": "kiln",
+    "description": "Place it, then click it to fire glass, bricks and ingots.",
+    "sheet": "placeholders",
+    "image_x": 6,
+    "image_y": 2,
+    "value": 25,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:kiln",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
+  },
+  {
+    "id": "item:bed",
+    "name": "bed",
+    "description": "Sleep in it to end the day. You wake up at the last bed you used.",
+    "sheet": "placeholders",
+    "image_x": 7,
+    "image_y": 2,
+    "value": 40,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:bed",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
+  },
+  {
+    "id": "item:door",
+    "name": "door",
+    "description": "Rooms need one. Wolves can not open it.",
+    "sheet": "placeholders",
+    "image_x": 8,
+    "image_y": 2,
+    "value": 15,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:door",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
+  },
+  {
+    "id": "item:window",
+    "name": "window",
+    "description": "A wall you can see through.",
+    "sheet": "placeholders",
+    "image_x": 9,
+    "image_y": 2,
+    "value": 20,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:window",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
+  },
+  {
+    "id": "item:plank_floor",
+    "name": "plank floor",
+    "description": "Place on the ground inside your house.",
+    "sheet": "placeholders",
+    "image_x": 10,
+    "image_y": 2,
+    "value": 2,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "replace": "tile:plank_floor",
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      },
+      {
+        "layer": "midground",
+        "empty": true,
+        "requires_present": ["background"],
+        "replace": "tile:plank_floor",
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
+  },
+  {
+    "id": "item:brick_floor",
+    "name": "brick floor",
+    "description": "Place on the ground inside your house.",
+    "sheet": "placeholders",
+    "image_x": 11,
+    "image_y": 2,
+    "value": 3,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "replace": "tile:brick_floor",
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      },
+      {
+        "layer": "midground",
+        "empty": true,
+        "requires_present": ["background"],
+        "replace": "tile:brick_floor",
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
+  },
+  {
+    "id": "item:sprinkler",
+    "name": "sprinkler",
+    "description": "Waters tilled soil next to it every morning.",
+    "sheet": "placeholders",
+    "image_x": 12,
+    "image_y": 2,
+    "value": 45,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:sprinkler",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
+  },
+  {
+    "id": "item:iron_sprinkler",
+    "name": "iron sprinkler",
+    "description": "Waters tilled soil in a 5x5 area every morning.",
+    "sheet": "placeholders",
+    "image_x": 12,
+    "image_y": 2,
+    "tint": [175, 185, 200],
+    "value": 90,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:iron_sprinkler",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
+  },
+  {
+    "id": "item:scarecrow",
+    "name": "scarecrow",
+    "description": "Keeps crows off crops within 4 tiles.",
+    "sheet": "placeholders",
+    "image_x": 13,
+    "image_y": 2,
+    "value": 10,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:scarecrow",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
+  },
+  {
+    "id": "item:hopper",
+    "name": "egg hopper",
+    "description": "Collects eggs from animals within 4 tiles.",
+    "sheet": "placeholders",
+    "image_x": 14,
+    "image_y": 2,
+    "value": 30,
+    "actions": [
+      {
+        "layer": "midground",
+        "tiles": ["*"],
+        "requires_empty": ["foreground"],
+        "place": {
+          "tile": "tile:hopper",
+          "layer": "foreground"
+        },
+        "consume": true,
+        "particles": "dirt",
+        "sound": "shovel"
+      }
+    ]
   }
 ]

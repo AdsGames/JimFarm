@@ -1,8 +1,19 @@
 #include "Character.h"
 
 #include "Graphics.h"
+#include "manager/ItemTypeManager.h"
 #include "manager/TileTypeManager.h"
+#include "ui/Tooltip.h"
+#include "ui/UiScale.h"
+#include "utility/Shadow.h"
 #include "utility/Tools.h"
+
+// Seconds to eat or drink one item
+constexpr float EAT_TIME = 0.9F;
+
+// Seconds to fully charge a throw, and the least charge that throws
+constexpr float THROW_TIME = 0.8F;
+constexpr float MIN_THROW = 0.15F;
 
 // Top of head
 CharacterForeground::CharacterForeground(Character* charPtr)
@@ -29,7 +40,7 @@ void CharacterForeground::update() {
 Character::Character() : Sprite() {
   this->z = 2.0f;
   c_fore = std::make_shared<CharacterForeground>(this);
-  Graphics::Instance()->add(c_fore, true);
+  Graphics::Instance().add(c_fore, true);
 }
 
 // Set image
@@ -45,20 +56,18 @@ void Character::loadData() {
   drop = asw::assets::load_sample("assets/sfx/drop.wav");
   step[0] = asw::assets::load_sample("assets/sfx/step_1.wav");
   step[1] = asw::assets::load_sample("assets/sfx/step_2.wav");
+}
 
-  // Load fonts
-  pixelart = asw::assets::load_font("assets/fonts/pixelart.ttf", 12);
-
-  inventory_ui.getInventory()->addItem(std::make_shared<Item>("item:axe"), 1);
-  inventory_ui.getInventory()->addItem(std::make_shared<Item>("item:scythe"),
-                                       1);
-  inventory_ui.getInventory()->addItem(std::make_shared<Item>("item:shovel"),
-                                       1);
-  inventory_ui.getInventory()->addItem(std::make_shared<Item>("item:hoe"), 1);
-  inventory_ui.getInventory()->addItem(
-      std::make_shared<Item>("item:berry_seed"), 4);
-  inventory_ui.getInventory()->addItem(
-      std::make_shared<Item>("item:watering_can"), 1);
+void Character::giveStarterItems() {
+  auto inventory = inventory_ui.getInventory();
+  inventory->addItem(std::make_shared<Item>("item:hoe"), 1);
+  inventory->addItem(std::make_shared<Item>("item:watering_can"), 1);
+  inventory->addItem(std::make_shared<Item>("item:berry_seed"), 6);
+  inventory->addItem(std::make_shared<Item>("item:carrot_seed"), 4);
+  inventory->addItem(std::make_shared<Item>("item:axe"), 1);
+  inventory->addItem(std::make_shared<Item>("item:scythe"), 1);
+  inventory->addItem(std::make_shared<Item>("item:shovel"), 1);
+  inventory->addItem(std::make_shared<Item>("item:berry"), 4);
 }
 
 void Character::setPosition(const asw::Vec2i& pos) {
@@ -83,11 +92,27 @@ void Character::draw(const Camera& camera) const {
                     asw::Vec2f(indicator_pos.x - camera.getPosition().x,
                                indicator_pos.y - camera.getPosition().y));
 
-  // Draw frame
+  // Shadow at the feet, then the frame
+  shadow::draw(pos.x - camera.getPosition().x + 8.0F,
+               pos.y - camera.getPosition().y + 11.0F, 11.0F);
+
   asw::draw::stretch_sprite_blit(
       image, asw::Quadf(ani_ticker / 4 * 16, (direction - 1) * 20, 16, 20),
       asw::Quadf(pos.x - camera.getPosition().x,
                  pos.y - camera.getPosition().y - 8, 16, 20));
+
+  // Eating and throw charge over the head
+  const float progress = eat_timer >= 0.0F      ? eat_timer / EAT_TIME
+                         : throw_charge >= 0.0F ? throw_charge / THROW_TIME
+                                                : -1.0F;
+  if (progress >= 0.0F) {
+    const float x = pos.x - camera.getPosition().x + 1.0F;
+    const float y = pos.y - camera.getPosition().y - 13.0F;
+    asw::draw::rect_fill(asw::Quadf(x, y, 14.0F, 3.0F), asw::Color(30, 30, 30));
+    asw::draw::rect_fill(asw::Quadf(x, y, 14.0F * progress, 3.0F),
+                         eat_timer >= 0.0F ? asw::Color(240, 180, 60)
+                                           : asw::Color(230, 90, 60));
+  }
 
   // Selected item
   if (inventory_ui.getInventory()->getStack(selected_item)->getItem()) {
@@ -99,8 +124,7 @@ void Character::draw(const Camera& camera) const {
 }
 
 // Update player
-void Character::drawInventory() const {
-  auto screen_size = asw::display::get_logical_size();
+void Character::drawInventory(const asw::Vec2i& screen_size) const {
   const int draw_x = (screen_size.x - HOTBAR_SIZE * 18) / 2;
   const int draw_y = screen_size.y - 20;
 
@@ -118,14 +142,29 @@ void Character::drawInventory() const {
       stack->draw(asw::Vec2i(18 * i + 1 + draw_x, 1 + draw_y));
     }
   }
+
+  // Tooltip for the hotbar slot under the cursor
+  const auto mouse = getUiMouse();
+  const int slot = (mouse.x - draw_x) / 18;
+  if (!UiController::isHoldingItem() && mouse.x >= draw_x &&
+      mouse.y >= draw_y && mouse.y < draw_y + 18 && slot < HOTBAR_SIZE) {
+    auto stack = inventory_ui.getInventory()->getStack(slot);
+    if (stack && stack->getItem()) {
+      Tooltip::setItem(*stack->getItem());
+    }
+  }
 }
 
 std::shared_ptr<Item> Character::getSelectedItem() const {
   return inventory_ui.getInventory()->getStack(selected_item)->getItem();
 }
 
+std::shared_ptr<ItemStack> Character::getHeldStack() const {
+  return inventory_ui.getInventory()->getStack(selected_item);
+}
+
 // Update player
-void Character::update(World& world) {
+void Character::update(World& world, float dt) {
   const auto& mouse = asw::input::get_mouse();
 
   auto relative_x = static_cast<int>(static_cast<float>(mouse.position.x) /
@@ -136,6 +175,9 @@ void Character::update(World& world) {
                     world.getCamera().getPosition().y;
 
   auto tile_index = pos / TILE_SIZE;
+
+  // Open windows take the input
+  const bool input_enabled = !world.getHud().isOpen();
 
   // Indicator
   indicator_pos = asw::Vec2i(relative_x - (relative_x % 16),
@@ -148,21 +190,48 @@ void Character::update(World& world) {
   }
 
   // Selector
-  if (asw::input::get_key_down(asw::input::Key::Z) || mouse.z > 0) {
+  if (input_enabled &&
+      (asw::input::get_key_down(asw::input::Key::Z) || mouse.z > 0)) {
     selected_item = (selected_item + (HOTBAR_SIZE - 1)) % HOTBAR_SIZE;
   }
-  if (asw::input::get_key_down(asw::input::Key::X) || mouse.z < 0) {
+  if (input_enabled &&
+      (asw::input::get_key_down(asw::input::Key::X) || mouse.z < 0)) {
     selected_item = (selected_item + 1) % HOTBAR_SIZE;
   }
 
-  // Movement code
-  // Move
+  // Number keys select hotbar slot directly
+  constexpr std::array<asw::input::Key, HOTBAR_SIZE> hotbar_keys = {
+      asw::input::Key::Num1, asw::input::Key::Num2, asw::input::Key::Num3,
+      asw::input::Key::Num4, asw::input::Key::Num5, asw::input::Key::Num6,
+      asw::input::Key::Num7, asw::input::Key::Num8};
+
+  for (int i = 0; i < HOTBAR_SIZE; i++) {
+    if (input_enabled && asw::input::get_key_down(hotbar_keys[i])) {
+      selected_item = i;
+    }
+  }
+
+  // Movement code, speed is chosen per step so it stays on the tile grid
+  const auto& state = world.getState();
   if (!moving) {
+    move_speed =
+        (state.energy <= 0.0F || state.health < 25.0F || state.warmth <= 0.0F)
+            ? 1
+            : 2;
+  }
+
+  // Open ground, or a closed door that opens as you walk into it
+  auto canEnter = [&](const asw::Vec2i& at) {
+    return !world.getMap().isSolidAt(at) || world.tryOpenDoor(at);
+  };
+
+  // Move
+  if (!moving && input_enabled) {
     // Up
     if (asw::input::get_key(asw::input::Key::Up) ||
         asw::input::get_key(asw::input::Key::W)) {
       direction = DIR_UP;
-      if (!world.getMap().isSolidAt(tile_index + asw::Vec2i(0, -1))) {
+      if (canEnter(tile_index + asw::Vec2i(0, -1))) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -171,7 +240,7 @@ void Character::update(World& world) {
     else if (asw::input::get_key(asw::input::Key::Down) ||
              asw::input::get_key(asw::input::Key::S)) {
       direction = DIR_DOWN;
-      if (!world.getMap().isSolidAt(tile_index + asw::Vec2i(0, 1))) {
+      if (canEnter(tile_index + asw::Vec2i(0, 1))) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -180,7 +249,7 @@ void Character::update(World& world) {
     else if (asw::input::get_key(asw::input::Key::Left) ||
              asw::input::get_key(asw::input::Key::A)) {
       direction = DIR_LEFT;
-      if (!world.getMap().isSolidAt(tile_index + asw::Vec2i(-1, 0))) {
+      if (canEnter(tile_index + asw::Vec2i(-1, 0))) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -189,7 +258,7 @@ void Character::update(World& world) {
     else if (asw::input::get_key(asw::input::Key::Right) ||
              asw::input::get_key(asw::input::Key::D)) {
       direction = DIR_RIGHT;
-      if (!world.getMap().isSolidAt(tile_index + asw::Vec2i(1, 0))) {
+      if (canEnter(tile_index + asw::Vec2i(1, 0))) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -205,15 +274,15 @@ void Character::update(World& world) {
   if (moving) {
     // Smooth move
     if (direction == DIR_UP && pos.y > 0) {
-      pos.y -= 2;
+      pos.y -= move_speed;
     } else if (direction == DIR_DOWN &&
                pos.y < (world.getMap().getHeight() * TILE_SIZE) - TILE_SIZE) {
-      pos.y += 2;
+      pos.y += move_speed;
     } else if (direction == DIR_LEFT && pos.x > 0) {
-      pos.x -= 2;
+      pos.x -= move_speed;
     } else if (direction == DIR_RIGHT &&
                pos.x < (world.getMap().getWidth() * TILE_SIZE) - TILE_SIZE) {
-      pos.x += 2;
+      pos.x += move_speed;
     }
 
     // Increase animation ticker
@@ -234,7 +303,7 @@ void Character::update(World& world) {
   }
 
   // Drop
-  if (asw::input::get_key_down(asw::input::Key::F)) {
+  if (input_enabled && asw::input::get_key_down(asw::input::Key::F)) {
     std::shared_ptr<Item> itemInHand = nullptr;
     if (inventory_ui.getInventory()->getStack(selected_item)->getItem()) {
       itemInHand =
@@ -249,13 +318,68 @@ void Character::update(World& world) {
     }
   }
 
-  // Interact with map
-  if ((asw::input::get_key_down(asw::input::Key::Space) ||
-       asw::input::get_mouse_button_down(asw::input::MouseButton::Left)) &&
-      inventory_ui.getInventory()->getStack(selected_item)->getItem()) {
-    world.interact(
-        indicator_pos,
-        inventory_ui.getInventory()->getStack(selected_item)->getItem());
+  // Left click uses the held item, right click interacts
+  auto held = inventory_ui.getInventory()->getStack(selected_item);
+
+  if (input_enabled &&
+      (asw::input::get_key_down(asw::input::Key::Space) ||
+       asw::input::get_mouse_button_down(asw::input::MouseButton::Left))) {
+    // Weapons turn you toward the cursor
+    if (held->getItem() &&
+        ItemTypeManager::getInfo(held->getItem()->getType().getId()).attack >
+            0 &&
+        !moving) {
+      const auto to = indicator_pos - pos;
+      if (std::abs(to.x) > std::abs(to.y)) {
+        direction = to.x > 0 ? DIR_RIGHT : DIR_LEFT;
+      } else if (to.y != 0) {
+        direction = to.y > 0 ? DIR_DOWN : DIR_UP;
+      }
+    }
+
+    world.use(indicator_pos, pos, *held);
+  }
+
+  const bool interact_held =
+      input_enabled &&
+      (asw::input::get_key(asw::input::Key::C) ||
+       asw::input::get_mouse_button(asw::input::MouseButton::Right));
+
+  if (input_enabled &&
+      (asw::input::get_key_down(asw::input::Key::C) ||
+       asw::input::get_mouse_button_down(asw::input::MouseButton::Right))) {
+    const auto result = world.interact(indicator_pos, pos, *held);
+    if (result == InteractResult::Eat) {
+      eat_timer = 0.0F;
+      eat_slot = selected_item;
+    } else if (result == InteractResult::Throw) {
+      throw_charge = 0.0F;
+    }
+  }
+
+  // Throws charge while held and fly when let go
+  if (throw_charge >= 0.0F) {
+    if (interact_held && held->getItem()) {
+      throw_charge = std::min(THROW_TIME, throw_charge + dt);
+    } else {
+      if (held->getItem() && throw_charge >= MIN_THROW) {
+        world.throwItem(*held, pos, indicator_pos, throw_charge / THROW_TIME);
+      }
+      throw_charge = -1.0F;
+    }
+  }
+
+  // Eating takes a moment, and goes on while the button is held
+  if (eat_timer >= 0.0F) {
+    if (!interact_held || selected_item != eat_slot || !held->getItem()) {
+      eat_timer = -1.0F;
+    } else {
+      eat_timer += dt;
+      if (eat_timer >= EAT_TIME) {
+        world.consume(*held);
+        eat_timer = 0.0F;
+      }
+    }
   }
 
   // Scroll map

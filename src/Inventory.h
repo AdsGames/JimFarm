@@ -2,6 +2,7 @@
 #define SRC_INVENTORY_H_
 
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "ItemStack.h"
@@ -22,6 +23,12 @@ class Inventory {
   int getSize() const;
 
   void empty();
+
+  // Total quantity of an item across all stacks
+  int count(const std::string& id) const;
+
+  // Remove quantity of an item across stacks, false if there is not enough
+  bool take(const std::string& id, int quantity);
 
  private:
   std::vector<std::shared_ptr<ItemStack>> contents;

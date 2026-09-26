@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>JimFarm</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        background-color: #000000;
+      }
+
+      #canvas_wrapper {
+        display: flex;
+        margin: 0 auto;
+      }
+
+      /* Size the canvas with CSS so SDL follows it: SDL only resizes the
+         drawing buffer to the canvas CSS size when CSS controls it */
+      #canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="canvas_wrapper">
+      <canvas
+        id="canvas"
+        oncontextmenu="event.preventDefault()"
+        onclick="this.focus()"
+        tabindex="-1"
+      ></canvas>
+    </div>
+
+    <script type="text/javascript">
+      var Module = {
+        canvas: (function () {
+          return document.getElementById("canvas");
+        })(),
+      };
+    </script>
+
+    <script type="text/javascript">
+      const resize = () => {
+        const aspectRatio = 3 / 2;
+        const maxWidth = window.innerWidth;
+        const maxHeight = window.innerHeight;
+        const canvasWrapper = document.getElementById("canvas_wrapper");
+        if (maxWidth / maxHeight > aspectRatio) {
+          canvasWrapper.style.width = maxHeight * aspectRatio + "px";
+          canvasWrapper.style.height = maxHeight + "px";
+        } else {
+          canvasWrapper.style.width = maxWidth + "px";
+          canvasWrapper.style.height = maxWidth / aspectRatio + "px";
+        }
+      };
+
+      // Size now, before SDL creates its window and reads the canvas size
+      resize();
+      window.addEventListener("resize", resize);
+    </script>
+
+    {{{ SCRIPT }}}
+  </body>
+</html>

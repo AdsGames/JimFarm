@@ -5,50 +5,53 @@
 #include <set>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "Sprite.h"
 #include "utility/Camera.h"
 
-struct SpriteCmp {
-  bool operator()(const std::weak_ptr<Sprite>& a,
-                  const std::weak_ptr<Sprite>& b) const {
-    if (a.expired() || b.expired()) {
-      return a.lock() < b.lock();
-    }
+// Sort key is captured on insert so comparisons never touch the sprite
+struct SpriteEntry {
+  float z;
+  int y;
+  unsigned int id;
+  std::weak_ptr<Sprite> sprite;
 
-    if (a.lock()->getZ() != b.lock()->getZ()) {
-      return a.lock()->getZ() < b.lock()->getZ();
+  bool operator<(const SpriteEntry& other) const {
+    if (z != other.z) {
+      return z < other.z;
     }
-    if (a.lock()->getPosition().y != b.lock()->getPosition().y) {
-      return a.lock()->getPosition().y < b.lock()->getPosition().y;
+    if (y != other.y) {
+      return y < other.y;
     }
-    return a.lock()->getSpriteId() < b.lock()->getSpriteId();
+    return id < other.id;
   }
 };
 
 class Graphics {
  public:
   // Get singleton instance
-  static std::shared_ptr<Graphics> Instance();
+  static Graphics& Instance();
 
   // Add and remove sprites
-  void add(std::shared_ptr<Sprite> sprite, bool dynamic = false);
-  void remove(std::shared_ptr<Sprite> sprite);
+  void add(const std::shared_ptr<Sprite>& sprite, bool dynamic = false);
+  void remove(const std::shared_ptr<Sprite>& sprite);
 
   // Draw managed sprites
   void draw(const Camera& camera) const;
 
-  // Prune dead sprites
+  // Re-sort dynamic sprites and drop dead ones
   void prune();
 
  private:
-  // Drawable
-  std::unordered_map<unsigned int, std::weak_ptr<Sprite>> sprites{};
-  std::set<unsigned int> dynamic_sprites{};
-  std::set<std::weak_ptr<Sprite>, SpriteCmp> sorted_sprites{};
+  using SortedSet = std::set<SpriteEntry>;
 
-  // Single instance
-  static std::shared_ptr<Graphics> instance;
+  void erase(unsigned int id);
+
+  // Drawable
+  SortedSet sorted_sprites{};
+  std::unordered_map<unsigned int, SortedSet::iterator> sprites{};
+  std::unordered_set<unsigned int> dynamic_sprites{};
 };
 
 #endif  // SRC_GRAPHICS_H_

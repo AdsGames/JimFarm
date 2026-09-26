@@ -9,8 +9,17 @@
 
 int Chunk::seed = 0;
 
-Chunk::Chunk(int index_x, int index_y) : index_x(index_x), index_y(index_y) {
-  generate();
+Chunk::Chunk(int index_x, int index_y, bool generate_tiles)
+    : index_x(index_x), index_y(index_y) {
+  if (generate_tiles) {
+    generate();
+  } else {
+    generateBiome();
+  }
+}
+
+Chunk::~Chunk() {
+  setDrawEnabled(false);
 }
 
 int Chunk::getXIndex() const {
@@ -71,13 +80,13 @@ void Chunk::setTileAt(const asw::Vec2i& position,
   }
 
   if (tiles[offset] && is_drawing) {
-    Graphics::Instance()->remove(tiles[offset]);
+    Graphics::Instance().remove(tiles[offset]);
   }
 
   tiles[offset] = tile;
 
   if (tile && is_drawing) {
-    Graphics::Instance()->add(tiles[offset]);
+    Graphics::Instance().add(tiles[offset]);
   }
 }
 
@@ -104,7 +113,7 @@ void Chunk::placeItemAt(std::shared_ptr<Item> item,
   items.push_back(newMapItem);
 
   if (is_drawing) {
-    Graphics::Instance()->add(newMapItem);
+    Graphics::Instance().add(newMapItem);
   }
 }
 
@@ -113,7 +122,7 @@ void Chunk::removeItem(std::shared_ptr<MapItem> item) {
   if (item != nullptr) {
     for (unsigned int i = 0; i < items.size(); i++) {
       if (items.at(i) == item) {
-        Graphics::Instance()->remove(items.at(i));
+        Graphics::Instance().remove(items.at(i));
         items.erase(items.begin() + i);
         break;
       }
@@ -128,92 +137,21 @@ void Chunk::setDrawEnabled(bool enabled) {
 
   for (auto const& tile : tiles) {
     if (tile && enabled) {
-      Graphics::Instance()->add(tile);
+      Graphics::Instance().add(tile);
     } else if (tile && !enabled) {
-      Graphics::Instance()->remove(tile);
+      Graphics::Instance().remove(tile);
     }
   }
 
   for (auto const& item : items) {
     if (enabled) {
-      Graphics::Instance()->add(item);
+      Graphics::Instance().add(item);
     } else {
-      Graphics::Instance()->remove(item);
+      Graphics::Instance().remove(item);
     }
   }
 
   is_drawing = enabled;
-}
-
-void Chunk::tick() {
-  // Tiles
-  for (unsigned i = 0; i < CHUNK_SIZE; i++) {
-    for (unsigned t = 0; t < CHUNK_SIZE; t++) {
-      const auto idx = asw::Vec2i(static_cast<int>(i), static_cast<int>(t));
-      const auto i_pos =
-          asw::Vec2i(i + index_x * CHUNK_SIZE, t + index_y * CHUNK_SIZE);
-
-      auto offset = this->getTileIndex(idx, LAYER_FOREGROUND);
-
-      // Current tile
-      const auto& current = tiles[offset];
-
-      if (!current) {
-        continue;
-      }
-
-      // Berries
-      if (current->getType().getId() == "tile:berry") {
-        // Grow a bit
-        current->changeMeta(1);
-
-        // Done Growing
-        if (current->getMeta() >= MAX_TILE_META) {
-          placeItemAt(std::make_shared<Item>("item:berry"), i_pos);
-          setTileAt(idx, current->getZ(), nullptr);
-        }
-      }
-      // Tomatos
-      else if (current->getType().getId() == "tile:tomato") {
-        // Grow a bit
-        if (!random(0, 2)) {
-          current->changeMeta(1);
-        }
-
-        // Done Growing
-        if (current->getMeta() >= MAX_TILE_META) {
-          placeItemAt(std::make_shared<Item>("item:tomato"), i_pos);
-          setTileAt(idx, current->getZ(), nullptr);
-        }
-      }
-      // Carrots
-      else if (current->getType().getId() == "tile:carrot") {
-        // Grow a bit
-        if (!random(0, 5)) {
-          current->changeMeta(1);
-        }
-
-        // Done Growing
-        if (current->getMeta() >= MAX_TILE_META) {
-          placeItemAt(std::make_shared<Item>("item:tomato"), i_pos);
-          setTileAt(idx, current->getZ(), nullptr);
-        }
-      }
-      // Lavender
-      else if (current->getType().getId() == "tile:lavender") {
-        // Grow a bit
-        if (!random(0, 10)) {
-          current->changeMeta(1);
-        }
-
-        // Done Growing
-        if (current->getMeta() >= MAX_TILE_META) {
-          placeItemAt(std::make_shared<Item>("item:lavender"), i_pos);
-          setTileAt(idx, current->getZ(), nullptr);
-        }
-      }
-    }
-  }
 }
 
 void Chunk::generate() {
@@ -242,6 +180,9 @@ void Chunk::generate() {
         if (random(0, 30) == 0) {
           tiles[pos_3_foreground] =
               std::make_shared<Tile>("tile:tree", t_pos, LAYER_FOREGROUND, 2);
+        } else if (random(0, 60) == 0) {
+          tiles[pos_3_foreground] =
+              std::make_shared<Tile>("tile:mushroom", t_pos, LAYER_FOREGROUND);
         }
       }
       // Forested tundra
@@ -253,6 +194,9 @@ void Chunk::generate() {
         if (random(0, 3) == 0) {
           tiles[pos_3_foreground] = std::make_shared<Tile>(
               "tile:tree", t_pos, LAYER_FOREGROUND, random(1, 2));
+        } else if (random(0, 25) == 0) {
+          tiles[pos_3_foreground] =
+              std::make_shared<Tile>("tile:mushroom", t_pos, LAYER_FOREGROUND);
         }
       }
       // Forest
@@ -264,6 +208,12 @@ void Chunk::generate() {
         if (random(0, 2) == 0) {
           tiles[pos_3_foreground] = std::make_shared<Tile>(
               "tile:tree", t_pos, LAYER_FOREGROUND, random(0, 1));
+        } else if (random(0, 40) == 0) {
+          tiles[pos_3_foreground] =
+              std::make_shared<Tile>("tile:bush", t_pos, LAYER_FOREGROUND, 0);
+        } else if (random(0, 70) == 0) {
+          tiles[pos_3_foreground] =
+              std::make_shared<Tile>("tile:mushroom", t_pos, LAYER_FOREGROUND);
         }
       }
       // Dense forest
@@ -300,6 +250,9 @@ void Chunk::generate() {
         if (random(0, 8) == 0) {
           tiles[pos_3_foreground] = std::make_shared<Tile>(
               "tile:dense_grass", t_pos, LAYER_FOREGROUND, random(0, 3));
+        } else if (random(0, 40) == 0) {
+          tiles[pos_3_foreground] =
+              std::make_shared<Tile>("tile:herb", t_pos, LAYER_FOREGROUND);
         }
       }
       // Grassy wasteland
@@ -311,6 +264,9 @@ void Chunk::generate() {
         if (random(0, 1) == 0) {
           tiles[pos_3_foreground] = std::make_shared<Tile>(
               "tile:dense_grass", t_pos, LAYER_FOREGROUND, random(0, 3));
+        } else if (random(0, 40) == 0) {
+          tiles[pos_3_foreground] =
+              std::make_shared<Tile>("tile:herb", t_pos, LAYER_FOREGROUND);
         }
       }
       // Savana
@@ -324,10 +280,7 @@ void Chunk::generate() {
               "tile:dense_grass", t_pos, LAYER_FOREGROUND, 1);
         } else if (random(0, 10) == 0) {
           tiles[pos_3_foreground] =
-              std::make_shared<Tile>("tile:bush", t_pos, LAYER_FOREGROUND, 1);
-        } else if (random(0, 50) == 0) {
-          tiles[pos_3_foreground] =
-              std::make_shared<Tile>("tile:barn", t_pos, LAYER_FOREGROUND, 1);
+              std::make_shared<Tile>("tile:bush", t_pos, LAYER_FOREGROUND, 0);
         }
       }
       // Desert
@@ -336,6 +289,10 @@ void Chunk::generate() {
             std::make_shared<Tile>("tile:soil", t_pos, LAYER_BACKGROUND);
         tiles[pos_3_midground] =
             std::make_shared<Tile>("tile:sand", t_pos, LAYER_MIDGROUND);
+        if (random(0, 25) == 0) {
+          tiles[pos_3_foreground] =
+              std::make_shared<Tile>("tile:cactus", t_pos, LAYER_FOREGROUND);
+        }
       }
 
       // Water deep
@@ -375,8 +332,24 @@ void Chunk::generate() {
         setTileAt(idx, LAYER_FOREGROUND,
                   std::make_shared<Tile>("tile:dense_grass", t_pos,
                                          LAYER_FOREGROUND));
-        if (random(0, 100) == 0) {
-          placeItemAt(std::make_shared<Item>("item:chicken"), i_pos);
+        // Reeds, clams and clay by the water
+        const int roll = random(0, 99);
+        if (roll == 0) {
+          setTileAt(
+              idx, LAYER_FOREGROUND,
+              std::make_shared<Tile>("tile:chicken", t_pos, LAYER_FOREGROUND));
+        } else if (roll < 14) {
+          setTileAt(
+              idx, LAYER_FOREGROUND,
+              std::make_shared<Tile>("tile:reeds", t_pos, LAYER_FOREGROUND));
+        } else if (roll < 18) {
+          setTileAt(
+              idx, LAYER_FOREGROUND,
+              std::make_shared<Tile>("tile:clam", t_pos, LAYER_FOREGROUND));
+        } else if (roll < 28) {
+          setTileAt(idx, LAYER_MIDGROUND,
+                    std::make_shared<Tile>("tile:clay", t_pos, LAYER_MIDGROUND));
+          setTileAt(idx, LAYER_FOREGROUND, nullptr);
         }
       }
       // Stone
@@ -390,6 +363,15 @@ void Chunk::generate() {
             idx, LAYER_FOREGROUND,
             std::make_shared<Tile>("tile:stone_wall", t_pos, LAYER_FOREGROUND,
                                    (height[pos_2] - 32) / 6));
+
+        // Ore in rock, iron mostly where it is cold
+        if (random(0, 9) == 0) {
+          const bool iron = temperature[pos_2] < 0 || random(0, 5) == 0;
+          setTileAt(idx, LAYER_FOREGROUND,
+                    std::make_shared<Tile>(
+                        iron ? "tile:iron_ore" : "tile:copper_ore", t_pos,
+                        LAYER_FOREGROUND));
+        }
       }
     }
   }

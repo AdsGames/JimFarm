@@ -14,6 +14,16 @@
 #include <vector>
 
 class TileBehaviour;
+class GameState;
+
+enum class ImageType {
+  Static,
+  MetaMap,
+  MetaMap2,
+  Animated,
+  Dynamic,
+  None,
+};
 
 class TileType {
  public:
@@ -39,8 +49,24 @@ class TileType {
   unsigned char getWidth() const { return width; }
   unsigned char getHeight() const { return height; }
 
-  // Draw
-  void draw(int x, int y, unsigned char meta = 0) const;
+  // Sprite size in tiles
+  unsigned char getImageWidth() const { return image_w; }
+  unsigned char getImageHeight() const { return image_h; }
+
+  // Draw, tile_x is the world tile column used to offset wind sway
+  void draw(int x, int y, unsigned char meta = 0, int tile_x = 0) const;
+
+  // Seasonal tint and wind sway, set in tiles.json
+  void setSeasonal(bool value) { seasonal = value; }
+  bool isSeasonal() const { return seasonal; }
+  void setSway(bool value) { sway = value; }
+  bool isSway() const { return sway; }
+
+  // Shadow width in pixels under the tile, 0 for none
+  void setShadow(int width) { shadow_width = width; }
+
+  // Update shared season tint and wind clock, call once per frame
+  static void updateEnvironment(float dt, const GameState& state);
 
   // Set sprite sheet
   void setSpriteSheet(asw::Texture spriteSheet);
@@ -57,7 +83,31 @@ class TileType {
   // Set behaviours
   void attachBehaviour(std::shared_ptr<TileBehaviour> behaviour);
 
-  std::string getImageType() const { return this->image_type; }
+  const std::vector<std::shared_ptr<TileBehaviour>>& getBehaviours() const {
+    return behaviours;
+  }
+
+  ImageType getImageType() const { return this->image_type; }
+
+  // Colour multiplied into the sprite, used to reuse art
+  void setTint(const asw::Color& color) {
+    tint = color;
+    has_tint = true;
+  }
+
+  // Walls, windows and doors make rooms
+  void setEncloses(bool value) { encloses = value; }
+  bool getEncloses() const { return encloses; }
+
+  // Living tiles (animals) bob gently when drawn
+  void setBobs(bool value) { bobs = value; }
+  bool getBobs() const { return bobs; }
+
+  // Tiles in the same group join when bitmasking, defaults to id
+  const std::string& getBitmaskGroup() const {
+    return bitmask_group.empty() ? id : bitmask_group;
+  }
+  void setBitmaskGroup(const std::string& group) { bitmask_group = group; }
 
  private:
   std::string id{};
@@ -70,7 +120,7 @@ class TileType {
 
   unsigned char num_images{0};
 
-  std::string image_type{""};
+  ImageType image_type{ImageType::Static};
   unsigned char sheet_width{1};
   unsigned char sheet_height{1};
 
@@ -83,6 +133,22 @@ class TileType {
   asw::Texture sprite_sheet{nullptr};
 
   std::vector<std::shared_ptr<TileBehaviour>> behaviours{};
+
+  asw::Color tint{255, 255, 255, 255};
+  bool has_tint{false};
+
+  bool bobs{false};
+  bool encloses{false};
+
+  std::string bitmask_group{};
+
+  bool seasonal{false};
+  bool sway{false};
+  int shadow_width{0};
+
+  // Shared environment for all tile types
+  static asw::Color season_tint;
+  static float wind_time;
 };
 
 #endif  // TILE_TYPE_H
