@@ -79,9 +79,9 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
+    "attribute": "NON_SOLID",
     "seasonal": true,
-    "sway": true,
+    "sway": true
   },
   {
     "id": "tile:tree",
@@ -403,8 +403,8 @@
       "height": 1,
       "width": 1
     },
-    "attribute": "NON_SOLID"
-    "seasonal": true,
+    "attribute": "NON_SOLID",
+    "seasonal": true
   },
   {
     "id": "tile:store",
