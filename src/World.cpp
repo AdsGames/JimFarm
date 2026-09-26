@@ -498,13 +498,22 @@ void World::drawLighting() {
   const auto cam = camera.getPosition();
   const float seconds = flickerClock();
 
-  // Screen area of a light, scale is 1 for the screen and less for the buffer
-  auto lightQuad = [&](const asw::Vec2i& tile, float radius_tiles,
-                       float scale) {
-    const float x = (tile.x * TILE_SIZE + TILE_SIZE / 2 - cam.x) * zoom * scale;
-    const float y = (tile.y * TILE_SIZE + TILE_SIZE / 2 - cam.y) * zoom * scale;
+  // Screen area of a light centred on world pixels, scale is 1 for the
+  // screen and less for the buffer
+  auto lightQuadAt = [&](const asw::Vec2f& centre, float radius_tiles,
+                         float scale) {
+    const float x = (centre.x - static_cast<float>(cam.x)) * zoom * scale;
+    const float y = (centre.y - static_cast<float>(cam.y)) * zoom * scale;
     const float radius = radius_tiles * TILE_SIZE * zoom * scale;
     return asw::Quadf(x - radius, y - radius, radius * 2.0F, radius * 2.0F);
+  };
+
+  auto lightQuad = [&](const asw::Vec2i& tile, float radius_tiles,
+                       float scale) {
+    return lightQuadAt(
+        asw::Vec2f(tile.x * TILE_SIZE + TILE_SIZE / 2.0F,
+                   tile.y * TILE_SIZE + TILE_SIZE / 2.0F),
+        radius_tiles, scale);
   };
 
   // -1 to 1, each fire out of step with the others
@@ -527,7 +536,7 @@ void World::drawLighting() {
   const float buffer_scale = 1.0F / LIGHT_SCALE;
 
   // Player carries a small lantern
-  light(lightQuad(player_tile, 3.5F, buffer_scale), LANTERN_LIGHT,
+  light(lightQuadAt(lantern_pos, 3.5F, buffer_scale), LANTERN_LIGHT,
         dark * LANTERN_STRENGTH);
 
   for (auto const& pos : lights) {
@@ -1202,6 +1211,8 @@ void World::update(float dt, const asw::Vec2i& player_pos) {
 
   player_tile =
       (player_pos + asw::Vec2i(TILE_SIZE / 2, TILE_SIZE / 2)) / TILE_SIZE;
+  lantern_pos = asw::Vec2f(static_cast<float>(player_pos.x) + TILE_SIZE / 2.0F,
+                           static_cast<float>(player_pos.y) + 4.0F);
 
   map_messages.update(dt);
 

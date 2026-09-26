@@ -376,6 +376,9 @@ class World {
   // Player position
   asw::Vec2i player_tile{0, 0};
 
+  // Where the player holds the lantern, in world pixels
+  asw::Vec2f lantern_pos{0.0F, 0.0F};
+
   // Room id per tile (x + y * width), 0 outdoors
   std::vector<int> rooms{};
   unsigned int rooms_version{0};
