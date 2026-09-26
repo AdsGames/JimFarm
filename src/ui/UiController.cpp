@@ -70,6 +70,7 @@ void UiController::draw(const GameState& state) {
     auto slot = std::dynamic_pointer_cast<UiSlot>(element);
     if (output_locked && slot && slot->getType() == SlotType::Output) {
       const auto at = position + slot->getPosition();
+      asw::display::set_blend_mode(asw::BlendMode::Blend);
       asw::draw::rect_fill(asw::Quadf(at.x, at.y, SLOT_SIZE, SLOT_SIZE),
                            asw::Color(120, 30, 30, 150));
     }
