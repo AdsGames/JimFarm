@@ -21,9 +21,17 @@ constexpr float BITE_DAMAGE = 12.0F;
 constexpr float BITE_COOLDOWN = 1.5F;
 constexpr int PREY_RANGE = 8;
 
-// Grazers run once the player is this close, and leave when far away
+// Grazers bolt once the player is this close, calm down once the player is
+// this far, and leave when very far away
 constexpr float SHY_TILES = 5.0F;
+constexpr float CALM_TILES = 10.0F;
 constexpr float ROAM_TILES = 32.0F;
+
+// Longest run to one flee spot before picking another, seconds
+constexpr float MAX_FLEE_TIME = 5.0F;
+
+// Close enough to the flee spot, pixels
+constexpr float ARRIVE_DISTANCE = 4.0F;
 
 // Per kind stats
 struct KindInfo {
@@ -32,18 +40,22 @@ struct KindInfo {
   float wander_speed;
   int sprite_x;
   int sprite_y;
+
+  // How far a flee spot is, tiles
+  int flee_min;
+  int flee_max;
 };
 
 KindInfo infoOf(CreatureKind kind) {
   switch (kind) {
     case CreatureKind::Deer:
-      return {4, 62.0F, 14.0F, 0, 1};
+      return {4, 62.0F, 14.0F, 0, 1, 9, 13};
     case CreatureKind::Rabbit:
-      return {1, 78.0F, 20.0F, 2, 1};
+      return {1, 78.0F, 20.0F, 2, 1, 6, 9};
     case CreatureKind::Wolf:
       break;
   }
-  return {3, FLEE_SPEED, WANDER_SPEED, 2, 0};
+  return {3, FLEE_SPEED, WANDER_SPEED, 2, 0, 0, 0};
 }
 constexpr float HIT_FLASH = 0.15F;
 
@@ -271,20 +283,94 @@ void Creature::updateGrazer(World& world,
                             float dt) {
   const float player_distance = length(to_player);
   const auto info = infoOf(kind);
+  const auto away = normalize(to_player) * -1.0F;
 
   // Wandered too far from the player, gone for good
-  if (player_distance > ROAM_TILES * TILE_SIZE) {
+  if (!fleeing && player_distance > ROAM_TILES * TILE_SIZE) {
     gone = true;
     return;
   }
 
-  // Bolt from the player, and for a while after being hit
-  if (flee_timer > 0.0F || player_distance < SHY_TILES * TILE_SIZE) {
-    move(world, normalize(to_player) * -info.flee_speed * dt);
+  // Startled by the player coming close or a hit, bolt to a spot away
+  if (startled || (!fleeing && player_distance < SHY_TILES * TILE_SIZE)) {
+    startled = false;
+    pickFleeTarget(world, away);
+  }
+
+  if (!fleeing) {
+    wander(world, info.wander_speed, dt);
     return;
   }
 
-  wander(world, info.wander_speed, dt);
+  flee_time += dt;
+  const auto to_target = flee_target - fpos;
+  const auto before = fpos;
+
+  if (length(to_target) > ARRIVE_DISTANCE) {
+    move(world, normalize(to_target) * info.flee_speed * dt);
+  }
+
+  const bool arrived = length(flee_target - fpos) <= ARRIVE_DISTANCE;
+  const bool stuck = length(fpos - before) < 0.01F && !arrived;
+
+  if (arrived || stuck || flee_time > MAX_FLEE_TIME) {
+    // Far enough, calm down and graze for a moment
+    if (player_distance >= CALM_TILES * TILE_SIZE) {
+      fleeing = false;
+      wander_dir = asw::Vec2f(0, 0);
+      wander_timer = static_cast<float>(random(2, 4));
+      return;
+    }
+
+    // Still too close, keep running
+    pickFleeTarget(world, away);
+  }
+}
+
+bool Creature::canStandAt(World& world, const asw::Vec2f& at) const {
+  return !blocked(world, at);
+}
+
+void Creature::pickFleeTarget(World& world, const asw::Vec2f& away) {
+  const auto info = infoOf(kind);
+  const float heading = std::atan2(away.y, away.x);
+
+  fleeing = true;
+  flee_time = 0.0F;
+
+  // Best reachable spot roughly away from the player, spread so a herd
+  // scatters instead of running in a line
+  float best_score = -1.0F;
+  for (int attempt = 0; attempt < 12; attempt++) {
+    const float spread =
+        static_cast<float>(random(-70, 70)) * 3.14159F / 180.0F;
+    const float distance =
+        static_cast<float>(random(info.flee_min, info.flee_max) * TILE_SIZE);
+    const auto candidate =
+        fpos + asw::Vec2f(std::cos(heading + spread) * distance,
+                          std::sin(heading + spread) * distance);
+
+    if (!canStandAt(world, candidate)) {
+      continue;
+    }
+
+    // Straighter away is better, and so is a clear first step
+    const float score = std::cos(spread) +
+                        (canStandAt(world, fpos + normalize(candidate - fpos) *
+                                                      static_cast<float>(
+                                                          TILE_SIZE))
+                             ? 1.0F
+                             : 0.0F);
+    if (score > best_score) {
+      best_score = score;
+      flee_target = candidate;
+    }
+  }
+
+  // Nowhere good, just run straight away
+  if (best_score < 0.0F) {
+    flee_target = fpos + away * static_cast<float>(info.flee_min * TILE_SIZE);
+  }
 }
 
 void Creature::wander(World& world, float speed, float dt) {
@@ -306,7 +392,8 @@ void Creature::wander(World& world, float speed, float dt) {
 bool Creature::hit(World& world, int damage, const asw::Vec2i& from) {
   hp -= damage;
   hurt_timer = HIT_FLASH;
-  flee_timer = isHostile() ? 0.8F : 4.0F;
+  flee_timer = 0.8F;
+  startled = !isHostile();
 
   // Knock back
   const auto me = centre(pos);

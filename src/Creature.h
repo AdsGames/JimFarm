@@ -49,6 +49,10 @@ class Creature : public Sprite {
 
   void wander(World& world, float speed, float dt);
 
+  // Grazers pick a spot away from the player and run to it
+  void pickFleeTarget(World& world, const asw::Vec2f& away);
+  bool canStandAt(World& world, const asw::Vec2f& at) const;
+
   CreatureKind kind{CreatureKind::Wolf};
 
   asw::Vec2f fpos{};
@@ -56,6 +60,12 @@ class Creature : public Sprite {
   float wander_timer{0.0F};
   float attack_cooldown{0.0F};
   float flee_timer{0.0F};
+
+  // Grazer fleeing, target in world pixels (sprite top left)
+  bool fleeing{false};
+  bool startled{false};
+  asw::Vec2f flee_target{};
+  float flee_time{0.0F};
   float hurt_timer{0.0F};
   float anim{0.0F};
   int hp{3};

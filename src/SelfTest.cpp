@@ -2,6 +2,7 @@
 
 #include <asw/asw.h>
 
+#include <cmath>
 #include <string>
 
 #include "Character.h"
@@ -289,6 +290,33 @@ int runSelfTest() {
             World::playerInventory().count("item:hide") > hides,
         "deer drops meat and hide");
   world.clearCreatures();
+
+  // Startled grazers run to a spot away from the player, then calm down
+  {
+    const auto field = origin + asw::Vec2i(12, 3);
+    const auto player_px = (field - asw::Vec2i(2, 0)) * TILE_SIZE;
+    auto rabbit =
+        std::make_shared<Creature>(field * TILE_SIZE, CreatureKind::Rabbit);
+    auto distance = [&]() {
+      const auto offset = rabbit->getPosition() - player_px;
+      return std::sqrt(static_cast<float>(offset.x * offset.x +
+                                          offset.y * offset.y)) /
+             TILE_SIZE;
+    };
+
+    for (int i = 0; i < 60 * 8; i++) {
+      rabbit->update(world, player_px, 1.0F / 60.0F);
+    }
+    check(!rabbit->isGone() && distance() >= 9.5F, "rabbit flees far enough");
+
+    const auto calm_at = rabbit->getPosition();
+    for (int i = 0; i < 60 * 2; i++) {
+      rabbit->update(world, player_px, 1.0F / 60.0F);
+    }
+    const auto moved = rabbit->getPosition() - calm_at;
+    check(std::abs(moved.x) + std::abs(moved.y) < 60,
+          "rabbit calms down once far away");
+  }
 
   // Sprinklers water soil each morning, hoppers catch eggs
   const auto sprinkler = origin + asw::Vec2i(7, 13);
