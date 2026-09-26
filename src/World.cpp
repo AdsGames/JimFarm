@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <chrono>
 #include <cmath>
 #include <format>
 #include <limits>
@@ -21,7 +22,7 @@ namespace {
 constexpr int FARM_WIDTH = 24;
 constexpr int FARM_HEIGHT = 18;
 
-// Light buffer is a quarter of the viewport, it is blurry anyway
+// Light buffer is a quarter of the viewport, it is scaled up smoothly
 constexpr int LIGHT_SCALE = 4;
 
 // Survival rates, per game minute
@@ -39,6 +40,106 @@ constexpr float WARNING_LEVEL = 25.0F;
 
 constexpr int FIRST_WOLF_DAY = 2;
 constexpr int MAX_WOLVES = 6;
+
+// Light gradient texture size in pixels
+constexpr int LIGHT_GRADIENT_SIZE = 64;
+
+// Ambient light, the map is multiplied by it
+const asw::Color DAY_LIGHT(255, 255, 255);
+const asw::Color GOLDEN_LIGHT(255, 180, 120);
+const asw::Color OVERCAST_LIGHT(190, 195, 210);
+const asw::Color NIGHT_LIGHT(50, 58, 110);
+
+// Lights, added to the ambient light
+const asw::Color LANTERN_LIGHT(255, 225, 180);
+const asw::Color FIRE_LIGHT(255, 130, 40);
+
+// Golden hour lengths in game minutes
+constexpr float DAWN_MINUTES = 120.0F;
+constexpr float EVENING_MINUTES = 90.0F;
+
+// Light strengths at full night
+constexpr float LANTERN_STRENGTH = 0.55F;
+constexpr float FIRE_STRENGTH = 0.9F;
+
+// Share of the fire light also added straight onto the screen at night
+constexpr float FIRE_GLOW = 0.35F;
+
+// Smooth scaling, asw textures default to nearest
+void setLinearScaling(const asw::Texture& texture) {
+  SDL_SetTextureScaleMode(texture.get(), SDL_SCALEMODE_LINEAR);
+}
+
+float smoothstep(float edge_0, float edge_1, float value) {
+  const float t = std::clamp((value - edge_0) / (edge_1 - edge_0), 0.0F, 1.0F);
+  return t * t * (3.0F - 2.0F * t);
+}
+
+asw::Color mix(const asw::Color& from, const asw::Color& to, float amount) {
+  auto channel = [&](uint8_t a, uint8_t b) {
+    return static_cast<uint8_t>(static_cast<float>(a) +
+                                (static_cast<float>(b) - a) * amount);
+  };
+  return asw::Color(channel(from.r, to.r), channel(from.g, to.g),
+                    channel(from.b, to.b));
+}
+
+// Golden after sunrise and before dusk, blue at night, grey when overcast
+asw::Color ambientLight(const GameState& state) {
+  const float minutes = state.getMinutes();
+  const float dawn =
+      1.0F - smoothstep(DAY_START_MINUTES, DAY_START_MINUTES + DAWN_MINUTES,
+                        minutes);
+  const float evening =
+      smoothstep(DUSK_MINUTES - EVENING_MINUTES, DUSK_MINUTES, minutes);
+
+  auto light = mix(DAY_LIGHT, GOLDEN_LIGHT, std::max(dawn, evening));
+
+  if (state.getWeather() != Weather::Sunny) {
+    light = mix(light, OVERCAST_LIGHT, 0.8F);
+  }
+
+  return mix(light, NIGHT_LIGHT, state.darkness());
+}
+
+// Seconds since start, drives the fire flicker
+float flickerClock() {
+  static const auto start = std::chrono::steady_clock::now();
+  return std::chrono::duration<float>(std::chrono::steady_clock::now() - start)
+      .count();
+}
+
+// White circle, opaque in the middle and clear at the edge
+asw::Texture makeLightGradient() {
+  auto texture =
+      asw::assets::create_texture(LIGHT_GRADIENT_SIZE, LIGHT_GRADIENT_SIZE);
+
+  asw::display::set_render_target(texture);
+  asw::display::set_blend_mode(asw::BlendMode::None);
+  asw::display::clear(asw::Color(255, 255, 255, 0));
+
+  const float half = LIGHT_GRADIENT_SIZE / 2.0F;
+  for (int y = 0; y < LIGHT_GRADIENT_SIZE; y++) {
+    for (int x = 0; x < LIGHT_GRADIENT_SIZE; x++) {
+      const float distance =
+          std::hypot(x + 0.5F - half, y + 0.5F - half) / half;
+      const float strength = smoothstep(1.0F, 0.0F, distance);
+      if (strength <= 0.0F) {
+        continue;
+      }
+
+      asw::draw::point(asw::Vec2f(x, y),
+                       asw::Color(255, 255, 255,
+                                  static_cast<uint8_t>(strength * 255.0F)));
+    }
+  }
+
+  asw::display::reset_render_target();
+  asw::display::set_blend_mode(asw::BlendMode::Blend);
+  asw::draw::set_blend_mode(texture, asw::BlendMode::Add);
+  setLinearScaling(texture);
+  return texture;
+}
 
 float clampStat(float value) {
   return std::clamp(value, 0.0F, MAX_STAT);
@@ -134,7 +235,12 @@ void World::ensureBuffers() {
   if (!light_buffer) {
     light_buffer = asw::assets::create_texture(VIEWPORT_WIDTH / LIGHT_SCALE,
                                                VIEWPORT_HEIGHT / LIGHT_SCALE);
-    asw::draw::set_blend_mode(light_buffer, asw::BlendMode::Blend);
+    asw::draw::set_blend_mode(light_buffer, asw::BlendMode::Modulate);
+    setLinearScaling(light_buffer);
+  }
+
+  if (!light_gradient) {
+    light_gradient = makeLightGradient();
   }
 
   if (!font) {
@@ -353,55 +459,74 @@ void World::draw() {
 }
 
 void World::drawLighting() {
-  float dark = state.darkness();
-  if (state.getWeather() != Weather::Sunny) {
-    dark = std::max(dark, 0.25F);
-  }
+  const auto ambient = ambientLight(state);
 
-  if (dark <= 0.0F) {
+  // Full daylight leaves the map as it is
+  if (ambient.r == 255 && ambient.g == 255 && ambient.b == 255) {
     return;
   }
 
-  const auto alpha = static_cast<uint8_t>(dark * 190.0F);
-  const auto shade = asw::Color(8, 10, 35, alpha);
+  // Lights only show once it gets dark
+  const float dark = state.darkness();
   const float zoom = camera.getZoom();
   const auto cam = camera.getPosition();
+  const float seconds = flickerClock();
 
-  asw::display::set_render_target(light_buffer);
-  asw::display::set_blend_mode(asw::BlendMode::None);
-  asw::display::clear(shade);
-
-  // Soft circle, drawn outer to inner so each ring replaces the last
-  auto light = [&](const asw::Vec2i& tile, float radius_tiles) {
-    const auto centre =
-        asw::Vec2f((tile.x * TILE_SIZE + TILE_SIZE / 2 - cam.x) * zoom /
-                       LIGHT_SCALE,
-                   (tile.y * TILE_SIZE + TILE_SIZE / 2 - cam.y) * zoom /
-                       LIGHT_SCALE);
-    const float radius = radius_tiles * TILE_SIZE * zoom / LIGHT_SCALE;
-
-    for (int ring = 0; ring < 5; ring++) {
-      const float fraction = 1.0F - ring * 0.18F;
-      const float ring_alpha = alpha * (0.8F - ring * 0.2F);
-      asw::draw::circle_fill(
-          centre, radius * fraction,
-          asw::Color(shade.r, shade.g, shade.b,
-                     static_cast<uint8_t>(std::max(0.0F, ring_alpha))));
-    }
+  // Screen area of a light, scale is 1 for the screen and less for the buffer
+  auto lightQuad = [&](const asw::Vec2i& tile, float radius_tiles,
+                       float scale) {
+    const float x = (tile.x * TILE_SIZE + TILE_SIZE / 2 - cam.x) * zoom * scale;
+    const float y = (tile.y * TILE_SIZE + TILE_SIZE / 2 - cam.y) * zoom * scale;
+    const float radius = radius_tiles * TILE_SIZE * zoom * scale;
+    return asw::Quadf(x - radius, y - radius, radius * 2.0F, radius * 2.0F);
   };
 
+  // -1 to 1, each fire out of step with the others
+  auto flicker = [&](const asw::Vec2i& tile) {
+    return std::sin(seconds * 9.0F + tile.x * 1.7F) * 0.6F +
+           std::sin(seconds * 23.0F + tile.y * 2.3F) * 0.4F;
+  };
+
+  auto light = [&](const asw::Quadf& area, const asw::Color& color,
+                   float strength) {
+    asw::draw::set_tint(light_gradient, color);
+    asw::draw::set_alpha(light_gradient, std::clamp(strength, 0.0F, 1.0F));
+    asw::draw::stretch_sprite(light_gradient, area);
+  };
+
+  // Light map: ambient colour, then lights added on top
+  asw::display::set_render_target(light_buffer);
+  asw::display::clear(ambient);
+
+  const float buffer_scale = 1.0F / LIGHT_SCALE;
+
   // Player carries a small lantern
-  light(player_tile, 2.5F);
+  light(lightQuad(player_tile, 3.5F, buffer_scale), LANTERN_LIGHT,
+        dark * LANTERN_STRENGTH);
 
   for (auto const& pos : lights) {
-    light(pos, CAMPFIRE_RADIUS + 1.0F);
+    const float f = flicker(pos);
+    light(lightQuad(pos, (CAMPFIRE_RADIUS + 2.0F) * (1.0F + 0.04F * f),
+                    buffer_scale),
+          FIRE_LIGHT, dark * FIRE_STRENGTH * (0.92F + 0.08F * f));
   }
 
   asw::display::reset_render_target();
   asw::display::set_blend_mode(asw::BlendMode::Blend);
 
+  // Multiply the map by the light map
   asw::draw::stretch_sprite(light_buffer,
                             asw::Quadf(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT));
+
+  // Fires also glow, so they look warm and not only less dark
+  for (auto const& pos : lights) {
+    const float f = flicker(pos);
+    light(lightQuad(pos, CAMPFIRE_RADIUS * 0.6F * (1.0F + 0.06F * f), 1.0F),
+          FIRE_LIGHT, dark * FIRE_GLOW * (0.85F + 0.15F * f));
+  }
+
+  asw::draw::set_tint(light_gradient, asw::color::white);
+  asw::draw::set_alpha(light_gradient, 1.0F);
 }
 
 /*

@@ -184,8 +184,11 @@ class World {
   // Buffer that holds whole map image
   asw::Texture map_buffer{nullptr};
 
-  // Darkness with light holes cut out, drawn over the map
+  // Light map, the map is multiplied by it (ambient colour plus lights)
   asw::Texture light_buffer{nullptr};
+
+  // Soft white circle, drawn additively for each light
+  asw::Texture light_gradient{nullptr};
 
   // Status text
   asw::Font font{nullptr};
