@@ -5,6 +5,7 @@
 #include "World.h"
 #include "manager/SoundManager.h"
 #include "manager/TileTypeManager.h"
+#include "utility/Anim.h"
 #include "utility/Tools.h"
 
 asw::Texture Creature::sheet{nullptr};
@@ -18,6 +19,7 @@ constexpr float BITE_RANGE = 13.0F;
 constexpr float BITE_DAMAGE = 12.0F;
 constexpr float BITE_COOLDOWN = 1.5F;
 constexpr int PREY_RANGE = 8;
+constexpr float HIT_FLASH = 0.15F;
 
 float length(const asw::Vec2f& v) {
   return std::sqrt(v.x * v.x + v.y * v.y);
@@ -50,19 +52,37 @@ asw::Vec2i Creature::getTile() const {
 }
 
 void Creature::draw(const Camera& camera) const {
-  const int frame = static_cast<int>(anim * 6.0F) % 2;
+  // Walk frames and a quick hop while moving, slow breathing when idle
+  const int frame = moving ? static_cast<int>(anim * 8.0F) % 2 : 0;
+  const int bob =
+      moving ? anim::walkBob(getSpriteId()) : anim::idleBob(getSpriteId());
 
-  if (hurt_timer > 0.0F) {
-    asw::draw::set_tint(sheet, asw::Color(255, 90, 90));
+  const auto source =
+      asw::Quadf((2 + frame) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE);
+  const auto dest =
+      asw::Quadf(pos.x - camera.getPosition().x,
+                 pos.y - camera.getPosition().y + bob, TILE_SIZE, TILE_SIZE);
+
+  // Hit flash, white then red. Tint only darkens, so the white half draws
+  // the sprite again additively to brighten it.
+  const bool flash_white = hurt_timer > HIT_FLASH / 2.0F;
+  const bool flash_red = hurt_timer > 0.0F && !flash_white;
+
+  if (flash_red) {
+    asw::draw::set_tint(sheet, asw::Color(255, 70, 70));
   }
 
-  asw::draw::stretch_sprite_blit(
-      sheet, asw::Quadf((2 + frame) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE),
-      asw::Quadf(pos.x - camera.getPosition().x, pos.y - camera.getPosition().y,
-                 TILE_SIZE, TILE_SIZE));
+  asw::draw::stretch_sprite_blit(sheet, source, dest);
 
-  if (hurt_timer > 0.0F) {
+  if (flash_red) {
     asw::draw::set_tint(sheet, asw::color::white);
+  }
+
+  if (flash_white) {
+    asw::draw::set_blend_mode(sheet, asw::BlendMode::Add);
+    asw::draw::stretch_sprite_blit(sheet, source, dest);
+    asw::draw::stretch_sprite_blit(sheet, source, dest);
+    asw::draw::set_blend_mode(sheet, asw::BlendMode::Blend);
   }
 }
 
@@ -97,6 +117,7 @@ bool Creature::move(World& world, const asw::Vec2f& delta) {
   }
 
   pos = asw::Vec2i(static_cast<int>(fpos.x), static_cast<int>(fpos.y));
+  moving = moving || moved;
   return moved;
 }
 
@@ -131,6 +152,7 @@ void Creature::update(World& world, const asw::Vec2i& player_pos, float dt) {
   flee_timer -= dt;
   hurt_timer -= dt;
   anim += dt;
+  moving = false;
 
   // Leave at dawn
   if (!state.isNight()) {
@@ -207,7 +229,7 @@ void Creature::update(World& world, const asw::Vec2i& player_pos, float dt) {
 
 bool Creature::hit(World& world, int damage, const asw::Vec2i& from) {
   hp -= damage;
-  hurt_timer = 0.25F;
+  hurt_timer = HIT_FLASH;
   flee_timer = 0.8F;
 
   // Knock back

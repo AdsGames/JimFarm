@@ -44,6 +44,7 @@ class Creature : public Sprite {
   float hurt_timer{0.0F};
   float anim{0.0F};
   int hp{3};
+  bool moving{false};
   bool leaving{false};
   bool gone{false};
 

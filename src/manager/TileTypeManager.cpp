@@ -97,6 +97,10 @@ int TileTypeManager::loadTiles(const std::string& path) {
 
         tile_defs[id].attachBehaviour(
             BehaviourTypeManager::create(behaviour_id, params));
+
+        if (behaviour_id == "behaviour:animal") {
+          tile_defs[id].setBobs(true);
+        }
       }
     }
   }

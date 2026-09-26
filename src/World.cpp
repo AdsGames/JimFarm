@@ -414,6 +414,7 @@ void World::draw() {
 
   // Drawable
   Graphics::Instance().draw(camera);
+  floating_texts.draw(font, camera);
 
   asw::display::reset_render_target();
 
@@ -695,6 +696,11 @@ bool World::attackAt(const asw::Vec2i& tile_pos, ItemStack& held) {
 
     SoundManager::play("axe");
 
+    floating_texts.add(std::to_string(attack),
+                       asw::Vec2f(creature->getPosition().x + TILE_SIZE / 2.0F,
+                                  creature->getPosition().y - 2.0F),
+                       asw::Color(255, 220, 90));
+
     if (creature->hit(*this, attack, player_tile * TILE_SIZE)) {
       dropItems("item:pelt", creature->getTile());
       state.wolves_defeated++;
@@ -875,6 +881,7 @@ void World::update(float dt, const asw::Vec2i& player_pos) {
   }
 
   updateCreatures(dt, player_pos);
+  floating_texts.update(dt);
   updateWeather(dt);
 
   // End of day
@@ -1073,6 +1080,7 @@ void World::clearCreatures() {
     Graphics::Instance().remove(creature);
   }
   creatures.clear();
+  floating_texts.clear();
 }
 
 /*

@@ -82,6 +82,10 @@ class TileType {
     has_tint = true;
   }
 
+  // Living tiles (animals) bob gently when drawn
+  void setBobs(bool value) { bobs = value; }
+  bool getBobs() const { return bobs; }
+
   // Tiles in the same group join when bitmasking, defaults to id
   const std::string& getBitmaskGroup() const {
     return bitmask_group.empty() ? id : bitmask_group;
@@ -115,6 +119,8 @@ class TileType {
 
   asw::Color tint{255, 255, 255, 255};
   bool has_tint{false};
+
+  bool bobs{false};
 
   std::string bitmask_group{};
 };
