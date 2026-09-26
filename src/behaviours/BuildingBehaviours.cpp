@@ -146,7 +146,16 @@ bool CampfireBehaviour::onInteract(World& world,
 
 void CampfireBehaviour::onTick(World& world,
                                const std::shared_ptr<Tile>& tile) {
-  world.addLight(tile->getTilePosition());
+  const auto tile_pos = tile->getTilePosition();
+  world.addLight(tile_pos);
+
+  // About 5 puffs of smoke and 2 sparks a second, at 20 ticks a second
+  if (random(0, 3) == 0) {
+    world.burstParticles("fire_smoke", tile_pos);
+  }
+  if (random(0, 7) == 0) {
+    world.burstParticles("fire_spark", tile_pos);
+  }
 
   if (random(0, TICKS_PER_FUEL - 1) != 0) {
     return;
@@ -154,6 +163,7 @@ void CampfireBehaviour::onTick(World& world,
 
   if (tile->getMeta() == 0) {
     world.getMap().replaceTile(tile, out_tile);
+    world.burstParticles("smoke", tile_pos);
     return;
   }
 

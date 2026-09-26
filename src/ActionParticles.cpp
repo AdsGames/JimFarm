@@ -53,6 +53,13 @@ const std::map<std::string, Preset, std::less<>> PRESETS = {
     {"sparks",
      {{asw::Color(255, 200, 80), asw::Color(255, 140, 40), asw::Color(255, 240, 160)},
       10, 25.0F, 60.0F, 0.6F, -20.0F, 0.6F, 1.0F}},
+    // Single particles, emitted steadily by lit campfires
+    {"fire_smoke",
+     {{asw::Color(160, 160, 165, 130), asw::Color(120, 120, 125, 110)},
+      1, 10.0F, 18.0F, 0.35F, -6.0F, 1.8F, 3.0F}},
+    {"fire_spark",
+     {{asw::Color(255, 200, 80), asw::Color(255, 150, 40), asw::Color(255, 240, 170)},
+      1, 20.0F, 45.0F, 0.5F, -10.0F, 0.7F, 1.0F}},
     {"coins",
      {{asw::Color(255, 215, 70), asw::Color(255, 240, 150), asw::Color(220, 170, 40)},
       12, 50.0F, 95.0F, 0.8F, 230.0F, 0.7F, 2.0F}},
