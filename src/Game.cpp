@@ -158,6 +158,7 @@ void Game::draw() {
   asw::display::set_render_target(ui_buffer);
   asw::display::clear(asw::Color(0, 0, 0, 0));
 
+  Tooltip::setSeason(farm_world.getState().getSeason());
   farm_world.drawStatus(ui_size);
   farm_world.getHud().draw(farm_world.getState());
   jim->drawInventory(ui_size);

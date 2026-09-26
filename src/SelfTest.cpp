@@ -132,6 +132,14 @@ int runSelfTest() {
   check(findStack("item:stone") != nullptr && !world.getMap().getItemAt(plot),
         "empty hand picks up items");
 
+  // Messages expire
+  auto& messages = world.getMessenger();
+  messages.pushMessage("Hello");
+  messages.update(3.0F);
+  check(messages.messageCount() > 0, "messages stay a while");
+  messages.update(10.0F);
+  check(messages.messageCount() == 0, "messages expire");
+
   // Crafting
   auto crafting = InterfaceTypeManager::getInterfaceByName("crafting");
   std::vector<std::shared_ptr<ItemStack>> inputs = {
@@ -178,7 +186,7 @@ int runSelfTest() {
     world.getHud().draw(state);
     world.drawStatus(asw::Vec2i(480, 320));
     world.drawSummary(asw::Vec2i(480, 320));
-    Tooltip::setItem(*findStack("item:watering_can")->getItem());
+    Tooltip::setItem(Item("item:tomato_seed"));
     Tooltip::draw(asw::Vec2i(480, 320));
     asw::display::present();
   }

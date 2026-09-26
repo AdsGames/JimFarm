@@ -24,6 +24,7 @@
   {
     "id": "item:hoe",
     "name": "hoe",
+    "description": "Tills grass and soil so seeds can be planted.",
     "image_x": 3,
     "image_y": 1,
     "value": 10,
@@ -42,6 +43,7 @@
   {
     "id": "item:hoe_gold",
     "name": "golden hoe",
+    "description": "Tills a 3x3 area in one swing.",
     "image_x": 3,
     "image_y": 1,
     "tint": [255, 215, 70],
@@ -62,6 +64,7 @@
   {
     "id": "item:scythe",
     "name": "scythe",
+    "description": "Cuts tall grass for hay. Can fight in a pinch.",
     "image_x": 0,
     "image_y": 1,
     "value": 20,
@@ -80,6 +83,7 @@
   {
     "id": "item:watering_can",
     "name": "watering can",
+    "description": "Waters tilled soil. Fill it at the well or water. Drink from it with C.",
     "image_x": 2,
     "image_y": 1,
     "value": 20,
@@ -123,6 +127,7 @@
   {
     "id": "item:watering_can_gold",
     "name": "golden can",
+    "description": "Waters a 3x3 area and holds three times more.",
     "image_x": 2,
     "image_y": 1,
     "tint": [255, 215, 70],
@@ -168,6 +173,7 @@
   {
     "id": "item:axe",
     "name": "axe",
+    "description": "Chops trees, stumps, walls, fences and cold fires. Hits wolves.",
     "image_x": 4,
     "image_y": 1,
     "value": 20,
@@ -210,6 +216,7 @@
   {
     "id": "item:shovel",
     "name": "shovel",
+    "description": "Digs up bushes, stumps, rock, grass, sand and tilled soil.",
     "image_x": 1,
     "image_y": 1,
     "value": 20,
@@ -260,6 +267,7 @@
   {
     "id": "item:spear",
     "name": "spear",
+    "description": "Best weapon against wolves.",
     "sheet": "placeholders",
     "image_x": 4,
     "image_y": 0,
@@ -269,6 +277,7 @@
   {
     "id": "item:chicken",
     "name": "chicken",
+    "description": "Place on the ground. Feed it hay each day for an egg.",
     "image_x": 3,
     "image_y": 0,
     "price": 60,
@@ -291,6 +300,7 @@
   {
     "id": "item:egg",
     "name": "egg",
+    "description": "Cook it on a campfire or in the furnace.",
     "image_x": 1,
     "image_y": 0,
     "value": 8,
@@ -324,6 +334,7 @@
   {
     "id": "item:berry_seed",
     "name": "berry seed",
+    "description": "Plant in tilled soil.",
     "image_x": 0,
     "image_y": 2,
     "price": 5,
@@ -360,6 +371,7 @@
   {
     "id": "item:tomato_seed",
     "name": "tomato seed",
+    "description": "Plant in tilled soil.",
     "image_x": 1,
     "image_y": 2,
     "price": 12,
@@ -396,6 +408,7 @@
   {
     "id": "item:carrot_seed",
     "name": "carrot seed",
+    "description": "Plant in tilled soil.",
     "image_x": 2,
     "image_y": 2,
     "price": 15,
@@ -421,6 +434,7 @@
   {
     "id": "item:carrot",
     "name": "carrot",
+    "description": "Roast it on a campfire for a better meal.",
     "image_x": 2,
     "image_y": 3,
     "value": 30,
@@ -453,6 +467,7 @@
   {
     "id": "item:lavender_seed",
     "name": "lavender seed",
+    "description": "Plant in tilled soil.",
     "image_x": 3,
     "image_y": 2,
     "price": 30,
@@ -478,6 +493,7 @@
   {
     "id": "item:lavender",
     "name": "lavender",
+    "description": "Sells well. Used to craft bandages.",
     "image_x": 3,
     "image_y": 3,
     "value": 80
@@ -499,6 +515,7 @@
   {
     "id": "item:bandage",
     "name": "herbal bandage",
+    "description": "Heals wounds.",
     "sheet": "placeholders",
     "image_x": 11,
     "image_y": 0,
@@ -511,6 +528,7 @@
   {
     "id": "item:pelt",
     "name": "wolf pelt",
+    "description": "Craft 3 into a fur coat.",
     "sheet": "placeholders",
     "image_x": 5,
     "image_y": 0,
@@ -519,6 +537,7 @@
   {
     "id": "item:coat",
     "name": "fur coat",
+    "description": "Keeps you warm while it is in your bag.",
     "sheet": "placeholders",
     "image_x": 6,
     "image_y": 0,
@@ -528,6 +547,7 @@
   {
     "id": "item:campfire",
     "name": "campfire kit",
+    "description": "Place to build a campfire. Gives warmth and light, and keeps wolves away.",
     "sheet": "placeholders",
     "image_x": 9,
     "image_y": 0,
@@ -550,6 +570,7 @@
   {
     "id": "item:gate",
     "name": "gate",
+    "description": "Place in a fence to make a door.",
     "sheet": "placeholders",
     "image_x": 10,
     "image_y": 0,
@@ -572,6 +593,7 @@
   {
     "id": "item:stick",
     "name": "stick",
+    "description": "Place to build a fence. Burns as fuel.",
     "image_x": 2,
     "image_y": 0,
     "value": 1,
@@ -593,6 +615,7 @@
   {
     "id": "item:wood",
     "name": "wood",
+    "description": "Place to build a wall. Burns as fuel.",
     "image_x": 4,
     "image_y": 0,
     "value": 2,
@@ -614,6 +637,7 @@
   {
     "id": "item:hay",
     "name": "hay",
+    "description": "Chicken feed.",
     "image_x": 5,
     "image_y": 0,
     "price": 3,
@@ -622,6 +646,7 @@
   {
     "id": "item:stone",
     "name": "stone",
+    "description": "Place to build a stone wall.",
     "image_x": 6,
     "image_y": 0,
     "value": 2,
@@ -643,6 +668,7 @@
   {
     "id": "item:sapling",
     "name": "sapling",
+    "description": "Plant on grass. Grows into a tree in 5 days.",
     "image_x": 7,
     "image_y": 0,
     "value": 3,
@@ -663,6 +689,7 @@
   {
     "id": "item:plank",
     "name": "plank",
+    "description": "Crafting material.",
     "image_x": 5,
     "image_y": 1,
     "value": 3
@@ -670,6 +697,7 @@
   {
     "id": "item:grass",
     "name": "grass",
+    "description": "Place on bare ground.",
     "image_x": 6,
     "image_y": 1,
     "value": 1,
@@ -687,6 +715,7 @@
   {
     "id": "item:sand",
     "name": "sand",
+    "description": "Place on bare ground.",
     "image_x": 7,
     "image_y": 1,
     "value": 1,
