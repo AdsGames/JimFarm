@@ -95,20 +95,25 @@ bool CropBehaviour::onInteract(World& world,
     return true;
   }
 
-  // Empty hand shows how the crop is doing
-  if (!held.getItem()) {
-    const auto soil =
-        world.getMap().getTileAt(tile->getTilePosition(), LAYER_MIDGROUND);
-    const bool watered = soil && soil->getType().getId() == needs_soil;
+  // Otherwise show how the crop is doing
+  (void)held;
+  const auto soil =
+      world.getMap().getTileAt(tile->getTilePosition(), LAYER_MIDGROUND);
+  const bool watered = soil && soil->getType().getId() == needs_soil;
 
-    world.getState().notify(
-        std::format("{}: day {}/{}{}", tile->getType().getName(),
-                    daysGrown(tile), days, watered ? "" : ", needs water"));
-    return true;
-  }
+  world.getState().notify(std::format("{}: day {}/{}{}",
+                                      tile->getType().getName(),
+                                      daysGrown(tile), days,
+                                      watered ? "" : ", needs water"));
+  return true;
+}
 
-  // Let the held item act on the soil (e.g. watering)
-  return false;
+std::string CropBehaviour::interactVerb(World& world,
+                                        const std::shared_ptr<Tile>& tile,
+                                        const ItemStack& held) {
+  (void)world;
+  (void)held;
+  return tile->getMeta() >= MAX_TILE_META ? "Harvest" : "Check";
 }
 
 void CropBehaviour::onDayEnd(World& world, const std::shared_ptr<Tile>& tile) {
@@ -253,6 +258,17 @@ bool AnimalBehaviour::onInteract(World& world,
   return false;
 }
 
+std::string AnimalBehaviour::interactVerb(World& world,
+                                          const std::shared_ptr<Tile>& tile,
+                                          const ItemStack& held) {
+  (void)world;
+  const auto id = heldId(held);
+  if (contains(food, id)) {
+    return (tile->getMeta() & FED_BIT) ? "Full" : "Feed";
+  }
+  return id.empty() && !pickup.empty() ? "Pick up" : "";
+}
+
 void AnimalBehaviour::onTick(World& world, const std::shared_ptr<Tile>& tile) {
   if (random(0, 9999) >= static_cast<int>(wander * 10000.0F)) {
     return;
@@ -327,11 +343,7 @@ ForageBehaviour::ForageBehaviour(const nlohmann::json& params)
 bool ForageBehaviour::onInteract(World& world,
                                  const std::shared_ptr<Tile>& tile,
                                  ItemStack& held) {
-  // Tools act on the tile as usual
-  if (held.getItem()) {
-    return false;
-  }
-
+  (void)held;
   if (tile->getMeta() > 0) {
     world.getState().notify(
         std::format("Nothing to pick, back in {} days", tile->getMeta()));
@@ -343,6 +355,14 @@ bool ForageBehaviour::onInteract(World& world,
   SoundManager::play("scythe");
   world.burstParticles("leaves", tile->getTilePosition());
   return true;
+}
+
+std::string ForageBehaviour::interactVerb(World& world,
+                                          const std::shared_ptr<Tile>& tile,
+                                          const ItemStack& held) {
+  (void)world;
+  (void)held;
+  return tile->getMeta() > 0 ? "Regrowing" : "Pick";
 }
 
 void ForageBehaviour::onDayEnd(World& world,

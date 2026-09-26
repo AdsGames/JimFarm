@@ -50,7 +50,13 @@ class Character : public Sprite {
   std::shared_ptr<Item> getSelectedItem() const;
 
   // Update
-  void update(World& world);
+  void update(World& world, float dt);
+
+  // Stack in the selected hotbar slot
+  std::shared_ptr<ItemStack> getHeldStack() const;
+
+  // Top left of the tile under the cursor, in world pixels
+  const asw::Vec2i& getCursorTile() const { return indicator_pos; }
 
  private:
   // Character foreground
@@ -70,6 +76,10 @@ class Character : public Sprite {
 
   // What tile you are over
   asw::Vec2i indicator_pos{};
+
+  // Holding right click on food eats it, -1 when not eating
+  float eat_timer{-1.0F};
+  int eat_slot{0};
 
   // Movement
   int move_speed{2};

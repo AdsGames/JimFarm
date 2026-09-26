@@ -40,6 +40,15 @@ constexpr int CAMPFIRE_RADIUS = 4;
 // Largest room, bigger enclosed areas count as outdoors
 constexpr int MAX_ROOM_TILES = 80;
 
+// What a right click did, the character carries on with eating or throwing
+enum class InteractResult { None, Handled, Eat, Throw };
+
+// Words shown under the cursor for each mouse button
+struct HoverVerbs {
+  std::string left{};
+  std::string right{};
+};
+
 // Weather particle
 struct Particle {
   asw::Vec2f pos;
@@ -83,10 +92,22 @@ class World {
   // Drawing
   void draw();
 
-  // Use held stack on the tile at pixel position
-  void interact(const asw::Vec2i& inter_pos,
-                const asw::Vec2i& player_pos,
-                ItemStack& held);
+  // Left click: use the held item on the tile at pixel position (tools,
+  // seeds, weapons)
+  void use(const asw::Vec2i& inter_pos,
+           const asw::Vec2i& player_pos,
+           ItemStack& held);
+
+  // Right click: interact with the tile at pixel position (open, harvest,
+  // pick up, drink). Tells the caller to eat or throw when nothing is there.
+  InteractResult interact(const asw::Vec2i& inter_pos,
+                          const asw::Vec2i& player_pos,
+                          ItemStack& held);
+
+  // What each click would do at pixel position
+  HoverVerbs hoverVerbs(const asw::Vec2i& inter_pos,
+                        const asw::Vec2i& player_pos,
+                        const ItemStack& held);
 
   // Eat or drink the held stack
   void consume(ItemStack& held);
@@ -146,8 +167,6 @@ class World {
   // Crafting station window (crafting, kiln) at a tier
   void openStation(const std::string& window, int tier);
 
-  // Would the held item's rules do something to this tile
-  bool itemCanUse(const ItemStack& held, const asw::Vec2i& tile_pos);
 
   // First foreground tile within radius (square) that match accepts
   std::shared_ptr<Tile> findTileNear(
@@ -206,6 +225,19 @@ class World {
 
   // Hit creatures at tile, returns true if one was there
   bool attackAt(const asw::Vec2i& tile_pos, ItemStack& held);
+
+  // Is the tile close enough to the player to use
+  bool inReach(const asw::Vec2i& tile_pos, const asw::Vec2i& player_pos) const;
+
+  // Run an item's rules on a tile, true when one matched
+  bool runItemRules(const std::string& item_id,
+                    const asw::Vec2i& tile_pos,
+                    ItemStack& held);
+
+  // First rule of an item that would act on the tile, or nullptr
+  const ItemAction* matchingAction(const std::string& item_id,
+                                   const asw::Vec2i& tile_pos,
+                                   const ItemStack& held);
 
   // Survival stats over elapsed game minutes
   void updateSurvival(float minutes);

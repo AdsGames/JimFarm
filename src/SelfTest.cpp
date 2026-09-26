@@ -74,7 +74,7 @@ int runSelfTest() {
   auto seeds = findStack("item:carrot_seed");
   check(seeds != nullptr, "has carrot seeds");
   const int seeds_before = seeds->getQuantity();
-  world.interact(plot * TILE_SIZE, player_pos, *seeds);
+  world.use(plot * TILE_SIZE, player_pos, *seeds);
   check(idAt(world, plot, LAYER_FOREGROUND) == "tile:carrot", "carrot planted");
   check(seeds->getQuantity() == seeds_before - 1, "seed consumed");
 
@@ -82,7 +82,7 @@ int runSelfTest() {
   check(can != nullptr && can->getItem()->getMeta() > 0, "watering can full");
 
   for (int day = 0; day < 4; day++) {
-    world.interact(plot * TILE_SIZE, player_pos, *can);
+    world.use(plot * TILE_SIZE, player_pos, *can);
     check(idAt(world, plot, LAYER_MIDGROUND) == "tile:watered_soil",
           "soil watered day " + std::to_string(day + 1));
     world.endDay(false);
@@ -104,7 +104,7 @@ int runSelfTest() {
         "carrot dropped");
 
   // Range limit
-  world.interact((plot + asw::Vec2i(10, 10)) * TILE_SIZE, player_pos, *seeds);
+  world.use((plot + asw::Vec2i(10, 10)) * TILE_SIZE, player_pos, *seeds);
   check(!world.getMap().getTileAt(plot + asw::Vec2i(10, 10), LAYER_FOREGROUND),
         "far tiles can not be used");
 
@@ -121,7 +121,7 @@ int runSelfTest() {
   World::playerInventory().addItem(std::make_shared<Item>("item:egg"), 1);
   auto egg = findStack("item:egg");
   const auto fire_player = (fire - asw::Vec2i(0, 1)) * TILE_SIZE;
-  world.interact(fire * TILE_SIZE, fire_player, *egg);
+  world.use(fire * TILE_SIZE, fire_player, *egg);
   check(findStack("item:cooked_egg") != nullptr, "cooked egg goes to bag");
   check(!world.getMap().getItemAt(fire), "nothing dropped under the fire");
 
@@ -186,7 +186,12 @@ int runSelfTest() {
   };
   auto use = [&](const asw::Vec2i& at, ItemStack& stack) {
     state.energy = MAX_STAT;
-    world.interact(at * TILE_SIZE, (at - asw::Vec2i(0, 1)) * TILE_SIZE, stack);
+    world.use(at * TILE_SIZE, (at - asw::Vec2i(0, 1)) * TILE_SIZE, stack);
+  };
+  auto rightClick = [&](const asw::Vec2i& at, ItemStack& stack) {
+    state.energy = MAX_STAT;
+    return world.interact(at * TILE_SIZE, (at - asw::Vec2i(0, 1)) * TILE_SIZE,
+                          stack);
   };
   // Picks up everything around at, true if id was there
   auto dropsNear = [&](const asw::Vec2i& at, const std::string& id) {
@@ -221,7 +226,7 @@ int runSelfTest() {
   const auto bed = inside + asw::Vec2i(0, -1);
   place("tile:bed", bed);
   const auto old_home = state.home;
-  use(bed, hand);
+  rightClick(bed, hand);
   check(state.sleep_requested && state.home != old_home,
         "bed sets the wake up spot");
   state.sleep_requested = false;
@@ -236,7 +241,7 @@ int runSelfTest() {
   // Workbench opens crafting at tier 1, an axe picks it up
   const auto bench = origin + asw::Vec2i(10, 14);
   place("tile:workbench", bench);
-  use(bench, hand);
+  rightClick(bench, hand);
   check(world.getHud().isOpen("crafting") &&
             state.crafting_tier == TIER_WORKBENCH,
         "workbench opens crafting");
@@ -272,10 +277,24 @@ int runSelfTest() {
   check(idAt(world, tree, LAYER_FOREGROUND) == "tile:stump",
         "iron axe fells a tree in one hit");
 
+  // Hover words and right click falls back to eating
+  const auto stump_player = (tree - asw::Vec2i(0, 1)) * TILE_SIZE;
+  place("tile:tree", tree + asw::Vec2i(1, 0));
+  check(world.hoverVerbs((tree + asw::Vec2i(1, 0)) * TILE_SIZE, stump_player,
+                         *iron_axe)
+                .left == "Chop",
+        "axe over a tree says chop");
+  auto food = give("item:berry");
+  const auto open_ground = origin + asw::Vec2i(9, 4);
+  check(rightClick(open_ground, *food) == InteractResult::Eat,
+        "right click with food eats");
+  check(rightClick(open_ground, *axe) == InteractResult::None,
+        "right click with a tool on grass does nothing");
+
   // Forage by hand
   const auto shroom = origin + asw::Vec2i(14, 14);
   place("tile:mushroom", shroom);
-  use(shroom, hand);
+  rightClick(shroom, hand);
   check(dropsNear(shroom, "item:mushroom"), "mushrooms can be picked");
 
   // Hunting a deer drops meat and hide
@@ -327,7 +346,7 @@ int runSelfTest() {
   place("tile:hopper", coop + asw::Vec2i(1, 0));
   place("tile:chicken", coop);
   auto hay = give("item:hay");
-  use(coop, *hay);
+  rightClick(coop, *hay);
   world.endDay(false);
   world.closeSummary();
   check(idAt(world, sprinkler + asw::Vec2i(1, 0), LAYER_MIDGROUND) ==

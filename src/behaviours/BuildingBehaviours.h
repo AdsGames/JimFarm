@@ -15,6 +15,10 @@ class ShopBehaviour : public TileBehaviour {
   bool onInteract(World& world,
                   const std::shared_ptr<Tile>& tile,
                   ItemStack& held) override;
+
+  std::string interactVerb(World& world,
+                           const std::shared_ptr<Tile>& tile,
+                           const ItemStack& held) override;
 };
 
 // Sleep to end the day
@@ -25,6 +29,10 @@ class BedBehaviour : public TileBehaviour {
   bool onInteract(World& world,
                   const std::shared_ptr<Tile>& tile,
                   ItemStack& held) override;
+
+  std::string interactVerb(World& world,
+                           const std::shared_ptr<Tile>& tile,
+                           const ItemStack& held) override;
 };
 
 // Burns fuel stored in meta, gives light and warmth while lit
@@ -35,6 +43,18 @@ class CampfireBehaviour : public TileBehaviour {
   bool onInteract(World& world,
                   const std::shared_ptr<Tile>& tile,
                   ItemStack& held) override;
+
+  bool onUse(World& world,
+             const std::shared_ptr<Tile>& tile,
+             ItemStack& held) override;
+
+  std::string useVerb(World& world,
+                      const std::shared_ptr<Tile>& tile,
+                      const ItemStack& held) override;
+
+  std::string interactVerb(World& world,
+                           const std::shared_ptr<Tile>& tile,
+                           const ItemStack& held) override;
 
   void onTick(World& world, const std::shared_ptr<Tile>& tile) override;
 
@@ -48,6 +68,11 @@ class CampfireBehaviour : public TileBehaviour {
   std::string out_tile{"tile:campfire_out"};
   std::map<std::string, int> fuel{};
   int overnight_burn{100};
+
+  // Adds held fuel, true when it was fuel
+  bool addFuel(World& world, const std::shared_ptr<Tile>& tile,
+               ItemStack& held);
+  bool isFuel(const ItemStack& held) const;
 };
 
 #endif  // BUILDING_BEHAVIOURS_H_

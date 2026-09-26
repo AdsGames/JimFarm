@@ -18,13 +18,19 @@ StationBehaviour::StationBehaviour(const nlohmann::json& params)
 bool StationBehaviour::onInteract(World& world,
                                   const std::shared_ptr<Tile>& tile,
                                   ItemStack& held) {
-  // Tools pick the station up
-  if (world.itemCanUse(held, tile->getTilePosition())) {
-    return false;
-  }
-
+  (void)tile;
+  (void)held;
   world.openStation(window, tier);
   return true;
+}
+
+std::string StationBehaviour::interactVerb(World& world,
+                                           const std::shared_ptr<Tile>& tile,
+                                           const ItemStack& held) {
+  (void)world;
+  (void)tile;
+  (void)held;
+  return "Craft";
 }
 
 /*************
@@ -43,9 +49,27 @@ BreakableBehaviour::BreakableBehaviour(const nlohmann::json& params)
   }
 }
 
-bool BreakableBehaviour::onInteract(World& world,
-                                    const std::shared_ptr<Tile>& tile,
-                                    ItemStack& held) {
+std::string BreakableBehaviour::useVerb(World& world,
+                                       const std::shared_ptr<Tile>& tile,
+                                       const ItemStack& held) {
+  (void)world;
+  (void)tile;
+  const auto item = held.getItem();
+  if (!item) {
+    return "";
+  }
+
+  const auto& id = item->getType().getId();
+  if (std::ranges::find(tools, id) != tools.end()) {
+    return "Mine";
+  }
+
+  return ItemTypeManager::getInfo(id).power > 0.0F ? hint : "";
+}
+
+bool BreakableBehaviour::onUse(World& world,
+                               const std::shared_ptr<Tile>& tile,
+                               ItemStack& held) {
   const auto item = held.getItem();
   if (!item) {
     return false;
@@ -125,11 +149,7 @@ HopperBehaviour::HopperBehaviour(const nlohmann::json& params)
 bool HopperBehaviour::onInteract(World& world,
                                  const std::shared_ptr<Tile>& tile,
                                  ItemStack& held) {
-  // Tools pick the hopper up
-  if (world.itemCanUse(held, tile->getTilePosition())) {
-    return false;
-  }
-
+  (void)held;
   const auto name = ItemTypeManager::getItem(item).getName();
 
   if (tile->getMeta() == 0) {
@@ -143,6 +163,15 @@ bool HopperBehaviour::onInteract(World& world,
   tile->setMeta(0);
   SoundManager::play("pickup");
   return true;
+}
+
+std::string HopperBehaviour::interactVerb(World& world,
+                                          const std::shared_ptr<Tile>& tile,
+                                          const ItemStack& held) {
+  (void)world;
+  (void)held;
+  return tile->getMeta() > 0 ? std::format("Take {}", tile->getMeta())
+                             : "Check";
 }
 
 bool HopperBehaviour::store(const std::shared_ptr<Tile>& tile,

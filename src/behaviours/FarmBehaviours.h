@@ -16,6 +16,10 @@ class CropBehaviour : public TileBehaviour {
                   const std::shared_ptr<Tile>& tile,
                   ItemStack& held) override;
 
+  std::string interactVerb(World& world,
+                           const std::shared_ptr<Tile>& tile,
+                           const ItemStack& held) override;
+
   void onDayEnd(World& world, const std::shared_ptr<Tile>& tile) override;
 
   // Growing info for tooltips
@@ -68,6 +72,10 @@ class AnimalBehaviour : public TileBehaviour {
                   const std::shared_ptr<Tile>& tile,
                   ItemStack& held) override;
 
+  std::string interactVerb(World& world,
+                           const std::shared_ptr<Tile>& tile,
+                           const ItemStack& held) override;
+
   void onTick(World& world, const std::shared_ptr<Tile>& tile) override;
 
   void onDayEnd(World& world, const std::shared_ptr<Tile>& tile) override;
@@ -91,6 +99,10 @@ class ForageBehaviour : public TileBehaviour {
   bool onInteract(World& world,
                   const std::shared_ptr<Tile>& tile,
                   ItemStack& held) override;
+
+  std::string interactVerb(World& world,
+                           const std::shared_ptr<Tile>& tile,
+                           const ItemStack& held) override;
 
   void onDayEnd(World& world, const std::shared_ptr<Tile>& tile) override;
 

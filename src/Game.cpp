@@ -117,7 +117,7 @@ void Game::update(float dt) {
 
   // Update character, the open book takes the input
   if (!farm_world.isSummaryOpen() && !recipe_book.isOpen()) {
-    jim->update(farm_world);
+    jim->update(farm_world, dt);
   }
 
   // Close windows, else go to menu
@@ -136,13 +136,15 @@ void Game::update(float dt) {
 void Game::drawHelp(const asw::Vec2i& ui_size) const {
   std::vector<std::string> lines = {
       "CONTROLS",
-      "WASD / Arrows  move        Click / Space  use item",
-      "1-8 / Z X / wheel  select   C / Right click  eat, drink",
+      "WASD / Arrows  move     Left click / Space  use held item",
+      "Right click / C  open, harvest, pick up, drink, talk",
+      "Hold right click / C with food to eat it",
+      "1-8 / Z X / wheel  select hotbar",
       "F  drop       E  bag       Q  crafting      G  furnace",
       "R  recipe book, click tabs or 1-5, A D turn pages",
-      "Empty hand: harvest, forage, pick up chickens, drink",
-      "Click a bed to sleep, the store to trade",
-      "Click a workbench or kiln to craft with it",
+      "The words by the cursor show what each click does",
+      "Right click a bed to sleep, the store to trade",
+      "Right click a workbench or kiln to craft with it",
       "Walls, windows and a door make a warm room",
       "",
       "WINDOWS",
@@ -170,6 +172,46 @@ void Game::drawHelp(const asw::Vec2i& ui_size) const {
   }
 }
 
+void Game::drawHoverVerbs() {
+  if (farm_world.getHud().isOpen() || recipe_book.isOpen() ||
+      farm_world.isSummaryOpen() || show_help) {
+    return;
+  }
+
+  const auto verbs = farm_world.hoverVerbs(
+      jim->getCursorTile(), jim->getPosition(), *jim->getHeldStack());
+
+  std::vector<std::pair<std::string, asw::Color>> lines;
+  if (!verbs.left.empty()) {
+    lines.emplace_back("L " + verbs.left, asw::Color(255, 255, 255));
+  }
+  if (!verbs.right.empty()) {
+    lines.emplace_back("R " + verbs.right, asw::Color(200, 230, 160));
+  }
+  if (lines.empty()) {
+    return;
+  }
+
+  const auto mouse = getUiMouse();
+  int width = 0;
+  for (auto const& [text, _] : lines) {
+    width = std::max(width, asw::util::get_text_size(font, text).x);
+  }
+
+  const float x = static_cast<float>(mouse.x + 8);
+  const float y = static_cast<float>(mouse.y + 8);
+  asw::draw::rect_fill(
+      asw::Quadf(x - 2.0F, y - 1.0F, static_cast<float>(width + 4),
+                 static_cast<float>(lines.size() * 9 + 1)),
+      asw::Color(0, 0, 0, 140));
+
+  for (size_t i = 0; i < lines.size(); i++) {
+    asw::draw::text(font, lines[i].first,
+                    asw::Vec2f(x, y + static_cast<float>(i * 9)),
+                    lines[i].second);
+  }
+}
+
 void Game::draw() {
   // Draw map
   farm_world.draw();
@@ -183,6 +225,7 @@ void Game::draw() {
   farm_world.drawStatus(ui_size);
   farm_world.getHud().draw(farm_world.getState());
   jim->drawInventory(ui_size);
+  drawHoverVerbs();
   recipe_book.draw(farm_world.getState(), ui_size);
   Tooltip::draw(ui_size);
   farm_world.drawSummary(ui_size);

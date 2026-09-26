@@ -2,6 +2,7 @@
 #define TILE_BEHAVIOUR_H_
 
 #include <memory>
+#include <string>
 
 #include "../ItemStack.h"
 #include "../Tile.h"
@@ -12,8 +13,19 @@ class TileBehaviour {
  public:
   virtual ~TileBehaviour() = default;
 
-  // Player uses held stack (may be empty) on the tile.
-  // Return true when handled, which stops item actions from running.
+  // Left click: the player uses the held item on the tile, e.g. an axe on a
+  // tree. Return true when handled, which stops item actions from running.
+  virtual bool onUse(World& world,
+                     const std::shared_ptr<Tile>& tile,
+                     ItemStack& held) {
+    (void)world;
+    (void)tile;
+    (void)held;
+    return false;
+  }
+
+  // Right click: the player interacts with the tile, e.g. opens, harvests or
+  // feeds it. The held stack may be empty. Return true when handled.
   virtual bool onInteract(World& world,
                           const std::shared_ptr<Tile>& tile,
                           ItemStack& held) {
@@ -21,6 +33,26 @@ class TileBehaviour {
     (void)tile;
     (void)held;
     return false;
+  }
+
+  // Words shown under the cursor for left and right click, empty when the
+  // click does nothing here
+  virtual std::string useVerb(World& world,
+                              const std::shared_ptr<Tile>& tile,
+                              const ItemStack& held) {
+    (void)world;
+    (void)tile;
+    (void)held;
+    return "";
+  }
+
+  virtual std::string interactVerb(World& world,
+                                   const std::shared_ptr<Tile>& tile,
+                                   const ItemStack& held) {
+    (void)world;
+    (void)tile;
+    (void)held;
+    return "";
   }
 
   // Called each game tick (20 per second) while the tile is near the camera

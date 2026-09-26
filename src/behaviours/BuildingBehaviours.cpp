@@ -23,16 +23,22 @@ bool ShopBehaviour::onInteract(World& world,
   return true;
 }
 
+std::string ShopBehaviour::interactVerb(World& world,
+                                        const std::shared_ptr<Tile>& tile,
+                                        const ItemStack& held) {
+  (void)world;
+  (void)tile;
+  (void)held;
+  return "Trade";
+}
+
 /*******
  * BED *
  *******/
 bool BedBehaviour::onInteract(World& world,
                               const std::shared_ptr<Tile>& tile,
                               ItemStack& held) {
-  // Tools pick the bed up
-  if (world.itemCanUse(held, tile->getTilePosition())) {
-    return false;
-  }
+  (void)held;
 
   // Wake up next to the last bed slept in
   auto& state = world.getState();
@@ -44,6 +50,15 @@ bool BedBehaviour::onInteract(World& world,
 
   state.sleep_requested = true;
   return true;
+}
+
+std::string BedBehaviour::interactVerb(World& world,
+                                       const std::shared_ptr<Tile>& tile,
+                                       const ItemStack& held) {
+  (void)world;
+  (void)tile;
+  (void)held;
+  return "Sleep";
 }
 
 /************
@@ -58,41 +73,74 @@ CampfireBehaviour::CampfireBehaviour(const nlohmann::json& params)
           std::map<std::string, int>{{"item:wood", 48}, {"item:stick", 12}})),
       overnight_burn(params.value("overnight_burn", 100)) {}
 
+bool CampfireBehaviour::isFuel(const ItemStack& held) const {
+  return held.getItem() && fuel.contains(held.getItem()->getType().getId());
+}
+
+bool CampfireBehaviour::onUse(World& world,
+                              const std::shared_ptr<Tile>& tile,
+                              ItemStack& held) {
+  // Fuel either way, other items cook by their own rules
+  return addFuel(world, tile, held);
+}
+
+std::string CampfireBehaviour::useVerb(World& world,
+                                       const std::shared_ptr<Tile>& tile,
+                                       const ItemStack& held) {
+  (void)world;
+  (void)tile;
+  return isFuel(held) ? (lit ? "Add fuel" : "Light") : "";
+}
+
+std::string CampfireBehaviour::interactVerb(World& world,
+                                            const std::shared_ptr<Tile>& tile,
+                                            const ItemStack& held) {
+  (void)world;
+  (void)tile;
+  if (isFuel(held)) {
+    return lit ? "Add fuel" : "Light";
+  }
+  return "Check fire";
+}
+
+bool CampfireBehaviour::addFuel(World& world,
+                                const std::shared_ptr<Tile>& tile,
+                                ItemStack& held) {
+  if (!isFuel(held)) {
+    return false;
+  }
+
+  const auto item = held.getItem();
+  const int amount = fuel.at(item->getType().getId());
+  const int total = std::min<int>(MAX_TILE_META, tile->getMeta() + amount);
+  held.remove(1);
+
+  if (lit) {
+    tile->setMeta(static_cast<unsigned char>(total));
+  } else {
+    world.getMap().replaceTile(tile, lit_tile,
+                               static_cast<unsigned char>(total));
+    world.getState().notify("The fire is lit");
+  }
+
+  SoundManager::play("shovel");
+  return true;
+}
+
 bool CampfireBehaviour::onInteract(World& world,
                                    const std::shared_ptr<Tile>& tile,
                                    ItemStack& held) {
-  const auto item = held.getItem();
-
-  // Add fuel
-  if (item && fuel.contains(item->getType().getId())) {
-    const int amount = fuel.at(item->getType().getId());
-    const int total = std::min<int>(MAX_TILE_META, tile->getMeta() + amount);
-    held.remove(1);
-
-    if (lit) {
-      tile->setMeta(static_cast<unsigned char>(total));
-    } else {
-      world.getMap().replaceTile(tile, lit_tile,
-                                 static_cast<unsigned char>(total));
-      world.getState().notify("The fire is lit");
-    }
-
-    SoundManager::play("shovel");
+  if (addFuel(world, tile, held)) {
     return true;
   }
 
-  // Empty hand checks the fuel
-  if (!item) {
-    const int hours = tile->getMeta() * TICKS_PER_FUEL / 20 *
-                      static_cast<int>(GAME_MINUTES_PER_SECOND) / 60;
-    world.getState().notify(
-        lit ? std::format("The fire will burn about {} more hours", hours)
-            : "Add wood or sticks to light the fire");
-    return true;
-  }
-
-  // Cooking and other item rules
-  return false;
+  // Anything else checks the fuel
+  const int hours = tile->getMeta() * TICKS_PER_FUEL / 20 *
+                    static_cast<int>(GAME_MINUTES_PER_SECOND) / 60;
+  world.getState().notify(
+      lit ? std::format("The fire will burn about {} more hours", hours)
+          : "Add wood or sticks to light the fire");
+  return true;
 }
 
 void CampfireBehaviour::onTick(World& world,

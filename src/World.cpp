@@ -722,56 +722,30 @@ bool World::attackAt(const asw::Vec2i& tile_pos, ItemStack& held) {
   return false;
 }
 
-// Interact with
-void World::interact(const asw::Vec2i& inter_pos,
-                     const asw::Vec2i& player_pos,
-                     ItemStack& held) {
-  const auto tile_pos = inter_pos / TILE_SIZE;
+bool World::inReach(const asw::Vec2i& tile_pos,
+                    const asw::Vec2i& player_pos) const {
   const auto player =
       (player_pos + asw::Vec2i(TILE_SIZE / 2, TILE_SIZE / 2)) / TILE_SIZE;
+  return tile_map.inBounds(tile_pos) &&
+         std::max(std::abs(tile_pos.x - player.x),
+                  std::abs(tile_pos.y - player.y)) <= INTERACT_RANGE;
+}
 
-  if (!tile_map.inBounds(tile_pos)) {
-    return;
-  }
-
-  if (std::max(std::abs(tile_pos.x - player.x),
-               std::abs(tile_pos.y - player.y)) > INTERACT_RANGE) {
-    state.notify("Too far away");
-    return;
-  }
-
-  // Creatures first
-  if (attackAt(tile_pos, held)) {
-    return;
-  }
-
-  // Empty hand picks up items lying on the tile
-  if (!held.getItem() && pickUpItems(tile_pos)) {
-    SoundManager::play("pickup");
-    return;
-  }
-
-  // Tile behaviours, top layer first
-  for (int z = LAYER_FOREGROUND; z >= static_cast<int>(LAYER_BACKGROUND);
-       z--) {
-    auto tile = tile_map.resolveStructure(tile_map.getTileAt(tile_pos, z));
-    if (!tile) {
-      continue;
-    }
-
-    for (auto const& behaviour : tile->getType().getBehaviours()) {
-      if (behaviour->onInteract(*this, tile, held)) {
-        return;
-      }
+const ItemAction* World::matchingAction(const std::string& item_id,
+                                        const asw::Vec2i& tile_pos,
+                                        const ItemStack& held) {
+  for (auto const& action : ItemTypeManager::getInfo(item_id).actions) {
+    if (actionMatches(action, tile_pos, held)) {
+      return &action;
     }
   }
+  return nullptr;
+}
 
-  // Item rules, empty hands use the hand's rules
-  const auto item = held.getItem();
-  const auto& info =
-      ItemTypeManager::getInfo(item ? item->getType().getId() : "item:hand");
-
-  for (auto const& action : info.actions) {
+bool World::runItemRules(const std::string& item_id,
+                         const asw::Vec2i& tile_pos,
+                         ItemStack& held) {
+  for (auto const& action : ItemTypeManager::getInfo(item_id).actions) {
     // Centre tile first, then the rest of the area
     std::vector<asw::Vec2i> cells;
     for (int dx = -action.area; dx <= action.area; dx++) {
@@ -792,12 +766,12 @@ void World::interact(const asw::Vec2i& inter_pos,
       if (!action.message.empty()) {
         state.notify(action.message);
       }
-      return;
+      return true;
     }
 
     if (!state.useEnergy(action.energy)) {
       SoundManager::play("error");
-      return;
+      return true;
     }
 
     for (auto const& cell : cells) {
@@ -814,12 +788,183 @@ void World::interact(const asw::Vec2i& inter_pos,
     if (!action.message.empty()) {
       state.notify(action.message);
     }
+    return true;
+  }
+
+  return false;
+}
+
+void World::use(const asw::Vec2i& inter_pos,
+                const asw::Vec2i& player_pos,
+                ItemStack& held) {
+  const auto tile_pos = inter_pos / TILE_SIZE;
+
+  if (!inReach(tile_pos, player_pos)) {
+    if (tile_map.inBounds(tile_pos)) {
+      state.notify("Too far away");
+    }
     return;
   }
 
-  if (item) {
+  // Creatures first
+  if (attackAt(tile_pos, held)) {
+    return;
+  }
+
+  // Tile behaviours, top layer first
+  for (int z = LAYER_FOREGROUND; z >= static_cast<int>(LAYER_BACKGROUND);
+       z--) {
+    auto tile = tile_map.resolveStructure(tile_map.getTileAt(tile_pos, z));
+    if (!tile) {
+      continue;
+    }
+
+    for (auto const& behaviour : tile->getType().getBehaviours()) {
+      if (behaviour->onUse(*this, tile, held)) {
+        return;
+      }
+    }
+  }
+
+  // Item rules
+  const auto item = held.getItem();
+  if (item && !runItemRules(item->getType().getId(), tile_pos, held)) {
     SoundManager::play("error");
   }
+}
+
+InteractResult World::interact(const asw::Vec2i& inter_pos,
+                               const asw::Vec2i& player_pos,
+                               ItemStack& held) {
+  const auto tile_pos = inter_pos / TILE_SIZE;
+  const auto item = held.getItem();
+  const bool reach = inReach(tile_pos, player_pos);
+
+  if (reach) {
+    // Items lying on the tile
+    if (pickUpItems(tile_pos)) {
+      SoundManager::play("pickup");
+      return InteractResult::Handled;
+    }
+
+    // Tile behaviours, top layer first
+    for (int z = LAYER_FOREGROUND; z >= static_cast<int>(LAYER_BACKGROUND);
+         z--) {
+      auto tile = tile_map.resolveStructure(tile_map.getTileAt(tile_pos, z));
+      if (!tile) {
+        continue;
+      }
+
+      for (auto const& behaviour : tile->getType().getBehaviours()) {
+        if (behaviour->onInteract(*this, tile, held)) {
+          return InteractResult::Handled;
+        }
+      }
+    }
+
+    // Hand rules, e.g. drinking from water
+    if (runItemRules("item:hand", tile_pos, held)) {
+      return InteractResult::Handled;
+    }
+  }
+
+  // Nothing here, use the held item on yourself
+  if (item) {
+    const auto& info = ItemTypeManager::getInfo(item->getType().getId());
+    if (info.edible) {
+      return InteractResult::Eat;
+    }
+    if (info.throwable) {
+      return InteractResult::Throw;
+    }
+  }
+
+  if (!reach && tile_map.inBounds(tile_pos)) {
+    state.notify("Too far away");
+  }
+
+  return InteractResult::None;
+}
+
+HoverVerbs World::hoverVerbs(const asw::Vec2i& inter_pos,
+                             const asw::Vec2i& player_pos,
+                             const ItemStack& held) {
+  const auto tile_pos = inter_pos / TILE_SIZE;
+  const auto item = held.getItem();
+  HoverVerbs verbs;
+
+  // Held food and throwing work anywhere
+  auto self_verb = [&]() -> std::string {
+    if (!item) {
+      return "";
+    }
+    const auto& info = ItemTypeManager::getInfo(item->getType().getId());
+    if (info.edible) {
+      return info.hunger <= 0.0F && info.thirst > 0.0F ? "Drink" : "Eat";
+    }
+    return info.throwable ? "Throw" : "";
+  };
+
+  if (!inReach(tile_pos, player_pos)) {
+    if (tile_map.inBounds(tile_pos)) {
+      verbs.left = item ? "Too far" : "";
+    }
+    verbs.right = self_verb();
+    return verbs;
+  }
+
+  // Creatures near the cursor
+  const int attack =
+      item ? ItemTypeManager::getInfo(item->getType().getId()).attack : 0;
+  for (auto const& creature : creatures) {
+    const auto offset = creature->getPosition() - tile_pos * TILE_SIZE;
+    if (!creature->isGone() && std::abs(offset.x) <= TILE_SIZE * 3 / 4 &&
+        std::abs(offset.y) <= TILE_SIZE * 3 / 4) {
+      verbs.left = attack > 0 ? "Attack" : "Needs a weapon";
+    }
+  }
+
+  // Behaviours, top layer first
+  for (int z = LAYER_FOREGROUND; z >= static_cast<int>(LAYER_BACKGROUND);
+       z--) {
+    auto tile = tile_map.resolveStructure(tile_map.getTileAt(tile_pos, z));
+    if (!tile) {
+      continue;
+    }
+
+    for (auto const& behaviour : tile->getType().getBehaviours()) {
+      if (verbs.left.empty()) {
+        verbs.left = behaviour->useVerb(*this, tile, held);
+      }
+      if (verbs.right.empty()) {
+        verbs.right = behaviour->interactVerb(*this, tile, held);
+      }
+    }
+  }
+
+  // Item rules
+  if (verbs.left.empty() && item) {
+    if (const auto* action =
+            matchingAction(item->getType().getId(), tile_pos, held)) {
+      verbs.left = action->verb;
+    }
+  }
+
+  if (tile_map.getItemAt(tile_pos)) {
+    verbs.right = "Pick up";
+  }
+
+  if (verbs.right.empty()) {
+    if (const auto* action = matchingAction("item:hand", tile_pos, held)) {
+      verbs.right = action->verb;
+    }
+  }
+
+  if (verbs.right.empty()) {
+    verbs.right = self_verb();
+  }
+
+  return verbs;
 }
 
 void World::consume(ItemStack& held) {
@@ -1474,20 +1619,6 @@ void World::openStation(const std::string& window, int tier) {
   hud.open(window, 0.15F);
   hud.open("inventory", 0.8F);
   state.crafting_tier = tier;
-}
-
-bool World::itemCanUse(const ItemStack& held, const asw::Vec2i& tile_pos) {
-  const auto item = held.getItem();
-  if (!item) {
-    return false;
-  }
-
-  return std::ranges::any_of(
-      ItemTypeManager::getInfo(item->getType().getId()).actions,
-      [&](const ItemAction& action) {
-        return !action.fail && action.layer >= 0 &&
-               actionMatches(action, tile_pos, held);
-      });
 }
 
 std::shared_ptr<Tile> World::findTileNear(

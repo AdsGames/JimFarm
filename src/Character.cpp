@@ -7,6 +7,9 @@
 #include "utility/Shadow.h"
 #include "utility/Tools.h"
 
+// Seconds to eat or drink one item
+constexpr float EAT_TIME = 0.9F;
+
 // Top of head
 CharacterForeground::CharacterForeground(Character* charPtr)
     : Sprite(), char_ptr(charPtr) {
@@ -93,6 +96,15 @@ void Character::draw(const Camera& camera) const {
       asw::Quadf(pos.x - camera.getPosition().x,
                  pos.y - camera.getPosition().y - 8, 16, 20));
 
+  // Eating progress over the head
+  if (eat_timer >= 0.0F) {
+    const float x = pos.x - camera.getPosition().x + 1.0F;
+    const float y = pos.y - camera.getPosition().y - 13.0F;
+    asw::draw::rect_fill(asw::Quadf(x, y, 14.0F, 3.0F), asw::Color(30, 30, 30));
+    asw::draw::rect_fill(asw::Quadf(x, y, 14.0F * eat_timer / EAT_TIME, 3.0F),
+                         asw::Color(240, 180, 60));
+  }
+
   // Selected item
   if (inventory_ui.getInventory()->getStack(selected_item)->getItem()) {
     inventory_ui.getInventory()
@@ -138,8 +150,12 @@ std::shared_ptr<Item> Character::getSelectedItem() const {
   return inventory_ui.getInventory()->getStack(selected_item)->getItem();
 }
 
+std::shared_ptr<ItemStack> Character::getHeldStack() const {
+  return inventory_ui.getInventory()->getStack(selected_item);
+}
+
 // Update player
-void Character::update(World& world) {
+void Character::update(World& world, float dt) {
   const auto& mouse = asw::input::get_mouse();
 
   auto relative_x = static_cast<int>(static_cast<float>(mouse.position.x) /
@@ -288,20 +304,40 @@ void Character::update(World& world) {
     }
   }
 
-  // Interact with map, empty hands can pick, drink and harvest
+  // Left click uses the held item, right click interacts
   auto held = inventory_ui.getInventory()->getStack(selected_item);
 
   if (input_enabled &&
       (asw::input::get_key_down(asw::input::Key::Space) ||
        asw::input::get_mouse_button_down(asw::input::MouseButton::Left))) {
-    world.interact(indicator_pos, pos, *held);
+    world.use(indicator_pos, pos, *held);
   }
 
-  // Eat or drink
+  const bool interact_held =
+      input_enabled &&
+      (asw::input::get_key(asw::input::Key::C) ||
+       asw::input::get_mouse_button(asw::input::MouseButton::Right));
+
   if (input_enabled &&
       (asw::input::get_key_down(asw::input::Key::C) ||
        asw::input::get_mouse_button_down(asw::input::MouseButton::Right))) {
-    world.consume(*held);
+    if (world.interact(indicator_pos, pos, *held) == InteractResult::Eat) {
+      eat_timer = 0.0F;
+      eat_slot = selected_item;
+    }
+  }
+
+  // Eating takes a moment, and goes on while the button is held
+  if (eat_timer >= 0.0F) {
+    if (!interact_held || selected_item != eat_slot || !held->getItem()) {
+      eat_timer = -1.0F;
+    } else {
+      eat_timer += dt;
+      if (eat_timer >= EAT_TIME) {
+        world.consume(*held);
+        eat_timer = 0.0F;
+      }
+    }
   }
 
   // Scroll map

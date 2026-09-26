@@ -18,6 +18,12 @@ class StationBehaviour : public TileBehaviour {
                   const std::shared_ptr<Tile>& tile,
                   ItemStack& held) override;
 
+  std::string interactVerb(World& world,
+                           const std::shared_ptr<Tile>& tile,
+                           const ItemStack& held) override;
+
+  int getTier() const { return tier; }
+
  private:
   std::string window{"crafting"};
   int tier{0};
@@ -28,9 +34,13 @@ class BreakableBehaviour : public TileBehaviour {
  public:
   explicit BreakableBehaviour(const nlohmann::json& params);
 
-  bool onInteract(World& world,
-                  const std::shared_ptr<Tile>& tile,
-                  ItemStack& held) override;
+  bool onUse(World& world,
+             const std::shared_ptr<Tile>& tile,
+             ItemStack& held) override;
+
+  std::string useVerb(World& world,
+                      const std::shared_ptr<Tile>& tile,
+                      const ItemStack& held) override;
 
  private:
   std::vector<std::string> tools{};
@@ -80,6 +90,10 @@ class HopperBehaviour : public TileBehaviour {
   bool onInteract(World& world,
                   const std::shared_ptr<Tile>& tile,
                   ItemStack& held) override;
+
+  std::string interactVerb(World& world,
+                           const std::shared_ptr<Tile>& tile,
+                           const ItemStack& held) override;
 
   // Store one product, false when full or not the collected item
   bool store(const std::shared_ptr<Tile>& tile, const std::string& id) const;

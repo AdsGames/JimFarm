@@ -13,7 +13,7 @@ Earn $1000 by the end of Spring. Till soil, plant seeds, water them every day,
 then sell the harvest at the store. Sleep in the barn to end the day. The game
 saves each morning.
 
-Stay alive: eat (C or right click), drink at water or the well, and stay warm.
+Stay alive: eat (hold right click), drink at water or the well, and stay warm.
 Wolves hunt you and your chickens at night. Lit campfires keep them away and
 warm you. Fences keep them out.
 
@@ -32,8 +32,9 @@ recipe book (R) as you pick up new things.
 | Key                     | Action                         |
 | ----------------------- | ------------------------------ |
 | WASD / arrows           | Move                           |
-| Click / Space           | Use held item (empty hand too) |
-| C / right click         | Eat or drink held item         |
+| Left click / Space      | Use held item (tools, weapons) |
+| Right click / C         | Interact: open, harvest, pick  |
+| Hold right click / C    | Eat or drink held food         |
 | 1-8, Z / X, mouse wheel | Select hotbar slot             |
 | F                       | Drop item                      |
 | E / Q / G               | Bag / crafting / furnace       |

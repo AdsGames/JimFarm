@@ -39,7 +39,8 @@
         "particles": "dirt",
         "sound": "hoe",
         "energy": 2,
-        "area": 0
+        "area": 0,
+        "verb": "Till"
       }
     ]
   },
@@ -61,7 +62,8 @@
         "particles": "dirt",
         "sound": "hoe",
         "energy": 6,
-        "area": 1
+        "area": 1,
+        "verb": "Till"
       }
     ]
   },
@@ -81,9 +83,13 @@
         "drops": ["item:hay"],
         "particles": "grass",
         "sound": "scythe",
-        "energy": 1
+        "energy": 1,
+        "verb": "Cut"
       }
-    ]
+    ],
+    "reach": 1.5,
+    "arc": 70,
+    "cooldown": 0.6
   },
   {
     "id": "item:watering_can",
@@ -123,7 +129,8 @@
         "particles": "water",
         "sound": "water pour",
         "energy": 1,
-        "area": 0
+        "area": 0,
+        "verb": "Water"
       },
       {
         "max_meta": 0,
@@ -172,7 +179,8 @@
         "particles": "water",
         "sound": "water pour",
         "energy": 1,
-        "area": 1
+        "area": 1,
+        "verb": "Water"
       },
       {
         "max_meta": 0,
@@ -196,7 +204,8 @@
         "replace": null,
         "drops": ["item:workbench"],
         "sound": "axe",
-        "energy": 1
+        "energy": 1,
+        "verb": "Pick up"
       },
       {
         "layer": "foreground",
@@ -204,7 +213,8 @@
         "replace": null,
         "drops": ["item:bed"],
         "sound": "axe",
-        "energy": 1
+        "energy": 1,
+        "verb": "Pick up"
       },
       {
         "layer": "foreground",
@@ -212,7 +222,8 @@
         "replace": null,
         "drops": ["item:door"],
         "sound": "axe",
-        "energy": 1
+        "energy": 1,
+        "verb": "Pick up"
       },
       {
         "layer": "foreground",
@@ -220,7 +231,8 @@
         "replace": null,
         "drops": ["item:scarecrow"],
         "sound": "axe",
-        "energy": 1
+        "energy": 1,
+        "verb": "Pick up"
       },
       {
         "layer": "foreground",
@@ -228,7 +240,8 @@
         "replace": null,
         "drops": ["item:hopper"],
         "sound": "axe",
-        "energy": 1
+        "energy": 1,
+        "verb": "Pick up"
       },
       {
         "layer": "foreground",
@@ -237,7 +250,8 @@
         "drops": ["item:wood"],
         "particles": "wood",
         "sound": "axe",
-        "energy": 3
+        "energy": 3,
+        "verb": "Chop"
       },
       {
         "layer": "foreground",
@@ -246,7 +260,8 @@
         "drops": ["item:wood"],
         "particles": "wood",
         "sound": "axe",
-        "energy": 2
+        "energy": 2,
+        "verb": "Break"
       },
       {
         "layer": "foreground",
@@ -255,7 +270,8 @@
         "drops": ["item:stick"],
         "particles": "wood",
         "sound": "axe",
-        "energy": 1
+        "energy": 1,
+        "verb": "Break"
       },
       {
         "layer": "foreground",
@@ -264,9 +280,13 @@
         "drops": ["item:campfire"],
         "particles": "wood",
         "sound": "axe",
-        "energy": 1
+        "energy": 1,
+        "verb": "Break"
       }
-    ]
+    ],
+    "reach": 1.5,
+    "arc": 70,
+    "cooldown": 0.6
   },
   {
     "id": "item:shovel",
@@ -282,7 +302,8 @@
         "replace": null,
         "drops": ["item:plank_floor"],
         "sound": "shovel",
-        "energy": 1
+        "energy": 1,
+        "verb": "Pick up"
       },
       {
         "layer": "midground",
@@ -290,7 +311,8 @@
         "replace": null,
         "drops": ["item:brick_floor"],
         "sound": "shovel",
-        "energy": 1
+        "energy": 1,
+        "verb": "Pick up"
       },
       {
         "layer": "midground",
@@ -299,7 +321,8 @@
         "drops": ["item:clay"],
         "sound": "shovel",
         "energy": 2,
-        "requires_empty": ["foreground"]
+        "requires_empty": ["foreground"],
+        "verb": "Pick up"
       },
       {
         "layer": "foreground",
@@ -307,7 +330,8 @@
         "replace": null,
         "particles": "dirt",
         "sound": "shovel",
-        "energy": 2
+        "energy": 2,
+        "verb": "Dig"
       },
       {
         "layer": "foreground",
@@ -316,7 +340,8 @@
         "drops": ["item:stone"],
         "particles": "dirt",
         "sound": "shovel",
-        "energy": 4
+        "energy": 4,
+        "verb": "Dig"
       },
       {
         "layer": "midground",
@@ -326,7 +351,8 @@
         "drops": ["item:grass"],
         "particles": "dirt",
         "sound": "shovel",
-        "energy": 2
+        "energy": 2,
+        "verb": "Pick up"
       },
       {
         "layer": "midground",
@@ -336,7 +362,8 @@
         "drops": ["item:sand"],
         "particles": "dirt",
         "sound": "shovel",
-        "energy": 2
+        "energy": 2,
+        "verb": "Pick up"
       },
       {
         "layer": "midground",
@@ -345,19 +372,24 @@
         "replace": null,
         "particles": "dirt",
         "sound": "shovel",
-        "energy": 1
+        "energy": 1,
+        "verb": "Dig"
       }
     ]
   },
   {
     "id": "item:spear",
     "name": "spear",
-    "description": "Best weapon against wolves.",
+    "description": "Thrusts far toward the cursor. Hold right click to throw it.",
     "sheet": "placeholders",
     "image_x": 4,
     "image_y": 0,
     "value": 15,
-    "attack": 3
+    "attack": 3,
+    "reach": 2.5,
+    "arc": 25,
+    "cooldown": 0.45,
+    "throw": true
   },
   {
     "id": "item:chicken",
@@ -436,7 +468,8 @@
         },
         "consume": true,
         "particles": "dirt",
-        "sound": "shovel"
+        "sound": "shovel",
+        "verb": "Plant"
       },
       {
         "fail": true,
@@ -474,7 +507,8 @@
         },
         "consume": true,
         "particles": "dirt",
-        "sound": "shovel"
+        "sound": "shovel",
+        "verb": "Plant"
       },
       {
         "fail": true,
@@ -512,7 +546,8 @@
         },
         "consume": true,
         "particles": "dirt",
-        "sound": "shovel"
+        "sound": "shovel",
+        "verb": "Plant"
       },
       {
         "fail": true,
@@ -572,7 +607,8 @@
         },
         "consume": true,
         "particles": "dirt",
-        "sound": "shovel"
+        "sound": "shovel",
+        "verb": "Plant"
       },
       {
         "fail": true,
@@ -778,7 +814,8 @@
         },
         "consume": true,
         "particles": "dirt",
-        "sound": "shovel"
+        "sound": "shovel",
+        "verb": "Plant"
       }
     ]
   },
@@ -1047,7 +1084,8 @@
         "replace": null,
         "drops": ["item:stone"],
         "sound": "shovel",
-        "energy": 2
+        "energy": 2,
+        "verb": "Mine"
       },
       {
         "layer": "foreground",
@@ -1055,7 +1093,8 @@
         "replace": null,
         "drops": ["item:brick"],
         "sound": "shovel",
-        "energy": 2
+        "energy": 2,
+        "verb": "Mine"
       },
       {
         "layer": "foreground",
@@ -1063,7 +1102,8 @@
         "replace": null,
         "drops": ["item:window"],
         "sound": "shovel",
-        "energy": 1
+        "energy": 1,
+        "verb": "Pick up"
       },
       {
         "layer": "foreground",
@@ -1071,7 +1111,8 @@
         "replace": null,
         "drops": ["item:kiln"],
         "sound": "shovel",
-        "energy": 2
+        "energy": 2,
+        "verb": "Pick up"
       },
       {
         "layer": "foreground",
@@ -1079,7 +1120,8 @@
         "replace": null,
         "drops": ["item:stone_workbench"],
         "sound": "shovel",
-        "energy": 2
+        "energy": 2,
+        "verb": "Pick up"
       },
       {
         "layer": "foreground",
@@ -1087,7 +1129,8 @@
         "replace": null,
         "drops": ["item:sprinkler"],
         "sound": "shovel",
-        "energy": 1
+        "energy": 1,
+        "verb": "Pick up"
       },
       {
         "layer": "foreground",
@@ -1095,7 +1138,8 @@
         "replace": null,
         "drops": ["item:iron_sprinkler"],
         "sound": "shovel",
-        "energy": 1
+        "energy": 1,
+        "verb": "Pick up"
       }
     ]
   },
@@ -1133,7 +1177,10 @@
     "value": 50,
     "attack": 2,
     "power": 2,
-    "actions_from": "item:axe"
+    "actions_from": "item:axe",
+    "reach": 1.5,
+    "arc": 70,
+    "cooldown": 0.6
   },
   {
     "id": "item:iron_axe",
@@ -1145,7 +1192,10 @@
     "value": 110,
     "attack": 3,
     "power": 3,
-    "actions_from": "item:axe"
+    "actions_from": "item:axe",
+    "reach": 1.5,
+    "arc": 70,
+    "cooldown": 0.6
   },
   {
     "id": "item:copper_hoe",
@@ -1163,7 +1213,8 @@
         "replace": "tile:plowed_soil",
         "sound": "hoe",
         "energy": 5,
-        "area": 1
+        "area": 1,
+        "verb": "Till"
       }
     ]
   },
@@ -1183,7 +1234,8 @@
         "replace": "tile:plowed_soil",
         "sound": "hoe",
         "energy": 10,
-        "area": 2
+        "area": 2,
+        "verb": "Till"
       }
     ]
   },
@@ -1223,7 +1275,8 @@
         "add_meta": -1,
         "sound": "water pour",
         "energy": 1,
-        "area": 1
+        "area": 1,
+        "verb": "Water"
       },
       {
         "max_meta": 0,
@@ -1268,7 +1321,8 @@
         "add_meta": -1,
         "sound": "water pour",
         "energy": 1,
-        "area": 2
+        "area": 2,
+        "verb": "Water"
       },
       {
         "max_meta": 0,

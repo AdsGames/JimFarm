@@ -13,9 +13,21 @@ TreeBehaviour::TreeBehaviour(const nlohmann::json& params)
       energy(params.value("energy", 4.0F)),
       sapling_chance(params.value("sapling_chance", 0.3F)) {}
 
-bool TreeBehaviour::onInteract(World& world,
-                               const std::shared_ptr<Tile>& tile,
-                               ItemStack& held) {
+std::string TreeBehaviour::useVerb(World& world,
+                                   const std::shared_ptr<Tile>& tile,
+                                   const ItemStack& held) {
+  (void)world;
+  (void)tile;
+  const auto item = held.getItem();
+  return item && std::ranges::find(tools, item->getType().getId()) !=
+                     tools.end()
+             ? "Chop"
+             : "";
+}
+
+bool TreeBehaviour::onUse(World& world,
+                          const std::shared_ptr<Tile>& tile,
+                          ItemStack& held) {
   const auto item = held.getItem();
   if (!item || std::ranges::find(tools, item->getType().getId()) ==
                    tools.end()) {

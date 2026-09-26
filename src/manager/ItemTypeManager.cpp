@@ -79,6 +79,24 @@ ItemAction parseAction(const nlohmann::json& data) {
   action.thirst = data.value("thirst", 0.0F);
   action.health = data.value("health", 0.0F);
   action.fail = data.value("fail", false);
+  action.verb = data.value("verb", "");
+
+  // Guess a word for the cursor when none is given
+  if (action.verb.empty() && !action.fail) {
+    if (!action.place.empty()) {
+      action.verb = "Place";
+    } else if (!action.gives.empty()) {
+      action.verb = "Cook";
+    } else if (action.set_meta >= 0) {
+      action.verb = "Fill";
+    } else if (action.thirst > 0.0F) {
+      action.verb = "Drink";
+    } else if (action.has_replace && action.replace.empty()) {
+      action.verb = "Clear";
+    } else {
+      action.verb = "Use";
+    }
+  }
 
   return action;
 }
@@ -118,6 +136,10 @@ int ItemTypeManager::loadItems(const std::string& path) {
     info.value = item.value("value", 0);
     info.attack = item.value("attack", 0);
     info.power = item.value("power", 0.0F);
+    info.reach = item.value("reach", 1.5F);
+    info.arc = item.value("arc", 60.0F);
+    info.cooldown = item.value("cooldown", 0.5F);
+    info.throwable = item.value("throw", false);
     info.carry_warmth = item.value("carry_warmth", 0.0F);
     info.start_meta = item.value("start_meta", 0);
 

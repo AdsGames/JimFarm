@@ -12,9 +12,13 @@ class TreeBehaviour : public TileBehaviour {
  public:
   explicit TreeBehaviour(const nlohmann::json& params);
 
-  bool onInteract(World& world,
-                  const std::shared_ptr<Tile>& tile,
-                  ItemStack& held) override;
+  bool onUse(World& world,
+             const std::shared_ptr<Tile>& tile,
+             ItemStack& held) override;
+
+  std::string useVerb(World& world,
+                      const std::shared_ptr<Tile>& tile,
+                      const ItemStack& held) override;
 
  private:
   std::vector<std::string> tools{};

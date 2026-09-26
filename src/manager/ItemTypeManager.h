@@ -71,6 +71,9 @@ struct ItemAction {
 
   // Rule only reports failure (error sound + message)
   bool fail{false};
+
+  // Word shown under the cursor, e.g. "Till"
+  std::string verb{};
 };
 
 // Non visual item data
@@ -102,6 +105,14 @@ struct ItemInfo {
 
   // Tool strength, trees and rocks take fewer hits. 0 for non tools.
   float power{0.0F};
+
+  // Weapon reach in tiles, swing arc in degrees and seconds between swings
+  float reach{1.5F};
+  float arc{60.0F};
+  float cooldown{0.5F};
+
+  // Can be thrown by holding right click
+  bool throwable{false};
 
   // Starting meta for new items (e.g. full watering can)
   unsigned char start_meta{0};

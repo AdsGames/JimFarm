@@ -26,6 +26,9 @@ class Game : public asw::scene::Scene<ProgramState> {
   // Controls overlay
   void drawHelp(const asw::Vec2i& ui_size) const;
 
+  // What each mouse button does under the cursor
+  void drawHoverVerbs();
+
   World farm_world{};
   std::shared_ptr<Character> jim = nullptr;
 
