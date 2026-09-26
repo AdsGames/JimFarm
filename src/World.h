@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "Creature.h"
+#include "FloatingText.h"
 #include "GameState.h"
 #include "Inventory.h"
 #include "Item.h"
@@ -208,6 +209,9 @@ class World {
   // Wolves and other creatures
   std::vector<std::shared_ptr<Creature>> creatures{};
   float spawn_timer{0.0F};
+
+  // Damage numbers over creatures
+  FloatingTexts floating_texts{};
 
   // Lit campfires seen this tick
   std::vector<asw::Vec2i> lights{};

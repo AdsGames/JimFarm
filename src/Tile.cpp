@@ -1,6 +1,7 @@
 #include "Tile.h"
 
 #include "manager/TileTypeManager.h"
+#include "utility/Anim.h"
 #include "utility/Tools.h"
 
 // Ctor for tile
@@ -16,8 +17,11 @@ const asw::Vec2i Tile::getTilePosition() const {
 
 // Draw tile to screen
 void Tile::draw(const Camera& camera) const {
+  // Animals breathe, see utility/Anim.h
+  const int bob = tile_pointer.getBobs() ? anim::idleBob(getSpriteId()) : 0;
+
   tile_pointer.draw(pos.x - camera.getPosition().x,
-                    pos.y - camera.getPosition().y, getMeta());
+                    pos.y - camera.getPosition().y + bob, getMeta());
 }
 
 const TileType& Tile::getType() const {
