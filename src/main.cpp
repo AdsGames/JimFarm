@@ -1,6 +1,7 @@
 #include <asw/asw.h>
 
 #include <chrono>
+#include <random>
 #include <string_view>
 
 #ifdef __EMSCRIPTEN__
@@ -14,6 +15,7 @@
 #include "SelfTest.h"
 #include "State.h"
 #include "World.h"
+#include "utility/Tools.h"
 
 // Main function
 int main(int argc, char* argv[]) {
@@ -34,6 +36,10 @@ int main(int argc, char* argv[]) {
     asw::core::shutdown();
     return result;
   }
+
+  // A new world and new weather each run. The self test above keeps the
+  // default seed so its results repeat.
+  generator.seed(std::random_device{}());
 
   asw::scene::SceneManager<ProgramState> app;
 
