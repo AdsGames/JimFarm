@@ -11,6 +11,7 @@
 #include "../manager/ItemTypeManager.h"
 #include "../manager/TileTypeManager.h"
 #include "UiScale.h"
+#include "../utility/Fonts.h"
 
 namespace {
 constexpr int PADDING = 3;
@@ -32,8 +33,7 @@ std::vector<Line> lines{};
 Season current_season{Season::Spring};
 
 asw::Font& font() {
-  static asw::Font loaded = asw::assets::load_font(
-      "assets/fonts/pixelart.ttf", 8, asw::FontStyle::Pixel);
+  static asw::Font loaded = fonts::load();
   return loaded;
 }
 

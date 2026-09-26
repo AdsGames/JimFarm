@@ -64,7 +64,6 @@ class Character : public Sprite {
   enum directions { DIR_DOWN = 1, DIR_UP = 2, DIR_RIGHT = 3, DIR_LEFT = 4 };
 
   // Fonts
-  asw::Font pixelart{};
 
   // Item in hand
   int selected_item{0};

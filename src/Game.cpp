@@ -13,6 +13,7 @@
 #include "manager/RecipeManager.h"
 #include "ui/Tooltip.h"
 #include "ui/UiScale.h"
+#include "utility/Fonts.h"
 #include "utility/Tools.h"
 
 void Game::init() {
@@ -32,8 +33,7 @@ void Game::init() {
     // Blending into a transparent buffer leaves colours premultiplied by alpha
     asw::draw::set_blend_mode(ui_buffer, asw::BlendMode::BlendPremultiplied);
 
-    font = asw::assets::load_font("assets/fonts/pixelart.ttf", 8,
-                                  asw::FontStyle::Pixel);
+    font = fonts::load();
   }
 
   // Setup jim

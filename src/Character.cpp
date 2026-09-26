@@ -48,9 +48,6 @@ void Character::loadData() {
   drop = asw::assets::load_sample("assets/sfx/drop.wav");
   step[0] = asw::assets::load_sample("assets/sfx/step_1.wav");
   step[1] = asw::assets::load_sample("assets/sfx/step_2.wav");
-
-  // Load fonts
-  pixelart = asw::assets::load_font("assets/fonts/pixelart.ttf", 12);
 }
 
 void Character::giveStarterItems() {

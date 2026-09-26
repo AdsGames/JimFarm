@@ -15,6 +15,7 @@
 #include "manager/RecipeManager.h"
 #include "manager/SoundManager.h"
 #include "manager/TileTypeManager.h"
+#include "utility/Fonts.h"
 #include "utility/Tools.h"
 
 namespace {
@@ -237,8 +238,7 @@ void World::ensureBuffers() {
   }
 
   if (!font) {
-    font = asw::assets::load_font("assets/fonts/pixelart.ttf", 8,
-                                  asw::FontStyle::Pixel);
+    font = fonts::load();
   }
 }
 

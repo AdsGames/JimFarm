@@ -1,6 +1,7 @@
 #include "Menu.h"
 
 #include "SaveManager.h"
+#include "utility/Fonts.h"
 #include "utility/Tools.h"
 
 void Menu::init() {
@@ -22,7 +23,7 @@ void Menu::init() {
   asw::sound::play_music(music, 0.8F);
 
   // Load fonts
-  pixelart = asw::assets::load_font("assets/fonts/pixelart.ttf", 12);
+  pixelart = fonts::load(2);
 
   has_save = SaveManager::exists();
 }

@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include "utility/Fonts.h"
+
 namespace {
 // Seconds a message stays up, the last second fades out
 constexpr float MESSAGE_LIFETIME = 6.0F;
@@ -10,8 +12,7 @@ constexpr float MESSAGE_FADE = 1.0F;
 
 Messenger::Messenger(unsigned int list_size, bool is_top_down, int padding)
     : max_size(list_size), top_down(is_top_down), padding(padding) {
-  this->pixelart = asw::assets::load_font("assets/fonts/pixelart.ttf", 8,
-                                          asw::FontStyle::Pixel);
+  this->pixelart = fonts::load();
 }
 
 void Messenger::setColors(asw::Color font, asw::Color background) {

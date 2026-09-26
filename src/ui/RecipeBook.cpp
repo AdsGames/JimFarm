@@ -13,6 +13,7 @@
 #include "../manager/SoundManager.h"
 #include "Tooltip.h"
 #include "UiScale.h"
+#include "../utility/Fonts.h"
 
 namespace {
 // Tabs in the order the player gets the stations, names match
@@ -47,8 +48,7 @@ const asw::Color ENOUGH(40, 120, 40);
 const asw::Color SHORT(165, 50, 40);
 
 asw::Font& font() {
-  static asw::Font loaded = asw::assets::load_font(
-      "assets/fonts/pixelart.ttf", 8, asw::FontStyle::Pixel);
+  static asw::Font loaded = fonts::load();
   return loaded;
 }
 

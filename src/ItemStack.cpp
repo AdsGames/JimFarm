@@ -1,5 +1,7 @@
 #include "ItemStack.h"
 
+#include "utility/Fonts.h"
+
 asw::Font ItemStack::pixelart = nullptr;
 
 ItemStack::ItemStack() : ItemStack(nullptr, 0) {}
@@ -7,8 +9,7 @@ ItemStack::ItemStack() : ItemStack(nullptr, 0) {}
 ItemStack::ItemStack(std::shared_ptr<Item> item, int quantity)
     : item(item), quantity(quantity) {
   if (!pixelart) {
-    pixelart = asw::assets::load_font("assets/fonts/pixelart.ttf", 8,
-                                      asw::FontStyle::Pixel);
+    pixelart = fonts::load();
   }
 }
 
