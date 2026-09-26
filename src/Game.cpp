@@ -146,6 +146,7 @@ void Game::drawHelp(const asw::Vec2i& ui_size) const {
       "Right click a bed to sleep, the store to trade",
       "Right click a workbench or kiln to craft with it",
       "Walls, windows and a door make a warm room",
+      "Doors open as you walk in, right click holds them open",
       "",
       "WINDOWS",
       "Click: take or swap   Right click: half, or place one",

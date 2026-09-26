@@ -174,6 +174,12 @@ class World {
       int radius,
       const std::function<bool(const std::shared_ptr<Tile>&)>& match);
 
+  // Walking into a closed door opens it, true when it did
+  bool tryOpenDoor(const asw::Vec2i& tile_pos);
+
+  // Is a creature standing on the tile
+  bool creatureAt(const asw::Vec2i& tile_pos) const;
+
   // Rooms: floor space closed in by walls, windows and a door
   bool isIndoors(const asw::Vec2i& tile_pos) const;
 

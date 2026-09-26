@@ -387,6 +387,16 @@ def door_tile(x, y):
   d.ellipse([ox + 11, oy + 17, ox + 13, oy + 19], fill=(230, 200, 80))
 
 
+def door_open_tile(x, y):
+  ox, oy = cell(x, y)
+  # Dark doorway with the door swung against the frame
+  d.rectangle([ox + 1, oy + 4, ox + 14, oy + 31], fill=(45, 30, 20),
+              outline=(100, 60, 30))
+  d.rectangle([ox + 1, oy + 4, ox + 4, oy + 31], fill=(140, 90, 50),
+              outline=(100, 60, 30))
+  d.point((ox + 3, oy + 18), fill=(230, 200, 80))
+
+
 def window_tile(x, y):
   ox, oy = cell(x, y)
   d.rectangle([ox, oy + 4, ox + 15, oy + 31], fill=(150, 105, 60))
@@ -511,6 +521,7 @@ door_tile(2, 4)
 window_tile(3, 4)
 brick_wall(4, 4)
 scarecrow_tile(5, 4)
+door_open_tile(6, 4)
 
 img.save(OUT)
 print("Wrote " + OUT)

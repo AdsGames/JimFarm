@@ -75,4 +75,33 @@ class CampfireBehaviour : public TileBehaviour {
   bool isFuel(const ItemStack& held) const;
 };
 
+// Closed doors are solid, walking into one opens it and it closes once you
+// step off. Right click holds it open (meta 1) or closes it.
+class DoorBehaviour : public TileBehaviour {
+ public:
+  explicit DoorBehaviour(const nlohmann::json& params);
+
+  bool onInteract(World& world,
+                  const std::shared_ptr<Tile>& tile,
+                  ItemStack& held) override;
+
+  std::string interactVerb(World& world,
+                           const std::shared_ptr<Tile>& tile,
+                           const ItemStack& held) override;
+
+  void onTick(World& world, const std::shared_ptr<Tile>& tile) override;
+
+  bool ticks() const override { return open; }
+
+  bool isOpen() const { return open; }
+
+ private:
+  // Close unless someone stands in the doorway, true when closed
+  bool close(World& world, const std::shared_ptr<Tile>& tile) const;
+
+  bool open{false};
+  std::string open_tile{"tile:door_open"};
+  std::string closed_tile{"tile:door"};
+};
+
 #endif  // BUILDING_BEHAVIOURS_H_

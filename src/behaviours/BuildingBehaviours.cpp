@@ -173,3 +173,63 @@ void CampfireBehaviour::onDayEnd(World& world,
 
   tile->setMeta(static_cast<unsigned char>(tile->getMeta() - overnight_burn));
 }
+
+/********
+ * DOOR *
+ ********/
+namespace {
+constexpr unsigned char DOOR_HELD_OPEN = 1;
+}  // namespace
+
+DoorBehaviour::DoorBehaviour(const nlohmann::json& params)
+    : open(params.value("open", false)),
+      open_tile(params.value("open_tile", "tile:door_open")),
+      closed_tile(params.value("closed_tile", "tile:door")) {}
+
+bool DoorBehaviour::close(World& world,
+                          const std::shared_ptr<Tile>& tile) const {
+  const auto at = tile->getTilePosition();
+  if (world.getPlayerTile() == at || world.creatureAt(at)) {
+    return false;
+  }
+
+  world.getMap().replaceTile(tile, closed_tile);
+  return true;
+}
+
+bool DoorBehaviour::onInteract(World& world,
+                               const std::shared_ptr<Tile>& tile,
+                               ItemStack& held) {
+  (void)held;
+
+  if (!open) {
+    world.getMap().replaceTile(tile, open_tile, DOOR_HELD_OPEN);
+    SoundManager::play("shovel");
+    return true;
+  }
+
+  if (!close(world, tile)) {
+    world.getState().notify("Something is in the doorway");
+    SoundManager::play("error");
+    return true;
+  }
+
+  SoundManager::play("shovel");
+  return true;
+}
+
+std::string DoorBehaviour::interactVerb(World& world,
+                                        const std::shared_ptr<Tile>& tile,
+                                        const ItemStack& held) {
+  (void)world;
+  (void)tile;
+  (void)held;
+  return open ? "Close" : "Hold open";
+}
+
+void DoorBehaviour::onTick(World& world, const std::shared_ptr<Tile>& tile) {
+  // Swings shut behind the player unless held open
+  if (tile->getMeta() != DOOR_HELD_OPEN) {
+    close(world, tile);
+  }
+}

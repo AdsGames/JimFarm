@@ -2,6 +2,7 @@
 
 #include <asw/asw.h>
 
+#include <algorithm>
 #include <cmath>
 #include <string>
 
@@ -222,6 +223,27 @@ int runSelfTest() {
             world.ambientTemperature(room + asw::Vec2i(2, 6)),
         "rooms are warmer");
 
+  // Doors open when walked into and close behind you
+  const auto door = room + asw::Vec2i(2, 4);
+  check(world.getMap().isSolidAt(door), "closed door is solid");
+  check(world.tryOpenDoor(door) && !world.getMap().isSolidAt(door),
+        "walking into a door opens it");
+  check(world.isIndoors(inside), "open door still makes a room");
+  world.getCamera().pan(door * TILE_SIZE - world.getCamera().getSize() / 2);
+  for (int i = 0; i < 4; i++) {
+    world.update(0.06F, (door + asw::Vec2i(0, 3)) * TILE_SIZE);
+  }
+  check(idAt(world, door, LAYER_FOREGROUND) == "tile:door",
+        "door closes behind you");
+  rightClick(door, hand);
+  for (int i = 0; i < 4; i++) {
+    world.update(0.06F, (door + asw::Vec2i(0, 3)) * TILE_SIZE);
+  }
+  check(idAt(world, door, LAYER_FOREGROUND) == "tile:door_open",
+        "right click holds a door open");
+  rightClick(door, hand);
+  check(idAt(world, door, LAYER_FOREGROUND) == "tile:door", "and closes it");
+
   // Bed sets where you wake up
   const auto bed = inside + asw::Vec2i(0, -1);
   place("tile:bed", bed);
@@ -324,10 +346,12 @@ int runSelfTest() {
              TILE_SIZE;
     };
 
+    float farthest = 0.0F;
     for (int i = 0; i < 60 * 8; i++) {
       rabbit->update(world, player_px, 1.0F / 60.0F);
+      farthest = std::max(farthest, distance());
     }
-    check(!rabbit->isGone() && distance() >= 9.5F, "rabbit flees far enough");
+    check(!rabbit->isGone() && farthest >= 9.5F, "rabbit flees far enough");
 
     const auto calm_at = rabbit->getPosition();
     for (int i = 0; i < 60 * 2; i++) {

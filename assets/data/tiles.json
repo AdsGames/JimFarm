@@ -1020,8 +1020,14 @@
       "height": 2,
       "width": 1
     },
-    "attribute": "NON_SOLID",
-    "encloses": true
+    "attribute": "SOLID",
+    "encloses": true,
+    "behaviours": [
+      {
+        "id": "behaviour:door",
+        "open": false
+      }
+    ]
   },
   {
     "id": "tile:window",
@@ -1184,6 +1190,30 @@
         "id": "behaviour:hopper",
         "item": "item:egg",
         "radius": 4
+      }
+    ]
+  },
+  {
+    "id": "tile:door_open",
+    "name": "Open Door",
+    "width": 1,
+    "height": 1,
+    "sheet": "placeholders",
+    "image": {
+      "type": "",
+      "spritesheet_width": 1,
+      "spritesheet_height": 1,
+      "x": 6,
+      "y": 4,
+      "height": 2,
+      "width": 1
+    },
+    "attribute": "NON_SOLID",
+    "encloses": true,
+    "behaviours": [
+      {
+        "id": "behaviour:door",
+        "open": true
       }
     ]
   }

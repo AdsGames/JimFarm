@@ -28,6 +28,7 @@ int BehaviourTypeManager::loadBehaviours() {
   factories["behaviour:shop"] = make<ShopBehaviour>();
   factories["behaviour:bed"] = make<BedBehaviour>();
   factories["behaviour:campfire"] = make<CampfireBehaviour>();
+  factories["behaviour:door"] = make<DoorBehaviour>();
   factories["behaviour:station"] = make<StationBehaviour>();
   factories["behaviour:breakable"] = make<BreakableBehaviour>();
   factories["behaviour:sprinkler"] = make<SprinklerBehaviour>();

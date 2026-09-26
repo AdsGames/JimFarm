@@ -211,13 +211,18 @@ void Character::update(World& world, float dt) {
             : 2;
   }
 
+  // Open ground, or a closed door that opens as you walk into it
+  auto canEnter = [&](const asw::Vec2i& at) {
+    return !world.getMap().isSolidAt(at) || world.tryOpenDoor(at);
+  };
+
   // Move
   if (!moving && input_enabled) {
     // Up
     if (asw::input::get_key(asw::input::Key::Up) ||
         asw::input::get_key(asw::input::Key::W)) {
       direction = DIR_UP;
-      if (!world.getMap().isSolidAt(tile_index + asw::Vec2i(0, -1))) {
+      if (canEnter(tile_index + asw::Vec2i(0, -1))) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -226,7 +231,7 @@ void Character::update(World& world, float dt) {
     else if (asw::input::get_key(asw::input::Key::Down) ||
              asw::input::get_key(asw::input::Key::S)) {
       direction = DIR_DOWN;
-      if (!world.getMap().isSolidAt(tile_index + asw::Vec2i(0, 1))) {
+      if (canEnter(tile_index + asw::Vec2i(0, 1))) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -235,7 +240,7 @@ void Character::update(World& world, float dt) {
     else if (asw::input::get_key(asw::input::Key::Left) ||
              asw::input::get_key(asw::input::Key::A)) {
       direction = DIR_LEFT;
-      if (!world.getMap().isSolidAt(tile_index + asw::Vec2i(-1, 0))) {
+      if (canEnter(tile_index + asw::Vec2i(-1, 0))) {
         moving = true;
         sound_step = !sound_step;
       }
@@ -244,7 +249,7 @@ void Character::update(World& world, float dt) {
     else if (asw::input::get_key(asw::input::Key::Right) ||
              asw::input::get_key(asw::input::Key::D)) {
       direction = DIR_RIGHT;
-      if (!world.getMap().isSolidAt(tile_index + asw::Vec2i(1, 0))) {
+      if (canEnter(tile_index + asw::Vec2i(1, 0))) {
         moving = true;
         sound_step = !sound_step;
       }

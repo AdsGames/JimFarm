@@ -1638,6 +1638,23 @@ std::shared_ptr<Tile> World::findTileNear(
   return nullptr;
 }
 
+bool World::tryOpenDoor(const asw::Vec2i& tile_pos) {
+  auto tile = tile_map.getTileAt(tile_pos, LAYER_FOREGROUND);
+  if (!tile || tile->getType().getId() != "tile:door") {
+    return false;
+  }
+
+  tile_map.replaceTile(tile, "tile:door_open");
+  SoundManager::play("shovel");
+  return true;
+}
+
+bool World::creatureAt(const asw::Vec2i& tile_pos) const {
+  return std::ranges::any_of(creatures, [&](auto const& creature) {
+    return !creature->isGone() && creature->getTile() == tile_pos;
+  });
+}
+
 /*
  * ROOMS
  */
@@ -1679,7 +1696,8 @@ void World::updateRooms() {
   for (int x = 0; x < width; x++) {
     for (int y = 0; y < height; y++) {
       const auto door = tile_map.getTileAt(asw::Vec2i(x, y), LAYER_FOREGROUND);
-      if (!door || door->getType().getId() != "tile:door") {
+      if (!door || (door->getType().getId() != "tile:door" &&
+                    door->getType().getId() != "tile:door_open")) {
         continue;
       }
 

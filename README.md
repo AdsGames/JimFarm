@@ -24,8 +24,8 @@ rabbits by day for meat and hide.
 
 Build: craft a workbench by hand, then a pickaxe and a kiln at the workbench.
 The kiln makes glass, bricks and ingots. Ingots upgrade your tools, and a stone
-workbench makes iron tools. Walls, windows and a door make a warm room that
-wolves can not enter. A bed sets where you wake up. Sprinklers water crops,
+workbench makes iron tools. Walls, windows and a door make a warm room. Doors open
+as you walk into them and close behind you. Wolves get in through open doors. A bed sets where you wake up. Sprinklers water crops,
 scarecrows keep crows away and hoppers collect eggs. New recipes appear in the
 recipe book (R) as you pick up new things.
 

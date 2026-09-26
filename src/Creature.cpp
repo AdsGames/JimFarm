@@ -141,10 +141,9 @@ bool Creature::blocked(World& world, const asw::Vec2f& at) const {
     return true;
   }
 
-  // Animals do not swim or open doors
+  // Animals do not swim, closed doors are solid, open ones let them in
   const auto top = map.getTileAt(tile, LAYER_FOREGROUND);
-  return top && (top->getType().getId() == "tile:water" ||
-                 top->getType().getEncloses());
+  return top && top->getType().getId() == "tile:water";
 }
 
 bool Creature::move(World& world, const asw::Vec2f& delta) {
@@ -297,8 +296,9 @@ void Creature::updateGrazer(World& world,
     pickFleeTarget(world, away);
   }
 
+  // Graze, drifting away from the player
   if (!fleeing) {
-    wander(world, info.wander_speed, dt);
+    wander(world, info.wander_speed, dt, normalize(to_player));
     return;
   }
 
@@ -338,42 +338,59 @@ void Creature::pickFleeTarget(World& world, const asw::Vec2f& away) {
   fleeing = true;
   flee_time = 0.0F;
 
+  // Clear straight run, checked every half tile
+  auto clearPath = [&](const asw::Vec2f& to) {
+    const auto step = to - fpos;
+    const int samples =
+        std::max(1, static_cast<int>(length(step) / (TILE_SIZE / 2.0F)));
+    for (int i = 1; i <= samples; i++) {
+      if (!canStandAt(world, fpos + step * (static_cast<float>(i) /
+                                            static_cast<float>(samples)))) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   // Best reachable spot roughly away from the player, spread so a herd
-  // scatters instead of running in a line
-  float best_score = -1.0F;
-  for (int attempt = 0; attempt < 12; attempt++) {
-    const float spread =
-        static_cast<float>(random(-70, 70)) * 3.14159F / 180.0F;
-    const float distance =
-        static_cast<float>(random(info.flee_min, info.flee_max) * TILE_SIZE);
-    const auto candidate =
-        fpos + asw::Vec2f(std::cos(heading + spread) * distance,
-                          std::sin(heading + spread) * distance);
+  // scatters. When boxed in, any way but straight at the player.
+  float best_score = -2.0F;
+  for (const int spread_limit : {70, 160}) {
+    for (int attempt = 0; attempt < 12; attempt++) {
+      const float spread =
+          static_cast<float>(random(-spread_limit, spread_limit)) * 3.14159F /
+          180.0F;
+      const float distance = static_cast<float>(
+          random(info.flee_min, info.flee_max) * TILE_SIZE);
+      const auto candidate =
+          fpos + asw::Vec2f(std::cos(heading + spread) * distance,
+                            std::sin(heading + spread) * distance);
 
-    if (!canStandAt(world, candidate)) {
-      continue;
+      if (!clearPath(candidate)) {
+        continue;
+      }
+
+      // Straighter away is better
+      const float score = std::cos(spread);
+      if (score > best_score) {
+        best_score = score;
+        flee_target = candidate;
+      }
     }
 
-    // Straighter away is better, and so is a clear first step
-    const float score = std::cos(spread) +
-                        (canStandAt(world, fpos + normalize(candidate - fpos) *
-                                                      static_cast<float>(
-                                                          TILE_SIZE))
-                             ? 1.0F
-                             : 0.0F);
-    if (score > best_score) {
-      best_score = score;
-      flee_target = candidate;
+    if (best_score > -2.0F) {
+      return;
     }
   }
 
-  // Nowhere good, just run straight away
-  if (best_score < 0.0F) {
-    flee_target = fpos + away * static_cast<float>(info.flee_min * TILE_SIZE);
-  }
+  // Nowhere good, just run straight away and slide along what is in the way
+  flee_target = fpos + away * static_cast<float>(info.flee_min * TILE_SIZE);
 }
 
-void Creature::wander(World& world, float speed, float dt) {
+void Creature::wander(World& world,
+                      float speed,
+                      float dt,
+                      const asw::Vec2f& avoid) {
   wander_timer -= dt;
   if (wander_timer <= 0.0F) {
     wander_timer = static_cast<float>(random(1, 3));
@@ -384,6 +401,10 @@ void Creature::wander(World& world, float speed, float dt) {
     } else {
       wander_dir = normalize(asw::Vec2f(static_cast<float>(random(-10, 10)),
                                         static_cast<float>(random(-10, 10))));
+    }
+
+    if (wander_dir.x * avoid.x + wander_dir.y * avoid.y > 0.0F) {
+      wander_dir = wander_dir * -1.0F;
     }
   }
   move(world, wander_dir * speed * dt);

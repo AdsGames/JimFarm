@@ -47,7 +47,11 @@ class Creature : public Sprite {
   void updateHunter(World& world, const asw::Vec2f& to_player, float dt);
   void updateGrazer(World& world, const asw::Vec2f& to_player, float dt);
 
-  void wander(World& world, float speed, float dt);
+  // Stroll about, never toward avoid when it is set
+  void wander(World& world,
+              float speed,
+              float dt,
+              const asw::Vec2f& avoid = asw::Vec2f(0, 0));
 
   // Grazers pick a spot away from the player and run to it
   void pickFleeTarget(World& world, const asw::Vec2f& away);
