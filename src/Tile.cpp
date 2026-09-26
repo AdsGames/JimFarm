@@ -21,7 +21,8 @@ void Tile::draw(const Camera& camera) const {
   const int bob = tile_pointer.getBobs() ? anim::idleBob(getSpriteId()) : 0;
 
   tile_pointer.draw(pos.x - camera.getPosition().x,
-                    pos.y - camera.getPosition().y + bob, getMeta());
+                    pos.y - camera.getPosition().y + bob, getMeta(),
+                    pos.x / TILE_SIZE);
 }
 
 const TileType& Tile::getType() const {

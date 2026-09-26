@@ -82,6 +82,9 @@ int TileTypeManager::loadTiles(const std::string& path) {
           asw::Color(tile["tint"][0], tile["tint"][1], tile["tint"][2]));
     }
 
+    tile_defs[id].setSeasonal(tile.value("seasonal", false));
+    tile_defs[id].setSway(tile.value("sway", false));
+
     if (tile.contains("bitmask_group")) {
       tile_defs[id].setBitmaskGroup(tile["bitmask_group"]);
     }

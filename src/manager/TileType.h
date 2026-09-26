@@ -14,6 +14,7 @@
 #include <vector>
 
 class TileBehaviour;
+class GameState;
 
 enum class ImageType {
   Static,
@@ -52,8 +53,17 @@ class TileType {
   unsigned char getImageWidth() const { return image_w; }
   unsigned char getImageHeight() const { return image_h; }
 
-  // Draw
-  void draw(int x, int y, unsigned char meta = 0) const;
+  // Draw, tile_x is the world tile column used to offset wind sway
+  void draw(int x, int y, unsigned char meta = 0, int tile_x = 0) const;
+
+  // Seasonal tint and wind sway, set in tiles.json
+  void setSeasonal(bool value) { seasonal = value; }
+  bool isSeasonal() const { return seasonal; }
+  void setSway(bool value) { sway = value; }
+  bool isSway() const { return sway; }
+
+  // Update shared season tint and wind clock, call once per frame
+  static void updateEnvironment(float dt, const GameState& state);
 
   // Set sprite sheet
   void setSpriteSheet(asw::Texture spriteSheet);
@@ -123,6 +133,13 @@ class TileType {
   bool bobs{false};
 
   std::string bitmask_group{};
+
+  bool seasonal{false};
+  bool sway{false};
+
+  // Shared environment for all tile types
+  static asw::Color season_tint;
+  static float wind_time;
 };
 
 #endif  // TILE_TYPE_H

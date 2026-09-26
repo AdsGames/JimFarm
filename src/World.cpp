@@ -857,6 +857,9 @@ void World::update(float dt, const asw::Vec2i& player_pos) {
 
   map_messages.update(dt);
 
+  // Seasonal tint and wind sway for tiles
+  TileType::updateEnvironment(dt, state);
+
   // Everything waits while the summary is up
   if (summary_open) {
     return;

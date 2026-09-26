@@ -14,6 +14,7 @@
       "width": 1
     },
     "attribute": "NON_SOLID",
+    "seasonal": true,
     "behaviours": []
   },
   {
@@ -79,6 +80,8 @@
       "width": 1
     },
     "attribute": "NON_SOLID"
+    "seasonal": true,
+    "sway": true,
   },
   {
     "id": "tile:tree",
@@ -95,6 +98,8 @@
       "width": 1
     },
     "attribute": "SOLID",
+    "seasonal": true,
+    "sway": true,
     "behaviours": [
       {
         "id": "behaviour:tree",
@@ -120,6 +125,8 @@
       "width": 1
     },
     "attribute": "SOLID",
+    "seasonal": true,
+    "sway": true,
     "behaviours": [
       {
         "id": "behaviour:forage",
@@ -273,6 +280,8 @@
       "width": 1
     },
     "attribute": "NON_SOLID",
+    "seasonal": true,
+    "sway": true,
     "behaviours": [
       {
         "id": "behaviour:crop",
@@ -302,6 +311,8 @@
       "width": 1
     },
     "attribute": "NON_SOLID",
+    "seasonal": true,
+    "sway": true,
     "behaviours": [
       {
         "id": "behaviour:crop",
@@ -331,6 +342,8 @@
       "width": 1
     },
     "attribute": "NON_SOLID",
+    "seasonal": true,
+    "sway": true,
     "behaviours": [
       {
         "id": "behaviour:crop",
@@ -360,6 +373,8 @@
       "width": 1
     },
     "attribute": "NON_SOLID",
+    "seasonal": true,
+    "sway": true,
     "behaviours": [
       {
         "id": "behaviour:crop",
@@ -389,6 +404,7 @@
       "width": 1
     },
     "attribute": "NON_SOLID"
+    "seasonal": true,
   },
   {
     "id": "tile:store",
@@ -667,6 +683,8 @@
       "width": 1
     },
     "attribute": "NON_SOLID",
+    "seasonal": true,
+    "sway": true,
     "behaviours": [
       {
         "id": "behaviour:transform",
