@@ -9,7 +9,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/target)
 set(SANITIZE  OFF)
 
 include(cmake/get_cpm.cmake)
-CPMAddPackage("gh:adsgames/asw@0.10.3")
+CPMAddPackage("gh:adsgames/asw@0.12.3")
 CPMAddPackage("gh:nlohmann/json@3.11.3")
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
@@ -27,20 +27,16 @@ if (SANITIZE)
   set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fsanitize=address")
 endif()
 
+asw_add_web_target(${PROJECT_NAME}
+  TITLE "Jim Farm"
+  BACKGROUND "#000000"
+  ASSETS ${CMAKE_CURRENT_LIST_DIR}/assets
+)
+
 if(EMSCRIPTEN)
-  set_target_properties(${PROJECT_NAME} PROPERTIES
-    OUTPUT_NAME "index"
-    SUFFIX ".html"
-  )
-
   target_link_options(${PROJECT_NAME} PRIVATE
-    -sWASM=1
-    -sALLOW_MEMORY_GROWTH=1
     -sMAXIMUM_MEMORY=1gb
-  )
-
-  set_target_properties(${PROJECT_NAME} PROPERTIES
-    LINK_FLAGS "--preload-file ${CMAKE_CURRENT_LIST_DIR}/assets@/assets --use-preload-plugins --shell-file ${CMAKE_CURRENT_LIST_DIR}/index.html"
+    --use-preload-plugins
   )
 endif()
 
